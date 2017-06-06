@@ -89,6 +89,8 @@ stargazer(lll1,lll2, align = TRUE, no.space = TRUE, digits = 2,  report = "vc*",
 # Smoothing Spline Regressions --------------------------------------------
 cropdat$dday8_32 <- cropdat$dday8C - cropdat$dday32C
 
+
+
 dat <- cropdat
 ndbdist <- datadist(dat)
 options("datadist" = "ndbdist")
