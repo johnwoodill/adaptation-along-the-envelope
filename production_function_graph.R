@@ -123,11 +123,9 @@ library(stringr)
 # cropdat <- readRDS("data/cropdat.rds")
 # 
 
-cropdat <- read_csv("data/full_ag_data.csv")
+cropdat <- readRDS("data/full_ag_data.rds")
 
 # Balanced years
-cropdat <- filter(cropdat, year >= 1930)
-# Not enough pricing data for cotton <= 1960
 bal <- c(1960, 1970, 1980, 1990, 2000)
 
 for (i in bal){
@@ -148,7 +146,7 @@ ag_cropdat <- sub_cropdat %>%
   group_by(state, fips) %>% 
   summarise_each(funs(mean(., na.rm = TRUE))) %>% 
   ungroup()
-    
+
 ag_cropdat$year <- NULL
 
 # Build weights
@@ -220,8 +218,8 @@ soybeansd <- filter(soybeansd, !is.na(tavg) & !is.na(soybean_w2))
 soybeans_density <- density(soybeansd$tavg, na.rm = TRUE, weights = soybeansd$soybean_w2/sum(soybeansd$soybean_w2), bw = 1)
 soybeans_density <- data.frame(x = soybeans_density$x, y = soybeans_density$y, type = "soybeans")
 
-density <- rbind(corn_density, wheat_density, cotton_density, hay_density, soybeans_density)
-ggplot(density, aes(x, y, color = type)) + geom_line() + xlab("Average Annual Temperature") + xlim(0, 30) + ggtitle(paste("County-level Average Temperatures U.S. - Weighted by production*acreage*price (", i, "-", i+9,")", sep = "")) + ylab("Density")
+dens <- rbind(corn_density, wheat_density, cotton_density, hay_density, soybeans_density)
+ggplot(dens, aes(x, y, color = type)) + geom_line() + xlab("Average Annual Temperature") + xlim(0, 30) + ggtitle(paste("County-level Average Temperatures U.S. - Weighted by production*acreage*price (", i, "-", i+9,")", sep = "")) + ylab("Density")
 filename <- paste("cropdensity_tavg_w2_", i, "-", i+9, ".png", sep = "")
 ggsave(filename, path = "figures/")
 

@@ -1,17 +1,16 @@
 library(ggplot2)
 library(dplyr)
 
-cropdat <- readRDS("data/cropdat.rds")
-aggdat <- readRDS("data/commodity_1960-2010_complete.rds")
+cropdat <- readRDS("data/full_ag_data.rds")
 
-fullcropdensity <- density(aggdat$tavg, na.rm = TRUE, bw = 1)
+fullcropdensity <- density(cropdat$tavg, na.rm = TRUE, bw = 1)
 plot(fullcropdensity)
 
-cornd <- select(aggdat, corn_grain_p, corn_grain_a, corn_price)
+cornd <- select(cropdat, corn_grain_p, corn_grain_a, corn_price)
 cornd <- filter(cornd, !is.na(corn_grain_p) & !is.na(corn_grain_a) & !is.na(corn_price))
 plot(density(cornd$corn_grain_p*cornd$corn_price, na.rm = TRUE, weights = cornd$corn_grain_a/sum(cornd$corn_grain_a), bw = 4))
 
-acres <- rbind(aggdat$corn_grain_a, aggdat$hay_a, aggdat$cotton_a, aggdat$wheat_a, aggdat$soybean_a)
+acres <- rbind(cropdat$corn_grain_a, cropdat$hay_a, cropdat$cotton_a, cropdat$wheat_a, cropdat$soybean_a)
 plot(density(remove_outliers(acres), na.rm = TRUE))
 
 acresdat <- select(cropdat, year, fips, state, corn_grain_a, cotton_a, hay_a, wheat_a, soybean_a)
