@@ -4,13 +4,14 @@ library(stargazer)
 library(rms)
 
 cropdat <- readRDS("data/full_ag_data.rds")
-cropdat <- do.call(data.frame,lapply(cropdat, function(x) replace(x, is.infinite(x),NA)))
 
-cropdat$corn_rev <- cropdat$corn_yield*cropdat$corn_price
-cropdat$cotton_rev <- cropdat$cotton_yield*cropdat$cotton_price
-cropdat$hay_rev <- cropdat$hay_yield*cropdat$hay_price
-cropdat$wheat_rev <- cropdat$wheat_yield*cropdat$wheat_price
-cropdat$soybean_rev <- cropdat$soybean_yield*cropdat$soybean_price
+
+
+cropdat$corn_rev <- cropdat$corn_grain_p*cropdat$corn_price
+cropdat$cotton_rev <- cropdat$cotton_p*cropdat$cotton_price
+cropdat$hay_rev <- cropdat$hay_p*cropdat$hay_price
+cropdat$wheat_rev <- cropdat$wheat_p*cropdat$wheat_price
+cropdat$soybean_rev <- cropdat$soybean_p*cropdat$soybean_price
 
 cropdat$total_rev <- cropdat$corn_rev + cropdat$cotton_rev + cropdat$hay_rev + cropdat$wheat_rev + cropdat$soybean_rev
 cropdat$total_a <- cropdat$corn_grain_a + cropdat$cotton_a + cropdat$hay_a + cropdat$wheat_a + cropdat$soybean_a
@@ -69,7 +70,7 @@ ll4 <- lm(log(1+wheat_rev) ~ I(dday8C - dday32C) + I((dday8C - dday32C)^2) + sqr
 ll5 <- lm(log(1+soybean_rev) ~ I(dday8C - dday32C) + I((dday8C - dday32C)^2) + sqrt(dday34C) + prec + I(prec^2), data = cropdat, weights = cropdat$soybean_a)
 
 
-lll1 <- lm(log(1 + total_rev) ~ tavg + I(tavg^2) + prec + I(prec^2), data = cropdat, weigths = cropdat$total_a)
+lll1 <- lm(log(1 + total_rev) ~ tavg + I(tavg^2) + prec + I(prec^2), data = cropdat, weights = cropdat$total_a)
 lll2 <- lm(log(1 + total_rev) ~ I(dday8C - dday32C) + I((dday8C - dday32C)^2) + sqrt(dday34C) + prec + I(prec^2), data = cropdat, weights = cropdat$total_a)
 
 

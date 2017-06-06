@@ -78,6 +78,16 @@ crop <- filter(crop, year >= 1900)
 # Get prices
 crop_prices <- crop[,c(1,2,4,7,10,13,16)]
 
+# NASS data description
+# corn_price: $/bu corn_p: bu
+# cotton_price: $/lb   cotton_p: 480lb bales
+# hay_price: $/ton    hay_p: tons
+# wheat_price: $/bu   wheat_p: bu
+# soybean_price: $/bu   soybean_p: bu
+
+# Adjust cotton price
+crop_prices$`COTTON, UPLAND - PRICE RECEIVED, MEASURED IN $ / LB` <- crop_prices$`COTTON, UPLAND - PRICE RECEIVED, MEASURED IN $ / LB`*480
+
 names(crop_prices) <- c("state", "year", "wheat_price", "corn_price", "hay_price", "soybean_price", "cotton_price")
 crop_prices <- as.data.frame(crop_prices)
 crop_prices <- select(crop_prices, year, state, wheat_price, corn_price, hay_price, soybean_price, cotton_price)
@@ -142,11 +152,11 @@ gc()
 
 # Aggregate county-level degree days -----------------------------------------------
 
-#dd <- read_csv("/run/media/john/1TB/MEGA/Projects/Adaptation and an Envelope/data/fips_degree_days_1900-2013.csv")
-#prec <- read_csv("/run/media/john/1TB/MEGA/Projects/Adaptation and an Envelope/data/fips_precipitation_1900-2013.csv")
+dd <- read_csv("/run/media/john/1TB/MEGA/Projects/Adaptation and an Envelope/data/fips_degree_days_1900-2013.csv")
+prec <- read_csv("/run/media/john/1TB/MEGA/Projects/Adaptation and an Envelope/data/fips_precipitation_1900-2013.csv")
 
-dd <- read_csv("/home/john/MEGA/Projects/adaptation-and-an-envelope/data/fips_degree_days_1900-2013.csv")
-prec <- read_csv("/home/john/MEGA/Projects/adaptation-and-an-envelope/data/fips_precipitation_1900-2013.csv")
+#dd <- read_csv("/home/john/MEGA/Projects/adaptation-and-an-envelope/data/fips_degree_days_1900-2013.csv")
+#prec <- read_csv("/home/john/MEGA/Projects/adaptation-and-an-envelope/data/fips_precipitation_1900-2013.csv")
 
 
 dd_dat <- left_join(dd, prec, by = c("fips", "year", "month"))
@@ -224,6 +234,6 @@ fulldat <- do.call(data.frame,lapply(fulldat, function(x) replace(x, is.infinite
 #   print(i)
 # }
 
-write.csv(fulldat, "data/full_ag_data.csv", row.names = FALSE)
+#write.csv(fulldat, "data/full_ag_data.csv", row.names = FALSE)
 saveRDS(fulldat, "data/full_ag_data.rds")
 fulldat <- read_csv("data/full_ag_data.csv")
