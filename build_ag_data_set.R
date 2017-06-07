@@ -4,6 +4,7 @@ library(tidyr)
 library(rms)
 library(noncensus)
 library(maps)
+library(lubridate)
 library(stringr)
 
 # Function to extract data
@@ -89,6 +90,22 @@ crop_prices <- crop[,c(1,2,4,7,10,13,16)]
 crop_prices$`COTTON, UPLAND - PRICE RECEIVED, MEASURED IN $ / LB` <- crop_prices$`COTTON, UPLAND - PRICE RECEIVED, MEASURED IN $ / LB`*480
 
 names(crop_prices) <- c("state", "year", "wheat_price", "corn_price", "hay_price", "soybean_price", "cotton_price")
+
+# Nominal to Real prices using GDP product index deflator
+def <- read.csv("data/gdp_def_base2010.csv")
+def$year <- year(def$DATE)
+def <- def %>% 
+  group_by(year) %>% 
+  summarise(gdpdef = mean(GDPDEF_NBD20100101, na.rm = TRUE))
+def$gdpdef <- ifelse(def$year == 2010, 100, def$gdpdef)
+
+crop_prices <- left_join(crop_prices, def, by = "year")
+crop_prices$corn_price <- (crop_prices$corn_price*crop_prices$gdpdef/100)
+crop_prices$cotton_price <- (crop_prices$cotton_price*crop_prices$gdpdef/100)
+crop_prices$hay_price <- (crop_prices$hay_price*crop_prices$gdpdef/100)
+crop_prices$wheat_price <- (crop_prices$wheat_price*crop_prices$gdpdef/100)
+crop_prices$soybean_price <- (crop_prices$soybean_price*crop_prices$gdpdef/100)
+
 crop_prices <- as.data.frame(crop_prices)
 crop_prices <- select(crop_prices, year, state, wheat_price, corn_price, hay_price, soybean_price, cotton_price)
 crop_prices
