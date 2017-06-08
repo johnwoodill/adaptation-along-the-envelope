@@ -1,6 +1,8 @@
 library(ggplot2)
 library(dplyr)
 
+
+### NO IDEA WHAT THIS IS FOR
 cropdat <- readRDS("data/full_ag_data.rds")
 
 fullcropdensity <- density(cropdat$tavg, na.rm = TRUE, bw = 1)
@@ -67,7 +69,7 @@ lines(d2$x, d2$y, col = 'blue')
 plot(d2$x, d2$y, type = "l", col = 'red')
 
 # Stacked bar chart
-dd <- density
+dd <- dens
 dd$x <- floor(dd$x)
 dd <- dd %>% 
   group_by(type, x) %>% 
