@@ -14,6 +14,16 @@ county.fips$state <- sapply(str_split(county.fips$polyname, ","),'[',1)
 county.fips$county <- sapply(str_split(county.fips$polyname, ","),'[',2)
 county.fips <- select(county.fips, fips, county, state)
 
+data(zip_codes)
+zip_codes <- select(zip_codes, fips, latitude, longitude)
+zip_codes <- zip_codes[!duplicated(zip_codes[,1:3]),]
+names(zip_codes) <- c("county", "lat", "long")
+zip_codes <- zip_codes %>% 
+  group_by(county) %>% 
+  summarise(lat = mean(lat, na.rm = TRUE),
+            long = mean(long, na.rm = TRUE))
+
+# Function to extract data
 # Extract NASS crop data at state level
 extract_d_state <- function(x){
   names(x) <- tolower(names(x))
@@ -143,6 +153,9 @@ mergdat <- left_join(mergdat, statedat, by = c("name"))
 mergdat <- select(mergdat, county, state)
 names(newgrid) <- c("county", "year")
 newgrid <- left_join(newgrid, mergdat, by = "county")
+
+newgrid <- left_join(newgrid, zip_codes, by = "county")
+
 newgrid <- newgrid[!duplicated(newgrid[,1:3]),]
 
 newgrid$county <- as.character(newgrid$county)
@@ -232,11 +245,11 @@ gc()
 fulldat <- left_join(cropdat, crop_prices, by = c("year", "state"))
 
 # Organize before degree day merge
-fulldat <- select(fulldat, year, state, fips, corn_grain_a, corn_grain_p, corn_yield, corn_nprice, corn_rprice,
+fulldat <- select(fulldat, year, state, fips, lat, long, corn_grain_a, corn_grain_p, corn_yield, corn_nprice, corn_rprice,
                   cotton_a, cotton_p, cotton_yield, cotton_nprice, cotton_rprice,
                   hay_a, hay_p, hay_yield, hay_nprice, hay_rprice,
                   wheat_a, wheat_p, wheat_yield, wheat_nprice, wheat_rprice,
-                  soybean_a, soybean_p, soybean_yield, soybean_nprice, soybean_rprice )
+                  soybean_a, soybean_p, soybean_yield, soybean_nprice, soybean_rprice)
 
 # Merge degree days
 fulldat <- left_join(fulldat, dd_dat, by = c("year", "fips"))

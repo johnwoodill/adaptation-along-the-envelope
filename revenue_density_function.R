@@ -2,7 +2,7 @@ library(ggplot2)
 library(dplyr)
 
 
-### NO IDEA WHAT THIS IS FOR
+### NO IDEA WHAT THIS FILE IS FOR
 cropdat <- readRDS("data/full_ag_data.rds")
 
 fullcropdensity <- density(cropdat$tavg, na.rm = TRUE, bw = 1)
