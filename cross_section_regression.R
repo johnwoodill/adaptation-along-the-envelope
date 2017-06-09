@@ -12,6 +12,8 @@ g_legend<-function(a.gplot){
     legend
 }
 
+
+
 cropdat <- readRDS("data/full_ag_data.rds")
 cropdat <- filter(cropdat, abs(long) <= 100)
 cropdat$corn_rev <- cropdat$corn_grain_p*cropdat$corn_rprice
