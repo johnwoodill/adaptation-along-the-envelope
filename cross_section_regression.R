@@ -73,7 +73,14 @@ l3 <- lm(log(1 + hay_rev) ~ tavg + I(tavg^2) + prec + I(prec^2), data = cropdat,
 l4 <- lm(log(1 + wheat_rev) ~ tavg + I(tavg^2) + prec + I(prec^2), data = cropdat, weights = cropdat$wheat_a)
 l5 <- lm(log(1 + soybean_rev) ~ tavg + I(tavg^2) + prec + I(prec^2), data = cropdat, weights = cropdat$soybean_a)
 
-l6 <- lm(log(1 + corn_rev) ~ tavg + factor(fips) + I(year - 1899), data = cropdat, weights = cropdat$corn_grain_a)
+cropdat$trend <- cropdat$year - 1899
+cropdat$trendsq <- cropdat$trend^2
+cropdat$precsq <- cropdat$prec^2
+cropdat$tavgsq <- cropdat$tavg^2
+
+l6 <- lm.fit(log(1 + corn_rev) ~ factor(fips) + tavg + tavgsq + trend + trensq + prec + precsq, data = cropdat)
+
+, weights = cropdat$corn_grain_a
 
 stargazer(l1,l2,l3,l4,l5, align = TRUE, no.space = TRUE, digits = 2,  report = "vc*", 
           omit.stat = c("ser", "f"), title = "Regression Models explaining Crop Revenue (weighted by crop acreage)", dep.var.labels = c("Log(Corn Rev)", "Log(Cotton Rev)", "Log(Hay Rev)", "Log(Wheat Rev)", "Log(Soybean Rev)")
