@@ -90,7 +90,7 @@ dat <- cropdat
 dbdist <- datadist(dat)
 options("datadist" = "dbdist")
 
-l6 <- ols(ln_corn ~ ffips + tavg + prec, data = dat,x = TRUE, y = TRUE)
+l6 <- ols(ln_corn ~ ffips + tavg + tavgsq + prec + precsq, data = dat,x = TRUE, y = TRUE, weights = cropdat$corn_grain_a)
 summary(l6)
 
 , weights = cropdat$corn_grain_a
