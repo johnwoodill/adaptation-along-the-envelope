@@ -16,11 +16,12 @@ g_legend<-function(a.gplot){
 
 cropdat <- readRDS("data/full_ag_data.rds")
 cropdat <- filter(cropdat, abs(long) <= 100)
-cropdat$corn_rev <- (cropdat$corn_grain_p*cropdat$corn_rprice)/cropdat$corn_grain_a
-cropdat$cotton_rev <- (cropdat$cotton_p*cropdat$cotton_rprice)/cropdat$cotton_a
-cropdat$hay_rev <- (cropdat$hay_p*cropdat$hay_rprice)/cropdat$hay_a
-cropdat$wheat_rev <- (cropdat$wheat_p*cropdat$wheat_rprice)/cropdat$wheat_a
-cropdat$soybean_rev <- (cropdat$soybean_p*cropdat$soybean_rprice)/cropdat$soybean_a
+cropdat <- filter(cropdat, year >= 1960 & year <= 2010)
+cropdat$corn_rev <- (cropdat$corn_grain_p*cropdat$corn_rprice)
+cropdat$cotton_rev <- (cropdat$cotton_p*cropdat$cotton_rprice)
+cropdat$hay_rev <- (cropdat$hay_p*cropdat$hay_rprice)
+cropdat$wheat_rev <- (cropdat$wheat_p*cropdat$wheat_rprice)
+cropdat$soybean_rev <- (cropdat$soybean_p*cropdat$soybean_rprice)
 
 cropdat$total_rev <- cropdat$corn_rev + cropdat$cotton_rev + cropdat$hay_rev + cropdat$wheat_rev + cropdat$soybean_rev
 cropdat$total_a <- cropdat$corn_grain_a + cropdat$cotton_a + cropdat$hay_a + cropdat$wheat_a + cropdat$soybean_a
@@ -72,6 +73,8 @@ l2 <- lm(log(1 + cotton_rev) ~ tavg + I(tavg^2) + prec + I(prec^2), data = cropd
 l3 <- lm(log(1 + hay_rev) ~ tavg + I(tavg^2) + prec + I(prec^2), data = cropdat, weights = cropdat$hay_a)
 l4 <- lm(log(1 + wheat_rev) ~ tavg + I(tavg^2) + prec + I(prec^2), data = cropdat, weights = cropdat$wheat_a)
 l5 <- lm(log(1 + soybean_rev) ~ tavg + I(tavg^2) + prec + I(prec^2), data = cropdat, weights = cropdat$soybean_a)
+
+l1 <- lm(log(1 + corn_rev) ~ tavg + I(tavg^2) + prec + I(prec^2), data = cropdat)
 
 cropdat$trend <- cropdat$year - 1899
 cropdat$trendsq <- cropdat$trend^2
