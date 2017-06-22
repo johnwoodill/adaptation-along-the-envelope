@@ -26,6 +26,14 @@ cropdat$soybean_rev <- (cropdat$soybean_p*cropdat$soybean_rprice)
 cropdat$total_rev <- cropdat$corn_rev + cropdat$cotton_rev + cropdat$hay_rev + cropdat$wheat_rev + cropdat$soybean_rev
 cropdat$total_a <- cropdat$corn_grain_a + cropdat$cotton_a + cropdat$hay_a + cropdat$wheat_a + cropdat$soybean_a
 
+
+cropdat$trend <- cropdat$year - 1959
+cropdat$trendsq <- cropdat$trend^2
+cropdat$precsq <- cropdat$prec^2
+cropdat$tavgsq <- cropdat$tavg^2
+cropdat$ffips <- as.factor(cropdat$fips)
+cropdat$fstate <- as.factor(cropdat$state)
+
 # Loop through regression to find best predictor (no interesting results produced)
 # # Find single degree day that best predicts crop revenue ------------------
 # 
@@ -68,7 +76,7 @@ cropdat$total_a <- cropdat$corn_grain_a + cropdat$cotton_a + cropdat$hay_a + cro
 #   }
 
 
-l1 <- lm(log(1 + corn_rev) ~ tavg + I(tavg^2) + prec + I(prec^2), data = cropdat, weights = cropdat$corn_grain_a)
+l1 <- lm(log(1 + corn_rev) ~ tavg + tavgsq + prec + precsq, data = cropdat, weights = cropdat$corn_grain_a)
 l2 <- lm(log(1 + cotton_rev) ~ tavg + I(tavg^2) + prec + I(prec^2), data = cropdat, weights = cropdat$cotton_a)
 l3 <- lm(log(1 + hay_rev) ~ tavg + I(tavg^2) + prec + I(prec^2), data = cropdat, weights = cropdat$hay_a)
 l4 <- lm(log(1 + wheat_rev) ~ tavg + I(tavg^2) + prec + I(prec^2), data = cropdat, weights = cropdat$wheat_a)
@@ -82,21 +90,21 @@ cropdat$precsq <- cropdat$prec^2
 cropdat$tavgsq <- cropdat$tavg^2
 cropdat$fips <- as.factor(cropdat$fips)
 
-l6 <- lm(log(1 + corn_rev) ~ factor(fips) + tavg + tavgsq + trend + trendsq + prec + precsq, data = cropdat)
+#l6 <- lm(log(1 + corn_rev) ~ factor(fips) + tavg + tavgsq + trend + trendsq + prec + precsq, data = cropdat)
 
-l6 <- lm(log(1 + corn_rev) ~ factor(fips) + tavg + prec, data = cropdat)
-summary(l6)
+#l6 <- lm(log(1 + corn_rev) ~ factor(fips) + tavg + prec, data = cropdat)
+#summary(l6)
 
-cropdat$ln_corn <- log(1 + cropdat$corn_rev)
-cropdat$ffips <- as.factor(cropdat$fips)
-dat <- cropdat
-dbdist <- datadist(dat)
-options("datadist" = "dbdist")
+#cropdat$ln_corn <- log(1 + cropdat$corn_rev)
+#cropdat$ffips <- as.factor(cropdat$fips)
+#dat <- cropdat
+#dbdist <- datadist(dat)
+#options("datadist" = "dbdist")
 
-l6 <- ols(ln_corn ~ ffips + tavg + tavgsq + prec + precsq, data = dat,x = TRUE, y = TRUE, weights = cropdat$corn_grain_a)
-summary(l6)
+#l6 <- ols(ln_corn ~ ffips + tavg + tavgsq + prec + precsq, data = dat,x = TRUE, y = TRUE, weights = cropdat$corn_grain_a)
+#summary(l6)
 
-, weights = cropdat$corn_grain_a
+#, weights = cropdat$corn_grain_a
 
 stargazer(l1,l2,l3,l4,l5, align = TRUE, no.space = TRUE, digits = 2,  report = "vc*", 
           omit.stat = c("ser", "f"), title = "Regression Models explaining Crop Revenue (weighted by crop acreage)", dep.var.labels = c("Log(Corn Rev)", "Log(Cotton Rev)", "Log(Hay Rev)", "Log(Wheat Rev)", "Log(Soybean Rev)")
@@ -111,48 +119,48 @@ stargazer(lll1,lll2, align = TRUE, no.space = TRUE, digits = 2,  report = "vc*",
 
 
 # Smoothing Spline Regressions --------------------------------------------
-
-cropdat$dday8_32 <- cropdat$dday8C - cropdat$dday32C
-
-p1 <- ggplot(cropdat, aes(tavg, log(1+corn_rev))) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 3), aes(linetype = "solid")) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 4), aes(linetype = "longdash"))+ geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 5), aes(linetype = "dotdash")) + scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5")) + theme(legend.position="none")
-p2 <- ggplot(cropdat, aes(tavg, log(1+cotton_rev))) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 3), aes(linetype = "solid")) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 4), aes(linetype = "longdash"))+ geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 5), aes(linetype = "dotdash")) + scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5"))+ theme(legend.position="none")
-p3 <- ggplot(cropdat, aes(tavg, log(1+hay_rev))) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 3), aes(linetype = "solid")) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 4), aes(linetype = "longdash"))+ geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 5), aes(linetype = "dotdash"))+ scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5")) + theme(legend.position="none")
-p4 <- ggplot(cropdat, aes(tavg, log(1+wheat_rev))) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 3), aes(linetype = "solid")) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 4), aes(linetype = "longdash"))+ geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 5), aes(linetype = "dotdash")) + scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5"))+ theme(legend.position="none")
-p5 <- ggplot(cropdat, aes(tavg, log(1+soybean_rev))) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 3), aes(linetype = "solid")) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 4), aes(linetype = "longdash"))+ geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 5), aes(linetype = "dotdash")) + scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5"))+ theme(legend.position="none")
-g1legend <- ggplot(cropdat, aes(tavg, log(1+soybean_rev))) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 3), aes(linetype = "solid")) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 4), aes(linetype = "longdash"))+ geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 5), aes(linetype = "dotdash"))+ scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5")) + scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5")) + theme(legend.key.width = unit(1.8, "cm"))
-
-p6 <- ggplot(cropdat, aes(dday8_32, log(1+corn_rev))) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 3), aes(linetype = "solid")) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 4), aes(linetype = "longdash"))+ geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 5), aes(linetype = "dotdash")) + scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5")) + theme(legend.position="none")
-p7 <- ggplot(cropdat, aes(dday8_32, log(1+cotton_rev))) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 3), aes(linetype = "solid")) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 4), aes(linetype = "longdash"))+ geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 5), aes(linetype = "dotdash")) + scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5")) + theme(legend.position="none")
-p8 <- ggplot(cropdat, aes(dday8_32, log(1+hay_rev))) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 3), aes(linetype = "solid")) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 4), aes(linetype = "longdash"))+ geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 5), aes(linetype = "dotdash")) + scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5")) + theme(legend.position="none")
-p9 <- ggplot(cropdat, aes(dday8_32, log(1+wheat_rev))) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 3), aes(linetype = "solid")) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 4), aes(linetype = "longdash"))+ geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 5), aes(linetype = "dotdash")) + scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5")) + theme(legend.position="none")
-p10 <- ggplot(cropdat, aes(dday8_32, log(1+soybean_rev))) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 3), aes(linetype = "solid")) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 4), aes(linetype = "longdash"))+ geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 5), aes(linetype = "dotdash")) + scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5")) + theme(legend.position="none")
-g2legend <- ggplot(cropdat, aes(dday8_32, log(1+soybean_rev))) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 3), aes(linetype = "solid")) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 4), aes(linetype = "longdash"))+ geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 5), aes(linetype = "dotdash"))+ scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5")) + scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5")) + theme(legend.key.width = unit(1.8, "cm"))
-
-p11 <- ggplot(cropdat, aes(dday34C, log(1+corn_rev))) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 3), aes(linetype = "solid")) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 4), aes(linetype = "longdash"))+ geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 5), aes(linetype = "dotdash")) + scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5")) + theme(legend.position="none")
-p12 <- ggplot(cropdat, aes(dday34C, log(1+cotton_rev))) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 3), aes(linetype = "solid")) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 4), aes(linetype = "longdash"))+ geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 5), aes(linetype = "dotdash")) + scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5")) + theme(legend.position="none")
-p13 <- ggplot(cropdat, aes(dday34C, log(1+hay_rev))) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 3), aes(linetype = "solid")) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 4), aes(linetype = "longdash"))+ geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 5), aes(linetype = "dotdash")) + scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5")) + theme(legend.position="none")
-p14 <- ggplot(cropdat, aes(dday34C, log(1+wheat_rev))) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 3), aes(linetype = "solid")) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 4), aes(linetype = "longdash"))+ geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 5), aes(linetype = "dotdash")) + scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5")) + theme(legend.position="none")
-p15 <- ggplot(cropdat, aes(dday34C, log(1+soybean_rev))) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 3), aes(linetype = "solid")) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 4), aes(linetype = "longdash"))+ geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 5), aes(linetype = "dotdash")) + scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5")) + theme(legend.position="none")
-g3legend <- ggplot(cropdat, aes(dday34C, log(1+soybean_rev))) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 3), aes(linetype = "solid")) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 4), aes(linetype = "longdash"))+ geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 5), aes(linetype = "dotdash"))+ scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5")) + scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5")) + theme(legend.key.width = unit(1.8, "cm"))
-
-p16 <- ggplot(cropdat, aes(prec, log(1+corn_rev))) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 3), aes(linetype = "solid")) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 4), aes(linetype = "longdash"))+ geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 5), aes(linetype = "dotdash")) + scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5")) + theme(legend.position="none")
-p17 <- ggplot(cropdat, aes(prec, log(1+cotton_rev))) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 3), aes(linetype = "solid")) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 4), aes(linetype = "longdash"))+ geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 5), aes(linetype = "dotdash")) + scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5")) + theme(legend.position="none")
-p18 <- ggplot(cropdat, aes(prec, log(1+hay_rev))) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 3), aes(linetype = "solid")) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 4), aes(linetype = "longdash"))+ geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 5), aes(linetype = "dotdash")) + scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5")) + theme(legend.position="none")
-p19 <- ggplot(cropdat, aes(prec, log(1+wheat_rev))) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 3), aes(linetype = "solid")) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 4), aes(linetype = "longdash"))+ geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 5), aes(linetype = "dotdash")) + scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5")) + theme(legend.position="none")
-p20 <- ggplot(cropdat, aes(prec, log(1+soybean_rev))) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 3), aes(linetype = "solid")) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 4), aes(linetype = "longdash"))+ geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 5), aes(linetype = "dotdash")) + scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5")) + theme(legend.position="none")
-g4legend <- ggplot(cropdat, aes(prec, log(1+soybean_rev))) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 3), aes(linetype = "solid")) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 4), aes(linetype = "longdash"))+ geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 5), aes(linetype = "dotdash"))+ scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5")) + scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5")) + theme(legend.key.width = unit(1.8, "cm"))
-
-
-g1legend <- g_legend(g1legend)
-
-g2legend <- g_legend(g2legend)
-
-g3legend <- g_legend(g3legend)
-
-g4legend <- g_legend(g4legend)
-
-cowplot::plot_grid(p1, p2, p3, p4, p5, g1legend, ncol = 3)
-cowplot::plot_grid(p6, p7, p8, p9, p10, g2legend, ncol = 3)
-cowplot::plot_grid(p11, p12, p13, p14, p15, g3legend, ncol = 3)
-cowplot::plot_grid(p16, p17, p18, p19, p20, g4legend, ncol = 3)
-
+# 
+# cropdat$dday8_32 <- cropdat$dday8C - cropdat$dday32C
+# 
+# p1 <- ggplot(cropdat, aes(tavg, log(1+corn_rev))) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 3), aes(linetype = "solid")) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 4), aes(linetype = "longdash"))+ geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 5), aes(linetype = "dotdash")) + scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5")) + theme(legend.position="none")
+# p2 <- ggplot(cropdat, aes(tavg, log(1+cotton_rev))) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 3), aes(linetype = "solid")) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 4), aes(linetype = "longdash"))+ geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 5), aes(linetype = "dotdash")) + scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5"))+ theme(legend.position="none")
+# p3 <- ggplot(cropdat, aes(tavg, log(1+hay_rev))) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 3), aes(linetype = "solid")) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 4), aes(linetype = "longdash"))+ geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 5), aes(linetype = "dotdash"))+ scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5")) + theme(legend.position="none")
+# p4 <- ggplot(cropdat, aes(tavg, log(1+wheat_rev))) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 3), aes(linetype = "solid")) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 4), aes(linetype = "longdash"))+ geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 5), aes(linetype = "dotdash")) + scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5"))+ theme(legend.position="none")
+# p5 <- ggplot(cropdat, aes(tavg, log(1+soybean_rev))) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 3), aes(linetype = "solid")) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 4), aes(linetype = "longdash"))+ geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 5), aes(linetype = "dotdash")) + scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5"))+ theme(legend.position="none")
+# g1legend <- ggplot(cropdat, aes(tavg, log(1+soybean_rev))) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 3), aes(linetype = "solid")) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 4), aes(linetype = "longdash"))+ geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 5), aes(linetype = "dotdash"))+ scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5")) + scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5")) + theme(legend.key.width = unit(1.8, "cm"))
+# 
+# p6 <- ggplot(cropdat, aes(dday8_32, log(1+corn_rev))) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 3), aes(linetype = "solid")) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 4), aes(linetype = "longdash"))+ geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 5), aes(linetype = "dotdash")) + scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5")) + theme(legend.position="none")
+# p7 <- ggplot(cropdat, aes(dday8_32, log(1+cotton_rev))) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 3), aes(linetype = "solid")) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 4), aes(linetype = "longdash"))+ geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 5), aes(linetype = "dotdash")) + scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5")) + theme(legend.position="none")
+# p8 <- ggplot(cropdat, aes(dday8_32, log(1+hay_rev))) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 3), aes(linetype = "solid")) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 4), aes(linetype = "longdash"))+ geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 5), aes(linetype = "dotdash")) + scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5")) + theme(legend.position="none")
+# p9 <- ggplot(cropdat, aes(dday8_32, log(1+wheat_rev))) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 3), aes(linetype = "solid")) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 4), aes(linetype = "longdash"))+ geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 5), aes(linetype = "dotdash")) + scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5")) + theme(legend.position="none")
+# p10 <- ggplot(cropdat, aes(dday8_32, log(1+soybean_rev))) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 3), aes(linetype = "solid")) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 4), aes(linetype = "longdash"))+ geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 5), aes(linetype = "dotdash")) + scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5")) + theme(legend.position="none")
+# g2legend <- ggplot(cropdat, aes(dday8_32, log(1+soybean_rev))) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 3), aes(linetype = "solid")) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 4), aes(linetype = "longdash"))+ geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 5), aes(linetype = "dotdash"))+ scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5")) + scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5")) + theme(legend.key.width = unit(1.8, "cm"))
+# 
+# p11 <- ggplot(cropdat, aes(dday34C, log(1+corn_rev))) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 3), aes(linetype = "solid")) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 4), aes(linetype = "longdash"))+ geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 5), aes(linetype = "dotdash")) + scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5")) + theme(legend.position="none")
+# p12 <- ggplot(cropdat, aes(dday34C, log(1+cotton_rev))) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 3), aes(linetype = "solid")) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 4), aes(linetype = "longdash"))+ geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 5), aes(linetype = "dotdash")) + scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5")) + theme(legend.position="none")
+# p13 <- ggplot(cropdat, aes(dday34C, log(1+hay_rev))) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 3), aes(linetype = "solid")) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 4), aes(linetype = "longdash"))+ geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 5), aes(linetype = "dotdash")) + scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5")) + theme(legend.position="none")
+# p14 <- ggplot(cropdat, aes(dday34C, log(1+wheat_rev))) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 3), aes(linetype = "solid")) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 4), aes(linetype = "longdash"))+ geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 5), aes(linetype = "dotdash")) + scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5")) + theme(legend.position="none")
+# p15 <- ggplot(cropdat, aes(dday34C, log(1+soybean_rev))) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 3), aes(linetype = "solid")) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 4), aes(linetype = "longdash"))+ geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 5), aes(linetype = "dotdash")) + scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5")) + theme(legend.position="none")
+# g3legend <- ggplot(cropdat, aes(dday34C, log(1+soybean_rev))) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 3), aes(linetype = "solid")) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 4), aes(linetype = "longdash"))+ geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 5), aes(linetype = "dotdash"))+ scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5")) + scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5")) + theme(legend.key.width = unit(1.8, "cm"))
+# 
+# p16 <- ggplot(cropdat, aes(prec, log(1+corn_rev))) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 3), aes(linetype = "solid")) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 4), aes(linetype = "longdash"))+ geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 5), aes(linetype = "dotdash")) + scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5")) + theme(legend.position="none")
+# p17 <- ggplot(cropdat, aes(prec, log(1+cotton_rev))) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 3), aes(linetype = "solid")) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 4), aes(linetype = "longdash"))+ geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 5), aes(linetype = "dotdash")) + scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5")) + theme(legend.position="none")
+# p18 <- ggplot(cropdat, aes(prec, log(1+hay_rev))) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 3), aes(linetype = "solid")) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 4), aes(linetype = "longdash"))+ geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 5), aes(linetype = "dotdash")) + scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5")) + theme(legend.position="none")
+# p19 <- ggplot(cropdat, aes(prec, log(1+wheat_rev))) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 3), aes(linetype = "solid")) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 4), aes(linetype = "longdash"))+ geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 5), aes(linetype = "dotdash")) + scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5")) + theme(legend.position="none")
+# p20 <- ggplot(cropdat, aes(prec, log(1+soybean_rev))) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 3), aes(linetype = "solid")) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 4), aes(linetype = "longdash"))+ geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 5), aes(linetype = "dotdash")) + scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5")) + theme(legend.position="none")
+# g4legend <- ggplot(cropdat, aes(prec, log(1+soybean_rev))) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 3), aes(linetype = "solid")) + geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 4), aes(linetype = "longdash"))+ geom_smooth(method = "gam", formula = y ~ rms::rcs(x, 5), aes(linetype = "dotdash"))+ scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5")) + scale_linetype_manual(name="Knots", values=c("solid", "longdash", "dotdash"), labels = c("3", "4", "5")) + theme(legend.key.width = unit(1.8, "cm"))
+# 
+# 
+# g1legend <- g_legend(g1legend)
+# 
+# g2legend <- g_legend(g2legend)
+# 
+# g3legend <- g_legend(g3legend)
+# 
+# g4legend <- g_legend(g4legend)
+# 
+# cowplot::plot_grid(p1, p2, p3, p4, p5, g1legend, ncol = 3)
+# cowplot::plot_grid(p6, p7, p8, p9, p10, g2legend, ncol = 3)
+# cowplot::plot_grid(p11, p12, p13, p14, p15, g3legend, ncol = 3)
+# cowplot::plot_grid(p16, p17, p18, p19, p20, g4legend, ncol = 3)
+# 

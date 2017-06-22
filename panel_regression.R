@@ -31,5 +31,7 @@ cropdat$trendsq <- cropdat$trend^2
 cropdat$precsq <- cropdat$prec^2
 cropdat$tavgsq <- cropdat$tavg^2
 cropdat$ffips <- as.factor(cropdat$fips)
+cropdat$fstate <- as.factor(cropdat$state)
 
 l6 <- lm(log(1 + corn_rev) ~ ffips + tavg + tavgsq + trend + trendsq + prec + precsq, data = cropdat, weights = cropdat$corn_grain_a)
+#l6s <- lm(log(1 + corn_rev) ~ fstate + tavg + tavgsq + trend + trendsq + prec + precsq, data = cropdat, weights = cropdat$corn_grain_a)
