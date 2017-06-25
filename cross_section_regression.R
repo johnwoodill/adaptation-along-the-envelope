@@ -14,25 +14,70 @@ g_legend<-function(a.gplot){
 
 
 
-cropdat <- readRDS("data/full_ag_data.rds")
+cropdat <- readRDS("/home/john/Dropbox/full_ag_data.rds")
 cropdat <- filter(cropdat, abs(long) <= 100)
-cropdat <- filter(cropdat, year >= 1960 & year <= 2010)
-cropdat$corn_rev <- (cropdat$corn_grain_p*cropdat$corn_rprice)
-cropdat$cotton_rev <- (cropdat$cotton_p*cropdat$cotton_rprice)
-cropdat$hay_rev <- (cropdat$hay_p*cropdat$hay_rprice)
-cropdat$wheat_rev <- (cropdat$wheat_p*cropdat$wheat_rprice)
-cropdat$soybean_rev <- (cropdat$soybean_p*cropdat$soybean_rprice)
+#cropdat <- filter(cropdat, year >= 1960 & year <= 2010)
+cropdat$corn_rev <- (cropdat$corn_grain_p*cropdat$corn_rprice)/cropdat$corn_grain_a
+cropdat$cotton_rev <- (cropdat$cotton_p*cropdat$cotton_rprice)/cropdat$cotton_a
+cropdat$hay_rev <- (cropdat$hay_p*cropdat$hay_rprice)/cropdat$hay_a 
+cropdat$wheat_rev <- (cropdat$wheat_p*cropdat$wheat_rprice)/cropdat$wheat_a
+cropdat$soybean_rev <- (cropdat$soybean_p*cropdat$soybean_rprice)/cropdat$soybean_a
 
 cropdat$total_rev <- cropdat$corn_rev + cropdat$cotton_rev + cropdat$hay_rev + cropdat$wheat_rev + cropdat$soybean_rev
 cropdat$total_a <- cropdat$corn_grain_a + cropdat$cotton_a + cropdat$hay_a + cropdat$wheat_a + cropdat$soybean_a
 
+dat <- cropdat %>%
+  group_by(year) %>%
+  mutate(annual_corn_rev = mean(corn_rev, na.rm = TRUE),
+         annual_tavg = mean(tavg, na.rm = TRUE),
+         annual_prec = mean(prec, na.rm = TRUE)) %>%  
+    ungroup()
 
-cropdat$trend <- cropdat$year - 1959
-cropdat$trendsq <- cropdat$trend^2
-cropdat$precsq <- cropdat$prec^2
-cropdat$tavgsq <- cropdat$tavg^2
-cropdat$ffips <- as.factor(cropdat$fips)
-cropdat$fstate <- as.factor(cropdat$state)
+########################
+# Producing lots of NA"s for some reason
+#
+#
+#
+#
+
+# dat$dm_corn_rev <- log(1 + dat$corn_rev) - log(1 + dat$annual_corn_rev)
+# dat$dm_tavg <- dat$tavg - dat$annual_tavg  
+# dat$dm_prec <- dat$prec - dat$annual_prec
+
+# group_by(fips, year) %>% 
+#   mutate(dm_corn_rev = log(1 + corn_rev) - log(1 + annual_corn_rev),
+#             dm_tavg = tavg - annual_tavg,
+#             dm_prec = prec - annual_prec) %>%  
+#   ungroup() %>% 
+
+dat <- dat %>%
+  group_by(fips) %>% 
+  summarise(corn_rev = mean(log(1 + corn_rev) - log(1 + annual_corn_rev), na.rm = TRUE))
+,
+            tavg = mean(dm_tavg, na.rm = TRUE),
+            prec = mean(dm_prec, na.rm = TRUE))
+
+dat[is.infinite(dat$corn_rev),] <- NA
+dat <- filter(dat, !is.na(corn_rev))
+dat$tavgsq <- dat$tavg^2
+dat$precsq <- dat$prec^2
+
+mod <- lm(corn_rev ~ tavg + tavgsq + precsq + prec, data = dat)
+mod
+
+newdat <- cropdat %>% 
+  group_by(fips) %>% 
+  summarise(corn_rev = mean(corn_rev, na.rm = TRUE))
+
+newdat <- filter(newdat, !is.na(corn_rev))
+
+newdat <- dat %>% 
+  group_by(fips) %>% 
+  summarise(corn_rev = mean(annual_corn_rev, na.rm = TRUE))
+
+newdat[is.infinite(newdat$corn_rev),] <- NA
+
+newdat <- filter(newdat, !is.na(corn_rev))
 
 # Loop through regression to find best predictor (no interesting results produced)
 # # Find single degree day that best predicts crop revenue ------------------
@@ -77,6 +122,7 @@ cropdat$fstate <- as.factor(cropdat$state)
 
 
 l1 <- lm(log(1 + corn_rev) ~ tavg + tavgsq + prec + precsq, data = cropdat, weights = cropdat$corn_grain_a)
+l1 <- lm(corn_rev ~ tavg + prec, data = cropdat)
 l2 <- lm(log(1 + cotton_rev) ~ tavg + I(tavg^2) + prec + I(prec^2), data = cropdat, weights = cropdat$cotton_a)
 l3 <- lm(log(1 + hay_rev) ~ tavg + I(tavg^2) + prec + I(prec^2), data = cropdat, weights = cropdat$hay_a)
 l4 <- lm(log(1 + wheat_rev) ~ tavg + I(tavg^2) + prec + I(prec^2), data = cropdat, weights = cropdat$wheat_a)

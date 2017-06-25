@@ -100,12 +100,16 @@ crop_prices$`COTTON, UPLAND - PRICE RECEIVED, MEASURED IN $ / LB` <- crop_prices
 names(crop_prices) <- c("state", "year", "wheat_nprice", "corn_nprice", "hay_nprice", "soybean_nprice", "cotton_nprice")
 
 # Nominal to Real prices using GDP product index deflator (base=2010)
-def <- read.csv("data/gdp_def_base2010.csv")
-def$year <- year(def$DATE)
-def <- def %>% 
-  group_by(year) %>% 
-  summarise(gdp_price_def = mean(GDPDEF_NBD20100101, na.rm = TRUE))
-def$gdp_price_def <- ifelse(def$year == 2010, 100, def$gdp_price_def)
+#def <- read.csv("data/gdp_def_base2010.csv")
+#def$year <- year(def$DATE)
+# def <- def %>% 
+#   group_by(year) %>% 
+#   summarise(gdp_price_def = mean(GDPDEF_NBD20100101, na.rm = TRUE))
+# def$gdp_price_def <- ifelse(def$year == 2010, 100, def$gdp_price_def)
+
+def <- read.csv("data/gdp_def_base2009.csv")
+
+#def$gdp_price_def <- ifelse(def$year == 2010, 100, def$gdp_price_def)
 
 crop_prices <- left_join(crop_prices, def, by = "year")
 crop_prices$corn_rprice <- (crop_prices$corn_nprice*crop_prices$gdp_price_def/100)
@@ -261,6 +265,6 @@ fulldat <- do.call(data.frame,lapply(fulldat, function(x) replace(x, is.infinite
 
 saveRDS(fulldat, "data/full_ag_data.rds")
 
-fulldat <- readRDS("data/full_ag_data.rds")
+#fulldat <- readRDS("data/full_ag_data.rds")
 #fulldat <- read_csv("data/full_ag_data.csv")
 

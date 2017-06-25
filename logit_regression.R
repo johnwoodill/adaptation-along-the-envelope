@@ -28,7 +28,7 @@ cropdat$total_a <- cropdat$corn_grain_a + cropdat$cotton_a + cropdat$hay_a + cro
 
 cropdat$prob_corn <- cropdat$corn_rev/sum(cropdat$corn_rev, na.rm = TRUE)
 
-l7 <- glm(prob_corn ~ tavg + prec, data = cropdat, family = "quasibinomial")
+l7 <- glm(prob_corn ~ tavg + tavgsq + prec + precsq, data = cropdat, family = "quasibinomial")
 
 logitdat <- cropdat %>% 
   group_by(year) %>% 
