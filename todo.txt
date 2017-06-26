@@ -1,0 +1,8 @@
+To Do
+=================================
+
+
+Complete
+==================================
+* Check prices are available for all states; some states only have month observations, so need to go through and average out all years (need to download all data again)
+  + Downloaded all pricing data and aggregated year and if no year then use monthly

@@ -14,7 +14,7 @@ g_legend<-function(a.gplot){
 
 
 
-cropdat <- readRDS("/home/john/Dropbox/full_ag_data.rds")
+cropdat <- readRDS("data/full_ag_data.rds")
 cropdat <- filter(cropdat, abs(long) <= 100)
 #cropdat <- filter(cropdat, year >= 1960 & year <= 2010)
 cropdat$corn_rev <- (cropdat$corn_grain_p*cropdat$corn_rprice)/cropdat$corn_grain_a
@@ -28,7 +28,7 @@ cropdat$total_a <- cropdat$corn_grain_a + cropdat$cotton_a + cropdat$hay_a + cro
 
 dat <- cropdat %>%
   group_by(year) %>%
-  mutate(annual_corn_rev = mean(corn_rev, na.rm = TRUE),
+  summarise(annual_corn_rev = mean(corn_rev, na.rm = TRUE),
          annual_tavg = mean(tavg, na.rm = TRUE),
          annual_prec = mean(prec, na.rm = TRUE)) %>%  
     ungroup()
@@ -53,7 +53,7 @@ dat <- cropdat %>%
 dat <- dat %>%
   group_by(fips) %>% 
   summarise(corn_rev = mean(log(1 + corn_rev) - log(1 + annual_corn_rev), na.rm = TRUE))
-,
+
             tavg = mean(dm_tavg, na.rm = TRUE),
             prec = mean(dm_prec, na.rm = TRUE))
 

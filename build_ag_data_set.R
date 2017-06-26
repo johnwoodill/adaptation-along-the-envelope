@@ -63,29 +63,33 @@ stateabb$state <- tolower(stateabb$state)
 stateabb$name <- tolower(stateabb$name)
 
 # Aggregate state level prices --------------------------------------------
+# 
+# corn <- read_csv("data/corn_statelevel_prices_1900-2016.csv")
+# cotton <- read_csv("data/cotton_statelevel_prices_1922-2016.csv")
+# hay <- read_csv("data/hay_statelevel_prices_1908-2016.csv")
+# wheat <- read_csv("data/wheat_statelevel_prices_1909-2016.csv")
+# soybeans <- read_csv("data/soybean_statelevel_prices_1924-2016.csv")
 
-corn <- read_csv("data/corn_statelevel_prices_1900-2016.csv")
-cotton <- read_csv("data/cotton_statelevel_prices_1922-2016.csv")
-hay <- read_csv("data/hay_statelevel_prices_1908-2016.csv")
-wheat <- read_csv("data/wheat_statelevel_prices_1909-2016.csv")
-soybeans <- read_csv("data/soybean_statelevel_prices_1924-2016.csv")
+crop_prices <- readRDS("data/crop_statelevel_prices.RDS")
 
-corn <- extract_d_state(corn)
-wheat <- extract_d_state(wheat)
-hay <- extract_d_state(hay)
-soybeans <- extract_d_state(soybeans)
-cotton <- extract_d_state(cotton)
+# corn <- extract_d_state(corn)
+# wheat <- extract_d_state(wheat)
+# hay <- extract_d_state(hay)
+# soybeans <- extract_d_state(soybeans)
+# cotton <- extract_d_state(cotton)
 
 newgrid <- expand.grid(tolower(states$state), 1900:2016, stringsAsFactors = FALSE)
 names(newgrid) <- c("state", "year")
 
-crop <- left_join(newgrid, wheat, by = c("year", "state"))
-crop <- left_join(crop, corn, by = c("year", "state")) 
-crop <- left_join(crop, hay, by = c("year", "state")) 
-crop <- left_join(crop, soybeans, by = c("year", "state")) 
-crop <- left_join(crop, cotton, by = c("year", "state"))
+crop_prices <- left_join(newgrid, crop_prices, by = c("year", "state"))
 
-crop_prices <- filter(crop, year >= 1900)
+# crop <- left_join(newgrid, wheat, by = c("year", "state"))
+# crop <- left_join(crop, corn, by = c("year", "state")) 
+# crop <- left_join(crop, hay, by = c("year", "state")) 
+# crop <- left_join(crop, soybeans, by = c("year", "state")) 
+# crop <- left_join(crop, cotton, by = c("year", "state"))
+
+crop_prices <- filter(crop_prices, year >= 1900)
 
 # NASS data description
 # corn_price: $/bu corn_p: bu
@@ -95,9 +99,11 @@ crop_prices <- filter(crop, year >= 1900)
 # soybean_price: $/bu   soybean_p: bu
 
 # Adjust cotton price
-crop_prices$`COTTON, UPLAND - PRICE RECEIVED, MEASURED IN $ / LB` <- crop_prices$`COTTON, UPLAND - PRICE RECEIVED, MEASURED IN $ / LB`*480
+#crop_prices$`COTTON, UPLAND - PRICE RECEIVED, MEASURED IN $ / LB` <- crop_prices$`COTTON, UPLAND - PRICE RECEIVED, MEASURED IN $ / LB`*480
 
-names(crop_prices) <- c("state", "year", "wheat_nprice", "corn_nprice", "hay_nprice", "soybean_nprice", "cotton_nprice")
+crop_prices$cotton_nprice <- crop_prices$cotton_nprice*480
+
+#names(crop_prices) <- c("state", "year", "wheat_nprice", "corn_nprice", "hay_nprice", "soybean_nprice", "cotton_nprice")
 
 # Nominal to Real prices using GDP product index deflator (base=2010)
 #def <- read.csv("data/gdp_def_base2010.csv")
@@ -121,7 +127,7 @@ crop_prices$soybean_rprice <- (crop_prices$soybean_nprice*crop_prices$gdp_price_
 crop_prices <- as.data.frame(crop_prices)
 crop_prices <- select(crop_prices, year, state, wheat_nprice, wheat_rprice, corn_nprice, corn_rprice, 
                       hay_nprice, hay_rprice, soybean_nprice, soybean_rprice, cotton_nprice, cotton_rprice)
-crop_prices
+
 
 # Aggregate county level ag data ------------------------------------------
 
@@ -180,8 +186,8 @@ cropdat$hay_yield <- cropdat$hay_p/cropdat$hay_a
 cropdat$wheat_yield <- cropdat$wheat_p/cropdat$wheat_a
 cropdat$soybean_yield <- cropdat$soybean_p/cropdat$soybean_a
 
-rm(list=setdiff(ls(), c("crop_prices", "cropdat", "extract_d_state", "extract_d_county", "dd_dat")))
-gc()
+# rm(list=setdiff(ls(), c("crop_prices", "cropdat", "extract_d_state", "extract_d_county", "dd_dat")))
+# gc()
 
 # Aggregate county-level degree days -----------------------------------------------
 
@@ -239,8 +245,8 @@ dd_dat <- dd_dat %>%
             tmax = mean(tmax),
             tavg = mean(tavg))
 
-rm(list=setdiff(ls(), c("crop_prices", "cropdat", "extract_d_state", "extract_d_county", "dd_dat")))
-gc()
+#rm(list=setdiff(ls(), c("crop_prices", "cropdat", "extract_d_state", "extract_d_county", "dd_dat")))
+#gc()
 
 
 

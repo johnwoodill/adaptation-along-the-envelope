@@ -4,17 +4,26 @@ library(dplyr)
 # Load data set
 cropdat <- readRDS("data/full_ag_data.rds")
 
-newdat <- filter(cropdat, year >= 1960)
+#newdat <- filter(cropdat, year >= 1960)
 newdat <- filter(newdat, abs(long) <= 100)
 bal <- c(1960, 2000)
 
-newdat$corn_rev <- newdat$corn_grain_p*newdat$corn_rprice
-newdat$cotton_rev <- newdat$cotton_p*newdat$cotton_rprice
-newdat$hay_rev <- newdat$hay_p*newdat$hay_rprice
-newdat$wheat_rev <- newdat$wheat_p*newdat$wheat_rprice
-newdat$soybean_rev <- newdat$soybean_p*newdat$soybean_rprice
+# Revenue
+newdat$corn_rev <- (newdat$corn_grain_p*newdat$corn_rprice)
+newdat$cotton_rev <- (newdat$cotton_p*newdat$cotton_rprice)
+newdat$hay_rev <- (newdat$hay_p*newdat$hay_rprice)
+newdat$wheat_rev <- (newdat$wheat_p*newdat$wheat_rprice)
+newdat$soybean_rev <- (newdat$soybean_p*newdat$soybean_rprice)
 
-newdat$total_rev <- rowSums(newdat[,68:72], na.rm = TRUE)
+# Revenue per acre
+newdat$corn_rev <- (newdat$corn_grain_p*newdat$corn_rprice)/newdat$corn_grain_a
+newdat$cotton_rev <- (newdat$cotton_p*newdat$cotton_rprice)/newdat$cotton_a
+newdat$hay_rev <- (newdat$hay_p*newdat$hay_rprice)/newdat$hay_a
+newdat$wheat_rev <- (newdat$wheat_p*newdat$wheat_rprice)/newdat$wheat_a
+newdat$soybean_rev <- (newdat$soybean_p*newdat$soybean_rprice)/newdat$soybean_a
+
+newdat$total_rev <- newdat$corn_rev + newdat$cotton_rev + newdat$hay_rev + newdat$wheat_rev + newdat$soybean_rev
+#newdat$total_rev <- rowSums(newdat[,68:72], na.rm = TRUE)
 
 aggdat <- data.frame()
 
@@ -44,8 +53,9 @@ for (i in bal){
 
 aggdat$year <- as.factor(aggdat$year)
 ggplot(aggdat, aes(x, y, color = year, group = year)) + 
-  geom_line()+ annotate("text", x = 5, y = .18, label = "tavg = 9.88C")+ 
-  annotate("text", x = 15, y = .18, label = "tavg = 10.41C") + 
+  geom_line()+ 
+  #annotate("text", x = 5, y = .18, label = "tavg = 9.88C")+ 
+  #annotate("text", x = 15, y = .18, label = "tavg = 16C") + 
   ylab("Value of Activity") + xlab("Average Temp") + 
   ggtitle("Total Crop Change in Average Temperature \n (weighted by Value of Activity)")
 #ggplot(aggdat, aes(tavg, weight = corn_w, color = year)) + geom_histogram()
