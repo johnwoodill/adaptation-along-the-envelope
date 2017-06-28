@@ -54,6 +54,12 @@ dat$dm_prec <- dat$prec - dat$annual_prec
 dat$dm_dd8C_32C <- dat$dd8C_32C - dat$annual_dd8C_32C
 dat$dm_dd34C <- dat$dday34C - dat$annual_dday34C
 
+dat$dm_tavg <- dat$tavg
+dat$dm_prec <- dat$prec
+dat$dm_dd8C_32C <- dat$dd8C_32C
+dat$dm_dd34C <- dat$dday34C
+
+
 # Aggregate to county level
 dat <- dat %>%
    group_by(fips) %>% 
@@ -74,7 +80,7 @@ dat$dm_precsq <- dat$dm_prec^2
 
 # Corn
 corn_reg <- filter(dat, !is.na(dm_corn_rev))
-mod1 <- lm(dm_corn_rev ~ dm_tavg + dm_tavgsq + dm_prec + dm_precsq, data = dat)
+mod1 <- lm(dm_corn_rev ~ dm_tavg + dm_tavgsq + dm_precsq + dm_prec, data = dat)
 summary(mod1)
 
 # Check assumptions
@@ -113,3 +119,6 @@ summary(mod4)
 # Soybean
 mod5 <- lm(dm_soybean_rev ~ dm_tavg + dm_tavgsq + dm_prec + dm_precsq, data = dat)
 summary(mod5)
+
+
+

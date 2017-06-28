@@ -3,6 +3,7 @@ library(dplyr)
 library(stargazer)
 library(rms)
 library(cowplot)
+library(plm)
 
 # Function to extract legend from ggplot object
 g_legend<-function(a.gplot){
@@ -34,11 +35,12 @@ cropdat$tavgsq <- cropdat$tavg^2
 cropdat$ffips <- as.factor(cropdat$fips)
 cropdat$fstate <- as.factor(cropdat$state)
 
-mod1 <- plm(log(1 + corn_rev) ~ tavg + tavgsq + trend + trendsq + prec + precsq, data = cropdat, index = "ffips", weight = cropdat$corn_grain_a)
-mod1 <- plm(log(1 + corn_rev) ~ tavg + tavgsq + prec + precsq, data = cropdat, index = "ffips")
+#mod1 <- plm(log(1 + corn_rev) ~ tavg + tavgsq + trend + trendsq + prec + precsq, data = cropdat, index = "ffips", weight = cropdat$corn_grain_a)
+mod1 <- plm(corn_rev ~ tavg + prec, data = cropdat, index = c("ffips"))
 summary(mod1)
+test <- mod1$model
 
-mod2 <- plm(log(1 + cotton_rev) ~ tavg + tavgsq + trend + trendsq + prec + precsq, data = cropdat, index = "ffips")
+mod2 <- plm(log(1 + cotton_rev) ~ tavg + tavgsq + trend + trendsq + prec + precsq, data = cropdat, index = c("ffips"))
 summary(mod2)
 
 mod3 <- plm(log(1 + hay_rev) ~ tavg + tavgsq + trend + trendsq + prec + precsq, data = cropdat, index = "ffips")
