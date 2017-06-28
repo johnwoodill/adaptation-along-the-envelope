@@ -17,70 +17,38 @@ cropdat$hay_rev <- (cropdat$hay_p*cropdat$hay_rprice)/cropdat$hay_a
 cropdat$wheat_rev <- (cropdat$wheat_p*cropdat$wheat_rprice)/cropdat$wheat_a
 cropdat$soybean_rev <- (cropdat$soybean_p*cropdat$soybean_rprice)/cropdat$soybean_a
 
-cropdat$total_rev <- cropdat$corn_rev + cropdat$cotton_rev + cropdat$hay_rev + cropdat$wheat_rev + cropdat$soybean_rev
-cropdat$total_a <- cropdat$corn_grain_a + cropdat$cotton_a + cropdat$hay_a + cropdat$wheat_a + cropdat$soybean_a
-
 cropdat$dd8C_32C <-cropdat$dday8C - cropdat$dday32C
+
+cropdat$ln_corn_rev <- log(1 + cropdat$corn_rev)
+cropdat$tavg_sq <- cropdat$tavg^2
+cropdat$prec_sq <- cropdat$prec^2
 
 # Remove inf to na
 is.na(cropdat) <- do.call(cbind, lapply(cropdat, is.infinite))
 
-# Get annual averages
-dat <- cropdat %>%
-  group_by(year) %>%
-  summarise(annual_corn_rev = mean(corn_rev, na.rm = TRUE),
-            annual_cotton_rev = mean(cotton_rev, na.rm = TRUE),
-            annual_hay_rev = mean(hay_rev, na.rm = TRUE),
-            annual_wheat_rev = mean(wheat_rev, na.rm = TRUE),
-            annual_soybean_rev = mean(soybean_rev, na.rm = TRUE),
-            annual_tavg = mean(tavg, na.rm = TRUE),
-            annual_prec = mean(prec, na.rm = TRUE),
-            annual_dd8C_32C = mean(dd8C_32C, na.rm = TRUE),
-            annual_dday34C = mean(dday34C, na.rm = TRUE)) %>%  
-    ungroup()
+d <- cropdat
 
-dat <- left_join(cropdat, dat, by = "year")
+for (i in unique(d$fips)){
+  timemeancorn <- mean(d[d$fips == i, "ln_corn_rev"], na.rm = TRUE)
+  timemeantavg <- mean(d[d$fips == i, "tavg"], na.rm = TRUE)
+  timemeanprec <- mean(d[d$fips == i, "prec"], na.rm = TRUE)
+  timemeantavg_sq <- mean(d[d$fips == i, "tavg_sq"], na.rm = TRUE)
+  timemeanprec_sq <- mean(d[d$fips == i, "prec_sq"], na.rm = TRUE)
+  cropdat$ln_corn_rev[d$fips == i] <- d$ln_corn_rev[d$fips == i] - timemeancorn
+  cropdat$tavg[d$fips == i] <- d$tavg[d$fips == i] - timemeantavg
+  cropdat$prec[d$fips == i] <- d$prec[d$fips == i] - timemeanprec
+  cropdat$tavg_sq[d$fips == i] <- d$tavg_sq[d$fips == i] - timemeantavg_sq
+  cropdat$prec_sq[d$fips == i] <- d$prec_sq[d$fips == i] - timemeanprec_sq
+}
 
-# Demean each crop and temps
-#dat$dm_corn_rev <- log(1 + dat$corn_rev) - log(1 + dat$annual_corn_rev)
-
-dat$dm_corn_rev <- dat$corn_rev - dat$annual_corn_rev
-dat$dm_cotton_rev <- log(1 + dat$cotton_rev) - log(1 + dat$annual_cotton_rev)
-dat$dm_hay_rev <- log(1 + dat$hay_rev) - log(1 + dat$annual_hay_rev)
-dat$dm_wheat_rev <- log(1 + dat$wheat_rev) - log(1 + dat$annual_wheat_rev)
-dat$dm_soybean_rev <- log(1 + dat$soybean_rev) - log(1 + dat$annual_soybean_rev)
-dat$dm_tavg <- dat$tavg - dat$annual_tavg  
-dat$dm_prec <- dat$prec - dat$annual_prec
-dat$dm_dd8C_32C <- dat$dd8C_32C - dat$annual_dd8C_32C
-dat$dm_dd34C <- dat$dday34C - dat$annual_dday34C
-
-dat$dm_tavg <- dat$tavg
-dat$dm_prec <- dat$prec
-dat$dm_dd8C_32C <- dat$dd8C_32C
-dat$dm_dd34C <- dat$dday34C
-
-
-# Aggregate to county level
-dat <- dat %>%
-   group_by(fips) %>% 
-   summarise(dm_corn_rev = mean(dm_corn_rev, na.rm = TRUE),
-             corn_grain_a = mean(corn_grain_a, na.rm = TRUE),
-             dm_cotton_rev = mean(dm_cotton_rev, na.rm = TRUE),
-             dm_hay_rev = mean(dm_hay_rev, na.rm = TRUE),
-             dm_wheat_rev = mean(dm_wheat_rev, na.rm = TRUE),
-             dm_soybean_rev = mean(dm_soybean_rev, na.rm = TRUE),
-             dm_tavg = mean(dm_tavg, na.rm = TRUE),
-             dm_prec = mean(dm_prec, na.rm = TRUE),
-             dm_dd8C_32C = mean(dm_dd8C_32C, na.rm = TRUE),
-             dm_dd34C = mean(dm_dd34C, na.rm = TRUE))
-
-dat[is.infinite(dat$dm_corn_rev),] <- NA
-dat$dm_tavgsq <- dat$dm_tavg^2
-dat$dm_precsq <- dat$dm_prec^2
+cropdat <- cropdat %>% 
+  group_by(fips) %>% 
+  summarise(ln_corn_rev = mean(ln_corn_rev, na.rm = TRUE),
+            tavg = mean(tavg, na.rm = TRUE),
+            prec = mean(prec, na.rm = TRUE))
 
 # Corn
-corn_reg <- filter(dat, !is.na(dm_corn_rev))
-mod1 <- lm(dm_corn_rev ~ dm_tavg + dm_tavgsq + dm_precsq + dm_prec, data = dat)
+mod1  <- lm(ln_corn_rev ~ tavg + I(tavg^2) + prec + I(prec^2), data = cropdat)
 summary(mod1)
 
 # Check assumptions
@@ -92,11 +60,6 @@ plot(mod1) # Homoscedasticity of residuals or equal variance
 
 acf(mod1$residuals) # no time so no autocorrection, check with dwtest
 dwtest(mod1)
-
-cor.test(corn_reg$dm_tavg, mod1$residuals)
-cor.test(corn_reg$dm_tavgsq, mod1$residuals)
-cor.test(corn_reg$dm_prec, mod1$residuals)
-cor.test(corn_reg$dm_precsq, mod1$residuals)
 
 # Check for multicollinearity
 car::vif(mod1)
