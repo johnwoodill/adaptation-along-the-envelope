@@ -1,3 +1,4 @@
+library(plm)
 library(tidyverse)
 library(stargazer)
 library(rms)
@@ -10,46 +11,43 @@ cropdat <- filter(cropdat, abs(long) <= 100)
 
 cropdat <- filter(cropdat, year >= 1960 & year <= 2010)
 
-# Crop rev
-cropdat$corn_rev <- (cropdat$corn_grain_p*cropdat$corn_rprice)/cropdat$corn_grain_a
-cropdat$cotton_rev <- (cropdat$cotton_p*cropdat$cotton_rprice)/cropdat$cotton_a
-cropdat$hay_rev <- (cropdat$hay_p*cropdat$hay_rprice)/cropdat$hay_a 
-cropdat$wheat_rev <- (cropdat$wheat_p*cropdat$wheat_rprice)/cropdat$wheat_a
-cropdat$soybean_rev <- (cropdat$soybean_p*cropdat$soybean_rprice)/cropdat$soybean_a
-
-cropdat$dd8C_32C <-cropdat$dday8C - cropdat$dday32C
-
-cropdat$ln_corn_rev <- log(1 + cropdat$corn_rev)
+cropdat$ln_corn_rrev <- log(1 + cropdat$corn_rrev)
 cropdat$tavg_sq <- cropdat$tavg^2
 cropdat$prec_sq <- cropdat$prec^2
 
 # Remove inf to na
 is.na(cropdat) <- do.call(cbind, lapply(cropdat, is.infinite))
 
-d <- cropdat
+# d <- cropdat
 
-for (i in unique(d$fips)){
-  timemeancorn <- mean(d[d$fips == i, "ln_corn_rev"], na.rm = TRUE)
-  timemeantavg <- mean(d[d$fips == i, "tavg"], na.rm = TRUE)
-  timemeanprec <- mean(d[d$fips == i, "prec"], na.rm = TRUE)
-  timemeantavg_sq <- mean(d[d$fips == i, "tavg_sq"], na.rm = TRUE)
-  timemeanprec_sq <- mean(d[d$fips == i, "prec_sq"], na.rm = TRUE)
-  cropdat$ln_corn_rev[d$fips == i] <- d$ln_corn_rev[d$fips == i] - timemeancorn
-  cropdat$tavg[d$fips == i] <- d$tavg[d$fips == i] - timemeantavg
-  cropdat$prec[d$fips == i] <- d$prec[d$fips == i] - timemeanprec
-  cropdat$tavg_sq[d$fips == i] <- d$tavg_sq[d$fips == i] - timemeantavg_sq
-  cropdat$prec_sq[d$fips == i] <- d$prec_sq[d$fips == i] - timemeanprec_sq
-}
+d <- cropdat %>% 
+  group_by(state) %>% 
+  mutate(dm_ln_corn_rrev = ln_corn_rrev - mean(ln_corn_rrev, na.rm = TRUE),
+        dm_tavg = tavg - mean(tavg, na.rm = TRUE),
+        dm_prec = prec - mean(prec, na.rm = TRUE),
+        dm_corn_grain_a = corn_grain_a - mean(corn_grain_a, na.rm = TRUE))
 
-cropdat <- cropdat %>% 
-  group_by(fips) %>% 
-  summarise(ln_corn_rev = mean(ln_corn_rev, na.rm = TRUE),
-            tavg = mean(tavg, na.rm = TRUE),
-            prec = mean(prec, na.rm = TRUE))
+# for (i in unique(d$fips)){
+#    timemeancorn <- mean(d[d$fips == i, "ln_corn_rrev"], na.rm = TRUE)
+#    timemeantavg <- mean(d[d$fips == i, "tavg"], na.rm = TRUE)
+#    timemeanprec <- mean(d[d$fips == i, "prec"], na.rm = TRUE)
+#    cropdat$dm_ln_corn_rrev[d$fips == i] <- d$ln_corn_rrev[d$fips == i] - timemeancorn
+#    cropdat$dm_tavg[d$fips == i] <- d$tavg[d$fips == i] - timemeantavg
+#    cropdat$dm_prec[d$fips == i] <- d$prec[d$fips == i] - timemeanprec
+#  }
+
+# cropdat <- cropdat %>% 
+#   group_by(fips) %>% 
+#   summarise(ln_corn_rev = mean(ln_corn_rev, na.rm = TRUE),
+#             tavg = mean(tavg, na.rm = TRUE),
+#             prec = mean(prec, na.rm = TRUE))
 
 # Corn
-mod1  <- lm(ln_corn_rev ~ tavg + I(tavg^2) + prec + I(prec^2), data = cropdat)
+mod1  <- lm(dm_ln_corn_rrev ~ dm_tavg + I(dm_tavg^2) + dm_prec + I(dm_prec^2) + lat, data = d)
 summary(mod1)
+
+mod2 <- plm(ln_corn_rrev ~ tavg + I(tavg^2) + prec + I(prec^2), data = cropdat, index = "state")
+summary(mod2)
 
 # Check assumptions
 gtest <- gvlma(mod1)

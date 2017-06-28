@@ -180,19 +180,14 @@ cropdat <- left_join(cropdat, soybean, by = c("state", "county", "year"))
 names(cropdat)[1] <- "fips"
 cropdat$fips <- as.integer(cropdat$fips)
 
-cropdat$corn_yield <- cropdat$corn_grain_p/cropdat$corn_grain_a
-cropdat$cotton_yield <- cropdat$cotton_p/cropdat$cotton_a
-cropdat$hay_yield <- cropdat$hay_p/cropdat$hay_a
-cropdat$wheat_yield <- cropdat$wheat_p/cropdat$wheat_a
-cropdat$soybean_yield <- cropdat$soybean_p/cropdat$soybean_a
 
 # rm(list=setdiff(ls(), c("crop_prices", "cropdat", "extract_d_state", "extract_d_county", "dd_dat")))
 # gc()
 
 # Aggregate county-level degree days -----------------------------------------------
 
-dd <- read_csv("/run/media/john/1TB/MEGA/Projects/Adaptation and an Envelope/data/fips_degree_days_1900-2013.csv")
-prec <- read_csv("/run/media/john/1TB/MEGA/Projects/Adaptation and an Envelope/data/fips_precipitation_1900-2013.csv")
+dd <- read_csv("/run/media/john/1TB/SpiderOak/Projects/Adaptation and an Envelope/data/fips_degree_days_1900-2013.csv")
+prec <- read_csv("/run/media/john/1TB/SpiderOak/Projects/Adaptation and an Envelope/data/fips_precipitation_1900-2013.csv")
 
 #dd <- read_csv("/home/john/MEGA/Projects/adaptation-and-an-envelope/data/fips_degree_days_1900-2013.csv")
 #prec <- read_csv("/home/john/MEGA/Projects/adaptation-and-an-envelope/data/fips_precipitation_1900-2013.csv")
@@ -254,15 +249,41 @@ dd_dat <- dd_dat %>%
 
 fulldat <- left_join(cropdat, crop_prices, by = c("year", "state"))
 
+# Yield
+fulldat$corn_yield <- fulldat$corn_grain_p/fulldat$corn_grain_a
+fulldat$cotton_yield <- fulldat$cotton_p/fulldat$cotton_a
+fulldat$hay_yield <- fulldat$hay_p/fulldat$hay_a
+fulldat$wheat_yield <- fulldat$wheat_p/fulldat$wheat_a
+fulldat$soybean_yield <- fulldat$soybean_p/fulldat$soybean_a
+
+# Real revenue per acre
+fulldat$corn_rrev <- (fulldat$corn_grain_p*fulldat$corn_rprice)/fulldat$corn_grain_a
+fulldat$cotton_rrev <- (fulldat$cotton_p*fulldat$cotton_rprice)/fulldat$cotton_a
+fulldat$hay_rrev <- (fulldat$hay_p*fulldat$hay_rprice)/fulldat$hay_a 
+fulldat$wheat_rrev <- (fulldat$wheat_p*fulldat$wheat_rprice)/fulldat$wheat_a
+fulldat$soybean_rrev <- (fulldat$soybean_p*fulldat$soybean_rprice)/fulldat$soybean_a
+
+# Nominal rev
+fulldat$corn_nrev <- (fulldat$corn_grain_p*fulldat$corn_nprice)/fulldat$corn_grain_a
+fulldat$cotton_nrev <- (fulldat$cotton_p*fulldat$cotton_nprice)/fulldat$cotton_a
+fulldat$hay_nrev <- (fulldat$hay_p*fulldat$hay_nprice)/fulldat$hay_a 
+fulldat$wheat_nrev <- (fulldat$wheat_p*fulldat$wheat_nprice)/fulldat$wheat_a
+fulldat$soybean_nrev <- (fulldat$soybean_p*fulldat$soybean_nprice)/fulldat$soybean_a
+
+
+
 # Organize before degree day merge
-fulldat <- select(fulldat, year, state, fips, lat, long, corn_grain_a, corn_grain_p, corn_yield, corn_nprice, corn_rprice,
-                  cotton_a, cotton_p, cotton_yield, cotton_nprice, cotton_rprice,
-                  hay_a, hay_p, hay_yield, hay_nprice, hay_rprice,
-                  wheat_a, wheat_p, wheat_yield, wheat_nprice, wheat_rprice,
-                  soybean_a, soybean_p, soybean_yield, soybean_nprice, soybean_rprice)
+fulldat <- select(fulldat, year, state, fips, lat, long, 
+                  corn_grain_a, corn_grain_p, corn_yield, corn_nprice, corn_rprice, corn_rrev, corn_nrev,
+                  cotton_a, cotton_p, cotton_yield, cotton_nprice, cotton_rprice, cotton_rrev, cotton_nrev,
+                  hay_a, hay_p, hay_yield, hay_nprice, hay_rprice, hay_rrev, hay_nrev,
+                  wheat_a, wheat_p, wheat_yield, wheat_nprice, wheat_rprice, wheat_rrev, wheat_nrev,
+                  soybean_a, soybean_p, soybean_yield, soybean_nprice, soybean_rprice, soybean_rrev, soybean_nrev)
 
 # Merge degree days
 fulldat <- left_join(fulldat, dd_dat, by = c("year", "fips"))
+
+
 
 # Convert inf to NA
 fulldat <- do.call(data.frame,lapply(fulldat, function(x) replace(x, is.infinite(x),NA)))
