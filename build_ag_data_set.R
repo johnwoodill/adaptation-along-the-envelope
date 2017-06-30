@@ -282,12 +282,100 @@ fulldat <- select(fulldat, year, state, fips, lat, long,
 # Merge degree days
 fulldat <- left_join(fulldat, dd_dat, by = c("year", "fips"))
 
+# Soil data
+soildat <- readRDS("data/soilData.rds")
 
 
 # Convert inf to NA
 fulldat <- do.call(data.frame,lapply(fulldat, function(x) replace(x, is.infinite(x),NA)))
 
+# Label names
+attr(fulldat$year, "label") <- "year"
+attr(fulldat$state, "label") <- "state"
+attr(fulldat$fips, "label") <- "fips code"
+attr(fulldat$lat, "label") <- "latitude"
+attr(fulldat$long, "label") <- "longitude"
+attr(fulldat$corn_grain_a, "label") <- "corn grain acres"
+attr(fulldat$corn_grain_p, "label") <- "corn grain production"
+attr(fulldat$corn_yield, "label") <- "corn yield (p/a)"
+attr(fulldat$corn_nprice, "label") <- "nominal corn price"
+attr(fulldat$corn_rprice, "label") <- "real corn price"
+attr(fulldat$corn_rrev, "label") <- "real corn revenue per acre"
+attr(fulldat$corn_nrev, "label") <- "nominal corn revenue per acre"
 
+attr(fulldat$cotton_a, "label") <- "cotton acres"
+attr(fulldat$cotton_p, "label") <- "cotton production"
+attr(fulldat$cotton_yield, "label") <- "cotton yield (p/a)"
+attr(fulldat$cotton_nprice, "label") <- "nominal cotton price"
+attr(fulldat$cotton_rprice, "label") <- "real cotton price"
+attr(fulldat$cotton_rrev, "label") <- "real cotton revenue per acre"
+attr(fulldat$cotton_nrev, "label") <- "nominal cotton revenue per acre"
+
+attr(fulldat$hay_a, "label") <- "hay acres"
+attr(fulldat$hay_p, "label") <- "hay production"
+attr(fulldat$hay_yield, "label") <- "hay yield (p/a)"
+attr(fulldat$hay_nprice, "label") <- "nominal hay price"
+attr(fulldat$hay_rprice, "label") <- "real hay price"
+attr(fulldat$hay_rrev, "label") <- "real hay revenue per acre"
+attr(fulldat$hay_nrev, "label") <- "nominal hay revenue per acre"
+
+attr(fulldat$wheat_a, "label") <- "wheat acres"
+attr(fulldat$wheat_p, "label") <- "wheat production"
+attr(fulldat$wheat_yield, "label") <- "wheat yield (p/a)"
+attr(fulldat$wheat_nprice, "label") <- "nominal wheat price"
+attr(fulldat$wheat_rprice, "label") <- "real wheat price"
+attr(fulldat$wheat_rrev, "label") <- "real wheat revenue per acre"
+attr(fulldat$wheat_nrev, "label") <- "nominal wheat revenue per acre"
+
+attr(fulldat$soybean_a, "label") <- "soybean acres"
+attr(fulldat$soybean_p, "label") <- "soybean production"
+attr(fulldat$soybean_yield, "label") <- "soybean yield (p/a)"
+attr(fulldat$soybean_nprice, "label") <- "nominal soybean price"
+attr(fulldat$soybean_rprice, "label") <- "real soybean price"
+attr(fulldat$soybean_rrev, "label") <- "real soybean revenue per acre"
+attr(fulldat$soybean_nrev, "label") <- "nominal soybean revenue per acre"
+
+attr(fulldat$dday0C, "label") <- "degree day 0c"
+attr(fulldat$dday1C, "label") <- "degree day 1C"
+attr(fulldat$dday2C, "label") <- "degree day 2C"
+attr(fulldat$dday3C, "label") <- "degree day 3C"
+attr(fulldat$dday4C, "label") <- "degree day 4C"
+attr(fulldat$dday5C, "label") <- "degree day 5C"
+attr(fulldat$dday6C, "label") <- "degree day 6C"
+attr(fulldat$dday7C, "label") <- "degree day 7C"
+attr(fulldat$dday8C, "label") <- "degree day 8C"
+attr(fulldat$dday9C, "label") <- "degree day 9C"
+attr(fulldat$dday10C, "label") <- "degree day 10C"
+attr(fulldat$dday11C, "label") <- "degree day 11C"
+attr(fulldat$dday12C, "label") <- "degree day 12C"
+attr(fulldat$dday13C, "label") <- "degree day 13C"
+attr(fulldat$dday14C, "label") <- "degree day 14C"
+attr(fulldat$dday15C, "label") <- "degree day 15C"
+attr(fulldat$dday16C, "label") <- "degree day 16C"
+attr(fulldat$dday17C, "label") <- "degree day 17C"
+attr(fulldat$dday18C, "label") <- "degree day 18C"
+attr(fulldat$dday19C, "label") <- "degree day 19C"
+attr(fulldat$dday20C, "label") <- "degree day 20C"
+attr(fulldat$dday21C, "label") <- "degree day 21C"
+attr(fulldat$dday22C, "label") <- "degree day 22C"
+attr(fulldat$dday23C, "label") <- "degree day 23C"
+attr(fulldat$dday24C, "label") <- "degree day 24C"
+attr(fulldat$dday25C, "label") <- "degree day 25C"
+attr(fulldat$dday26C, "label") <- "degree day 26C"
+attr(fulldat$dday27C, "label") <- "degree day 27C"
+attr(fulldat$dday28C, "label") <- "degree day 28C"
+attr(fulldat$dday29C, "label") <- "degree day 29C"
+attr(fulldat$dday30C, "label") <- "degree day 30C"
+attr(fulldat$dday31C, "label") <- "degree day 31C"
+attr(fulldat$dday32C, "label") <- "degree day 32C"
+attr(fulldat$dday33C, "label") <- "degree day 33C"
+attr(fulldat$dday34C, "label") <- "degree day 34C"
+attr(fulldat$dday35C, "label") <- "degree day 35C"
+attr(fulldat$ndday0C, "label") <- "degree days < 0C"
+attr(fulldat$prec, "label") <- "precipitation"
+attr(fulldat$tmin, "label") <- "minimum temp"
+attr(fulldat$tmax, "label") <- "maximum temp"
+attr(fulldat$tavg, "label") <- "average temp"
 
 #write.csv(fulldat, "data/full_ag_data.csv", row.names = FALSE)
 
