@@ -1,11 +1,10 @@
-library(readr)
-library(dplyr)
-library(tidyr)
+library(tidyverse)
 library(rms)
 library(noncensus)
 library(maps)
 library(lubridate)
 library(stringr)
+library(foreign)
 
 # Function to extract data
 
@@ -287,6 +286,8 @@ fulldat <- left_join(fulldat, dd_dat, by = c("year", "fips"))
 
 # Convert inf to NA
 fulldat <- do.call(data.frame,lapply(fulldat, function(x) replace(x, is.infinite(x),NA)))
+
+
 
 #write.csv(fulldat, "data/full_ag_data.csv", row.names = FALSE)
 

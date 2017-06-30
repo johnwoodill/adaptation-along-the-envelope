@@ -4,7 +4,12 @@ library(stargazer)
 library(rms)
 library(cowplot)
 
+# Crop data
 cropdat <- readRDS("data/full_ag_data.rds")
+
+# Soil data
+soil <- read_dta("data/soilData.dta")
+soil$fips <- as.integer(soil$fips)
 
 # East of 100th meridian
 cropdat <- filter(cropdat, abs(long) <= 100)
@@ -20,12 +25,16 @@ is.na(cropdat) <- do.call(cbind, lapply(cropdat, is.infinite))
 
 # d <- cropdat
 
-d <- cropdat %>% 
-  group_by(state) %>% 
+cropdat <- cropdat %>% 
+  group_by(fips) %>% 
   mutate(dm_ln_corn_rrev = ln_corn_rrev - mean(ln_corn_rrev, na.rm = TRUE),
         dm_tavg = tavg - mean(tavg, na.rm = TRUE),
         dm_prec = prec - mean(prec, na.rm = TRUE),
-        dm_corn_grain_a = corn_grain_a - mean(corn_grain_a, na.rm = TRUE))
+        dm_corn_grain_a = corn_grain_a - mean(corn_grain_a, na.rm = TRUE)) %>% 
+  summarise(dm_ln_corn_rrev = mean(dm_ln_corn_rrev, na.rm = TRUE),
+        dm_tavg = mean(dm_tavg, na.rm = TRUE),
+        dm_prec = mean(dm_prec, na.rm = TRUE),
+        dm_corn_grain_a = mean(dm_corn_grain_a, na.rm = TRUE)) 
 
 # for (i in unique(d$fips)){
 #    timemeancorn <- mean(d[d$fips == i, "ln_corn_rrev"], na.rm = TRUE)
@@ -42,8 +51,14 @@ d <- cropdat %>%
 #             tavg = mean(tavg, na.rm = TRUE),
 #             prec = mean(prec, na.rm = TRUE))
 
+cropdat <- left_join(cropdat, soil, by = "fips")
+
 # Corn
+
 mod1  <- lm(dm_ln_corn_rrev ~ dm_tavg + I(dm_tavg^2) + dm_prec + I(dm_prec^2) + lat, data = d)
+summary(mod1)
+
+mod1  <- lm(dm_ln_corn_rrev ~ dm_tavg + I(dm_tavg^2) + dm_prec + I(dm_prec^2) + percentClay + minPermeability + kFactor + bestSoil, data = cropdat)
 summary(mod1)
 
 mod2 <- plm(ln_corn_rrev ~ tavg + I(tavg^2) + prec + I(prec^2), data = cropdat, index = "state")
