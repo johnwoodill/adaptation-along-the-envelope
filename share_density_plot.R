@@ -6,6 +6,7 @@ library(ggplot2)
 library(dplyr)
 cropdat1 <- readRDS("data/full_ag_data.rds")
 cropdat1 <- filter(cropdat1, year >= 1960 & year < 1970)
+cropdat1 <- filter(cropdat1, year >= 2000 & year < 2010)
 
 plots <- list()
 
@@ -15,6 +16,7 @@ cropdat1$cotton_rev <- (cropdat1$cotton_p*cropdat1$cotton_rprice)/cropdat1$cotto
 cropdat1$hay_rev <- (cropdat1$hay_p*cropdat1$hay_rprice)/cropdat1$hay_a
 cropdat1$wheat_rev <- (cropdat1$wheat_p*cropdat1$wheat_rprice)/cropdat1$wheat_a
 cropdat1$soybean_rev <- (cropdat1$soybean_p*cropdat1$soybean_rprice)/cropdat1$soybean_a
+cropdat1$cropland <- cropdat1$corn_grain_a + cropdat1$cotton_a + cropdat1$hay_a + cropdat1$wheat_a + cropdat1$soybean_a
 
 # Remove inf to na
 is.na(cropdat1) <- do.call(cbind, lapply(cropdat1, is.infinite))
@@ -24,6 +26,7 @@ cotton_dat <- filter(cropdat1, !is.na(cotton_rev) & !is.na(tavg))
 hay_dat <- filter(cropdat1, !is.na(hay_rev) & !is.na(tavg))
 wheat_dat <- filter(cropdat1, !is.na(wheat_rev) & !is.na(tavg))
 soybean_dat <- filter(cropdat1, !is.na(soybean_rev) & !is.na(tavg))
+cropland_dat <- filter(cropdat1, !is.na(cropland) & !is.na(cropland))
 
 sum.corn <- sum(corn_dat$corn_rev)
 sum.cotton <- sum(cotton_dat$cotton_rev)
@@ -49,7 +52,8 @@ plot1 <- ggplot(NULL, aes(x = dens.corn1$x, y = dens.corn1$y)) +
   geom_polygon(aes(x = dens.hay1$x, y = dens.hay1$y, fill = "hay")) + 
   geom_polygon(aes(x = dens.wheat1$x, y = dens.wheat1$y, fill = "wheat")) +
   geom_polygon(aes(x = dens.cotton1$x, y = dens.cotton1$y, fill = "cotton")) + 
-  xlab("Average Temp (C)") + ylab("Share of Value per Acre") + ylim(0, 0.1123) +
+  geom_line(aes(x = dens.cropland1$x, y = dens.cropland1$y)) +
+  xlab("Average Temp (C)") + ylab("Share of Value per Acre") +  
     annotate("text", y = 0.09, x = 20, label = "1960's", size = 8) +
   scale_fill_discrete(breaks = c("corn", "soybean", "hay", "wheat", "cotton")) 
 plot1
@@ -101,7 +105,7 @@ plot2 <- ggplot(NULL, aes(x = dens.corn$x, y = dens.corn$y)) +
   geom_polygon(aes(x = dens.hay$x, y = dens.hay$y, fill = "hay")) + 
   geom_polygon(aes(x = dens.wheat$x, y = dens.wheat$y, fill = "wheat")) +
   geom_polygon(aes(x = dens.cotton$x, y = dens.cotton$y, fill = "cotton")) + 
-  xlab("Average Temp (C)") + ylab("Share of Value per Acre") + ylim(0, 0.1123) +
+  xlab("Average Temp (C)") + ylab("Share of Value per Acre") + ylim(0, 0.12) +
   annotate("text", y = 0.09, x = 20, label = "2000's", size = 8) +
   scale_fill_discrete(breaks = c("corn", "soybean", "hay", "wheat", "cotton"))
 plot2

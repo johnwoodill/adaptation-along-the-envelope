@@ -114,6 +114,9 @@ crop_prices$cotton_nprice <- crop_prices$cotton_nprice*480
 
 def <- read.csv("data/gdp_def_base2009.csv")
 
+# Adjust prices to 2010 levels
+def$gdp_price_def <- def$gdp_price_def/1.01221
+
 #def$gdp_price_def <- ifelse(def$year == 2010, 100, def$gdp_price_def)
 
 crop_prices <- left_join(crop_prices, def, by = "year")
@@ -124,7 +127,7 @@ crop_prices$wheat_rprice <- (crop_prices$wheat_nprice*crop_prices$gdp_price_def/
 crop_prices$soybean_rprice <- (crop_prices$soybean_nprice*crop_prices$gdp_price_def/100)
 
 crop_prices <- as.data.frame(crop_prices)
-crop_prices <- select(crop_prices, year, state, wheat_nprice, wheat_rprice, corn_nprice, corn_rprice, 
+crop_prices <- select(crop_prices, year, state, gdp_price_def, wheat_nprice, wheat_rprice, corn_nprice, corn_rprice, 
                       hay_nprice, hay_rprice, soybean_nprice, soybean_rprice, cotton_nprice, cotton_rprice)
 
 
@@ -272,7 +275,7 @@ fulldat$soybean_nrev <- (fulldat$soybean_p*fulldat$soybean_nprice)/fulldat$soybe
 
 
 # Organize before degree day merge
-fulldat <- select(fulldat, year, state, fips, lat, long, 
+fulldat <- select(fulldat, year, state, fips, lat, long, gdp_price_def,
                   corn_grain_a, corn_grain_p, corn_yield, corn_nprice, corn_rprice, corn_rrev, corn_nrev,
                   cotton_a, cotton_p, cotton_yield, cotton_nprice, cotton_rprice, cotton_rrev, cotton_nrev,
                   hay_a, hay_p, hay_yield, hay_nprice, hay_rprice, hay_rrev, hay_nrev,
@@ -285,9 +288,14 @@ fulldat <- left_join(fulldat, dd_dat, by = c("year", "fips"))
 # Soil data
 soildat <- readRDS("data/soilData.rds")
 
+# Merge population and land data
+popland <- readRDS("data/pop_ipc.rds")
+fulldat <- left_join(fulldat, popland, by = c("year", "fips"))
 
 # Convert inf to NA
 fulldat <- do.call(data.frame,lapply(fulldat, function(x) replace(x, is.infinite(x),NA)))
+
+
 
 # Label names
 attr(fulldat$year, "label") <- "year"
@@ -295,6 +303,7 @@ attr(fulldat$state, "label") <- "state"
 attr(fulldat$fips, "label") <- "fips code"
 attr(fulldat$lat, "label") <- "latitude"
 attr(fulldat$long, "label") <- "longitude"
+attr(fulldat$gdp_price_def, "label") <- "gdp price def (base = 2010)"
 attr(fulldat$corn_grain_a, "label") <- "corn grain acres"
 attr(fulldat$corn_grain_p, "label") <- "corn grain production"
 attr(fulldat$corn_yield, "label") <- "corn yield (p/a)"
@@ -376,10 +385,16 @@ attr(fulldat$prec, "label") <- "precipitation"
 attr(fulldat$tmin, "label") <- "minimum temp"
 attr(fulldat$tmax, "label") <- "maximum temp"
 attr(fulldat$tavg, "label") <- "average temp"
+attr(fulldat$population, "label") <- "population"
+attr(fulldat$pop_dens, "label") <- "population density per sq mi"
+attr(fulldat$land_sqm, "label") <- "county area sq mile"
+attr(fulldat$ipc, "label") <- "income per capita"
 
 #write.csv(fulldat, "data/full_ag_data.csv", row.names = FALSE)
 
 saveRDS(fulldat, "data/full_ag_data.rds")
+fulldat <- readRDS("data/full_ag_data.rds")
+
 
 #fulldat <- readRDS("data/full_ag_data.rds")
 #fulldat <- read_csv("data/full_ag_data.csv")
