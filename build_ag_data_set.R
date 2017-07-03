@@ -6,6 +6,8 @@ library(lubridate)
 library(stringr)
 library(foreign)
 
+setwd("/run/media/john/1TB/SpiderOak/Projects/adaptation-and-an-envelope/")
+
 # Function to extract data
 
 data(county.fips) 
@@ -136,24 +138,34 @@ crop_prices <- select(crop_prices, year, state, gdp_price_def, wheat_nprice, whe
 
 # Load crop data (balanced years 1927-2007)
 corn <- read_csv("data/corn_1910-2016.csv")
-corn <- extract_d_county(corn)
-names(corn) <- c("state", "county", "year", "corn_grain_a", "corn_grain_p")
+#corn <- extract_d_county(corn)
+corn$state <- tolower(corn$state)
+corn$fips <- as.integer(corn$fips)
+#names(corn) <- c("year", "state", "fips", "corn_grain_a", "corn_grain_p")
 
-cotton <- read_csv("data/cotton_1919-2015.csv")
-cotton <- extract_d_county(cotton)
-names(cotton) <- c("state", "county", "year" , "cotton_a", "cotton_p")
+cotton <- read_csv("data/cotton_1919-2016.csv")
+#cotton <- extract_d_county(cotton)
+cotton$state <- tolower(cotton$state)
+cotton$fips <- as.integer(cotton$fips)
+#names(cotton) <- c("year", "state", "fips", "cotton_a", "cotton_p")
 
-hay <- read_csv("data/hay_1919-2008.csv")
-hay <- extract_d_county(hay)
-names(hay) <- c("state", "county", "year" , "hay_a", "hay_p")
+hay <- read_csv("data/hay_1918-2008.csv")
+#hay <- extract_d_county(hay)
+hay$state <- tolower(hay$state)
+hay$fips <- as.integer(hay$fips)
+#names(hay) <- c("year", "state", "fips", "hay_a", "hay_p")
 
 wheat <- read_csv("data/wheat_1909-2007.csv")
-wheat <- extract_d_county(wheat)
-names(wheat) <- c("state", "county", "year" , "wheat_a", "wheat_p")
+#wheat <- extract_d_county(wheat)
+wheat$state <- tolower(wheat$state)
+wheat$fips <- as.integer(wheat$fips)
+#names(wheat) <- c("year", "state", "fips", "wheat_a", "wheat_p")
 
 soybean <- read_csv("data/soybean_1927-2016.csv")
-soybean <- extract_d_county(soybean)
-names(soybean) <- c("state", "county", "year" , "soybean_a", "soybean_p")
+#soybean <- extract_d_county(soybean)
+soybean$state <- tolower(soybean$state)
+soybean$fips <- as.integer(soybean$fips)
+#names(soybean) <- c("year", "state", "fips", "soybean_a", "soybean_p")
 
 # Get all combinations of years and states
 newgrid <- expand.grid(county.fips$fips, 1900:2016)#
@@ -171,16 +183,17 @@ newgrid <- left_join(newgrid, zip_codes, by = "county")
 newgrid <- newgrid[!duplicated(newgrid[,1:3]),]
 
 newgrid$county <- as.character(newgrid$county)
+names(newgrid) <- c("fips", "year", "state", "lat", "long")
+newgrid$fips <- as.integer(newgrid$fips)
 
+cropdat <- left_join(newgrid, corn, by = c("year", "state", "fips"))
+cropdat <- left_join(cropdat, cotton, by = c("state", "fips", "year"))
+cropdat <- left_join(cropdat, hay, by = c("state", "fips", "year"))
+cropdat <- left_join(cropdat, wheat, by = c("state", "fips", "year"))
+cropdat <- left_join(cropdat, soybean, by = c("state", "fips", "year"))
 
-cropdat <- left_join(newgrid, corn, by = c("year", "state", "county"))
-cropdat <- left_join(cropdat, cotton, by = c("state", "county", "year"))
-cropdat <- left_join(cropdat, hay, by = c("state", "county", "year"))
-cropdat <- left_join(cropdat, wheat, by = c("state", "county", "year"))
-cropdat <- left_join(cropdat, soybean, by = c("state", "county", "year"))
-
-names(cropdat)[1] <- "fips"
-cropdat$fips <- as.integer(cropdat$fips)
+#names(cropdat)[1] <- "fips"
+#cropdat$fips <- as.integer(cropdat$fips)
 
 
 # rm(list=setdiff(ls(), c("crop_prices", "cropdat", "extract_d_state", "extract_d_county", "dd_dat")))
@@ -197,6 +210,7 @@ prec <- read_csv("/run/media/john/1TB/SpiderOak/Projects/Adaptation and an Envel
 
 dd_dat <- left_join(dd, prec, by = c("fips", "year", "month"))
 dd_dat$X1 <- NULL
+
 
 dd_dat <- dd_dat %>% 
     group_by(year, fips) %>% 

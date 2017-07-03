@@ -1,6 +1,8 @@
 library(rnassqs)
 library(tidyverse)
 
+# Get an NASS QuickStats API key: https://quickstats.nass.usda.gov/api
+
 NASSQS_TOKEN = "2BD928ED-10EB-3FB3-9B42-F3F237A067AE"
 
 # State-level Prices ------------------------------------------------------
@@ -75,7 +77,10 @@ newdat$state <- tolower(newdat$state)
 # Save to 'data/'
 saveRDS(newdat, "/run/media/john/1TB/MEGA/Projects/adaptation-and-an-envelope/data/crop_statelevel_prices.RDS")
 
-################################
+
+# NASS Corn Data ----------------------------------------------------------
+
+
 states <- state.abb
 dat <- data.frame()
 for (i in unique(states)){
@@ -101,33 +106,253 @@ for (i in unique(states)){
   }
   }
 
+corn_dat <- dat
 
-corn <- select(dat, data.year, data.state_alpha, data.state_fips_code, data.county_code, data.county_name, data.short_desc, data.Value)
-names(corn) <- c("year", "state", "state_fips", "county_fips", "county", "data_item", "value")
-corn$fips <- paste(corn$state_fips, corn$county_fips, sep = "")
-corn <- select(corn, year, state, fips, data_item, value)
-head(corn)
-min(corn$year)
-max(corn$year)
+# Remove comma
+corn_dat$data.Value <- as.numeric(gsub(",", "", corn_dat$data.Value))
 
-write_csv(corn, "corn_1919-2016.csv")
+#  Convert to state-county fipes
+corn_dat$fips <- paste(corn_dat$data.state_fips_code, corn_dat$data.county_code, sep = "")
+
+# If only monthly observations exist, then use average
+corn_dat <- corn_dat %>%
+  group_by(data.year, data.state_alpha, data.short_desc, fips) %>%
+  summarise(data.Value = ifelse("MARKETING YEAR"%in%data.reference_period_desc, 
+                           data.Value[data.reference_period_desc=="MARKETING YEAR"], 
+                           mean(data.Value[data.reference_period_desc!="MARKETING YEAR"])), data.reference_period_desc="YEAR") %>% 
+  ungroup()
+
+# Tidy up data
+corn_dat <- select(corn_dat, data.year, data.state_alpha, fips, data.short_desc, data.Value)
+corn_dat<- spread(corn_dat, key = data.short_desc, value = data.Value)
+names(corn_dat) <- c("year", "state", "fips", "corn_grain_a", "corn_grain_p")
+
+head(corn_dat)
+min(corn_dat$year)
+max(corn_dat$year)
+
+write_csv(corn_dat, "data/corn_1910-2016.csv")
 
 
 
-soybean <- select(dat, data.year, data.state_alpha, data.state_fips_code, data.county_code, data.county_name, data.short_desc, data.Value)
-names(soybean) <- c("year", "state", "state_fips", "county_fips", "county", "data_item", "value")
-soybean$fips <- paste(soybean$state_fips, soybean$county_fips, sep = "")
-soybean <- select(soybean, year, state, fips, data_item, value)
-write_csv(soybean, "soybean_statelevel_1927-2016.csv")
+# NASS Cotton Data --------------------------------------------------------
 
-# State
-cotton <- filter(dat, data.reference_period_desc == "YEAR" | data.reference_period_desc == "MARKETING YEAR")
-cotton <- select(cotton, data.year, data.state_alpha,  data.short_desc, data.Value)
-names(cotton) <- c("year", "state", "data_item", "value")
-cotton <- select(cotton, year, state, data_item, value)
-which(is.character(cotton$value))
-min(cotton$year)
-head(cotton)
-cotton$value <- str_trim(cotton$value)
-cotton <- filter(cotton, value != "(D)")
-write_csv(cotton, "cotton_statelevel_1917-2016.csv")
+states <- state.abb
+dat <- data.frame()
+for (i in unique(states)){
+  
+# Get acres harvested
+    params = list("state_alpha"=i, "agg_level_desc"="COUNTY","commodity_desc"="COTTON", "source_desc"="SURVEY", "statisticcat_desc" = "AREA HARVESTED", "short_desc"="COTTON, UPLAND - ACRES HARVESTED")
+    a <- tryCatch({
+      req = nassqs_GET(params=params, key=NASSQS_TOKEN)
+      hdat = nassqs_parse(req)
+      check <- 1
+    },error=function(e) e)
+  
+  # Get Production
+  params = list("state_alpha"=i, "agg_level_desc"="COUNTY","commodity_desc"="COTTON", "source_desc"="SURVEY", "statisticcat_desc" = "PRODUCTION", "short_desc"="COTTON, UPLAND - PRODUCTION, MEASURED IN 480 LB BALES")
+      b <- tryCatch({
+      req = nassqs_GET(params=params, key=NASSQS_TOKEN)
+      pdat = nassqs_parse(req)
+      check <- check + 1
+    },error=function(e) e) 
+  if(check == 2){
+    dat <- rbind(dat, hdat, pdat)
+    print(i)
+  }
+  }
+
+cotton_dat <- dat
+
+# Remove comma
+cotton_dat$data.Value <- as.numeric(gsub(",", "", cotton_dat$data.Value))
+cotton_dat <- filter(cotton_dat, !is.na(data.Value))
+
+#  Convert to state-county fipes
+cotton_dat$fips <- paste(cotton_dat$data.state_fips_code, cotton_dat$data.county_code, sep = "")
+
+# If only monthly observations exist, then use average
+cotton_dat <- cotton_dat %>%
+  group_by(data.year, data.state_alpha, data.short_desc, fips) %>%
+  summarise(data.Value = ifelse("MARKETING YEAR"%in%data.reference_period_desc, 
+                           data.Value[data.reference_period_desc=="MARKETING YEAR"], 
+                           mean(data.Value[data.reference_period_desc!="MARKETING YEAR"])), data.reference_period_desc="YEAR") %>% 
+  ungroup()
+
+# Tidy up data
+cotton_dat <- select(cotton_dat, data.year, data.state_alpha, fips, data.short_desc, data.Value)
+cotton_dat<- spread(cotton_dat, key = data.short_desc, value = data.Value)
+names(cotton_dat) <- c("year", "state", "fips", "cotton_a", "cotton_p")
+
+head(cotton_dat)
+min(cotton_dat$year)
+max(cotton_dat$year)
+
+write_csv(cotton_dat, "data/cotton_1919-2016.csv")
+
+
+
+# NASS Hay Data -----------------------------------------------------------
+
+states <- state.abb
+dat <- data.frame()
+for (i in unique(states)){
+  
+# Get acres harvested
+    params = list("state_alpha"=i, "agg_level_desc"="COUNTY","commodity_desc"="HAY", "source_desc"="SURVEY", "statisticcat_desc" = "AREA HARVESTED", "short_desc"="HAY - ACRES HARVESTED")
+    a <- tryCatch({
+      req = nassqs_GET(params=params, key=NASSQS_TOKEN)
+      hdat = nassqs_parse(req)
+      check <- 1
+    },error=function(e) e)
+  
+  # Get Production
+  params = list("state_alpha"=i, "agg_level_desc"="COUNTY","commodity_desc"="HAY", "source_desc"="SURVEY", "statisticcat_desc" = "PRODUCTION", "short_desc"="HAY - PRODUCTION, MEASURED IN TONS")
+      b <- tryCatch({
+      req = nassqs_GET(params=params, key=NASSQS_TOKEN)
+      pdat = nassqs_parse(req)
+      check <- check + 1
+    },error=function(e) e) 
+  if(check == 2){
+    dat <- rbind(dat, hdat, pdat)
+    print(i)
+  }
+  }
+
+hay_dat <- dat
+
+# Remove comma
+hay_dat$data.Value <- as.numeric(gsub(",", "", hay_dat$data.Value))
+
+#  Convert to state-county fipes
+hay_dat$fips <- paste(hay_dat$data.state_fips_code, hay_dat$data.county_code, sep = "")
+
+# If only monthly observations exist, then use average
+hay_dat <- hay_dat %>%
+  group_by(data.year, data.state_alpha, data.short_desc, fips) %>%
+  summarise(data.Value = ifelse("MARKETING YEAR"%in%data.reference_period_desc, 
+                           data.Value[data.reference_period_desc=="MARKETING YEAR"], 
+                           mean(data.Value[data.reference_period_desc!="MARKETING YEAR"])), data.reference_period_desc="YEAR") %>% 
+  ungroup()
+
+# Tidy up data
+hay_dat <- select(hay_dat, data.year, data.state_alpha, fips, data.short_desc, data.Value)
+hay_dat <- spread(hay_dat, key = data.short_desc, value = data.Value)
+names(hay_dat) <- c("year", "state", "fips", "hay_a", "hay_p")
+
+head(hay_dat)
+min(hay_dat$year)
+max(hay_dat$year)
+
+write_csv(hay_dat, "data/hay_1918-2008.csv")
+
+
+
+# NASS Wheat Data ---------------------------------------------------------
+
+states <- state.abb
+dat <- data.frame()
+for (i in unique(states)){
+  
+# Get acres harvested
+    params = list("state_alpha"=i, "agg_level_desc"="COUNTY","commodity_desc"="WHEAT", "source_desc"="SURVEY", "statisticcat_desc" = "AREA HARVESTED", "short_desc"="WHEAT - ACRES HARVESTED")
+    a <- tryCatch({
+      req = nassqs_GET(params=params, key=NASSQS_TOKEN)
+      hdat = nassqs_parse(req)
+      check <- 1
+    },error=function(e) e)
+  
+  # Get Production
+  params = list("state_alpha"=i, "agg_level_desc"="COUNTY","commodity_desc"="WHEAT", "source_desc"="SURVEY", "statisticcat_desc" = "PRODUCTION", "short_desc"="WHEAT - PRODUCTION, MEASURED IN BU")
+      b <- tryCatch({
+      req = nassqs_GET(params=params, key=NASSQS_TOKEN)
+      pdat = nassqs_parse(req)
+      check <- check + 1
+    },error=function(e) e) 
+  if(check == 2){
+    dat <- rbind(dat, hdat, pdat)
+    print(i)
+  }
+  }
+
+wheat_dat <- dat
+
+# Remove comma
+wheat_dat$data.Value <- as.numeric(gsub(",", "", wheat_dat$data.Value))
+
+#  Convert to state-county fipes
+wheat_dat$fips <- paste(wheat_dat$data.state_fips_code, wheat_dat$data.county_code, sep = "")
+
+# If only monthly observations exist, then use average
+wheat_dat <- wheat_dat %>%
+  group_by(data.year, data.state_alpha, data.short_desc, fips) %>%
+  summarise(data.Value = ifelse("MARKETING YEAR"%in%data.reference_period_desc, 
+                           data.Value[data.reference_period_desc=="MARKETING YEAR"], 
+                           mean(data.Value[data.reference_period_desc!="MARKETING YEAR"])), data.reference_period_desc="YEAR") %>% 
+  ungroup()
+
+# Tidy up data
+wheat_dat <- select(wheat_dat, data.year, data.state_alpha, fips, data.short_desc, data.Value)
+wheat_dat <- spread(wheat_dat, key = data.short_desc, value = data.Value)
+names(wheat_dat) <- c("year", "state", "fips", "wheat_a", "wheat_p")
+
+head(wheat_dat)
+min(wheat_dat$year)
+max(wheat_dat$year)
+
+write_csv(wheat_dat, "data/wheat_1909-2007.csv")
+
+
+# NASS Soybean Data ---------------------------------------------------------
+
+states <- state.abb
+dat <- data.frame()
+for (i in unique(states)){
+  
+# Get acres harvested
+    params = list("state_alpha"=i, "agg_level_desc"="COUNTY","commodity_desc"="SOYBEANS", "source_desc"="SURVEY", "statisticcat_desc" = "AREA HARVESTED", "short_desc"="SOYBEANS - ACRES HARVESTED")
+    a <- tryCatch({
+      req = nassqs_GET(params=params, key=NASSQS_TOKEN)
+      hdat = nassqs_parse(req)
+      check <- 1
+    },error=function(e) e)
+  
+  # Get Production
+  params = list("state_alpha"=i, "agg_level_desc"="COUNTY","commodity_desc"="SOYBEANS", "source_desc"="SURVEY", "statisticcat_desc" = "PRODUCTION", "short_desc"="SOYBEANS - PRODUCTION, MEASURED IN BU")
+      b <- tryCatch({
+      req = nassqs_GET(params=params, key=NASSQS_TOKEN)
+      pdat = nassqs_parse(req)
+      check <- check + 1
+    },error=function(e) e) 
+  if(check == 2){
+    dat <- rbind(dat, hdat, pdat)
+    print(i)
+  }
+  }
+
+soybean_dat <- dat
+
+# Remove comma
+soybean_dat$data.Value <- as.numeric(gsub(",", "", soybean_dat$data.Value))
+
+#  Convert to state-county fipes
+soybean_dat$fips <- paste(soybean_dat$data.state_fips_code, soybean_dat$data.county_code, sep = "")
+
+# If only monthly observations exist, then use average
+soybean_dat <- soybean_dat %>%
+  group_by(data.year, data.state_alpha, data.short_desc, fips) %>%
+  summarise(data.Value = ifelse("MARKETING YEAR"%in%data.reference_period_desc, 
+                           data.Value[data.reference_period_desc=="MARKETING YEAR"], 
+                           mean(data.Value[data.reference_period_desc!="MARKETING YEAR"])), data.reference_period_desc="YEAR") %>% 
+  ungroup()
+
+# Tidy up data
+soybean_dat <- select(soybean_dat, data.year, data.state_alpha, fips, data.short_desc, data.Value)
+soybean_dat <- spread(soybean_dat, key = data.short_desc, value = data.Value)
+names(soybean_dat) <- c("year", "state", "fips", "soybean_a", "soybean_p")
+
+head(soybean_dat)
+min(soybean_dat$year)
+max(soybean_dat$year)
+
+write_csv(soybean_dat, "data/soybean_1927-2016.csv")

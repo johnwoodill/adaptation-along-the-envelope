@@ -29,10 +29,11 @@ options("datadist" = "dbdist")
 #mod1 <- ols(log(corn_yield) ~ statefe + corn_dday10w + corn_dday29w,
 #            data=gp, x = TRUE, y = TRUE)
 
-mod1 <- plm(log(1 + corn_rrev) ~ dday8C_32C + dday8C_32C_sq + 
-             dday34C_sqrt + trend + trendsq + prec + precsq, data = dat, index = "state")
-mod1
-summary(mod1)
+p.mod1 <- plm(log(1 + corn_rrev) ~ 1 +dday8C_32C + dday8C_32C_sq + 
+             dday34C_sqrt + trend + trendsq + prec + precsq, data = cropdat, index = "fips")
+summary(p.mod1)
+
+
 test <- mod1$model
 plot(mod1)
 

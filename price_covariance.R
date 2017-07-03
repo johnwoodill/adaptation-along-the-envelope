@@ -3,28 +3,32 @@ cropdat <- readRDS("data/full_ag_data.rds")
 # P bar
 
 dat <- cropdat
-dat$corn_avg_price <- mean(dat$corn_rprice, na.rm = TRUE)
-dat$cotton_avg_price <- mean(dat$cotton_rprice, na.rm = TRUE)
-dat$hay_avg_price <- mean(dat$hay_rprice, na.rm = TRUE)
-dat$wheat_avg_price <- mean(dat$wheat_rprice, na.rm = TRUE)
-dat$soybean_avg_price <- mean(dat$soybean_rprice, na.rm = TRUE)
+dat$corn_rprice <- mean(dat$corn_rprice, na.rm = TRUE)
+dat$cotton_rprice <- mean(dat$cotton_rprice, na.rm = TRUE)
+dat$hay_rprice <- mean(dat$hay_rprice, na.rm = TRUE)
+dat$wheat_rprice <- mean(dat$wheat_rprice, na.rm = TRUE)
+dat$soybean_rprice <- mean(dat$soybean_rprice, na.rm = TRUE)
+
+
 
 # Revenue
-dat$corn_r <- dat$corn_grain_p*dat$corn_avg_price
-dat$cotton_r <- dat$cotton_p*dat$cotton_avg_price
-dat$hay_r <- dat$hay_p*dat$hay_avg_price
-dat$wheat_r <- dat$wheat_p*dat$wheat_avg_price
-dat$soybean_r <- dat$soybean_p*dat$soybean_avg_price
+# dat$corn_rev <- (dat$corn_grain_p*dat$corn_rprice)/dat$corn_grain_a
+# dat$cotton_rev <- (dat$cotton_p*dat$cotton_rprice)/dat$cotton_a
+# dat$hay_rev <- (dat$hay_p*dat$hay_rprice)/dat$hay_a
+# dat$wheat_rev <- (dat$wheat_p*dat$wheat_rprice)/dat$wheat_a
+# dat$soybean_rev <- (dat$soybean_p*dat$soybean_rprice)/dat$soybean_a
 
 dat <- dat %>% 
   group_by(fips) %>% 
-  mutate(corn_rev = corn_r + cov(corn_grain_p, corn_rprice, use = "pairwise.complete.obs"),
-         cotton_rev = cotton_r + cov(cotton_p, cotton_rprice, use = "pairwise.complete.obs"),
-         hay_rev = hay_r + cov(hay_p, hay_rprice, use = "pairwise.complete.obs"),
-         wheat_rev = wheat_r + cov(wheat_p, wheat_rprice, use = "pairwise.complete.obs"),
-         soybean_rev = soybean_r + cov(soybean_p, soybean_rprice, use = "pairwise.complete.obs"))
+  mutate(corn_crev = corn_rrev + cov(corn_yield, corn_rprice, use = "pairwise.complete.obs"),
+         cotton_crev = cotton_rrev + cov(cotton_yield, cotton_rprice, use = "pairwise.complete.obs"),
+         hay_crev = hay_rrev + cov(hay_yield, hay_rprice, use = "pairwise.complete.obs"),
+         wheat_crev = wheat_rrev + cov(wheat_yield, wheat_rprice, use = "pairwise.complete.obs"),
+         soybean_crev = soybean_rrev + cov(soybean_yield, soybean_rprice, use = "pairwise.complete.obs"))
 
-ggplot(data = dat) + geom_smooth(aes(year, corn_rev)) + geom_smooth(aes(year, corn_r), color = "red")
+cov(dat$corn_yield, dat$corn_rprice, use = "pairwise.complete.obs")
+
+ggplot(data = dat) + geom_smooth(aes(year, corn_rrev), color = "blue") + geom_smooth(aes(year, corn_crev), color = "red")
 
 # Y_it
 # dat$total_p <- rowSums(dat[,c(7, 12, 17, 22, 27)], na.rm = TRUE)
@@ -48,6 +52,13 @@ ggplot(data = dat) + geom_smooth(aes(year, corn_rev)) + geom_smooth(aes(year, co
 # 
 # 
 # dat$corn_rev <- dat$corn_grain_p*dat$price + dat$covs  
+
+(4 + 5 + 8 + 10 + 3 + 4)/6
+
+(4+5+8)/3
+(10+3+4)/3
+
+
 
 
 

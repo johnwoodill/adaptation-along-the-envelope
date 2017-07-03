@@ -6,7 +6,7 @@ library(ggplot2)
 library(dplyr)
 cropdat1 <- readRDS("data/full_ag_data.rds")
 cropdat1 <- filter(cropdat1, year >= 1960 & year < 1970)
-cropdat1 <- filter(cropdat1, year >= 2000 & year < 2010)
+#cropdat1 <- filter(cropdat1, year >= 2000 & year < 2010)
 
 plots <- list()
 
@@ -52,7 +52,7 @@ plot1 <- ggplot(NULL, aes(x = dens.corn1$x, y = dens.corn1$y)) +
   geom_polygon(aes(x = dens.hay1$x, y = dens.hay1$y, fill = "hay")) + 
   geom_polygon(aes(x = dens.wheat1$x, y = dens.wheat1$y, fill = "wheat")) +
   geom_polygon(aes(x = dens.cotton1$x, y = dens.cotton1$y, fill = "cotton")) + 
-  geom_line(aes(x = dens.cropland1$x, y = dens.cropland1$y)) +
+  #geom_line(aes(x = dens.cropland1$x, y = dens.cropland1$y)) +
   xlab("Average Temp (C)") + ylab("Share of Value per Acre") +  
     annotate("text", y = 0.09, x = 20, label = "1960's", size = 8) +
   scale_fill_discrete(breaks = c("corn", "soybean", "hay", "wheat", "cotton")) 

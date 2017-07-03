@@ -41,7 +41,7 @@ cropdat <- cropdat %>%
         dm_dday34C = dday34C - mean(dday32C, na.rm = TRUE),
         dm_ipc = ipc - mean(ipc, na.rm = TRUE),
         dm_pop_dens = pop_dens - mean(pop_dens, na.rm = TRUE)) %>% 
-  group_by(fips) %>% 
+  group_by(state, fips) %>% 
 
     summarise(dm_ln_corn_rrev = mean(dm_ln_corn_rrev, na.rm = TRUE),
         dm_tavg = mean(dm_tavg, na.rm = TRUE),
@@ -72,12 +72,14 @@ cropdat <- left_join(cropdat, soil, by = "fips")
 
 # Corn
 
-mod1  <- lm(dm_ln_corn_rrev ~ dm_tavg + I(dm_tavg^2) + dm_prec + I(dm_prec^2) + lat +
+cs.mod1  <- lm(dm_ln_corn_rrev ~ dm_tavg + I(dm_tavg^2) + dm_prec + I(dm_prec^2) + lat +
               dm_ipc + dm_pop_dens + I(dm_pop_dens^2) + waterCapacity +  percentClay + minPermeability + kFactor + bestSoil, data = cropdat)
 summary(mod1)
-mod1  <- lm(dm_ln_corn_rrev ~ dm_dday8_32 + I(dm_dday8_32^2) + sqrt(dm_dday34C) + dm_prec + I(dm_prec^2) + lat +
+
+cs.mod1  <- lm(dm_ln_corn_rrev ~ dm_dday8_32 + I(dm_dday8_32^2) + sqrt(dm_dday34C) + dm_prec + I(dm_prec^2) + lat +
               dm_ipc + dm_pop_dens + I(dm_pop_dens^2) + percentClay + minPermeability + kFactor + bestSoil, data = cropdat)
-summary(mod1)
+summary(cs.mod1)
+
 
 
 # Check assumptions
