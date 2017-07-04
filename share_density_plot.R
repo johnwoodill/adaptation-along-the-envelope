@@ -55,7 +55,8 @@ plot1 <- ggplot(NULL, aes(x = dens.corn1$x, y = dens.corn1$y)) +
   #geom_line(aes(x = dens.cropland1$x, y = dens.cropland1$y)) +
   xlab("Average Temp (C)") + ylab("Share of Value per Acre") +  
     annotate("text", y = 0.09, x = 20, label = "1960's", size = 8) +
-  scale_fill_discrete(breaks = c("corn", "soybean", "hay", "wheat", "cotton")) 
+  scale_fill_discrete(breaks = c("corn", "soybean", "hay", "wheat", "cotton")) + theme(legend.position="top") + 
+  theme(legend.title=element_blank())
 plot1
 
 
@@ -107,7 +108,7 @@ plot2 <- ggplot(NULL, aes(x = dens.corn$x, y = dens.corn$y)) +
   geom_polygon(aes(x = dens.cotton$x, y = dens.cotton$y, fill = "cotton")) + 
   xlab("Average Temp (C)") + ylab("Share of Value per Acre") + ylim(0, 0.12) +
   annotate("text", y = 0.09, x = 20, label = "2000's", size = 8) +
-  scale_fill_discrete(breaks = c("corn", "soybean", "hay", "wheat", "cotton"))
+  scale_fill_discrete(breaks = c("corn", "soybean", "hay", "wheat", "cotton"))+ theme(legend.position = "none", legend.key.size = 10)
 plot2
 
 plot_grid(plot1, plot2, ncol = 1)

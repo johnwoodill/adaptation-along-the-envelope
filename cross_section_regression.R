@@ -18,6 +18,7 @@ cropdat <- filter(cropdat, abs(long) <= 100)
 
 cropdat <- filter(cropdat, year >= 1970 & year <= 2010)
 
+cropdat$corn_rrev <- cropdat$corn_rrev + cropdat$cotton_rrev + cropdat$hay_rrev + cropdat$wheat_rrev + cropdat$soybean_rrev
 cropdat$ln_corn_rrev <- log(1 + cropdat$corn_rrev)
 cropdat$ln_cotton_rrev <- log(1 + cropdat$cotton_rrev)
 cropdat$ln_hay_rrev <- log(1 + cropdat$hay_rrev)
@@ -74,7 +75,7 @@ cropdat <- left_join(cropdat, soil, by = "fips")
 
 cs.mod1  <- lm(dm_ln_corn_rrev ~ dm_tavg + I(dm_tavg^2) + dm_prec + I(dm_prec^2) + lat +
               dm_ipc + dm_pop_dens + I(dm_pop_dens^2) + waterCapacity +  percentClay + minPermeability + kFactor + bestSoil, data = cropdat)
-summary(mod1)
+summary(cs.mod1)
 
 cs.mod1  <- lm(dm_ln_corn_rrev ~ dm_dday8_32 + I(dm_dday8_32^2) + sqrt(dm_dday34C) + dm_prec + I(dm_prec^2) + lat +
               dm_ipc + dm_pop_dens + I(dm_pop_dens^2) + percentClay + minPermeability + kFactor + bestSoil, data = cropdat)
