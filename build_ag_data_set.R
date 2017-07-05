@@ -201,60 +201,70 @@ cropdat <- left_join(cropdat, soybean, by = c("state", "fips", "year"))
 
 # Aggregate county-level degree days -----------------------------------------------
 
-dd <- read_csv("/run/media/john/1TB/SpiderOak/Projects/Adaptation and an Envelope/data/fips_degree_days_1900-2013.csv")
-prec <- read_csv("/run/media/john/1TB/SpiderOak/Projects/Adaptation and an Envelope/data/fips_precipitation_1900-2013.csv")
+# dd <- read_csv("/run/media/john/1TB/SpiderOak/Projects/Adaptation and an Envelope/data/fips_degree_days_1900-2013.csv")
+# prec <- read_csv("/run/media/john/1TB/SpiderOak/Projects/Adaptation and an Envelope/data/fips_precipitation_1900-2013.csv")
 
 #dd <- read_csv("/home/john/MEGA/Projects/adaptation-and-an-envelope/data/fips_degree_days_1900-2013.csv")
 #prec <- read_csv("/home/john/MEGA/Projects/adaptation-and-an-envelope/data/fips_precipitation_1900-2013.csv")
 
+# Schlenker and Roberts data
+dd <- read_dta("data/ddayOverAgAreaByMonth.dta")
+dd$year <- as.integer(dd$year)
+dd$fips <- as.integer(dd$fips)
+#dd_dat <- left_join(dd, prec, by = c("fips", "year", "month"))
+#dd_dat$X1 <- NULL
 
-dd_dat <- left_join(dd, prec, by = c("fips", "year", "month"))
-dd_dat$X1 <- NULL
-
-
-dd_dat <- dd_dat %>% 
-    group_by(year, fips) %>% 
-    summarise(dday0C = sum(dday0C),
-            dday1C = sum(dday1C),
-            dday2C = sum(dday2C),
-            dday3C = sum(dday3C),
-            dday4C = sum(dday4C),
-            dday5C = sum(dday5C),
-            dday6C = sum(dday6C),
-            dday7C = sum(dday7C),
-            dday8C = sum(dday8C),
-            dday9C = sum(dday9C),
-            dday10C = sum(dday10C),
-            dday11C = sum(dday11C),
-            dday12C = sum(dday12C),
-            dday13C = sum(dday13C),
-            dday14C = sum(dday14C),
-            dday15C = sum(dday15C),
-            dday16C = sum(dday16C),
-            dday17C= sum(dday17C),
-            dday18C = sum(dday18C),
-            dday19C = sum(dday19C),
-            dday20C = sum(dday20C),
-            dday21C = sum(dday21C),
-            dday22C = sum(dday22C),
-            dday23C = sum(dday23C),
-            dday24C = sum(dday24C),
-            dday25C = sum(dday25C),
-            dday26C = sum(dday26C),
-            dday27C = sum(dday27C),
-            dday28C = sum(dday28C),
-            dday29C = sum(dday29C),
-            dday30C = sum(dday30C),
-            dday31C = sum(dday31C),
+dd_dat <- dd %>% 
+  group_by(year, fips) %>% 
+  summarise(dday8C = sum(dday8C),
             dday32C = sum(dday32C),
-            dday33C = sum(dday33C),
             dday34C = sum(dday34C),
-            dday35C = sum(dday35C),
-            ndday0C = sum(ndday0C),
-            prec = sum(ppt),
-            tmin = mean(tmin),
-            tmax = mean(tmax),
-            tavg = mean(tavg))
+            prec = sum(prec),
+            tavg = mean(tAvg))
+# 
+# dd_dat <- dd_dat %>% 
+#     group_by(year, fips) %>% 
+#     summarise(dday0C = sum(dday0C),
+#             dday1C = sum(dday1C),
+#             dday2C = sum(dday2C),
+#             dday3C = sum(dday3C),
+#             dday4C = sum(dday4C),
+#             dday5C = sum(dday5C),
+#             dday6C = sum(dday6C),
+#             dday7C = sum(dday7C),
+#             dday8C = sum(dday8C),
+#             dday9C = sum(dday9C),
+#             dday10C = sum(dday10C),
+#             dday11C = sum(dday11C),
+#             dday12C = sum(dday12C),
+#             dday13C = sum(dday13C),
+#             dday14C = sum(dday14C),
+#             dday15C = sum(dday15C),
+#             dday16C = sum(dday16C),
+#             dday17C= sum(dday17C),
+#             dday18C = sum(dday18C),
+#             dday19C = sum(dday19C),
+#             dday20C = sum(dday20C),
+#             dday21C = sum(dday21C),
+#             dday22C = sum(dday22C),
+#             dday23C = sum(dday23C),
+#             dday24C = sum(dday24C),
+#             dday25C = sum(dday25C),
+#             dday26C = sum(dday26C),
+#             dday27C = sum(dday27C),
+#             dday28C = sum(dday28C),
+#             dday29C = sum(dday29C),
+#             dday30C = sum(dday30C),
+#             dday31C = sum(dday31C),
+#             dday32C = sum(dday32C),
+#             dday33C = sum(dday33C),
+#             dday34C = sum(dday34C),
+#             dday35C = sum(dday35C),
+#             ndday0C = sum(ndday0C),
+#             prec = sum(ppt),
+#             tmin = mean(tmin),
+#             tmax = mean(tmax),
+#             tavg = mean(tavg))
 
 #rm(list=setdiff(ls(), c("crop_prices", "cropdat", "extract_d_state", "extract_d_county", "dd_dat")))
 #gc()
@@ -300,7 +310,7 @@ fulldat <- select(fulldat, year, state, fips, lat, long, gdp_price_def,
 fulldat <- left_join(fulldat, dd_dat, by = c("year", "fips"))
 
 # Soil data
-soildat <- readRDS("data/soilData.rds")
+#soildat <- readRDS("data/soilData.rds")
 
 # Merge population and land data
 popland <- readRDS("data/pop_ipc.rds")
@@ -310,99 +320,99 @@ fulldat <- left_join(fulldat, popland, by = c("year", "fips"))
 fulldat <- do.call(data.frame,lapply(fulldat, function(x) replace(x, is.infinite(x),NA)))
 
 
+# 
+# # Label names
+# attr(fulldat$year, "label") <- "year"
+# attr(fulldat$state, "label") <- "state"
+# attr(fulldat$fips, "label") <- "fips code"
+# attr(fulldat$lat, "label") <- "latitude"
+# attr(fulldat$long, "label") <- "longitude"
+# attr(fulldat$gdp_price_def, "label") <- "gdp price def (base = 2010)"
+# attr(fulldat$corn_grain_a, "label") <- "corn grain acres"
+# attr(fulldat$corn_grain_p, "label") <- "corn grain production"
+# attr(fulldat$corn_yield, "label") <- "corn yield (p/a)"
+# attr(fulldat$corn_nprice, "label") <- "nominal corn price"
+# attr(fulldat$corn_rprice, "label") <- "real corn price"
+# attr(fulldat$corn_rrev, "label") <- "real corn revenue per acre"
+# attr(fulldat$corn_nrev, "label") <- "nominal corn revenue per acre"
+# 
+# attr(fulldat$cotton_a, "label") <- "cotton acres"
+# attr(fulldat$cotton_p, "label") <- "cotton production"
+# attr(fulldat$cotton_yield, "label") <- "cotton yield (p/a)"
+# attr(fulldat$cotton_nprice, "label") <- "nominal cotton price"
+# attr(fulldat$cotton_rprice, "label") <- "real cotton price"
+# attr(fulldat$cotton_rrev, "label") <- "real cotton revenue per acre"
+# attr(fulldat$cotton_nrev, "label") <- "nominal cotton revenue per acre"
+# 
+# attr(fulldat$hay_a, "label") <- "hay acres"
+# attr(fulldat$hay_p, "label") <- "hay production"
+# attr(fulldat$hay_yield, "label") <- "hay yield (p/a)"
+# attr(fulldat$hay_nprice, "label") <- "nominal hay price"
+# attr(fulldat$hay_rprice, "label") <- "real hay price"
+# attr(fulldat$hay_rrev, "label") <- "real hay revenue per acre"
+# attr(fulldat$hay_nrev, "label") <- "nominal hay revenue per acre"
+# 
+# attr(fulldat$wheat_a, "label") <- "wheat acres"
+# attr(fulldat$wheat_p, "label") <- "wheat production"
+# attr(fulldat$wheat_yield, "label") <- "wheat yield (p/a)"
+# attr(fulldat$wheat_nprice, "label") <- "nominal wheat price"
+# attr(fulldat$wheat_rprice, "label") <- "real wheat price"
+# attr(fulldat$wheat_rrev, "label") <- "real wheat revenue per acre"
+# attr(fulldat$wheat_nrev, "label") <- "nominal wheat revenue per acre"
+# 
+# attr(fulldat$soybean_a, "label") <- "soybean acres"
+# attr(fulldat$soybean_p, "label") <- "soybean production"
+# attr(fulldat$soybean_yield, "label") <- "soybean yield (p/a)"
+# attr(fulldat$soybean_nprice, "label") <- "nominal soybean price"
+# attr(fulldat$soybean_rprice, "label") <- "real soybean price"
+# attr(fulldat$soybean_rrev, "label") <- "real soybean revenue per acre"
+# attr(fulldat$soybean_nrev, "label") <- "nominal soybean revenue per acre"
 
-# Label names
-attr(fulldat$year, "label") <- "year"
-attr(fulldat$state, "label") <- "state"
-attr(fulldat$fips, "label") <- "fips code"
-attr(fulldat$lat, "label") <- "latitude"
-attr(fulldat$long, "label") <- "longitude"
-attr(fulldat$gdp_price_def, "label") <- "gdp price def (base = 2010)"
-attr(fulldat$corn_grain_a, "label") <- "corn grain acres"
-attr(fulldat$corn_grain_p, "label") <- "corn grain production"
-attr(fulldat$corn_yield, "label") <- "corn yield (p/a)"
-attr(fulldat$corn_nprice, "label") <- "nominal corn price"
-attr(fulldat$corn_rprice, "label") <- "real corn price"
-attr(fulldat$corn_rrev, "label") <- "real corn revenue per acre"
-attr(fulldat$corn_nrev, "label") <- "nominal corn revenue per acre"
-
-attr(fulldat$cotton_a, "label") <- "cotton acres"
-attr(fulldat$cotton_p, "label") <- "cotton production"
-attr(fulldat$cotton_yield, "label") <- "cotton yield (p/a)"
-attr(fulldat$cotton_nprice, "label") <- "nominal cotton price"
-attr(fulldat$cotton_rprice, "label") <- "real cotton price"
-attr(fulldat$cotton_rrev, "label") <- "real cotton revenue per acre"
-attr(fulldat$cotton_nrev, "label") <- "nominal cotton revenue per acre"
-
-attr(fulldat$hay_a, "label") <- "hay acres"
-attr(fulldat$hay_p, "label") <- "hay production"
-attr(fulldat$hay_yield, "label") <- "hay yield (p/a)"
-attr(fulldat$hay_nprice, "label") <- "nominal hay price"
-attr(fulldat$hay_rprice, "label") <- "real hay price"
-attr(fulldat$hay_rrev, "label") <- "real hay revenue per acre"
-attr(fulldat$hay_nrev, "label") <- "nominal hay revenue per acre"
-
-attr(fulldat$wheat_a, "label") <- "wheat acres"
-attr(fulldat$wheat_p, "label") <- "wheat production"
-attr(fulldat$wheat_yield, "label") <- "wheat yield (p/a)"
-attr(fulldat$wheat_nprice, "label") <- "nominal wheat price"
-attr(fulldat$wheat_rprice, "label") <- "real wheat price"
-attr(fulldat$wheat_rrev, "label") <- "real wheat revenue per acre"
-attr(fulldat$wheat_nrev, "label") <- "nominal wheat revenue per acre"
-
-attr(fulldat$soybean_a, "label") <- "soybean acres"
-attr(fulldat$soybean_p, "label") <- "soybean production"
-attr(fulldat$soybean_yield, "label") <- "soybean yield (p/a)"
-attr(fulldat$soybean_nprice, "label") <- "nominal soybean price"
-attr(fulldat$soybean_rprice, "label") <- "real soybean price"
-attr(fulldat$soybean_rrev, "label") <- "real soybean revenue per acre"
-attr(fulldat$soybean_nrev, "label") <- "nominal soybean revenue per acre"
-
-attr(fulldat$dday0C, "label") <- "degree day 0c"
-attr(fulldat$dday1C, "label") <- "degree day 1C"
-attr(fulldat$dday2C, "label") <- "degree day 2C"
-attr(fulldat$dday3C, "label") <- "degree day 3C"
-attr(fulldat$dday4C, "label") <- "degree day 4C"
-attr(fulldat$dday5C, "label") <- "degree day 5C"
-attr(fulldat$dday6C, "label") <- "degree day 6C"
-attr(fulldat$dday7C, "label") <- "degree day 7C"
-attr(fulldat$dday8C, "label") <- "degree day 8C"
-attr(fulldat$dday9C, "label") <- "degree day 9C"
-attr(fulldat$dday10C, "label") <- "degree day 10C"
-attr(fulldat$dday11C, "label") <- "degree day 11C"
-attr(fulldat$dday12C, "label") <- "degree day 12C"
-attr(fulldat$dday13C, "label") <- "degree day 13C"
-attr(fulldat$dday14C, "label") <- "degree day 14C"
-attr(fulldat$dday15C, "label") <- "degree day 15C"
-attr(fulldat$dday16C, "label") <- "degree day 16C"
-attr(fulldat$dday17C, "label") <- "degree day 17C"
-attr(fulldat$dday18C, "label") <- "degree day 18C"
-attr(fulldat$dday19C, "label") <- "degree day 19C"
-attr(fulldat$dday20C, "label") <- "degree day 20C"
-attr(fulldat$dday21C, "label") <- "degree day 21C"
-attr(fulldat$dday22C, "label") <- "degree day 22C"
-attr(fulldat$dday23C, "label") <- "degree day 23C"
-attr(fulldat$dday24C, "label") <- "degree day 24C"
-attr(fulldat$dday25C, "label") <- "degree day 25C"
-attr(fulldat$dday26C, "label") <- "degree day 26C"
-attr(fulldat$dday27C, "label") <- "degree day 27C"
-attr(fulldat$dday28C, "label") <- "degree day 28C"
-attr(fulldat$dday29C, "label") <- "degree day 29C"
-attr(fulldat$dday30C, "label") <- "degree day 30C"
-attr(fulldat$dday31C, "label") <- "degree day 31C"
-attr(fulldat$dday32C, "label") <- "degree day 32C"
-attr(fulldat$dday33C, "label") <- "degree day 33C"
-attr(fulldat$dday34C, "label") <- "degree day 34C"
-attr(fulldat$dday35C, "label") <- "degree day 35C"
-attr(fulldat$ndday0C, "label") <- "degree days < 0C"
-attr(fulldat$prec, "label") <- "precipitation"
-attr(fulldat$tmin, "label") <- "minimum temp"
-attr(fulldat$tmax, "label") <- "maximum temp"
-attr(fulldat$tavg, "label") <- "average temp"
-attr(fulldat$population, "label") <- "population"
-attr(fulldat$pop_dens, "label") <- "population density per sq mi"
-attr(fulldat$land_sqm, "label") <- "county area sq mile"
-attr(fulldat$ipc, "label") <- "income per capita"
+# attr(fulldat$dday0C, "label") <- "degree day 0c"
+# attr(fulldat$dday1C, "label") <- "degree day 1C"
+# attr(fulldat$dday2C, "label") <- "degree day 2C"
+# attr(fulldat$dday3C, "label") <- "degree day 3C"
+# attr(fulldat$dday4C, "label") <- "degree day 4C"
+# attr(fulldat$dday5C, "label") <- "degree day 5C"
+# attr(fulldat$dday6C, "label") <- "degree day 6C"
+# attr(fulldat$dday7C, "label") <- "degree day 7C"
+# attr(fulldat$dday8C, "label") <- "degree day 8C"
+# attr(fulldat$dday9C, "label") <- "degree day 9C"
+# attr(fulldat$dday10C, "label") <- "degree day 10C"
+# attr(fulldat$dday11C, "label") <- "degree day 11C"
+# attr(fulldat$dday12C, "label") <- "degree day 12C"
+# attr(fulldat$dday13C, "label") <- "degree day 13C"
+# attr(fulldat$dday14C, "label") <- "degree day 14C"
+# attr(fulldat$dday15C, "label") <- "degree day 15C"
+# attr(fulldat$dday16C, "label") <- "degree day 16C"
+# attr(fulldat$dday17C, "label") <- "degree day 17C"
+# attr(fulldat$dday18C, "label") <- "degree day 18C"
+# attr(fulldat$dday19C, "label") <- "degree day 19C"
+# attr(fulldat$dday20C, "label") <- "degree day 20C"
+# attr(fulldat$dday21C, "label") <- "degree day 21C"
+# attr(fulldat$dday22C, "label") <- "degree day 22C"
+# attr(fulldat$dday23C, "label") <- "degree day 23C"
+# attr(fulldat$dday24C, "label") <- "degree day 24C"
+# attr(fulldat$dday25C, "label") <- "degree day 25C"
+# attr(fulldat$dday26C, "label") <- "degree day 26C"
+# attr(fulldat$dday27C, "label") <- "degree day 27C"
+# attr(fulldat$dday28C, "label") <- "degree day 28C"
+# attr(fulldat$dday29C, "label") <- "degree day 29C"
+# attr(fulldat$dday30C, "label") <- "degree day 30C"
+# attr(fulldat$dday31C, "label") <- "degree day 31C"
+# attr(fulldat$dday32C, "label") <- "degree day 32C"
+# attr(fulldat$dday33C, "label") <- "degree day 33C"
+# attr(fulldat$dday34C, "label") <- "degree day 34C"
+# attr(fulldat$dday35C, "label") <- "degree day 35C"
+# attr(fulldat$ndday0C, "label") <- "degree days < 0C"
+# attr(fulldat$prec, "label") <- "precipitation"
+# attr(fulldat$tmin, "label") <- "minimum temp"
+# attr(fulldat$tmax, "label") <- "maximum temp"
+# attr(fulldat$tavg, "label") <- "average temp"
+# attr(fulldat$population, "label") <- "population"
+# attr(fulldat$pop_dens, "label") <- "population density per sq mi"
+# attr(fulldat$land_sqm, "label") <- "county area sq mile"
+# attr(fulldat$ipc, "label") <- "income per capita"
 
 #write.csv(fulldat, "data/full_ag_data.csv", row.names = FALSE)
 

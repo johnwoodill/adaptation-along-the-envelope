@@ -17,8 +17,8 @@ soil$fips <- as.numeric(soil$fips)
 cropdat <- filter(cropdat, abs(long) <= 100)
 
 cropdat <- filter(cropdat, year >= 1970 & year <= 2010)
-
-cropdat$corn_rrev <- cropdat$corn_rrev + cropdat$cotton_rrev + cropdat$hay_rrev + cropdat$wheat_rrev + cropdat$soybean_rrev
+# cropdat <- filter(cropdat, corn_rrev > 0)
+#cropdat$corn_rrev <- cropdat$corn_rrev + cropdat$cotton_rrev + cropdat$hay_rrev + cropdat$wheat_rrev + cropdat$soybean_rrev
 cropdat$ln_corn_rrev <- log(1 + cropdat$corn_rrev)
 cropdat$ln_cotton_rrev <- log(1 + cropdat$cotton_rrev)
 cropdat$ln_hay_rrev <- log(1 + cropdat$hay_rrev)
@@ -54,32 +54,17 @@ cropdat <- cropdat %>%
         dm_ipc = mean(ipc, na.rm = TRUE),
         dm_pop_dens = mean(pop_dens, na.rm = TRUE)) 
 
-# for (i in unique(d$fips)){
-#    timemeancorn <- mean(d[d$fips == i, "ln_corn_rrev"], na.rm = TRUE)
-#    timemeantavg <- mean(d[d$fips == i, "tavg"], na.rm = TRUE)
-#    timemeanprec <- mean(d[d$fips == i, "prec"], na.rm = TRUE)
-#    cropdat$dm_ln_corn_rrev[d$fips == i] <- d$ln_corn_rrev[d$fips == i] - timemeancorn
-#    cropdat$dm_tavg[d$fips == i] <- d$tavg[d$fips == i] - timemeantavg
-#    cropdat$dm_prec[d$fips == i] <- d$prec[d$fips == i] - timemeanprec
-#  }
-
-# cropdat <- cropdat %>% 
-#   group_by(fips) %>% 
-#   summarise(ln_corn_rev = mean(ln_corn_rev, na.rm = TRUE),
-#             tavg = mean(tavg, na.rm = TRUE),
-#             prec = mean(prec, na.rm = TRUE))
-
 cropdat <- left_join(cropdat, soil, by = "fips")
 
 # Corn
 
-cs.mod1  <- lm(dm_ln_corn_rrev ~ dm_tavg + I(dm_tavg^2) + dm_prec + I(dm_prec^2) + lat +
-              dm_ipc + dm_pop_dens + I(dm_pop_dens^2) + waterCapacity +  percentClay + minPermeability + kFactor + bestSoil, data = cropdat)
-summary(cs.mod1)
-
-cs.mod1  <- lm(dm_ln_corn_rrev ~ dm_dday8_32 + I(dm_dday8_32^2) + sqrt(dm_dday34C) + dm_prec + I(dm_prec^2) + lat +
+cs.corn.mod1  <- lm(dm_ln_corn_rrev ~ dm_tavg + I(dm_tavg^2) + dm_prec + I(dm_prec^2) + lat +
               dm_ipc + dm_pop_dens + I(dm_pop_dens^2) + percentClay + minPermeability + kFactor + bestSoil, data = cropdat)
-summary(cs.mod1)
+summary(cs.corn.mod1)
+
+cs.corn.mod2<- lm(dm_ln_corn_rrev ~ dm_dday8_32 + I(dm_dday8_32^2) + sqrt(dm_dday34C) + dm_prec + I(dm_prec^2) + lat +
+              dm_ipc + dm_pop_dens + I(dm_pop_dens^2) + percentClay + minPermeability + kFactor + bestSoil, data = cropdat)
+summary(cs.corn.mod2)
 
 
 

@@ -8,6 +8,7 @@ library(plm)
 cropdat <- readRDS("data/full_ag_data.rds")
 cropdat <- filter(cropdat, abs(long) <= 100)
 cropdat <- filter(cropdat, year >= 1960 & year <= 2010)
+# cropdat <- filter(cropdat, corn_rrev > 0)
 #cropdat <- filter(cropdat, fips == 18175)
 
 
@@ -20,18 +21,17 @@ cropdat$ffips <- as.factor(cropdat$fips)
 cropdat$fstate <- as.factor(cropdat$state)
 cropdat$dday8C_32C <- cropdat$dday8C - cropdat$dday32C
 cropdat$dday8C_32C_sq <- cropdat$dday8C_32C^2
-cropdat$dday34C_sqrt <- sqrt(cropdat$dday32C)
+cropdat$dday34C_sqrt <- sqrt(cropdat$dday34C)
 
-dat <- cropdat
-dbdist <- datadist(dat)
-options("datadist" = "dbdist")
+p.corn.mod1 <- plm(log(1 + corn_rrev) ~ tavg + tavgsq + prec + precsq + trend + trendsq, data = cropdat, index = "fips")
+summary(p.corn.mod1)
 
-#mod1 <- ols(log(corn_yield) ~ statefe + corn_dday10w + corn_dday29w,
-#            data=gp, x = TRUE, y = TRUE)
+p.corn.mod2 <- plm(log(1 + corn_rrev) ~ dday8C_32C + dday8C_32C_sq + dday34C_sqrt +
+              prec + precsq + trend + trendsq, data = cropdat, index = "fips")
+summary(p.corn.mod2)
 
-p.mod1 <- plm(log(1 + corn_rrev) ~ 1 +dday8C_32C + dday8C_32C_sq + 
-             dday34C_sqrt + trend + trendsq + prec + precsq, data = cropdat, index = "fips")
-summary(p.mod1)
+
+
 
 
 test <- mod1$model
