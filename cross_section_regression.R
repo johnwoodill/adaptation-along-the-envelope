@@ -66,39 +66,39 @@ cs.corn.mod2<- lm(dm_ln_corn_rrev ~ dm_dday8_32 + I(dm_dday8_32^2) + sqrt(dm_dda
               dm_ipc + dm_pop_dens + I(dm_pop_dens^2) + percentClay + minPermeability + kFactor + bestSoil, data = cropdat)
 summary(cs.corn.mod2)
 
-
-
-# Check assumptions
-gtest <- gvlma(mod1)
-summary(gtest)
-mean(mod1$residuals)   # Mean of residuals is 0: [1] 2.370616e-18
-
-plot(mod1) # Homoscedasticity of residuals or equal variance
-
-acf(mod1$residuals) # no time so no autocorrection, check with dwtest
-dwtest(mod1)
-
-# Check for multicollinearity
-car::vif(mod1)
-
-mod1 <- lm(dm_corn_rev ~ dm_dd8C_32C + + I(dm_dd8C_32C^2) + dm_dd34C + dm_prec + dm_precsq, data = corn_reg)
-summary(mod1)
-
-# Cotton
-mod2 <- lm(dm_cotton_rev ~ dm_tavg + dm_tavgsq + dm_prec + dm_precsq, data = dat)
-summary(mod2)
-
-# Hay
-mod3 <- lm(dm_hay_rev ~ dm_tavg + dm_tavgsq + dm_prec + dm_precsq, data = dat)
-summary(mod3)
-
-# Wheat
-mod4 <- lm(dm_wheat_rev ~ dm_tavg + dm_tavgsq + dm_prec + dm_precsq, data = dat)
-summary(mod4)
-
-# Soybean
-mod5 <- lm(dm_soybean_rev ~ dm_tavg + dm_tavgsq + dm_prec + dm_precsq, data = dat)
-summary(mod5)
-
-
-
+# 
+# 
+# # Check assumptions
+# gtest <- gvlma(mod1)
+# summary(gtest)
+# mean(mod1$residuals)   # Mean of residuals is 0: [1] 2.370616e-18
+# 
+# plot(mod1) # Homoscedasticity of residuals or equal variance
+# 
+# acf(mod1$residuals) # no time so no autocorrection, check with dwtest
+# dwtest(mod1)
+# 
+# # Check for multicollinearity
+# car::vif(mod1)
+# 
+# mod1 <- lm(dm_corn_rev ~ dm_dd8C_32C + + I(dm_dd8C_32C^2) + dm_dd34C + dm_prec + dm_precsq, data = corn_reg)
+# summary(mod1)
+# 
+# # Cotton
+# mod2 <- lm(dm_cotton_rev ~ dm_tavg + dm_tavgsq + dm_prec + dm_precsq, data = dat)
+# summary(mod2)
+# 
+# # Hay
+# mod3 <- lm(dm_hay_rev ~ dm_tavg + dm_tavgsq + dm_prec + dm_precsq, data = dat)
+# summary(mod3)
+# 
+# # Wheat
+# mod4 <- lm(dm_wheat_rev ~ dm_tavg + dm_tavgsq + dm_prec + dm_precsq, data = dat)
+# summary(mod4)
+# 
+# # Soybean
+# mod5 <- lm(dm_soybean_rev ~ dm_tavg + dm_tavgsq + dm_prec + dm_precsq, data = dat)
+# summary(mod5)
+# 
+# 
+# 

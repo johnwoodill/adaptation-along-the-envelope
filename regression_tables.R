@@ -1,4 +1,10 @@
-setwd("/run/media/john/1TB/SpiderOak/Projects/adaptation-and-an-envelope/")
+library(stargazer)
+
+setwd("/run/media/john/1TB/SpiderOak/Projects/adaptation-along-the-envelope/")
+
+source("cross_section_regression.R")
+source("panel_regression.R")
+source("logit_regression.R")
 
 # Cross Section Model
 names(cs.corn.mod1$coefficients)
@@ -13,7 +19,6 @@ names(cs.corn.mod2$coefficients) <- c("Intercept", "Degree Days (8-32C)", "Degre
                                  "Precipitation", "Precipitation Squared", "Latitude", "Income per Capita", "Population Density",
                                  "Population Density Squared", "Percent Clay", "Minimum Permeability", 
                                  "K-factor of Top Soil", "Best Soil Class")
-cs.corn.mod2$coefficients <- cs.corn.mod2$coefficients*100
 
 # Panel Model
 names(p.corn.mod1$coefficients)
@@ -23,7 +28,6 @@ names(p.corn.mod1$coefficients) <- c("Avg. Temperature", "Avg. Temperature Squar
 names(p.corn.mod2$coefficients)
 names(p.corn.mod2$coefficients) <- c("Degree Days (8-32C)", "Degree Days (8-32C) Squared", "Square Root Degree Days (34C)", 
                                 "Precipitation", "Precipitation Squared", "Trend", "Trend Squared")
-p.corn.mod2$coefficients <- p.corn.mod2$coefficients*100
 
 # Logit Model
 names(l.corn.mod1$coefficients)
@@ -33,7 +37,6 @@ names(l.corn.mod1$coefficients) <- c("Intercept", "Avg. Temperature", "Avg. Temp
 names(l.corn.mod2$coefficients)
 names(l.corn.mod2$coefficients) <- c("Intercept", "Degree Days (8-32C)", "Degree Days (8-32C) Squared", "Square Root Degree Days (34C)",
                                      "Precipitation", "Precipitation Squared")
-l.corn.mod2$coefficients <- l.corn.mod2$coefficients*100
 
 names(l.corn.mod3$coefficients)
 names(l.corn.mod3$coefficients) <- c("Intercept", "Avg. Temperature", "Avg. Temperature Squared", "Precipitation", 
@@ -42,7 +45,6 @@ names(l.corn.mod3$coefficients) <- c("Intercept", "Avg. Temperature", "Avg. Temp
 names(l.corn.mod4$coefficients)
 names(l.corn.mod4$coefficients) <- c("Intercept", "Degree Days (8-32C)", "Degree Days (8-32C) Squared", "Square Root Degree Days (34C)",
                                      "Precipitation", "Precipitation Squared")
-l.corn.mod4$coefficients <- l.corn.mod4$coefficients*100
 
 # Long difference Model
 

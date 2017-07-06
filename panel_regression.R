@@ -32,25 +32,25 @@ summary(p.corn.mod2)
 
 
 
-
-
-test <- mod1$model
-plot(mod1)
-
-mod2 <- plm(log(1 + cotton_rrev) ~ dday8C_32C + dday8C_32C_sq + 
-             dday34C_sqrt + trend + trendsq + prec + precsq, data = dat, index = c("ffips"))
-summary(mod2)
-
-mod3 <- plm(log(1 + hay_rrev) ~ dday8C_32C + dday8C_32C_sq + 
-             dday34C_sqrt + trend + trendsq + prec + precsq, data = dat, index = "ffips")
-summary(mod3)
-
-mod4 <- plm(log(1 + wheat_rrev) ~ ~ dday8C_32C + dday8C_32C_sq + 
-             dday34C_sqrt + trend + trendsq + prec + precsq, data = dat, index = "ffips")
-summary(mod4)
-
-mod5 <- plm(log(1 + soybean_rrev) ~ ~ dday8C_32C + dday8C_32C_sq + 
-             dday34C_sqrt + trend + trendsq + prec + precsq, data = dat = "ffips")
-summary(mod5)
+# 
+# 
+# test <- mod1$model
+# plot(mod1)
+# 
+# mod2 <- plm(log(1 + cotton_rrev) ~ dday8C_32C + dday8C_32C_sq + 
+#              dday34C_sqrt + trend + trendsq + prec + precsq, data = dat, index = c("ffips"))
+# summary(mod2)
+# 
+# mod3 <- plm(log(1 + hay_rrev) ~ dday8C_32C + dday8C_32C_sq + 
+#              dday34C_sqrt + trend + trendsq + prec + precsq, data = dat, index = "ffips")
+# summary(mod3)
+# 
+# mod4 <- plm(log(1 + wheat_rrev) ~ ~ dday8C_32C + dday8C_32C_sq + 
+#              dday34C_sqrt + trend + trendsq + prec + precsq, data = dat, index = "ffips")
+# summary(mod4)
+# 
+# mod5 <- plm(log(1 + soybean_rrev) ~ ~ dday8C_32C + dday8C_32C_sq + 
+#              dday34C_sqrt + trend + trendsq + prec + precsq, data = dat = "ffips")
+# summary(mod5)
 
 
