@@ -57,6 +57,9 @@ star1 <- stargazer(cs.corn.mod1, cs.corn.mod2, p.corn.mod1, p.corn.mod2, align =
           , model.names = FALSE
           )
 
+#star1 <- sub("\\caption{Regression Models explaining Crop Revenue}", 
+#          "\\caption[asdfasdfasdfasdfasdf]{The main caption of the table.}", fixed = TRUE, star1)
+
 # Logit Model Table
 star2 <- stargazer(l.corn.mod1, l.corn.mod2, l.corn.mod3, l.corn.mod4, align = TRUE, no.space = TRUE, digits = 2,  report = "vc*", 
           omit = "fips", omit.stat = c("ser", "f"), 
@@ -74,3 +77,11 @@ cat("\\end{document}", file = "regression_tables.tex", append = TRUE)
 # Compile pdf
 system("pdflatex regression_tables.tex")
 }
+
+x <- capture.output(stargazer(mtcars[1:5, 1:3], summary = FALSE, title="The main caption of the table."))
+
+x
+x <- sub("\\caption{The main caption of the table.}", 
+         "\\caption[short caption]{The main caption of the table.}", fixed = TRUE, x)
+
+x

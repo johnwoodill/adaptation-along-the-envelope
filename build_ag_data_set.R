@@ -5,6 +5,7 @@ library(maps)
 library(lubridate)
 library(stringr)
 library(foreign)
+library(haven)
 
 setwd("/run/media/john/1TB/SpiderOak/Projects/adaptation-and-an-envelope/")
 
@@ -217,6 +218,8 @@ dd$fips <- as.integer(dd$fips)
 dd_dat <- dd %>% 
   group_by(year, fips) %>% 
   summarise(dday8C = sum(dday8C),
+            dday10C = sum(dday10C),
+            dday30C = sum(dday30C),
             dday32C = sum(dday32C),
             dday34C = sum(dday34C),
             prec = sum(prec),

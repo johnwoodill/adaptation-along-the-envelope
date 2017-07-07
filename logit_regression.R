@@ -17,11 +17,12 @@ g_legend<-function(a.gplot){
 
 cropdat <- readRDS("data/full_ag_data.rds")
 cropdat <- filter(cropdat, abs(long) <= 100)
-cropdat <- filter(cropdat, year >= 1960 & year <= 2010)
+cropdat <- filter(cropdat, year >= 1970 & year <= 2010)
 
 cropdat$total_rev <- cropdat$corn_rrev + cropdat$cotton_rrev + cropdat$hay_rrev + cropdat$wheat_rrev + cropdat$soybean_rrev
 cropdat$total_a <- cropdat$corn_grain_a + cropdat$cotton_a + cropdat$hay_a + cropdat$wheat_a + cropdat$soybean_a
 cropdat$dday8_32 <- cropdat$dday8C - cropdat$dday32C
+cropdat$dday10_30 <- cropdat$dday10C - cropdat$dday30C
 
 # # Remove trend
 # cropdat <- cropdat %>% 
@@ -45,6 +46,7 @@ cropdat <- cropdat %>%
         tavg = mean(tavg, na.rm = TRUE),
         prec = mean(prec, na.rm = TRUE),
         dday8_32 = mean(dday8_32, na.rm = TRUE),
+        dday10_30 = mean(dday10_30, na.rm = TRUE),
         dday34C = mean(dday34C, na.rm = TRUE))
 
 # 

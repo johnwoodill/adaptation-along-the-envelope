@@ -20,12 +20,12 @@ cropdat <- filter(cropdat, year >= 1970 & year <= 2010)
 # cropdat <- filter(cropdat, corn_rrev > 0)
 #cropdat$corn_rrev <- cropdat$corn_rrev + cropdat$cotton_rrev + cropdat$hay_rrev + cropdat$wheat_rrev + cropdat$soybean_rrev
 cropdat$ln_corn_rrev <- log(1 + cropdat$corn_rrev)
-cropdat$ln_cotton_rrev <- log(1 + cropdat$cotton_rrev)
-cropdat$ln_hay_rrev <- log(1 + cropdat$hay_rrev)
+# cropdat$ln_cotton_rrev <- log(1 + cropdat$cotton_rrev)
+# cropdat$ln_hay_rrev <- log(1 + cropdat$hay_rrev)
 
-cropdat$tavg_sq <- cropdat$tavg^2
-cropdat$prec_sq <- cropdat$prec^2
-cropdat$dday8_32 <- cropdat$dday8C - cropdat$dday32C
+# cropdat$tavg_sq <- cropdat$tavg^2
+# cropdat$prec_sq <- cropdat$prec^2
+cropdat$dday10_30 <- cropdat$dday10C - cropdat$dday30C
 
 # Remove inf to na
 is.na(cropdat) <- do.call(cbind, lapply(cropdat, is.infinite))
@@ -38,10 +38,11 @@ cropdat <- cropdat %>%
         dm_tavg = tavg - mean(tavg, na.rm = TRUE),
         dm_prec = prec - mean(prec, na.rm = TRUE),
         dm_corn_grain_a = corn_grain_a - mean(corn_grain_a, na.rm = TRUE),
-        dm_dday8_32 = dday8_32 - mean(dday8_32, na.rm = TRUE),
-        dm_dday34C = dday34C - mean(dday32C, na.rm = TRUE),
+        dm_dday10_30 = dday10_30 - mean(dday10_30, na.rm = TRUE),
+        dm_dday34C = dday34C - mean(dday34C, na.rm = TRUE),
         dm_ipc = ipc - mean(ipc, na.rm = TRUE),
         dm_pop_dens = pop_dens - mean(pop_dens, na.rm = TRUE)) %>% 
+  ungroup() %>% 
   group_by(state, fips) %>% 
 
     summarise(dm_ln_corn_rrev = mean(dm_ln_corn_rrev, na.rm = TRUE),
@@ -49,7 +50,7 @@ cropdat <- cropdat %>%
         dm_prec = mean(dm_prec, na.rm = TRUE),
         dm_corn_grain_a = mean(dm_corn_grain_a, na.rm = TRUE),
         lat = mean(lat, na.rm = TRUE),
-        dm_dday8_32 = mean(dday8_32, na.rm = TRUE),
+        dm_dday10_30 = mean(dday10_30, na.rm = TRUE),
         dm_dday34C = mean(dday34C, na.rm = TRUE),
         dm_ipc = mean(ipc, na.rm = TRUE),
         dm_pop_dens = mean(pop_dens, na.rm = TRUE)) 
@@ -58,11 +59,18 @@ cropdat <- left_join(cropdat, soil, by = "fips")
 
 # Corn
 
+# cs.corn.mod1  <- lm(dm_ln_corn_rrev ~ dm_tavg + I(dm_tavg^2) + dm_prec + I(dm_prec^2), data = cropdat)
+# summary(cs.corn.mod1)
+
 cs.corn.mod1  <- lm(dm_ln_corn_rrev ~ dm_tavg + I(dm_tavg^2) + dm_prec + I(dm_prec^2) + lat +
               dm_ipc + dm_pop_dens + I(dm_pop_dens^2) + percentClay + minPermeability + kFactor + bestSoil, data = cropdat)
 summary(cs.corn.mod1)
 
-cs.corn.mod2<- lm(dm_ln_corn_rrev ~ dm_dday8_32 + I(dm_dday8_32^2) + sqrt(dm_dday34C) + dm_prec + I(dm_prec^2) + lat +
+# cs.corn.mod2<- lm(dm_ln_corn_rrev ~ dm_dday10_30 + I(dm_dday10_30^2) + sqrt(dm_dday34C) + dm_prec + I(dm_prec^2), data = cropdat)
+# summary(cs.corn.mod2)
+
+
+cs.corn.mod2<- lm(dm_ln_corn_rrev ~ dm_dday10_30 + I(dm_dday10_30^2) + sqrt(dm_dday34C) + dm_prec + I(dm_prec^2) + lat +
               dm_ipc + dm_pop_dens + I(dm_pop_dens^2) + percentClay + minPermeability + kFactor + bestSoil, data = cropdat)
 summary(cs.corn.mod2)
 
