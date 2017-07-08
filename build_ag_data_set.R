@@ -7,7 +7,7 @@ library(stringr)
 library(foreign)
 library(haven)
 
-setwd("/run/media/john/1TB/SpiderOak/Projects/adaptation-and-an-envelope/")
+setwd("/run/media/john/1TB/SpiderOak/Projects/adaptation-along-the-envelope/")
 
 # Function to extract data
 

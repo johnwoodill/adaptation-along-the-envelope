@@ -1,6 +1,6 @@
 To Do
 =================================
-
+Update regression tables and correct t-stats/s.e. with multiplying by 100
 
 Complete
 ==================================

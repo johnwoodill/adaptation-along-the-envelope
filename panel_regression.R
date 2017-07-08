@@ -2,6 +2,7 @@ library(ggplot2)
 library(dplyr)
 library(stargazer)
 library(rms)
+library(lfe)
 library(cowplot)
 library(plm)
 
@@ -26,18 +27,38 @@ cropdat$dday8C_32C_sq <- cropdat$dday8C_32C^2
 cropdat$dday34C_sqrt <- sqrt(cropdat$dday34C)
 cropdat$ln_corn_rrev <- log(1 + cropdat$corn_rrev)
 
+cropdat <- filter(cropdat, !is.na(ln_corn_rrev))
+
+# cropdat <- cropdat %>%
+#    group_by(fips) %>%
+#    mutate(ln_corn_rrev = ln_corn_rrev - mean(ln_corn_rrev, na.rm = TRUE),
+#              tavg = tavg - mean(tavg, na.rm = TRUE),
+#              prec = prec - mean(prec, na.rm = TRUE))
+# 
+# cropdat$precsq <- cropdat$prec^2
+# cropdat$tavgsq <- cropdat$tavg^2
+
 p.cropdat <- plm.data(cropdat, index = c("fips", "year"))
 
-# With Trend
-p.corn.mod1 <- plm(ln_corn_rrev ~ factor(year) + tavg + tavgsq + prec + precsq, 
-                   data = p.cropdat, index = c("fips", "year"), model = "within")
-summary(p.corn.mod1)
 
-p.corn.mod2 <- plm(ln_corn_rrev ~ factor(year) + dday10C_30C + dday10C_30C_sq + dday34C_sqrt +
-              prec + precsq + trend + trendsq, data = p.cropdat, model = "within")
-summary(p.corn.mod2)
+ p.corn.mod1 <- plm(ln_corn_rrev ~ factor(year) + tavg + tavgsq + prec + precsq, 
+                    data = p.cropdat, model = "within")
+ summary(p.corn.mod1)
+ 
+ p.corn.mod2 <- plm(ln_corn_rrev ~ factor(year) + dday10C_30C + dday10C_30C_sq + dday34C_sqrt +
+               prec + precsq, data = p.cropdat, model = "within")
+ summary(p.corn.mod2)
 
+# p.corn.mod1 <- lm(ln_corn_rrev ~ factor(year) + factor(fips) + tavg + tavgsq + prec + precsq,
+#                    data = cropdat)
+# summary(p.corn.mod1)
+# 
+# p.corn.mod2 <- lm(ln_corn_rrev ~ factor(year) + factor(fips) + dday10C_30C + dday10C_30C_sq + dday34C_sqrt +
+#               prec + precsq, data = cropdat)
+# summary(p.corn.mod2)
 
+saveRDS(p.corn.mod1, "models/p.corn.mod1")
+saveRDS(p.corn.mod2, "models/p.corn.mod2")
 
 # 
 # 
