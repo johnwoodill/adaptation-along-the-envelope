@@ -1,124 +1,142 @@
-library(tidyverse)
-library(ggthemes)
-library(cowplot)
-
 library(ggplot2)
 library(dplyr)
-cropdat1 <- readRDS("data/full_ag_data.rds")
-cropdat1 <- filter(cropdat1, year >= 1960 & year < 1970)
-#cropdat1 <- filter(cropdat1, year >= 2000 & year < 2010)
+library(cowplot)
 
-plots <- list()
+cropdat <- readRDS("data/full_ag_data.rds")
 
-# Crop rev
-cropdat1$corn_rev <- (cropdat1$corn_grain_p*cropdat1$corn_rprice)/cropdat1$corn_grain_a
-cropdat1$cotton_rev <- (cropdat1$cotton_p*cropdat1$cotton_rprice)/cropdat1$cotton_a
-cropdat1$hay_rev <- (cropdat1$hay_p*cropdat1$hay_rprice)/cropdat1$hay_a
-cropdat1$wheat_rev <- (cropdat1$wheat_p*cropdat1$wheat_rprice)/cropdat1$wheat_a
-cropdat1$soybean_rev <- (cropdat1$soybean_p*cropdat1$soybean_rprice)/cropdat1$soybean_a
-cropdat1$cropland <- cropdat1$corn_grain_a + cropdat1$cotton_a + cropdat1$hay_a + cropdat1$wheat_a + cropdat1$soybean_a
+# Function for plotting differences in density
+crop.density <- function(x, start, end, var){ # 1 - crop rev per acre, 2 - crop rev, 3 - acres
+  cropdat <- x
+  if (var == 1){
+    # Crop rev per acre
+    cropdat$corn_var <- (cropdat$corn_grain_p*cropdat$corn_rprice)/cropdat$corn_grain_a
+    cropdat$cotton_var <- (cropdat$cotton_p*cropdat$cotton_rprice)/cropdat$cotton_a
+    cropdat$hay_var <- (cropdat$hay_p*cropdat$hay_rprice)/cropdat$hay_a
+    cropdat$wheat_var <- (cropdat$wheat_p*cropdat$wheat_rprice)/cropdat$wheat_a
+    cropdat$soybean_var <- (cropdat$soybean_p*cropdat$soybean_rprice)/cropdat$soybean_a
+    gt <- paste0("Revenue per Acre Crop Share")
+    title <- paste0("revenue_per_acre_crop_share")
+  } else if (var == 2){
+    # Crop rev
+    cropdat$corn_var <- (cropdat$corn_grain_p*cropdat$corn_rprice)
+    cropdat$cotton_var <- (cropdat$cotton_p*cropdat$cotton_rprice)
+    cropdat$hay_var <- (cropdat$hay_p*cropdat$hay_rprice)
+    cropdat$wheat_var <- (cropdat$wheat_p*cropdat$wheat_rprice)
+    cropdat$soybean_var <- (cropdat$soybean_p*cropdat$soybean_rprice)
+    gt <- paste0("Revenue Crop Share")
+    title <- paste0("revenue_crop_share")
+  } else if (var == 3){
+    # Crop acres
+    cropdat$corn_var <- cropdat$corn_grain_a
+    cropdat$cotton_var <- cropdat$cotton_a
+    cropdat$hay_var <- cropdat$hay_a
+    cropdat$wheat_var <- cropdat$wheat_a
+    cropdat$soybean_var <- cropdat$soybean_a
+    gt <- paste0("Acre Crop Share")
+    title <- paste0("acre_crop_share")
+  }
 
-# Remove inf to na
-is.na(cropdat1) <- do.call(cbind, lapply(cropdat1, is.infinite))
+    cropdat1 <- filter(cropdat, year >= start & year < (start + 10))
+    
+    # Remove inf to na
+    is.na(cropdat1) <- do.call(cbind, lapply(cropdat1, is.infinite))
+    
+    corn_dat1 <- filter(cropdat1, !is.na(corn_var) & !is.na(tavg))
+    cotton_dat1 <- filter(cropdat1, !is.na(cotton_var) & !is.na(tavg))
+    hay_dat1 <- filter(cropdat1, !is.na(hay_var) & !is.na(tavg))
+    wheat_dat1 <- filter(cropdat1, !is.na(wheat_var) & !is.na(tavg))
+    soybean_dat1 <- filter(cropdat1, !is.na(soybean_var) & !is.na(tavg))
+    
+    sum.corn1 <- sum(corn_dat1$corn_var)
+    sum.cotton1 <- sum(cotton_dat1$cotton_var)
+    sum.hay1 <- sum(hay_dat1$hay_var)
+    sum.wheat1 <- sum(wheat_dat1$wheat_var)
+    sum.soybean1 <- sum(soybean_dat1$soybean_var)
+    sum.all1 <- sum.corn1 + sum.cotton1 + sum.hay1 + sum.wheat1 + sum.soybean1
+    
+    dens.corn1 <- density(corn_dat1$tavg, weight = corn_dat1$corn_var/sum.all1, from = 0, to = 25, n = 30)
+    dens.cotton1 <- density(cotton_dat1$tavg, weight = cotton_dat1$cotton_var/sum.all1, from = 0, to = 25, n = 30)
+    dens.hay1 <- density(hay_dat1$tavg, weight = hay_dat1$hay_var/sum.all1, from = 0, to = 25, n = 30)
+    dens.wheat1 <- density(wheat_dat1$tavg, weight = wheat_dat1$wheat_var/sum.all1, from = 0, to = 25, n = 30)
+    dens.soybean1 <- density(soybean_dat1$tavg, weight = soybean_dat1$soybean_var/sum.all1, from = 0, to = 25, n = 30)
+    
+    dens.wheat1$y <- dens.wheat1$y + dens.cotton1$y
+    dens.hay1$y <- dens.hay1$y + dens.wheat1$y
+    dens.soybean1$y <- dens.hay1$y + dens.soybean1$y
+    dens.corn1$y <- dens.corn1$y + dens.soybean1$y
+    
+    
+    
+    #----------------------
+    # 2000's
+    
+    cropdat2 <- filter(cropdat, year >= end & year < (end + 10))
+    
+    # Remove inf to na
+    is.na(cropdat2) <- do.call(cbind, lapply(cropdat2, is.infinite))
+    
+    corn_dat2 <- filter(cropdat2, !is.na(corn_var) & !is.na(tavg))
+    cotton_dat2 <- filter(cropdat2, !is.na(cotton_var) & !is.na(tavg))
+    hay_dat2 <- filter(cropdat2, !is.na(hay_var) & !is.na(tavg))
+    wheat_dat2 <- filter(cropdat2, !is.na(wheat_var) & !is.na(tavg))
+    soybean_dat2 <- filter(cropdat2, !is.na(soybean_var) & !is.na(tavg))
+    
+    sum.corn2 <- sum(corn_dat2$corn_var)
+    sum.cotton2 <- sum(cotton_dat2$cotton_var)
+    sum.hay2 <- sum(hay_dat2$hay_var)
+    sum.wheat2 <- sum(wheat_dat2$wheat_var)
+    sum.soybean2 <- sum(soybean_dat2$soybean_var)
+    sum.all2 <- sum.corn2 + sum.cotton2 + sum.hay2 + sum.wheat2 + sum.soybean2
+    
+    dens.corn2 <- density(corn_dat2$tavg, weight = corn_dat2$corn_var/sum.all2, from = 0, to = 25, n = 30)
+    dens.cotton2 <- density(cotton_dat2$tavg, weight = cotton_dat2$cotton_var/sum.all2, from = 0, to = 25, n = 30)
+    dens.hay2 <- density(hay_dat2$tavg, weight = hay_dat2$hay_var/sum.all2, from = 0, to = 25, n = 30)
+    dens.wheat2 <- density(wheat_dat2$tavg, weight = wheat_dat2$wheat_var/sum.all2, from = 0, to = 25, n = 30)
+    dens.soybean2 <- density(soybean_dat2$tavg, weight = soybean_dat2$soybean_var/sum.all2, from = 0, to = 25, n = 30)
+    
+    dens.wheat2$y <- dens.wheat2$y + dens.cotton2$y
+    dens.hay2$y <- dens.hay2$y + dens.wheat2$y
+    dens.soybean2$y <- dens.hay2$y + dens.soybean2$y
+    dens.corn2$y <- dens.corn2$y + dens.soybean2$y
+    
+    ymax <- max(dens.corn1$y, dens.corn2$y) + .05
+    
+    plot1 <- ggplot(NULL, aes(x = dens.corn1$x, y = dens.corn1$y)) + 
+      geom_polygon(aes(x = dens.corn1$x, y = dens.corn1$y, fill = "corn")) +
+      geom_polygon(aes(x = dens.soybean1$x, y = dens.soybean1$y, fill = "soybean")) + 
+      geom_polygon(aes(x = dens.hay1$x, y = dens.hay1$y, fill = "hay")) + 
+      geom_polygon(aes(x = dens.wheat1$x, y = dens.wheat1$y, fill = "wheat")) +
+      geom_polygon(aes(x = dens.cotton1$x, y = dens.cotton1$y, fill = "cotton")) + 
+      annotate("text", y = 0.09, x = 20, label = "1960's", size = 8) + xlab(NULL) + ylab(NULL)+ ylim(0, ymax) +
+      scale_fill_discrete(breaks = c("corn", "soybean", "hay", "wheat", "cotton")) + theme(legend.position="top") + 
+      theme(legend.title=element_blank()) + ggtitle(gt)
+    plot1
+    
+    plot2 <- ggplot(NULL, aes(x = dens.corn2$x, y = dens.corn2$y)) + 
+      geom_polygon(aes(x = dens.corn2$x, y = dens.corn2$y, fill = "corn")) +
+      geom_polygon(aes(x = dens.soybean2$x, y = dens.soybean2$y, fill = "soybean")) + 
+      geom_polygon(aes(x = dens.hay2$x, y = dens.hay2$y, fill = "hay")) + 
+      geom_polygon(aes(x = dens.wheat2$x, y = dens.wheat2$y, fill = "wheat")) +
+      geom_polygon(aes(x = dens.cotton2$x, y = dens.cotton2$y, fill = "cotton")) + 
+      xlab("Average Temp (C)") + ylab(NULL) + ylim(0, ymax) +
+        annotate("text", y = 0.09, x = 20, label = "2000's", size = 8) +
+      scale_fill_discrete(breaks = c("corn", "soybean", "hay", "wheat", "cotton")) + theme(legend.position="none") + 
+      theme(legend.title=element_blank())
+    plot2
+    
+    plott <- plot_grid(plot1, plot2, ncol = 1)
+    plott
+    save_plot(paste0("figures/", title, ".png"), plott, base_height = 10)
+}
 
-corn_dat <- filter(cropdat1, !is.na(corn_rev) & !is.na(tavg))
-cotton_dat <- filter(cropdat1, !is.na(cotton_rev) & !is.na(tavg))
-hay_dat <- filter(cropdat1, !is.na(hay_rev) & !is.na(tavg))
-wheat_dat <- filter(cropdat1, !is.na(wheat_rev) & !is.na(tavg))
-soybean_dat <- filter(cropdat1, !is.na(soybean_rev) & !is.na(tavg))
-cropland_dat <- filter(cropdat1, !is.na(cropland) & !is.na(cropland))
+# Revenue per acre share
+crop.density(cropdat, 1960, 2000, 1)
 
-sum.corn <- sum(corn_dat$corn_rev)
-sum.cotton <- sum(cotton_dat$cotton_rev)
-sum.hay <- sum(hay_dat$hay_rev)
-sum.wheat <- sum(wheat_dat$wheat_rev)
-sum.soybean <- sum(soybean_dat$soybean_rev)
-sum.all <- sum.corn + sum.cotton + sum.hay + sum.wheat + sum.soybean
+# Revenue share
+crop.density(cropdat, 1960, 2000, 2)
 
-dens.corn1 <- density(corn_dat$tavg, weight = corn_dat$corn_rev/sum.all, from = 0, to = 25, n = 30)
-dens.cotton1 <- density(cotton_dat$tavg, weight = cotton_dat$cotton_rev/sum.all, from = 0, to = 25, n = 30)
-dens.hay1 <- density(hay_dat$tavg, weight = hay_dat$hay_rev/sum.all, from = 0, to = 25, n = 30)
-dens.wheat1 <- density(wheat_dat$tavg, weight = wheat_dat$wheat_rev/sum.all, from = 0, to = 25, n = 30)
-dens.soybean1 <- density(soybean_dat$tavg, weight = soybean_dat$soybean_rev/sum.all, from = 0, to = 25, n = 30)
-
-dens.wheat1$y <- dens.wheat1$y + dens.cotton1$y
-dens.hay1$y <- dens.hay1$y + dens.wheat1$y
-dens.soybean1$y <- dens.hay1$y + dens.soybean1$y
-dens.corn1$y <- dens.corn1$y + dens.soybean1$y
-
-plot1 <- ggplot(NULL, aes(x = dens.corn1$x, y = dens.corn1$y)) + 
-  geom_polygon(aes(x = dens.corn1$x, y = dens.corn1$y, fill = "corn")) +
-  geom_polygon(aes(x = dens.soybean1$x, y = dens.soybean1$y, fill = "soybean")) + 
-  geom_polygon(aes(x = dens.hay1$x, y = dens.hay1$y, fill = "hay")) + 
-  geom_polygon(aes(x = dens.wheat1$x, y = dens.wheat1$y, fill = "wheat")) +
-  geom_polygon(aes(x = dens.cotton1$x, y = dens.cotton1$y, fill = "cotton")) + 
-  #geom_line(aes(x = dens.cropland1$x, y = dens.cropland1$y)) +
-  xlab("Average Temp (C)") + ylab("Share of Value per Acre") +  
-    annotate("text", y = 0.09, x = 20, label = "1960's", size = 8) +
-  scale_fill_discrete(breaks = c("corn", "soybean", "hay", "wheat", "cotton")) + theme(legend.position="top") + 
-  theme(legend.title=element_blank())
-plot1
+# Acreage share
+crop.density(cropdat, 1960, 2000, 3)
 
 
-#----------------------
-# 2000's
 
-cropdat2 <- readRDS("data/full_ag_data.rds")
-cropdat2 <- filter(cropdat2, year >= 2000 & year < 2010)
-
-# Crop rev
-cropdat2$corn_rev <- (cropdat2$corn_grain_p*cropdat2$corn_rprice)/cropdat2$corn_grain_a
-cropdat2$cotton_rev <- (cropdat2$cotton_p*cropdat2$cotton_rprice)/cropdat2$cotton_a
-cropdat2$hay_rev <- (cropdat2$hay_p*cropdat2$hay_rprice)/cropdat2$hay_a
-cropdat2$wheat_rev <- (cropdat2$wheat_p*cropdat2$wheat_rprice)/cropdat2$wheat_a
-cropdat2$soybean_rev <- (cropdat2$soybean_p*cropdat2$soybean_rprice)/cropdat2$soybean_a
-
-# Remove inf to na
-is.na(cropdat2) <- do.call(cbind, lapply(cropdat2, is.infinite))
-
-corn_dat <- filter(cropdat2, !is.na(corn_rev) & !is.na(tavg))
-cotton_dat <- filter(cropdat2, !is.na(cotton_rev) & !is.na(tavg))
-hay_dat <- filter(cropdat2, !is.na(hay_rev) & !is.na(tavg))
-wheat_dat <- filter(cropdat2, !is.na(wheat_rev) & !is.na(tavg))
-soybean_dat <- filter(cropdat2, !is.na(soybean_rev) & !is.na(tavg))
-
-sum.corn <- sum(corn_dat$corn_rev)
-sum.cotton <- sum(cotton_dat$cotton_rev)
-sum.hay <- sum(hay_dat$hay_rev)
-sum.wheat <- sum(wheat_dat$wheat_rev)
-sum.soybean <- sum(soybean_dat$soybean_rev)
-sum.all <- sum.corn + sum.cotton + sum.hay + sum.wheat + sum.soybean
-
-dens.corn <- density(corn_dat$tavg, weight = corn_dat$corn_rev/sum.all, from = 0, to = 25, n = 30)
-dens.cotton <- density(cotton_dat$tavg, weight = cotton_dat$cotton_rev/sum.all, from = 0, to = 25, n = 30)
-dens.hay <- density(hay_dat$tavg, weight = hay_dat$hay_rev/sum.all, from = 0, to = 25, n = 30)
-dens.wheat <- density(wheat_dat$tavg, weight = wheat_dat$wheat_rev/sum.all, from = 0, to = 25, n = 30)
-dens.soybean <- density(soybean_dat$tavg, weight = soybean_dat$soybean_rev/sum.all, from = 0, to = 25, n = 30)
-
-dens.wheat$y <- dens.wheat$y + dens.cotton$y
-dens.hay$y <- dens.hay$y + dens.wheat$y
-dens.soybean$y <- dens.hay$y + dens.soybean$y
-dens.corn$y <- dens.corn$y + dens.soybean$y
-
-plot2 <- ggplot(NULL, aes(x = dens.corn$x, y = dens.corn$y)) + 
-  geom_polygon(aes(x = dens.corn$x, y = dens.corn$y, fill = "corn")) +
-  geom_polygon(aes(x = dens.soybean$x, y = dens.soybean$y, fill = "soybean")) + 
-  geom_polygon(aes(x = dens.hay$x, y = dens.hay$y, fill = "hay")) + 
-  geom_polygon(aes(x = dens.wheat$x, y = dens.wheat$y, fill = "wheat")) +
-  geom_polygon(aes(x = dens.cotton$x, y = dens.cotton$y, fill = "cotton")) + 
-  xlab("Average Temp (C)") + ylab("Share of Value per Acre") + ylim(0, 0.12) +
-  annotate("text", y = 0.09, x = 20, label = "2000's", size = 8) +
-  scale_fill_discrete(breaks = c("corn", "soybean", "hay", "wheat", "cotton"))#+ theme(legend.position = "none", legend.key.size = 10)
-plot2
-
-plot_grid(plot1, plot2, ncol = 1)
-
-# 
-#  plot_grid(p1, p2,ncol = 1)
-
-# dens <- data.frame(x = c(dens.soybean$x, dens.wheat$x, dens.hay$x, dens.cotton$x, dens.corn$x),
-#                    y = c(dens.soybean$y, dens.wheat$y, dens.hay$y, dens.cotton$y, dens.corn$y),
-#                    crop = rep(c("soybean", "wheat", "hay", "cotton", "corn", each = 30)))
-# 
-# ggplot(dens, aes(x = x, y = y, fill = crop)) + geom_line(alpha = 0.3) +
-#            scale_fill_manual(values = c('red','blue','green', 'yellow', 'pink', 'grey')) 
