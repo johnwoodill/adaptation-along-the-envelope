@@ -39,20 +39,20 @@ names(cs.corn.mod2$coefficients) <- c("Intercept", "Degree Days (10-30C)", "Squa
 # Panel Model
 names(p.corn.mod1$coefficients)
 #p.corn.mod1$coefficients <- p.corn.mod1$coefficients[2344:2347]
-names(p.corn.mod1$coefficients)[36:39] <- c("Avg. Temperature", "Avg. Temperature Squared", 
+names(p.corn.mod1$coefficients)[40:44] <- c("Avg. Temperature", "Avg. Temperature Squared", 
                                 "Precipitation", "Precipitation Squared")
 
 #p.corn.mod2$coefficients <- p.corn.mod2$coefficients[2344:2348]
 names(p.corn.mod2$coefficients)
-names(p.corn.mod2$coefficients)[36:39] <- c("Degree Days (10-30C)", "Square Root Degree Days (34C)", 
+names(p.corn.mod2$coefficients)[40:44] <- c("Degree Days (10-30C)", "Square Root Degree Days (34C)", 
                                 "Precipitation", "Precipitation Squared")
 
 names(p.corn.mod3$coefficients)
-names(p.corn.mod3$coefficients)[56:59] <- c("Avg. Temperature", "Avg. Temperature Squared", 
+names(p.corn.mod3$coefficients)[61:64] <- c("Avg. Temperature", "Avg. Temperature Squared", 
                                 "Precipitation", "Precipitation Squared")
 
 names(p.corn.mod4$coefficients)
-names(p.corn.mod4$coefficients)[56:59] <- c("Degree Days (10-30C)", "Square Root Degree Days (34C)", 
+names(p.corn.mod4$coefficients)[61:64] <- c("Degree Days (10-30C)", "Square Root Degree Days (34C)", 
                                 "Precipitation", "Precipitation Squared")
 
 # Crop Choice Model
@@ -75,19 +75,19 @@ names(cc.corn.mod2$coefficients) <- c("Intercept", "Degree Days (10-30C)", "Squa
 
 # Difference Model
 names(diff.corn.mod1$coefficients)
-names(diff.corn.mod1$coefficients)[2264:2267] <- c("Avg. Temperature", "Avg. Temperature Squared", 
+names(diff.corn.mod1$coefficients)[2277:2280] <- c("Avg. Temperature", "Avg. Temperature Squared", 
                                 "Precipitation", "Precipitation Squared")
 
 names(diff.corn.mod2$coefficients)
-names(diff.corn.mod2$coefficients)[2264:2267] <- c("Degree Days (10-30C)", "Square Root Degree Days (34C)", 
+names(diff.corn.mod2$coefficients)[2277:2280] <- c("Degree Days (10-30C)", "Square Root Degree Days (34C)", 
                                 "Precipitation", "Precipitation Squared")
 
 names(diff.corn.mod3$coefficients)
-names(diff.corn.mod3$coefficients)[2264:2267] <- c("Avg. Temperature", "Avg. Temperature Squared", 
+names(diff.corn.mod3$coefficients)[2277:2280] <- c("Avg. Temperature", "Avg. Temperature Squared", 
                                 "Precipitation", "Precipitation Squared")
 
 names(diff.corn.mod4$coefficients)
-names(diff.corn.mod4$coefficients)[2264:2267] <- c("Degree Days (10-30C)", "Square Root Degree Days (34C)", 
+names(diff.corn.mod4$coefficients)[2277:2280] <- c("Degree Days (10-30C)", "Square Root Degree Days (34C)", 
                                 "Precipitation", "Precipitation Squared")
 
 

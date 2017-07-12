@@ -64,7 +64,7 @@ cropdat <- cropdat %>%
   ungroup() %>%
   group_by(state, fips) %>%
 
-    summarise(ln_corn_rrev = mean(dm_ln_corn_rrev, na.rm = TRUE),
+    summarise(ln_corn_rrev = mean(ln_corn_rrev, na.rm = TRUE),
         dm_tavg = mean(tavg, na.rm = TRUE),
         dm_prec = mean(prec, na.rm = TRUE),
         lat = mean(lat, na.rm = TRUE),
@@ -73,8 +73,8 @@ cropdat <- cropdat %>%
         dm_ipc = mean(dm_ipc, na.rm = TRUE),
         dm_pop_dens = mean(dm_pop_dens, na.rm = TRUE))
 # 
-cropdat <- left_join(cropdat, soil, by = "fips")
-cropdat <- filter(cropdat, !is.na(dm_ln_corn_rrev))
+#cropdat <- left_join(cropdat, soil, by = "fips")
+#cropdat <- filter(cropdat, !is.na(dm_ln_corn_rrev))
 # # Corn
 
 # cs.corn.mod1  <- lm(dm_ln_corn_rrev ~ dm_tavg + I(dm_tavg^2) + dm_prec + I(dm_prec^2), data = cropdat)
