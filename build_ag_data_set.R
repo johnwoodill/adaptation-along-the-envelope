@@ -202,28 +202,29 @@ cropdat <- left_join(cropdat, soybean, by = c("state", "fips", "year"))
 
 # Aggregate county-level degree days -----------------------------------------------
 
-# dd <- read_csv("/run/media/john/1TB/SpiderOak/Projects/Adaptation and an Envelope/data/fips_degree_days_1900-2013.csv")
-# prec <- read_csv("/run/media/john/1TB/SpiderOak/Projects/Adaptation and an Envelope/data/fips_precipitation_1900-2013.csv")
+dd <- read_csv("/run/media/john/1TB/SpiderOak/Projects/adaptation-along-the-envelope/data/fips_degree_days_1900-2013.csv")
+prec <- read_csv("/run/media/john/1TB/SpiderOak/Projects/adaptation-along-the-envelope/data/fips_precipitation_1900-2013.csv")
 
 #dd <- read_csv("/home/john/MEGA/Projects/adaptation-and-an-envelope/data/fips_degree_days_1900-2013.csv")
 #prec <- read_csv("/home/john/MEGA/Projects/adaptation-and-an-envelope/data/fips_precipitation_1900-2013.csv")
 
 # Schlenker and Roberts data
-dd <- read_dta("data/ddayOverAgAreaByMonth.dta")
+#dd <- read_dta("data/ddayOverAgAreaByMonth.dta")
+
 dd$year <- as.integer(dd$year)
 dd$fips <- as.integer(dd$fips)
-#dd_dat <- left_join(dd, prec, by = c("fips", "year", "month"))
+dd_dat <- left_join(dd, prec, by = c("fips", "year", "month"))
 #dd_dat$X1 <- NULL
 
-dd_dat <- dd %>% 
+dd_dat <- dd_dat %>% 
   group_by(year, fips) %>% 
   summarise(dday8C = sum(dday8C),
             dday10C = sum(dday10C),
             dday30C = sum(dday30C),
             dday32C = sum(dday32C),
             dday34C = sum(dday34C),
-            prec = sum(prec),
-            tavg = mean(tAvg))
+            prec = sum(ppt),
+            tavg = mean(tavg))
 # 
 # dd_dat <- dd_dat %>% 
 #     group_by(year, fips) %>% 

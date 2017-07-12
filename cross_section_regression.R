@@ -58,13 +58,13 @@ is.na(cropdat) <- do.call(cbind, lapply(cropdat, is.infinite))
 
 cropdat <- cropdat %>%
   group_by(year) %>%
-  mutate(dm_ln_corn_rrev = ln_corn_rrev - mean(ln_corn_rrev, na.rm = TRUE),
+  mutate(ln_corn_rrev = ln_corn_rrev - mean(ln_corn_rrev, na.rm = TRUE),
          dm_ipc = ipc - mean(ipc, na.rm = TRUE),
          dm_pop_dens = pop_dens - mean(pop_dens, na.rm = TRUE)) %>% 
   ungroup() %>%
   group_by(state, fips) %>%
 
-    summarise(dm_ln_corn_rrev = mean(dm_ln_corn_rrev, na.rm = TRUE),
+    summarise(ln_corn_rrev = mean(dm_ln_corn_rrev, na.rm = TRUE),
         dm_tavg = mean(tavg, na.rm = TRUE),
         dm_prec = mean(prec, na.rm = TRUE),
         lat = mean(lat, na.rm = TRUE),
@@ -80,9 +80,7 @@ cropdat <- filter(cropdat, !is.na(dm_ln_corn_rrev))
 # cs.corn.mod1  <- lm(dm_ln_corn_rrev ~ dm_tavg + I(dm_tavg^2) + dm_prec + I(dm_prec^2), data = cropdat)
 # summary(cs.corn.mod1)
 
-cs.corn.mod1  <- lm(dm_ln_corn_rrev ~ dm_tavg + I(dm_tavg^2) + dm_prec + I(dm_prec^2) + lat +
-              dm_ipc + dm_pop_dens + I(dm_pop_dens^2) + 
-                waterCapacity + percentClay + minPermeability + kFactor + bestSoil, data = cropdat)
+cs.corn.mod1  <- lm(ln_corn_rrev ~ dm_tavg + I(dm_tavg^2) + dm_prec + I(dm_prec^2), data = cropdat)
 summary(cs.corn.mod1)
 
 #cs.corn.mod1  <- lm(dm_ln_corn_rrev ~ dm_tavg + I(dm_tavg^2) + dm_prec + I(dm_prec^2), data = cropdat)
@@ -92,9 +90,7 @@ summary(cs.corn.mod1)
 # summary(cs.corn.mod2)
 
 
-cs.corn.mod2<- lm(dm_ln_corn_rrev ~ dm_dday10_30 + I(dm_dday10_30^2) + sqrt(dm_dday34C) + dm_prec + I(dm_prec^2) + lat +
-              dm_ipc + dm_pop_dens + I(dm_pop_dens^2) + 
-               waterCapacity + percentClay + minPermeability + kFactor + bestSoil, data = cropdat)
+cs.corn.mod2<- lm(ln_corn_rrev ~ dm_dday10_30 + sqrt(dm_dday34C) + dm_prec + I(dm_prec^2), data = cropdat)
 summary(cs.corn.mod2)
 
 # Save models

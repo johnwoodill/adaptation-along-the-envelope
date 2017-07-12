@@ -36,6 +36,7 @@ crop.density <- function(x, start, end, var){ # 1 - crop rev per acre, 2 - crop 
     title <- paste0("acre_crop_share")
   }
 
+    # Start year
     cropdat1 <- filter(cropdat, year >= start & year < (start + 10))
     
     # Remove inf to na
@@ -65,10 +66,16 @@ crop.density <- function(x, start, end, var){ # 1 - crop rev per acre, 2 - crop 
     dens.soybean1$y <- dens.hay1$y + dens.soybean1$y
     dens.corn1$y <- dens.corn1$y + dens.soybean1$y
     
+    plot(dens.corn1)
+    lines(dens.cotton1)
+    lines(dens.hay1)
+    lines(dens.soybean1)
+    lines(dens.wheat1)
     
+    plot(y= (dens.corn1$y + dens.cotton1$y + dens.hay1$y + dens.wheat1$y + dens.soybean1$y), x = 1:30, type = "l")
     
     #----------------------
-    # 2000's
+    # End year
     
     cropdat2 <- filter(cropdat, year >= end & year < (end + 10))
     
