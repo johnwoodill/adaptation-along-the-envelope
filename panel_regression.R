@@ -12,7 +12,7 @@ library(plm)
 
 cropdat <- readRDS("data/full_ag_data.rds")
 cropdat <- filter(cropdat, abs(long) <= 100)
-cropdat <- filter(cropdat, year >= 1970 & year <= 2010)
+cropdat <- filter(cropdat, year >= 1950 & year <= 2010)
 # cropdat <- filter(cropdat, corn_rrev > 0)
 #cropdat <- filter(cropdat, fips == 18175)
 
@@ -47,7 +47,7 @@ p.cropdat <- plm.data(cropdat, index = c("fips", "year"))
                     data = p.cropdat, model = "within")
  summary(p.corn.mod1)
  
- p.corn.mod2 <- plm(ln_corn_rrev ~ factor(year) + dday10C_30C  + I(sqrt(dday34C)) +
+ p.corn.mod2 <- plm(ln_corn_rrev ~ factor(year) + dday10C_30C  + dday10C_30C_sq + dday34C_sqrt +
                prec + precsq, data = p.cropdat, model = "within")
  summary(p.corn.mod2)
 
@@ -100,7 +100,7 @@ p.corn.mod3 <- plm(p_corn_a ~ factor(year) + tavg + tavgsq + prec + precsq,
                     data = p.cropdat, model = "within")
 summary(p.corn.mod3)
 
-p.corn.mod4 <- plm(p_corn_a ~ factor(year) + dday10C_30C  + I(sqrt(dday34C)) +
+p.corn.mod4 <- plm(p_corn_a ~ factor(year) + dday10C_30C + dday10C_30C_sq + dday34C_sqrt +
                prec + precsq, data = p.cropdat, model = "within")
 summary(p.corn.mod4)
 

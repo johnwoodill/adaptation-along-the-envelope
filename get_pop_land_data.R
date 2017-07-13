@@ -5,9 +5,11 @@ library(tidyverse)
 
 
 library(bea.R)
-beaSearch('population density', beaKey = beaKey)
-
 beaKey = "543C6E18-FF72-4461-9365-4FFA458CFBD4"
+
+#beaSearch('population density', beaKey = beaKey)
+
+
 beaUpdateMetadata('RegionalData',  beaKey = "543C6E18-FF72-4461-9365-4FFA458CFBD4")
 dat <- data.frame()
 
@@ -36,15 +38,15 @@ for (i in years){
   	'ResultFormat' = 'json'
   )
 
-pop <- beaGet(pop_beaSpecs)
-pop <- pop[, c(2,6)]
-names(pop) <- c("fips", "population")
-ipc <- beaGet(ipc_beaSpecs)
-ipc <- ipc[, c(2, 6)]
-names(ipc) <- c("fips", "ipc")
-comb <- left_join(pop, ipc, by = "fips")
-comb$year <- i
-dat <- rbind(dat, comb)
+    pop <- beaGet(pop_beaSpecs)
+    pop <- pop[, c(2,6)]
+    names(pop) <- c("fips", "population")
+    ipc <- beaGet(ipc_beaSpecs)
+    ipc <- ipc[, c(2, 6)]
+    names(ipc) <- c("fips", "ipc")
+    comb <- left_join(pop, ipc, by = "fips")
+    comb$year <- i
+    dat <- rbind(dat, comb)
 }
 
 dat <- select(dat, year, fips, population, ipc)
