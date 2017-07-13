@@ -82,6 +82,8 @@ cs.corn.mod1  <- lm(ln_corn_rrev ~ factor(state) + dm_tavg + dm_tavg_sq + dm_pre
                     data = cropdat, weights = cropdat$dm_corn_grain_a)
 summary(cs.corn.mod1)
 
+
+
 #cs.corn.mod1  <- lm(dm_ln_corn_rrev ~ dm_tavg + I(dm_tavg^2) + dm_prec + I(dm_prec^2), data = cropdat)
 #summary(cs.corn.mod1)
 
