@@ -208,6 +208,7 @@ cropdat <- left_join(cropdat, soybean, by = c("state", "fips", "year"))
  dd$year <- as.integer(dd$year)
  dd$fips <- as.integer(dd$fips)
  dd_dat <- left_join(dd, prec, by = c("fips", "year", "month"))
+ dd_dat <- filter(dd_dat, month >= 3 & month <= 9)
  dd_dat$X1 <- NULL
  
  dd_dat <- dd_dat %>%
@@ -224,17 +225,17 @@ cropdat <- left_join(cropdat, soybean, by = c("state", "fips", "year"))
 
 # Schlenker and Roberts data
 # dd_dat <- read_dta("data/ddayOverAgAreaByMonth.dta")
-# dd_dat$year <- as.integer(dd_dat$year)
-# dd_dat$fips <- as.integer(dd_dat$fips)
-# dd_dat <- dd_dat %>% 
-#   group_by(year, fips) %>% 
-#   summarise(dday8C = sum(dday8C),
-#             dday10C = sum(dday10C),
-#             dday30C = sum(dday30C),
-#             dday32C = sum(dday32C),
-#             dday34C = sum(dday34C),
-#             prec = sum(prec),
-#             tavg = mean(tAvg))
+#  dd_dat$year <- as.integer(dd_dat$year)
+#  dd_dat$fips <- as.integer(dd_dat$fips)
+#  dd_dat <- dd_dat %>% 
+#    group_by(year, fips) %>% 
+#    summarise(dday8C = sum(dday8C),
+#              dday10C = sum(dday10C),
+#              dday30C = sum(dday30C),
+#              dday32C = sum(dday32C),
+#              dday34C = sum(dday34C),
+#              prec = sum(prec),
+#              tavg = mean(tAvg))
 # 
 # dd_dat <- dd_dat %>% 
 #     group_by(year, fips) %>% 
