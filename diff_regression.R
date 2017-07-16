@@ -117,10 +117,10 @@ diff.corn.mod4 <- plm(p_corn_share ~ factor(year) + dday10_30 + I(dday10_30^2) +
                    data = newcropdat, index = c("fips", "year"), model = "within")
 summary(diff.corn.mod4)
 
-saveRDS(diff.corn.mod1, "models/diff.corn.mod1")
-saveRDS(diff.corn.mod2, "models/diff.corn.mod2")
-saveRDS(diff.corn.mod3, "models/diff.corn.mod3")
-saveRDS(diff.corn.mod4, "models/diff.corn.mod4")
+saveRDS(diff.corn.mod1, "models/diff.temp.ln_corn_rrev")
+saveRDS(diff.corn.mod2, "models/diff.dd.ln_corn_rrev")
+saveRDS(diff.corn.mod3, "models/diff.temp.p_corn_share")
+saveRDS(diff.corn.mod4, "models/diff.dd.p_corn_share")
 
 
 

@@ -1,6 +1,6 @@
 To Do
 =================================
-
+Need to figure out how to use fixed effects in predictions
 
 Complete
 ==================================

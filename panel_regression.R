@@ -31,16 +31,17 @@ cropdat <- filter(cropdat, !is.na(ln_corn_rrev))
 p.cropdat <- plm.data(cropdat, index = c("fips", "year"))
 
 
- p.corn.mod1 <- plm(ln_corn_rrev ~ factor(year) + tavg + I(tavg^2) + prec + I(prec^2), 
+p.corn.mod1 <- plm(ln_corn_rrev ~ factor(year) + tavg + I(tavg^2) + prec + I(prec^2), 
                     data = p.cropdat, model = "within")
- summary(p.corn.mod1)
- 
- p.corn.mod2 <- plm(ln_corn_rrev ~ factor(year) + dday10C_30C  + I(dday10C_30C^2) + dday30C +
-               prec + I(prec^2), data = p.cropdat, model = "within")
- summary(p.corn.mod2)
+summary(p.corn.mod1)
 
-saveRDS(p.corn.mod1, "models/p.corn.mod1")
-saveRDS(p.corn.mod2, "models/p.corn.mod2")
+
+p.corn.mod2 <- plm(ln_corn_rrev ~ factor(year) + dday10C_30C  + I(dday10C_30C^2) + dday30C +
+               prec + I(prec^2), data = p.cropdat, model = "within")
+summary(p.corn.mod2)
+
+saveRDS(p.corn.mod1, "models/p.temp.ln_corn_rrev")
+saveRDS(p.corn.mod2, "models/p.dd.ln_corn_rrev")
 
 
 
@@ -83,7 +84,7 @@ p.corn.mod4 <- plm(p_corn_a ~ factor(year) + dday10C_30C + I(dday10C_30C^2) + dd
                prec + I(prec^2), data = p.cropdat, model = "within")
 summary(p.corn.mod4)
 
-saveRDS(p.corn.mod3, "models/p.corn.mod3")
-saveRDS(p.corn.mod4, "models/p.corn.mod4")
+saveRDS(p.corn.mod3, "models/p.temp.p_corn_share")
+saveRDS(p.corn.mod4, "models/p.dd.p_corn_share")
 
 
