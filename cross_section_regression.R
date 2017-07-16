@@ -5,7 +5,7 @@ library(rms)
 library(cowplot)
 library(multiwayvcov)
 library(lmtest)
-
+library(lfe)
 
 # Cross-section: Log(Corn Rev) --------------------------------------------
 
@@ -20,7 +20,7 @@ soil$fips <- as.numeric(soil$fips)
 
 # East of 100th meridian
 cropdat <- filter(cropdat, abs(long) <= 100)
-cropdat <- filter(cropdat, !is.na(corn_rrev))
+cropdat <- filter(cropdat, !is.na(corn_rrev) & !is.na(ipc) & !is.na(pop_dens))
 cropdat <- filter(cropdat, year >= 1970 & year <= 2010)
 
 cropdat$ln_corn_rrev <- log(1 + cropdat$corn_rrev)
@@ -39,6 +39,7 @@ cropdat$dday34C_sqrt <- sqrt(cropdat$dday34C)
 
 # Remove inf to na
 is.na(cropdat) <- do.call(cbind, lapply(cropdat, is.infinite))
+
 
 # Need to remove mean from weather variables too
 cropdat <- cropdat %>%
@@ -80,11 +81,15 @@ cropdat <- cropdat %>%
               dm_dday8_32 = mean(dm_dday8_32, na.rm = TRUE),
               dm_dday34C = mean(dm_dday34C, na.rm = TRUE),
               dm_ipc = mean(dm_ipc, na.rm = TRUE),
-              dm_pop_dens = mean(dm_pop_dens, na.rm = TRUE))
+              dm_pop_dens = mean(dm_pop_dens, na.rm = TRUE)) %>% 
+  ungroup()
 
-# 
-#   ungroup() %>% 
-#   group_by(state) %>% 
+
+cropdat <- left_join(cropdat, soil, by = "fips")
+cropdat$state <- factor(cropdat$state)
+cropdat <- filter(cropdat, !is.na(ln_corn_rrev) & !is.na(waterCapacity) & !is.na(percentClay) & !is.na(minPermeability) & !is.na(kFactor) & !is.na(bestSoil))
+# cropdat <- cropdat %>% 
+#   group_by(state) %>%
 #   mutate(ln_corn_rrev = ln_corn_rrev - mean(ln_corn_rrev, na.rm = TRUE),
 #               ln_cotton_rrev = ln_cotton_rrev - mean(ln_cotton_rrev, na.rm = TRUE),
 #               ln_hay_rrev = ln_hay_rrev - mean(ln_hay_rrev, na.rm = TRUE),
@@ -100,16 +105,38 @@ cropdat <- cropdat %>%
 #               dm_ipc = dm_ipc - mean(dm_ipc, na.rm = TRUE),
 #               dm_pop_dens = dm_pop_dens - mean(dm_pop_dens, na.rm = TRUE))
 
-cropdat <- left_join(cropdat, soil, by = "fips")
+cropdat$dm_tavg_sq <- cropdat$dm_tavg^2
+cropdat$dm_prec_sq <- cropdat$dm_prec^2
+cropdat$dm_pop_dens_sq <- cropdat$dm_pop_dens^2
 
 p.cropdat <- plm.data(cropdat, index = c("state"))
 
 # Corn
-cs.corn.mod1  <- lm(ln_corn_rrev ~ dm_tavg + I(dm_tavg^2) + dm_prec + I(dm_prec^2) + 
-                      lat + dm_ipc + dm_pop_dens + I(dm_pop_dens^2) + waterCapacity + percentClay + minPermeability + kFactor + bestSoil,
+cs.corn.mod1  <- lm(ln_corn_rrev ~ factor(state) + dm_tavg + dm_tavg_sq + dm_prec + dm_prec_sq + 
+                      lat + dm_ipc + dm_pop_dens + dm_pop_dens_sq + 
+                      waterCapacity + percentClay + minPermeability + kFactor + bestSoil,
                     data = cropdat, weights = cropdat$corn_grain_a)
 
 summary(cs.corn.mod1)
+
+mod <- felm(ln_corn_rrev ~ dm_tavg + dm_tavg_sq + dm_prec + dm_prec_sq +
+                      lat + dm_ipc + dm_pop_dens + dm_pop_dens_sq +
+              waterCapacity + percentClay + minPermeability + kFactor + bestSoil | state | 0 | state,
+                    data = cropdat, weights = cropdat$corn_grain_a)
+summary(mod)
+
+cropdat <- ungroup(cropdat)
+cropdat <- as.data.frame(cropdat)
+
+# Weights are not making equivalent, but lm_felm_dmeanlist...R is showing equivalence
+test <- demeanlist(cropdat, list(cropdat$state))
+mod <- lm(ln_corn_rrev ~ dm_tavg + dm_tavg_sq + dm_prec + dm_prec_sq + 
+                      lat + dm_ipc + dm_pop_dens + dm_pop_dens_sq + 
+              waterCapacity + percentClay + minPermeability + kFactor + bestSoil,
+                    data = test, weights = cropdat$corn_grain_a)
+summary(mod)
+
+
 
 cs.corn.mod2 <- lm(ln_corn_rrev ~ dm_dday10_30 + I(dm_dday10_30^2) + dm_dday30 + dm_prec + I(dm_prec^2) + 
                     lat + dm_ipc + dm_pop_dens + I(dm_pop_dens^2) + waterCapacity + percentClay + minPermeability + kFactor + bestSoil,
