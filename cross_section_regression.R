@@ -112,12 +112,16 @@ cropdat$dm_pop_dens_sq <- cropdat$dm_pop_dens^2
 p.cropdat <- plm.data(cropdat, index = c("state"))
 
 # Corn
-cs.corn.mod1  <- lm(ln_corn_rrev ~ factor(state) + dm_tavg + dm_tavg_sq + dm_prec + dm_prec_sq + 
-                      lat + dm_ipc + dm_pop_dens + dm_pop_dens_sq + 
-                      waterCapacity + percentClay + minPermeability + kFactor + bestSoil,
+cs.corn.mod1  <- lm(ln_corn_rrev ~ factor(state) + dm_tavg ,
                     data = cropdat, weights = cropdat$corn_grain_a)
 
 summary(cs.corn.mod1)
+
++ dm_tavg_sq + dm_prec + dm_prec_sq + 
+                      lat + dm_ipc + dm_pop_dens + dm_pop_dens_sq + 
+                      waterCapacity + percentClay + minPermeability + kFactor + bestSoil
+
+
 
 mod <- felm(ln_corn_rrev ~ dm_tavg + dm_tavg_sq + dm_prec + dm_prec_sq +
                       lat + dm_ipc + dm_pop_dens + dm_pop_dens_sq +
@@ -125,16 +129,20 @@ mod <- felm(ln_corn_rrev ~ dm_tavg + dm_tavg_sq + dm_prec + dm_prec_sq +
                     data = cropdat, weights = cropdat$corn_grain_a)
 summary(mod)
 
-cropdat <- ungroup(cropdat)
-cropdat <- as.data.frame(cropdat)
 
 # Weights are not making equivalent, but lm_felm_dmeanlist...R is showing equivalence
-test <- demeanlist(cropdat, list(cropdat$state))
-mod <- lm(ln_corn_rrev ~ dm_tavg + dm_tavg_sq + dm_prec + dm_prec_sq + 
-                      lat + dm_ipc + dm_pop_dens + dm_pop_dens_sq + 
-              waterCapacity + percentClay + minPermeability + kFactor + bestSoil,
-                    data = test, weights = cropdat$corn_grain_a)
+cropdat <- ungroup(cropdat)
+cropdat <- as.data.frame(cropdat)
+moddat <- ungroup(cs.corn.mod1$model)
+moddat <- as.data.frame(moddat)
+
+test <- demeanlist(moddat, list(moddat$`factor(state)`))
+mod <- lm(ln_corn_rrev ~ dm_tavg, weights = cropdat$corn_grain_a, data = test)
 summary(mod)
+
++ dm_tavg_sq + dm_prec + dm_prec_sq + 
+                      lat + dm_ipc + dm_pop_dens + dm_pop_dens_sq + 
+              waterCapacity + percentClay + minPermeability + kFactor + bestSoil
 
 
 
