@@ -1,0 +1,279 @@
+\documentclass[10pt]{article}
+\usepackage{graphicx}
+\usepackage{dcolumn}
+\usepackage[a4paper, total={8in, 10in}]{geometry}
+\begin{document}
+% Table created by stargazer v.5.2 by Marek Hlavac, Harvard University. E-mail: hlavac at fas.harvard.edu
+% Date and time: Mon, Jul 17, 2017 - 07:04:02 PM
+\begin{table}[!htbp] \centering 
+  \caption{Cross-section Regression Models explaining Crop Revenue and Acres} 
+  \label{} 
+\footnotesize 
+\begin{tabular}{@{\extracolsep{5pt}}lccccc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+\\[-1.8ex] & Log(Corn Rev) & Log(Cotton Rev) & Log(Hay Rev) & Log(Wheat Rev) & Log(Soybean Rev) \\ 
+ & Cross-section & Cross-section & Cross-section & Cross-section & Cross-section \\ 
+\\[-1.8ex] & (1) & (2) & (3) & (4) & (5)\\ 
+\hline \\[-1.8ex] 
+ Avg. Temperature & $-$4.80$^{***}$ & 1.70$^{***}$ & $-$6.42$^{***}$ & $-$0.45 & $-$3.83$^{***}$ \\ 
+  & (0.82) & (0.37) & (1.02) & (0.63) & (0.66) \\ 
+  & & & & & \\ 
+ Avg. Temperature Squared & $-$0.21$^{**}$ & 0.28$^{***}$ & $-$0.25$^{*}$ & $-$0.28$^{***}$ & $-$0.72$^{***}$ \\ 
+  & (0.10) & (0.05) & (0.13) & (0.08) & (0.08) \\ 
+  & & & & & \\ 
+ Precipitation & $-$0.58$^{***}$ & 0.09 & $-$0.79$^{***}$ & 0.22 & $-$0.09 \\ 
+  & (0.21) & (0.09) & (0.26) & (0.16) & (0.17) \\ 
+  & & & & & \\ 
+ Precipitation Squared & $-$0.03 & 0.00 & $-$0.21$^{***}$ & $-$0.03 & 0.00 \\ 
+  & (0.02) & (0.01) & (0.03) & (0.02) & (0.02) \\ 
+  & & & & & \\ 
+ Latitude & $-$3.76$^{***}$ & 0.73$^{**}$ & $-$1.13 & 2.52$^{***}$ & $-$0.75 \\ 
+  & (0.71) & (0.32) & (0.88) & (0.55) & (0.57) \\ 
+  & & & & & \\ 
+ Income per Capita & 0.00$^{***}$ & $-$0.00 & 0.00$^{***}$ & 0.00$^{***}$ & 0.00$^{***}$ \\ 
+  & (0.00) & (0.00) & (0.00) & (0.00) & (0.00) \\ 
+  & & & & & \\ 
+ Population Density & $-$0.01$^{***}$ & $-$0.00 & $-$0.00 & $-$0.00 & $-$0.01$^{***}$ \\ 
+  & (0.00) & (0.00) & (0.00) & (0.00) & (0.00) \\ 
+  & & & & & \\ 
+ Population Density Squared & 0.00$^{***}$ & 0.00 & 0.00 & $-$0.00 & 0.00$^{**}$ \\ 
+  & (0.00) & (0.00) & (0.00) & (0.00) & (0.00) \\ 
+  & & & & & \\ 
+ Water Capacity & 2.80$^{***}$ & 0.42$^{***}$ & 5.49$^{***}$ & 0.52$^{**}$ & 3.01$^{***}$ \\ 
+  & (0.29) & (0.13) & (0.36) & (0.22) & (0.23) \\ 
+  & & & & & \\ 
+ Percent Clay & $-$0.20$^{***}$ & 0.11$^{***}$ & $-$0.05 & 0.11$^{**}$ & $-$0.06 \\ 
+  & (0.07) & (0.03) & (0.09) & (0.06) & (0.06) \\ 
+  & & & & & \\ 
+ Minimum Permeability & 2.12$^{***}$ & 0.36$^{*}$ & $-$0.66 & $-$0.23 & 1.29$^{***}$ \\ 
+  & (0.47) & (0.21) & (0.58) & (0.36) & (0.38) \\ 
+  & & & & & \\ 
+ K-factor of Top Soil & $-$65.15$^{***}$ & $-$5.34 & $-$103.18$^{***}$ & $-$24.95$^{***}$ & $-$64.88$^{***}$ \\ 
+  & (10.62) & (4.74) & (13.15) & (8.17) & (8.51) \\ 
+  & & & & & \\ 
+ Best Soil Class & 0.35$^{***}$ & $-$0.01 & 0.28$^{***}$ & 0.28$^{***}$ & 0.20$^{***}$ \\ 
+  & (0.03) & (0.01) & (0.03) & (0.02) & (0.02) \\ 
+  & & & & & \\ 
+ Constant & $-$0.00 & 0.00 & $-$0.00 & $-$0.00 & $-$0.00 \\ 
+  & (0.24) & (0.11) & (0.30) & (0.18) & (0.19) \\ 
+  & & & & & \\ 
+\hline \\[-1.8ex] 
+Weights & Acres & Acres & Acres & Acres & Acres \\ 
+Fixed-effect & State & State & State & State & State \\ 
+Observations & 1,569 & 1,569 & 1,569 & 1,569 & 1,569 \\ 
+R$^{2}$ & 0.31 & 0.04 & 0.35 & 0.29 & 0.32 \\ 
+Adjusted R$^{2}$ & 0.30 & 0.03 & 0.34 & 0.28 & 0.31 \\ 
+\hline 
+\hline \\[-1.8ex] 
+\textit{Notes:} & \multicolumn{5}{l}{All coefficients multiplied by 100} \\ 
+\end{tabular} 
+\end{table} 
+\newpage
+% Table created by stargazer v.5.2 by Marek Hlavac, Harvard University. E-mail: hlavac at fas.harvard.edu
+% Date and time: Mon, Jul 17, 2017 - 07:04:04 PM
+\begin{table}[!htbp] \centering 
+  \caption{Cross-section Regression Models explaining Crop Revenue and Acres} 
+  \label{} 
+\footnotesize 
+\begin{tabular}{@{\extracolsep{5pt}}lccccc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+\\[-1.8ex] & Log(Corn Rev) & Log(Cotton Rev) & Log(Hay Rev) & Log(Wheat Rev) & Log(Soybean Rev) \\ 
+ & Cross-section & Cross-section & Cross-section & Cross-section & Cross-section \\ 
+\\[-1.8ex] & (1) & (2) & (3) & (4) & (5)\\ 
+\hline \\[-1.8ex] 
+ Degree Days (10-30C) & $-$0.02$^{**}$ & 0.02$^{***}$ & $-$0.05$^{***}$ & 0.01 & $-$0.01$^{*}$ \\ 
+  & (0.01) & (0.00) & (0.01) & (0.00) & (0.01) \\ 
+  & & & & & \\ 
+ Degree Days (10-30C) Squared & 0.00 & 0.00$^{***}$ & $-$0.00 & $-$0.00 & $-$0.00$^{***}$ \\ 
+  & (0.00) & (0.00) & (0.00) & (0.00) & (0.00) \\ 
+  & & & & & \\ 
+ Degree Days (30C) & $-$0.23$^{***}$ & $-$0.10$^{***}$ & 0.17$^{**}$ & $-$0.16$^{***}$ & $-$0.22$^{***}$ \\ 
+  & (0.07) & (0.03) & (0.08) & (0.05) & (0.05) \\ 
+  & & & & & \\ 
+ Precipitation & $-$1.01$^{***}$ & $-$0.11 & $-$0.54$^{*}$ & $-$0.09 & $-$0.50$^{***}$ \\ 
+  & (0.24) & (0.11) & (0.30) & (0.19) & (0.19) \\ 
+  & & & & & \\ 
+ Precipitation Squared & $-$0.02 & 0.01 & $-$0.23$^{***}$ & $-$0.03 & 0.00 \\ 
+  & (0.02) & (0.01) & (0.03) & (0.02) & (0.02) \\ 
+  & & & & & \\ 
+ Latitude & $-$4.15$^{***}$ & 0.54$^{*}$ & $-$0.85 & 1.87$^{***}$ & $-$1.25$^{**}$ \\ 
+  & (0.68) & (0.30) & (0.84) & (0.53) & (0.55) \\ 
+  & & & & & \\ 
+ Income per Capita & 0.00$^{***}$ & $-$0.00 & 0.00$^{***}$ & 0.00$^{***}$ & 0.00$^{***}$ \\ 
+  & (0.00) & (0.00) & (0.00) & (0.00) & (0.00) \\ 
+  & & & & & \\ 
+ Population Density & $-$0.01$^{***}$ & $-$0.00 & $-$0.00 & $-$0.00 & $-$0.01$^{***}$ \\ 
+  & (0.00) & (0.00) & (0.00) & (0.00) & (0.00) \\ 
+  & & & & & \\ 
+ Population Density Squared & 0.00$^{***}$ & 0.00 & 0.00 & $-$0.00 & 0.00$^{**}$ \\ 
+  & (0.00) & (0.00) & (0.00) & (0.00) & (0.00) \\ 
+  & & & & & \\ 
+ Water Capacity & 2.85$^{***}$ & 0.40$^{***}$ & 5.63$^{***}$ & 0.55$^{**}$ & 3.05$^{***}$ \\ 
+  & (0.29) & (0.13) & (0.36) & (0.23) & (0.24) \\ 
+  & & & & & \\ 
+ Percent Clay & $-$0.19$^{***}$ & 0.11$^{***}$ & $-$0.01 & 0.13$^{**}$ & $-$0.04 \\ 
+  & (0.07) & (0.03) & (0.09) & (0.06) & (0.06) \\ 
+  & & & & & \\ 
+ Minimum Permeability & 2.21$^{***}$ & 0.39$^{*}$ & $-$0.54 & $-$0.15 & 1.42$^{***}$ \\ 
+  & (0.47) & (0.21) & (0.58) & (0.36) & (0.38) \\ 
+  & & & & & \\ 
+ K-factor of Top Soil & $-$66.10$^{***}$ & $-$4.35 & $-$102.36$^{***}$ & $-$25.87$^{***}$ & $-$66.33$^{***}$ \\ 
+  & (10.59) & (4.71) & (13.15) & (8.18) & (8.55) \\ 
+  & & & & & \\ 
+ Best Soil Class & 0.35$^{***}$ & $-$0.01 & 0.27$^{***}$ & 0.28$^{***}$ & 0.21$^{***}$ \\ 
+  & (0.03) & (0.01) & (0.03) & (0.02) & (0.02) \\ 
+  & & & & & \\ 
+ Constant & $-$0.00 & 0.00 & $-$0.00 & $-$0.00 & $-$0.00 \\ 
+  & (0.24) & (0.11) & (0.30) & (0.18) & (0.19) \\ 
+  & & & & & \\ 
+\hline \\[-1.8ex] 
+Weights & Acres & Acres & Acres & Acres & Acres \\ 
+Fixed-effect & State & State & State & State & State \\ 
+Observations & 1,569 & 1,569 & 1,569 & 1,569 & 1,569 \\ 
+R$^{2}$ & 0.32 & 0.06 & 0.35 & 0.29 & 0.32 \\ 
+Adjusted R$^{2}$ & 0.31 & 0.05 & 0.34 & 0.29 & 0.31 \\ 
+\hline 
+\hline \\[-1.8ex] 
+\textit{Notes:} & \multicolumn{5}{l}{All coefficients multiplied by 100} \\ 
+\end{tabular} 
+\end{table} 
+\newpage
+% Table created by stargazer v.5.2 by Marek Hlavac, Harvard University. E-mail: hlavac at fas.harvard.edu
+% Date and time: Mon, Jul 17, 2017 - 07:04:04 PM
+\begin{table}[!htbp] \centering 
+  \caption{Cross-section Regression Models explaining Crop Revenue and Acres} 
+  \label{} 
+\footnotesize 
+\begin{tabular}{@{\extracolsep{5pt}}lccccc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+\\[-1.8ex] & Corn Acres & Cotton Acres & Hay Acres & Wheat Acres & Soybean Acres \\ 
+ & Cross-section & Cross-section & Cross-section & Cross-section & Cross-section \\ 
+\\[-1.8ex] & (1) & (2) & (3) & (4) & (5)\\ 
+\hline \\[-1.8ex] 
+ Avg. Temperature & 0.01 & 0.10$^{***}$ & $-$0.02 & 0.18$^{**}$ & 0.13$^{***}$ \\ 
+  & (0.01) & (0.03) & (0.01) & (0.09) & (0.04) \\ 
+  & & & & & \\ 
+ Avg. Temperature Squared & 0.00 & 0.01 & $-$0.01$^{*}$ & 0.01 & $-$0.01 \\ 
+  & (0.00) & (0.01) & (0.00) & (0.02) & (0.01) \\ 
+  & & & & & \\ 
+ Precipitation & $-$0.00 & $-$0.02$^{***}$ & 0.00$^{**}$ & $-$0.02$^{**}$ & $-$0.00 \\ 
+  & (0.00) & (0.00) & (0.00) & (0.01) & (0.01) \\ 
+  & & & & & \\ 
+ Precipitation Squared & $-$0.00$^{**}$ & 0.00 & $-$0.00 & $-$0.00 & $-$0.00 \\ 
+  & (0.00) & (0.00) & (0.00) & (0.00) & (0.00) \\ 
+  & & & & & \\ 
+ Latitude & 0.00 & 0.03 & 0.01 & 0.22$^{***}$ & 0.07$^{**}$ \\ 
+  & (0.01) & (0.02) & (0.01) & (0.07) & (0.03) \\ 
+  & & & & & \\ 
+ Income per Capita & $-$0.00 & $-$0.00$^{*}$ & $-$0.00 & 0.00$^{***}$ & $-$0.00 \\ 
+  & (0.00) & (0.00) & (0.00) & (0.00) & (0.00) \\ 
+  & & & & & \\ 
+ Population Density & 0.00 & 0.00 & 0.00$^{***}$ & $-$0.00$^{***}$ & $-$0.00 \\ 
+  & (0.00) & (0.00) & (0.00) & (0.00) & (0.00) \\ 
+  & & & & & \\ 
+ Population Density Squared & $-$0.00 & $-$0.00 & $-$0.00$^{***}$ & 0.00$^{***}$ & $-$0.00 \\ 
+  & (0.00) & (0.00) & (0.00) & (0.00) & (0.00) \\ 
+  & & & & & \\ 
+ Water Capacity & 0.03$^{***}$ & 0.01 & $-$0.02$^{***}$ & 0.08$^{**}$ & 0.06$^{***}$ \\ 
+  & (0.01) & (0.01) & (0.01) & (0.03) & (0.02) \\ 
+  & & & & & \\ 
+ Percent Clay & $-$0.01$^{***}$ & 0.00 & 0.00 & $-$0.00 & 0.00 \\ 
+  & (0.00) & (0.00) & (0.00) & (0.01) & (0.00) \\ 
+  & & & & & \\ 
+ Minimum Permeability & 0.01 & $-$0.02 & $-$0.03$^{***}$ & 0.01 & 0.02 \\ 
+  & (0.01) & (0.02) & (0.01) & (0.06) & (0.03) \\ 
+  & & & & & \\ 
+ K-factor of Top Soil & $-$0.36$^{*}$ & $-$0.53 & $-$0.20 & 1.12 & 0.31 \\ 
+  & (0.20) & (0.37) & (0.17) & (1.01) & (0.48) \\ 
+  & & & & & \\ 
+ Best Soil Class & 0.00$^{***}$ & 0.00$^{***}$ & 0.00 & 0.01$^{***}$ & 0.00$^{***}$ \\ 
+  & (0.00) & (0.00) & (0.00) & (0.00) & (0.00) \\ 
+  & & & & & \\ 
+ Constant & $-$0.03$^{***}$ & 0.00 & 0.00 & 0.00 & 0.00 \\ 
+  & (0.01) & (0.01) & (0.00) & (0.03) & (0.01) \\ 
+  & & & & & \\ 
+\hline \\[-1.8ex] 
+Weights & Total Acres & Total Acres & Total Acres & Total Acres & Total Acres \\ 
+Fixed-effect & State & State & State & State & State \\ 
+Observations & 298 & 298 & 298 & 298 & 298 \\ 
+R$^{2}$ & 0.26 & 0.24 & 0.29 & 0.27 & 0.19 \\ 
+Adjusted R$^{2}$ & 0.23 & 0.20 & 0.25 & 0.23 & 0.16 \\ 
+\hline 
+\hline \\[-1.8ex] 
+\textit{Notes:} & \multicolumn{5}{l}{All coefficients multiplied by 100} \\ 
+\end{tabular} 
+\end{table} 
+\newpage
+% Table created by stargazer v.5.2 by Marek Hlavac, Harvard University. E-mail: hlavac at fas.harvard.edu
+% Date and time: Mon, Jul 17, 2017 - 07:04:05 PM
+\begin{table}[!htbp] \centering 
+  \caption{Cross-section Regression Models explaining Crop Share} 
+  \label{} 
+\footnotesize 
+\begin{tabular}{@{\extracolsep{5pt}}lccccc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+\\[-1.8ex] & Corn Acres & Cotton Acres & Hay Acres & Wheat Acres & Soybean Acres \\ 
+ & Cross-section & Cross-section & Cross-section & Cross-section & Cross-section \\ 
+\\[-1.8ex] & (1) & (2) & (3) & (4) & (5)\\ 
+\hline \\[-1.8ex] 
+ Degree Days (10-30C) & 0.00 & 0.00 & $-$0.00$^{**}$ & $-$0.00$^{***}$ & 0.00$^{*}$ \\ 
+  & (0.00) & (0.00) & (0.00) & (0.00) & (0.00) \\ 
+  & & & & & \\ 
+ Degree Days (10-30C) Squared & 0.00$^{*}$ & 0.00 & $-$0.00$^{**}$ & $-$0.00 & $-$0.00 \\ 
+  & (0.00) & (0.00) & (0.00) & (0.00) & (0.00) \\ 
+  & & & & & \\ 
+ Degree Days (30C) & $-$0.00 & 0.00 & 0.00$^{*}$ & 0.02$^{***}$ & 0.00 \\ 
+  & (0.00) & (0.00) & (0.00) & (0.00) & (0.00) \\ 
+  & & & & & \\ 
+ Precipitation & $-$0.01$^{*}$ & $-$0.01$^{**}$ & 0.01$^{***}$ & 0.01 & $-$0.01 \\ 
+  & (0.00) & (0.01) & (0.00) & (0.01) & (0.01) \\ 
+  & & & & & \\ 
+ Precipitation Squared & $-$0.00 & $-$0.00 & $-$0.00 & $-$0.00$^{***}$ & $-$0.00 \\ 
+  & (0.00) & (0.00) & (0.00) & (0.00) & (0.00) \\ 
+  & & & & & \\ 
+ Latitude & 0.02 & $-$0.00 & 0.01 & $-$0.02 & 0.06$^{*}$ \\ 
+  & (0.02) & (0.03) & (0.01) & (0.06) & (0.03) \\ 
+  & & & & & \\ 
+ Income per Capita & $-$0.00 & $-$0.00$^{**}$ & $-$0.00$^{*}$ & 0.00$^{**}$ & $-$0.00 \\ 
+  & (0.00) & (0.00) & (0.00) & (0.00) & (0.00) \\ 
+  & & & & & \\ 
+ Population Density & $-$0.00 & 0.00 & 0.00$^{***}$ & $-$0.00$^{***}$ & $-$0.00 \\ 
+  & (0.00) & (0.00) & (0.00) & (0.00) & (0.00) \\ 
+  & & & & & \\ 
+ Population Density Squared & $-$0.00 & $-$0.00 & $-$0.00$^{***}$ & 0.00$^{***}$ & 0.00 \\ 
+  & (0.00) & (0.00) & (0.00) & (0.00) & (0.00) \\ 
+  & & & & & \\ 
+ Water Capacity & 0.04$^{***}$ & 0.02 & $-$0.02$^{***}$ & 0.09$^{***}$ & 0.06$^{***}$ \\ 
+  & (0.01) & (0.01) & (0.01) & (0.03) & (0.02) \\ 
+  & & & & & \\ 
+ Percent Clay & $-$0.00$^{**}$ & 0.00 & 0.00 & $-$0.01 & 0.00 \\ 
+  & (0.00) & (0.00) & (0.00) & (0.01) & (0.00) \\ 
+  & & & & & \\ 
+ Minimum Permeability & 0.04$^{**}$ & $-$0.02 & $-$0.03$^{***}$ & $-$0.01 & 0.01 \\ 
+  & (0.02) & (0.02) & (0.01) & (0.05) & (0.03) \\ 
+  & & & & & \\ 
+ K-factor of Top Soil & $-$0.23 & $-$0.51 & $-$0.16 & 1.43 & 0.14 \\ 
+  & (0.28) & (0.38) & (0.17) & (0.89) & (0.49) \\ 
+  & & & & & \\ 
+ Best Soil Class & 0.00$^{***}$ & 0.00$^{***}$ & 0.00 & 0.01$^{***}$ & 0.00$^{***}$ \\ 
+  & (0.00) & (0.00) & (0.00) & (0.00) & (0.00) \\ 
+  & & & & & \\ 
+ Constant & 0.00 & 0.00 & 0.00 & 0.00 & 0.00 \\ 
+  & (0.01) & (0.01) & (0.00) & (0.03) & (0.01) \\ 
+  & & & & & \\ 
+\hline \\[-1.8ex] 
+Weights & Acres & Acres & Acres & Acres & Acres \\ 
+Fixed-effect & State & State & State & State & State \\ 
+Observations & 298 & 298 & 298 & 298 & 298 \\ 
+R$^{2}$ & 0.20 & 0.23 & 0.29 & 0.45 & 0.20 \\ 
+Adjusted R$^{2}$ & 0.16 & 0.19 & 0.26 & 0.42 & 0.16 \\ 
+\hline 
+\hline \\[-1.8ex] 
+\textit{Notes:} & \multicolumn{5}{l}{All coefficients multiplied by 100} \\ 
+\end{tabular} 
+\end{table} 
+\end{document}

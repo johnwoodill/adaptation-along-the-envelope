@@ -1,5 +1,5 @@
 library(lfe)
-
+set.seed(12345)
 iris <- iris
 
 # Create weights
@@ -16,15 +16,32 @@ summary(felm(Sepal.Length ~ Sepal.Width + Sepal.Width_sq| Species, data = iris, 
 
 # demean and lm()
 newdat <- demeanlist(iris, list(iris$Species))
-summary(lm(Sepal.Length ~ Sepal.Width + Sepal.Width_sq, data = newdat, weights = iris$w))
+newdat <- iris
+newdat$Sepal.Length <- demean(newdat$Sepal.Length, newdat$Species)
+newdat$Sepal.Width <- demean(newdat$Sepal.Width, newdat$Species)
+newdat$Sepal.Width_sq <- demean(newdat$Sepal.Width_sq, newdat$Species)
+summary(lm(Sepal.Length ~ Sepal.Width + Sepal.Width_sq - 1, data = newdat, weights = iris$w))
 
 
+mod1 <- lm(Sepal.Length ~ Sepal.Width + Sepal.Width_sq + 
+         factor(Species), data = iris, weights = iris$w)
 
+mod2 <- felm(Sepal.Length ~ Sepal.Width + Sepal.Width_sq| Species,
+         data = iris, weights = iris$w)
 
+# Also the way you were using demeanlist didn't look right at all
+newdat <- demeanlist(
+  mtx     = as.matrix(iris[, c("Sepal.Length", "Sepal.Width", "Sepal.Width_sq")]), 
+  fl      = list(Species = iris$Species), 
+  weights = sqrt(iris$w)) #Don't forget for WLS you are actually working with the square-root of the weight
 
+mod3 <- lm(Sepal.Length ~ Sepal.Width + Sepal.Width_sq, 
+         data = as.data.frame(newdat), weights = iris$w)
 
+all.equal(
+  coef(mod3)[c("Sepal.Width", "Sepal.Width_sq")], 
+  coef(mod2)[c("Sepal.Width", "Sepal.Width_sq")])
 
-test <- cropdat
-lm(ln_corn_rrev ~ factor(state) + dm_tavg + dm_tavg_sq, data = test)
-
-
+all.equal(
+  coef(mod3)[c("Sepal.Width", "Sepal.Width_sq")], 
+  coef(mod1)[c("Sepal.Width", "Sepal.Width_sq")])
