@@ -14,15 +14,6 @@ summary(lm(Sepal.Length ~ Sepal.Width + Sepal.Width_sq + factor(Species) , data 
 # With felm()
 summary(felm(Sepal.Length ~ Sepal.Width + Sepal.Width_sq| Species, data = iris, weights = iris$w))
 
-# demean and lm()
-newdat <- demeanlist(iris, list(iris$Species))
-newdat <- iris
-newdat$Sepal.Length <- demean(newdat$Sepal.Length, newdat$Species)
-newdat$Sepal.Width <- demean(newdat$Sepal.Width, newdat$Species)
-newdat$Sepal.Width_sq <- demean(newdat$Sepal.Width_sq, newdat$Species)
-summary(lm(Sepal.Length ~ Sepal.Width + Sepal.Width_sq - 1, data = newdat, weights = iris$w))
-
-
 mod1 <- lm(Sepal.Length ~ Sepal.Width + Sepal.Width_sq + 
          factor(Species), data = iris, weights = iris$w)
 

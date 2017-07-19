@@ -1,7 +1,7 @@
 To Do
 =================================
-Need to figure out how to use fixed effects in predictions
 fix soil data that is missing for fips
+Add regional fixed effects
 
 Complete
 ==================================
@@ -9,3 +9,5 @@ Complete
   + Downloaded all pricing data and aggregated year and if no year then use monthly
   
 * Update regression tables and correct t-stats/s.e. with multiplying by 100
+
+* Need to figure out how to use fixed effects in predictions

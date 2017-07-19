@@ -37,147 +37,123 @@ cs.temp.p_soybean_share <- readRDS("models/cs.temp.p_soybean_share")
 cs.dd.p_soybean_share <- readRDS("models/cs.dd.p_soybean_share")
 
 
-
-# Crop share
-# cs.temp.p_corn_share <- readRDS("models/cs.temp.p_corn_share")
-# cs.dd.p_corn_share <- readRDS("models/cs.dd.p_corn_share")
-# 
-# cs.temp.p_cotton_share <- readRDS("models/cs.temp.p_cotton_share")
-# cs.dd.p_cotton_share <- readRDS("models/cs.dd.p_cotton_share")
-# 
-# cs.temp.p_hay_share <- readRDS("models/cs.temp.p_hay_share")
-# cs.dd.p_hay_share <- readRDS("models/cs.dd.p_hay_share")
-# 
-# cs.temp.p_wheat_share <- readRDS("models/cs.temp.p_wheat_share")
-# cs.dd.p_wheat_share <- readRDS("models/cs.dd.p_wheat_share")
-# 
-# cs.temp.p_soybean_share <- readRDS("models/cs.temp.p_soybean_share")
-# cs.dd.p_soybean_share <- readRDS("models/cs.dd.p_soybean_share")
-
-
-# Calculate robust standard errors to place in tables
-
-# Cluster by state
-# vcov_state <- cluster.vcov(cs.temp.ln_corn_rrev, cluster = cropdat$state)
-# cs.temp.ln_corn_rrev_se <- coeftest(cs.temp.ln_corn_rrev, vcov_state)[,2]
-
 # Cross Section Model
 names(cs.temp.ln_corn_rrev$coefficients)
-names(cs.temp.ln_corn_rrev$coefficients)[2:14] <- c("Avg. Temperature", "Avg. Temperature Squared", "Precipitation",
+names(cs.temp.ln_corn_rrev$coefficients) <- c("Avg. Temperature", "Avg. Temperature Squared", "Precipitation",
                                  "Precipitation Squared", "Latitude", "Income per Capita", "Population Density",
                                   "Population Density Squared", "Water Capacity", "Percent Clay", "Minimum Permeability", 
                                   "K-factor of Top Soil", "Best Soil Class")
 
 names(cs.dd.ln_corn_rrev$coefficients)
-names(cs.dd.ln_corn_rrev$coefficients)[2:15] <- c("Degree Days (10-30C)", "Degree Days (10-30C) Squared", "Degree Days (30C)",
+names(cs.dd.ln_corn_rrev$coefficients) <- c("Degree Days (10-30C)", "Degree Days (10-30C) Squared", "Degree Days (30C)",
                                  "Precipitation", "Precipitation Squared", "Latitude", "Income per Capita", "Population Density",
                                   "Population Density Squared",  "Water Capacity", "Percent Clay", "Minimum Permeability", 
                                   "K-factor of Top Soil", "Best Soil Class")
 
 names(cs.temp.ln_cotton_rrev$coefficients)
-names(cs.temp.ln_cotton_rrev$coefficients)[2:14] <- c("Avg. Temperature", "Avg. Temperature Squared", "Precipitation",
+names(cs.temp.ln_cotton_rrev$coefficients) <- c("Avg. Temperature", "Avg. Temperature Squared", "Precipitation",
                                  "Precipitation Squared", "Latitude", "Income per Capita", "Population Density",
                                   "Population Density Squared", "Water Capacity", "Percent Clay", "Minimum Permeability", 
                                   "K-factor of Top Soil", "Best Soil Class")
 
 names(cs.dd.ln_cotton_rrev$coefficients)
-names(cs.dd.ln_cotton_rrev$coefficients)[2:15] <- c("Degree Days (10-30C)", "Degree Days (10-30C) Squared", "Degree Days (30C)",
+names(cs.dd.ln_cotton_rrev$coefficients) <- c("Degree Days (10-30C)", "Degree Days (10-30C) Squared", "Degree Days (30C)",
                                  "Precipitation", "Precipitation Squared", "Latitude", "Income per Capita", "Population Density",
                                   "Population Density Squared",  "Water Capacity", "Percent Clay", "Minimum Permeability", 
                                   "K-factor of Top Soil", "Best Soil Class")
 
 names(cs.temp.ln_hay_rrev$coefficients)
-names(cs.temp.ln_hay_rrev$coefficients)[2:14] <- c("Avg. Temperature", "Avg. Temperature Squared", "Precipitation",
+names(cs.temp.ln_hay_rrev$coefficients) <- c("Avg. Temperature", "Avg. Temperature Squared", "Precipitation",
                                  "Precipitation Squared", "Latitude", "Income per Capita", "Population Density",
                                   "Population Density Squared", "Water Capacity", "Percent Clay", "Minimum Permeability", 
                                   "K-factor of Top Soil", "Best Soil Class")
 
 names(cs.dd.ln_hay_rrev$coefficients)
-names(cs.dd.ln_hay_rrev$coefficients)[2:15] <- c("Degree Days (10-30C)", "Degree Days (10-30C) Squared", "Degree Days (30C)",
+names(cs.dd.ln_hay_rrev$coefficients) <- c("Degree Days (10-30C)", "Degree Days (10-30C) Squared", "Degree Days (30C)",
                                  "Precipitation", "Precipitation Squared", "Latitude", "Income per Capita", "Population Density",
                                   "Population Density Squared",  "Water Capacity", "Percent Clay", "Minimum Permeability", 
                                   "K-factor of Top Soil", "Best Soil Class")
 
 names(cs.temp.ln_wheat_rrev$coefficients)
-names(cs.temp.ln_wheat_rrev$coefficients)[2:14] <- c("Avg. Temperature", "Avg. Temperature Squared", "Precipitation",
+names(cs.temp.ln_wheat_rrev$coefficients) <- c("Avg. Temperature", "Avg. Temperature Squared", "Precipitation",
                                  "Precipitation Squared", "Latitude", "Income per Capita", "Population Density",
                                   "Population Density Squared", "Water Capacity", "Percent Clay", "Minimum Permeability", 
                                   "K-factor of Top Soil", "Best Soil Class")
 
 names(cs.dd.ln_wheat_rrev$coefficients)
-names(cs.dd.ln_wheat_rrev$coefficients)[2:15] <- c("Degree Days (10-30C)", "Degree Days (10-30C) Squared", "Degree Days (30C)",
+names(cs.dd.ln_wheat_rrev$coefficients) <- c("Degree Days (10-30C)", "Degree Days (10-30C) Squared", "Degree Days (30C)",
                                  "Precipitation", "Precipitation Squared", "Latitude", "Income per Capita", "Population Density",
                                   "Population Density Squared",  "Water Capacity", "Percent Clay", "Minimum Permeability", 
                                   "K-factor of Top Soil", "Best Soil Class")
 
 names(cs.temp.ln_soybean_rrev$coefficients)
-names(cs.temp.ln_soybean_rrev$coefficients)[2:14] <- c("Avg. Temperature", "Avg. Temperature Squared", "Precipitation",
+names(cs.temp.ln_soybean_rrev$coefficients) <- c("Avg. Temperature", "Avg. Temperature Squared", "Precipitation",
                                  "Precipitation Squared", "Latitude", "Income per Capita", "Population Density",
                                   "Population Density Squared", "Water Capacity", "Percent Clay", "Minimum Permeability", 
                                   "K-factor of Top Soil", "Best Soil Class")
 
 names(cs.dd.ln_soybean_rrev $coefficients)
-names(cs.dd.ln_soybean_rrev $coefficients)[2:15] <- c("Degree Days (10-30C)", "Degree Days (10-30C) Squared", "Degree Days (30C)",
+names(cs.dd.ln_soybean_rrev $coefficients) <- c("Degree Days (10-30C)", "Degree Days (10-30C) Squared", "Degree Days (30C)",
                                  "Precipitation", "Precipitation Squared", "Latitude", "Income per Capita", "Population Density",
                                   "Population Density Squared",  "Water Capacity", "Percent Clay", "Minimum Permeability", 
                                   "K-factor of Top Soil", "Best Soil Class")
 
 names(cs.temp.p_corn_share$coefficients)
-names(cs.temp.p_corn_share$coefficients)[2:14] <- c("Avg. Temperature", "Avg. Temperature Squared", "Precipitation",
+names(cs.temp.p_corn_share$coefficients) <- c("Avg. Temperature", "Avg. Temperature Squared", "Precipitation",
                                  "Precipitation Squared", "Latitude", "Income per Capita", "Population Density",
                                   "Population Density Squared", "Water Capacity", "Percent Clay", "Minimum Permeability", 
                                   "K-factor of Top Soil", "Best Soil Class")
 
 names(cs.dd.p_corn_share$coefficients)
-names(cs.dd.p_corn_share$coefficients)[2:15] <- c("Degree Days (10-30C)", "Degree Days (10-30C) Squared", "Degree Days (30C)",
+names(cs.dd.p_corn_share$coefficients) <- c("Degree Days (10-30C)", "Degree Days (10-30C) Squared", "Degree Days (30C)",
                                  "Precipitation", "Precipitation Squared", "Latitude", "Income per Capita", "Population Density",
                                   "Population Density Squared",  "Water Capacity", "Percent Clay", "Minimum Permeability", 
                                   "K-factor of Top Soil", "Best Soil Class")
 
 names(cs.temp.p_cotton_share$coefficients)
-names(cs.temp.p_cotton_share$coefficients)[2:14] <- c("Avg. Temperature", "Avg. Temperature Squared", "Precipitation",
+names(cs.temp.p_cotton_share$coefficients) <- c("Avg. Temperature", "Avg. Temperature Squared", "Precipitation",
                                  "Precipitation Squared", "Latitude", "Income per Capita", "Population Density",
                                   "Population Density Squared", "Water Capacity", "Percent Clay", "Minimum Permeability", 
                                   "K-factor of Top Soil", "Best Soil Class")
 
 names(cs.dd.p_cotton_share$coefficients)
-names(cs.dd.p_cotton_share$coefficients)[2:15] <- c("Degree Days (10-30C)", "Degree Days (10-30C) Squared", "Degree Days (30C)",
+names(cs.dd.p_cotton_share$coefficients) <- c("Degree Days (10-30C)", "Degree Days (10-30C) Squared", "Degree Days (30C)",
                                  "Precipitation", "Precipitation Squared", "Latitude", "Income per Capita", "Population Density",
                                   "Population Density Squared",  "Water Capacity", "Percent Clay", "Minimum Permeability", 
                                   "K-factor of Top Soil", "Best Soil Class")
 
 names(cs.temp.p_hay_share$coefficients)
-names(cs.temp.p_hay_share$coefficients)[2:14] <- c("Avg. Temperature", "Avg. Temperature Squared", "Precipitation",
+names(cs.temp.p_hay_share$coefficients) <- c("Avg. Temperature", "Avg. Temperature Squared", "Precipitation",
                                  "Precipitation Squared", "Latitude", "Income per Capita", "Population Density",
                                   "Population Density Squared", "Water Capacity", "Percent Clay", "Minimum Permeability", 
                                   "K-factor of Top Soil", "Best Soil Class")
 
 names(cs.dd.p_hay_share$coefficients)
-names(cs.dd.p_hay_share$coefficients)[2:15] <- c("Degree Days (10-30C)", "Degree Days (10-30C) Squared", "Degree Days (30C)",
+names(cs.dd.p_hay_share$coefficients) <- c("Degree Days (10-30C)", "Degree Days (10-30C) Squared", "Degree Days (30C)",
                                  "Precipitation", "Precipitation Squared", "Latitude", "Income per Capita", "Population Density",
                                   "Population Density Squared",  "Water Capacity", "Percent Clay", "Minimum Permeability", 
                                   "K-factor of Top Soil", "Best Soil Class")
 
 names(cs.temp.p_wheat_share$coefficients)
-names(cs.temp.p_wheat_share$coefficients)[2:14] <- c("Avg. Temperature", "Avg. Temperature Squared", "Precipitation",
+names(cs.temp.p_wheat_share$coefficients) <- c("Avg. Temperature", "Avg. Temperature Squared", "Precipitation",
                                  "Precipitation Squared", "Latitude", "Income per Capita", "Population Density",
                                   "Population Density Squared", "Water Capacity", "Percent Clay", "Minimum Permeability", 
                                   "K-factor of Top Soil", "Best Soil Class")
 
 names(cs.dd.p_wheat_share$coefficients)
-names(cs.dd.p_wheat_share$coefficients)[2:15] <- c("Degree Days (10-30C)", "Degree Days (10-30C) Squared", "Degree Days (30C)",
+names(cs.dd.p_wheat_share$coefficients) <- c("Degree Days (10-30C)", "Degree Days (10-30C) Squared", "Degree Days (30C)",
                                  "Precipitation", "Precipitation Squared", "Latitude", "Income per Capita", "Population Density",
                                   "Population Density Squared",  "Water Capacity", "Percent Clay", "Minimum Permeability", 
                                   "K-factor of Top Soil", "Best Soil Class")
 
 names(cs.temp.p_soybean_share$coefficients)
-names(cs.temp.p_soybean_share$coefficients)[2:14] <- c("Avg. Temperature", "Avg. Temperature Squared", "Precipitation",
+names(cs.temp.p_soybean_share$coefficients) <- c("Avg. Temperature", "Avg. Temperature Squared", "Precipitation",
                                  "Precipitation Squared", "Latitude", "Income per Capita", "Population Density",
                                   "Population Density Squared", "Water Capacity", "Percent Clay", "Minimum Permeability", 
                                   "K-factor of Top Soil", "Best Soil Class")
 
 names(cs.dd.p_soybean_share$coefficients)
-names(cs.dd.p_soybean_share$coefficients)[2:15] <- c("Degree Days (10-30C)", "Degree Days (10-30C) Squared", "Degree Days (30C)",
+names(cs.dd.p_soybean_share$coefficients) <- c("Degree Days (10-30C)", "Degree Days (10-30C) Squared", "Degree Days (30C)",
                                  "Precipitation", "Precipitation Squared", "Latitude", "Income per Capita", "Population Density",
                                   "Population Density Squared",  "Water Capacity", "Percent Clay", "Minimum Permeability", 
                                   "K-factor of Top Soil", "Best Soil Class")
@@ -195,7 +171,7 @@ star1 <- stargazer(cs.temp.ln_corn_rrev,
                    align = FALSE, no.space = FALSE, 
                    style = "aer", digits = 2,
           omit = c("fips", "year","state"), omit.stat = c("ser", "f"), 
-          title = "Cross-section Regression Models explaining Crop Revenue and Acres", 
+          title = "Cross-section Regression Models explaining Crop Revenue per Acre", 
           column.labels = c("Cross-section", "Cross-section", "Cross-section", "Cross-section", "Cross-section"),
           dep.var.labels = c("Log(Corn Rev)", "Log(Cotton Rev)", "Log(Hay Rev)", "Log(Wheat Rev)", "Log(Soybean Rev)"), 
           model.names = FALSE,
@@ -217,7 +193,7 @@ star2 <- stargazer(cs.dd.ln_corn_rrev,
                    align = FALSE, no.space = FALSE, 
                    style = "aer", digits = 2,
           omit = c("fips", "year","state"), omit.stat = c("ser", "f"), 
-          title = "Cross-section Regression Models explaining Crop Revenue and Acres", 
+          title = "Cross-section Regression Models explaining Crop Revenue per Acre", 
           column.labels = c("Cross-section", "Cross-section", "Cross-section", "Cross-section", "Cross-section"),
           dep.var.labels = c("Log(Corn Rev)", "Log(Cotton Rev)", "Log(Hay Rev)", "Log(Wheat Rev)", "Log(Soybean Rev)"), 
           model.names = FALSE,
@@ -238,7 +214,7 @@ star3 <- stargazer(cs.temp.p_corn_share,
                    align = FALSE, no.space = FALSE, 
                    style = "aer", digits = 2,
           omit = c("fips", "year","state"), omit.stat = c("ser", "f"), 
-          title = "Cross-section Regression Models explaining Crop Revenue and Acres", 
+          title = "Cross-section Regression Models explaining Proportion of Acres by Crop", 
           column.labels = c("Cross-section", "Cross-section", "Cross-section", "Cross-section", "Cross-section"),
           dep.var.labels = c("Corn Acres", "Cotton Acres", "Hay Acres", "Wheat Acres", "Soybean Acres"), 
           model.names = FALSE,
@@ -260,7 +236,7 @@ star4 <- stargazer(cs.dd.p_corn_share,
                    align = FALSE, no.space = FALSE, 
                    style = "aer", digits = 2,
           omit = c("fips", "year","state"), omit.stat = c("ser", "f"), 
-          title = "Cross-section Regression Models explaining Crop Share", 
+          title = "Cross-section Regression Models explaining Proportion of Acres by Crop", 
           column.labels = c("Cross-section", "Cross-section", "Cross-section", "Cross-section", "Cross-section"),
           dep.var.labels = c("Corn Acres", "Cotton Acres", "Hay Acres", "Wheat Acres", "Soybean Acres"), 
           model.names = FALSE,
