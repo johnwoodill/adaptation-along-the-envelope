@@ -14,44 +14,45 @@ cropdat <- readRDS("data/cross_section_regression_data.rds")
 # Demean values
 corn_cropdat <- as.data.frame(filter(cropdat, !is.na(ln_corn_rrev)))
 corn_moddat <- demeanlist(
-  mtx = as.matrix(corn_cropdat[,3:40]), 
+  mtx = as.matrix(corn_cropdat[,3:36]), 
   fl = list(state = corn_cropdat$state),
   weights = sqrt(corn_cropdat$corn_grain_a))
 corn_moddat <- as.data.frame(corn_moddat)
 
 cotton_cropdat <- filter(cropdat, !is.na(ln_cotton_rrev))
 cotton_moddat <- demeanlist(
-  mtx = as.matrix(cotton_cropdat[,3:40]), 
+  mtx = as.matrix(cotton_cropdat[,3:36]), 
   fl = list(state = cotton_cropdat$state),
   weights = sqrt(cotton_cropdat$cotton_a))
 cotton_moddat <- as.data.frame(cotton_moddat)
 
 hay_cropdat <- filter(cropdat, !is.na(ln_hay_rrev))
 hay_moddat <- demeanlist(
-  mtx = as.matrix(hay_cropdat[,3:40]), 
+  mtx = as.matrix(hay_cropdat[,3:36]), 
   fl = list(state = hay_cropdat$state),
   weights = sqrt(hay_cropdat$hay_a))
 hay_moddat <- as.data.frame(hay_moddat)
 
 wheat_cropdat <- filter(cropdat, !is.na(ln_wheat_rrev))
 wheat_moddat <- demeanlist(
-  mtx = as.matrix(wheat_cropdat[,3:40]), 
+  mtx = as.matrix(wheat_cropdat[,3:36]), 
   fl = list(state = wheat_cropdat$state),
   weights = sqrt(wheat_cropdat$wheat_a))
 wheat_moddat <- as.data.frame(wheat_moddat)
 
 soybean_cropdat <- filter(cropdat, !is.na(ln_soybean_rrev))
 soybean_moddat <- demeanlist(
-  mtx = as.matrix(soybean_cropdat[,3:40]), 
+  mtx = as.matrix(soybean_cropdat[,3:36]), 
   fl = list(state = soybean_cropdat$state),
   weights = sqrt(soybean_cropdat$soybean_a))
 soybean_moddat <- as.data.frame(soybean_moddat)
 
-cs.corn.mod1 <- lm(ln_corn_rrev ~ dm_tavg + dm_tavg_sq + dm_prec + dm_prec_sq + 
-                      lat + dm_ipc + dm_pop_dens + dm_pop_dens_sq + 
+cs.corn.mod1 <- lm(ln_corn_rrev ~ tavg + tavg_sq + prec + prec_sq + 
+                      lat + ipc + pop_dens + pop_dens_sq + 
               waterCapacity + percentClay + minPermeability + kFactor + bestSoil - 1, 
               data = corn_moddat, weights = corn_cropdat$corn_grain_a)
 summary(cs.corn.mod1)
+
 
  # mod1 <-lm(ln_corn_rrev ~ factor(state) + dm_tavg + dm_tavg_sq + dm_prec + dm_prec_sq + 
  #                       lat + dm_ipc + dm_pop_dens + dm_pop_dens_sq + 
@@ -67,9 +68,10 @@ summary(cs.corn.mod1)
 
 # summary(mod2)
 
-cs.corn.mod2 <- lm(ln_corn_rrev ~ dm_dday10_30 + dm_dday10_30_sq + dm_dday30 + dm_prec + dm_prec_sq +
-                    lat + dm_ipc + dm_pop_dens + dm_pop_dens_sq + waterCapacity + percentClay + minPermeability + kFactor + bestSoil - 1,
+cs.corn.mod2 <- lm(ln_corn_rrev ~ dday10_30 + dday30C + prec + prec_sq +
+                    lat + ipc + pop_dens + pop_dens_sq + waterCapacity + percentClay + minPermeability + kFactor + bestSoil - 1,
                   data = corn_moddat, weights = corn_cropdat$corn_grain_a)
+
 summary(cs.corn.mod2)
 
 # Cotton
@@ -138,48 +140,48 @@ cropdat <- filter(cropdat, corn_grain_a != 0 & cotton_a != 0 & hay_a != 0 & whea
 
 corn_cropdat <- filter(cropdat, !is.na(p_corn_share))
 corn_moddat <- demeanlist(
-  mtx = as.matrix(corn_cropdat[,3:40]), 
+  mtx = as.matrix(corn_cropdat[,3:36]), 
   fl = list(state = corn_cropdat$state),
   weights = sqrt(corn_cropdat$total_a))
 corn_moddat <- as.data.frame(corn_moddat)
 
 cotton_cropdat <- filter(cropdat, !is.na(p_cotton_share))
 cotton_moddat <- demeanlist(
-  mtx = as.matrix(cotton_cropdat[,3:40]), 
+  mtx = as.matrix(cotton_cropdat[,3:36]), 
   fl = list(state = cotton_cropdat$state),
   weights = sqrt(cotton_cropdat$total_a))
 cotton_moddat <- as.data.frame(cotton_moddat)
 
 hay_cropdat <- filter(cropdat, !is.na(p_hay_share))
 hay_moddat <- demeanlist(
-  mtx = as.matrix(hay_cropdat[,3:40]), 
+  mtx = as.matrix(hay_cropdat[,3:36]), 
   fl = list(state = hay_cropdat$state),
   weights = sqrt(hay_cropdat$total_a))
 hay_moddat <- as.data.frame(hay_moddat)
 
 wheat_cropdat <- filter(cropdat, !is.na(p_wheat_share))
 wheat_moddat <- demeanlist(
-  mtx = as.matrix(wheat_cropdat[,3:40]), 
+  mtx = as.matrix(wheat_cropdat[,3:36]), 
   fl = list(state = wheat_cropdat$state),
   weights = sqrt(wheat_cropdat$total_a))
 wheat_moddat <- as.data.frame(wheat_moddat)
 
 soybean_cropdat <- filter(cropdat, !is.na(p_soybean_share))
 soybean_moddat <- demeanlist(
-  mtx = as.matrix(soybean_cropdat[,3:40]), 
+  mtx = as.matrix(soybean_cropdat[,3:36]), 
   fl = list(state = soybean_cropdat$state),
   weights = sqrt(soybean_cropdat$total_a))
 soybean_moddat <- as.data.frame(soybean_moddat)
 
-cc.corn.mod1 <- lm(p_corn_share ~ dm_tavg + dm_tavg_sq + prec + dm_prec_sq + 
-                     lat + dm_ipc + dm_pop_dens + dm_pop_dens_sq + 
+cc.corn.mod1 <- lm(p_corn_share ~ tavg + tavg_sq + prec + prec_sq + 
+                     lat + ipc + pop_dens + pop_dens_sq + 
                      waterCapacity + percentClay + minPermeability + kFactor + bestSoil - 1, 
                    data = corn_moddat, weights = corn_cropdat$total_a)
 summary(cc.corn.mod1)
 
 
-cc.corn.mod2 <- lm(p_corn_share ~ dm_dday10_30  + dm_dday10_30_sq + dm_dday30 + dm_prec + dm_prec_sq + 
-                    lat + dm_ipc + dm_pop_dens + dm_pop_dens_sq + 
+cc.corn.mod2 <- lm(p_corn_share ~ dday10_30  + dday30C + prec + prec_sq + 
+                    lat + ipc + pop_dens + pop_dens_sq + 
                      waterCapacity + percentClay + minPermeability + kFactor + bestSoil - 1, 
                    data = corn_moddat, weights = cropdat$total_a)
 summary(cc.corn.mod2)

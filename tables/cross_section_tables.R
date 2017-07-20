@@ -45,7 +45,7 @@ names(cs.temp.ln_corn_rrev$coefficients) <- c("Avg. Temperature", "Avg. Temperat
                                   "K-factor of Top Soil", "Best Soil Class")
 
 names(cs.dd.ln_corn_rrev$coefficients)
-names(cs.dd.ln_corn_rrev$coefficients) <- c("Degree Days (10-30C)", "Degree Days (10-30C) Squared", "Degree Days (30C)",
+names(cs.dd.ln_corn_rrev$coefficients) <- c("Degree Days (10-30C)", "Degree Days (30C)",
                                  "Precipitation", "Precipitation Squared", "Latitude", "Income per Capita", "Population Density",
                                   "Population Density Squared",  "Water Capacity", "Percent Clay", "Minimum Permeability", 
                                   "K-factor of Top Soil", "Best Soil Class")
@@ -57,7 +57,7 @@ names(cs.temp.ln_cotton_rrev$coefficients) <- c("Avg. Temperature", "Avg. Temper
                                   "K-factor of Top Soil", "Best Soil Class")
 
 names(cs.dd.ln_cotton_rrev$coefficients)
-names(cs.dd.ln_cotton_rrev$coefficients) <- c("Degree Days (10-30C)", "Degree Days (10-30C) Squared", "Degree Days (30C)",
+names(cs.dd.ln_cotton_rrev$coefficients) <- c("Degree Days (10-30C)", "Degree Days (30C)",
                                  "Precipitation", "Precipitation Squared", "Latitude", "Income per Capita", "Population Density",
                                   "Population Density Squared",  "Water Capacity", "Percent Clay", "Minimum Permeability", 
                                   "K-factor of Top Soil", "Best Soil Class")
@@ -69,7 +69,7 @@ names(cs.temp.ln_hay_rrev$coefficients) <- c("Avg. Temperature", "Avg. Temperatu
                                   "K-factor of Top Soil", "Best Soil Class")
 
 names(cs.dd.ln_hay_rrev$coefficients)
-names(cs.dd.ln_hay_rrev$coefficients) <- c("Degree Days (10-30C)", "Degree Days (10-30C) Squared", "Degree Days (30C)",
+names(cs.dd.ln_hay_rrev$coefficients) <- c("Degree Days (10-30C)", "Degree Days (30C)",
                                  "Precipitation", "Precipitation Squared", "Latitude", "Income per Capita", "Population Density",
                                   "Population Density Squared",  "Water Capacity", "Percent Clay", "Minimum Permeability", 
                                   "K-factor of Top Soil", "Best Soil Class")
@@ -81,7 +81,7 @@ names(cs.temp.ln_wheat_rrev$coefficients) <- c("Avg. Temperature", "Avg. Tempera
                                   "K-factor of Top Soil", "Best Soil Class")
 
 names(cs.dd.ln_wheat_rrev$coefficients)
-names(cs.dd.ln_wheat_rrev$coefficients) <- c("Degree Days (10-30C)", "Degree Days (10-30C) Squared", "Degree Days (30C)",
+names(cs.dd.ln_wheat_rrev$coefficients) <- c("Degree Days (10-30C)", "Degree Days (30C)",
                                  "Precipitation", "Precipitation Squared", "Latitude", "Income per Capita", "Population Density",
                                   "Population Density Squared",  "Water Capacity", "Percent Clay", "Minimum Permeability", 
                                   "K-factor of Top Soil", "Best Soil Class")
@@ -93,7 +93,7 @@ names(cs.temp.ln_soybean_rrev$coefficients) <- c("Avg. Temperature", "Avg. Tempe
                                   "K-factor of Top Soil", "Best Soil Class")
 
 names(cs.dd.ln_soybean_rrev $coefficients)
-names(cs.dd.ln_soybean_rrev $coefficients) <- c("Degree Days (10-30C)", "Degree Days (10-30C) Squared", "Degree Days (30C)",
+names(cs.dd.ln_soybean_rrev $coefficients) <- c("Degree Days (10-30C)", "Degree Days (30C)",
                                  "Precipitation", "Precipitation Squared", "Latitude", "Income per Capita", "Population Density",
                                   "Population Density Squared",  "Water Capacity", "Percent Clay", "Minimum Permeability", 
                                   "K-factor of Top Soil", "Best Soil Class")
@@ -105,7 +105,7 @@ names(cs.temp.p_corn_share$coefficients) <- c("Avg. Temperature", "Avg. Temperat
                                   "K-factor of Top Soil", "Best Soil Class")
 
 names(cs.dd.p_corn_share$coefficients)
-names(cs.dd.p_corn_share$coefficients) <- c("Degree Days (10-30C)", "Degree Days (10-30C) Squared", "Degree Days (30C)",
+names(cs.dd.p_corn_share$coefficients) <- c("Degree Days (10-30C)", "Degree Days (30C)",
                                  "Precipitation", "Precipitation Squared", "Latitude", "Income per Capita", "Population Density",
                                   "Population Density Squared",  "Water Capacity", "Percent Clay", "Minimum Permeability", 
                                   "K-factor of Top Soil", "Best Soil Class")
@@ -117,7 +117,7 @@ names(cs.temp.p_cotton_share$coefficients) <- c("Avg. Temperature", "Avg. Temper
                                   "K-factor of Top Soil", "Best Soil Class")
 
 names(cs.dd.p_cotton_share$coefficients)
-names(cs.dd.p_cotton_share$coefficients) <- c("Degree Days (10-30C)", "Degree Days (10-30C) Squared", "Degree Days (30C)",
+names(cs.dd.p_cotton_share$coefficients) <- c("Degree Days (10-30C)", "Degree Days (30C)",
                                  "Precipitation", "Precipitation Squared", "Latitude", "Income per Capita", "Population Density",
                                   "Population Density Squared",  "Water Capacity", "Percent Clay", "Minimum Permeability", 
                                   "K-factor of Top Soil", "Best Soil Class")
@@ -129,7 +129,7 @@ names(cs.temp.p_hay_share$coefficients) <- c("Avg. Temperature", "Avg. Temperatu
                                   "K-factor of Top Soil", "Best Soil Class")
 
 names(cs.dd.p_hay_share$coefficients)
-names(cs.dd.p_hay_share$coefficients) <- c("Degree Days (10-30C)", "Degree Days (10-30C) Squared", "Degree Days (30C)",
+names(cs.dd.p_hay_share$coefficients) <- c("Degree Days (10-30C)", "Degree Days (30C)",
                                  "Precipitation", "Precipitation Squared", "Latitude", "Income per Capita", "Population Density",
                                   "Population Density Squared",  "Water Capacity", "Percent Clay", "Minimum Permeability", 
                                   "K-factor of Top Soil", "Best Soil Class")
@@ -141,7 +141,7 @@ names(cs.temp.p_wheat_share$coefficients) <- c("Avg. Temperature", "Avg. Tempera
                                   "K-factor of Top Soil", "Best Soil Class")
 
 names(cs.dd.p_wheat_share$coefficients)
-names(cs.dd.p_wheat_share$coefficients) <- c("Degree Days (10-30C)", "Degree Days (10-30C) Squared", "Degree Days (30C)",
+names(cs.dd.p_wheat_share$coefficients) <- c("Degree Days (10-30C)", "Degree Days (30C)",
                                  "Precipitation", "Precipitation Squared", "Latitude", "Income per Capita", "Population Density",
                                   "Population Density Squared",  "Water Capacity", "Percent Clay", "Minimum Permeability", 
                                   "K-factor of Top Soil", "Best Soil Class")
@@ -153,7 +153,7 @@ names(cs.temp.p_soybean_share$coefficients) <- c("Avg. Temperature", "Avg. Tempe
                                   "K-factor of Top Soil", "Best Soil Class")
 
 names(cs.dd.p_soybean_share$coefficients)
-names(cs.dd.p_soybean_share$coefficients) <- c("Degree Days (10-30C)", "Degree Days (10-30C) Squared", "Degree Days (30C)",
+names(cs.dd.p_soybean_share$coefficients) <- c("Degree Days (10-30C)", "Degree Days (30C)",
                                  "Precipitation", "Precipitation Squared", "Latitude", "Income per Capita", "Population Density",
                                   "Population Density Squared",  "Water Capacity", "Percent Clay", "Minimum Permeability", 
                                   "K-factor of Top Soil", "Best Soil Class")
