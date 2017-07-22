@@ -224,7 +224,7 @@ cropdat <- left_join(cropdat, soybean, by = c("state", "fips", "year"))
 
 
 # Schlenker and Roberts data
- dd_dat <- read_dta("data/ddayOverAgAreaByMonth.dta")
+# dd_dat <- read_dta("data/ddayOverAgAreaByMonth.dta")
 #  dd_dat$year <- as.integer(dd_dat$year)
 #  dd_dat$fips <- as.integer(dd_dat$fips)
 #  dd_dat <- dd_dat %>% 

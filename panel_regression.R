@@ -62,9 +62,8 @@ soybean_moddat <- as.data.frame(soybean_moddat)
 
 # Corn
 p.corn.mod1 <- lm(ln_corn_rrev ~ tavg + tavg_sq + prec + prec_sq - 1, 
-                data = corn_moddat, weights = corn_cropdat$corn_grain_a)
+                data = corn_cropdat, weights = corn_cropdat$corn_grain_a)
 summary(p.corn.mod1)
-
 
 p.corn.mod2 <- lm(ln_corn_rrev ~ dday10C_30C  + dday10C_30C_sq + dday30C +
                prec + prec_sq - 1, data = corn_cropdat, weights = corn_cropdat$corn_grain_a)
