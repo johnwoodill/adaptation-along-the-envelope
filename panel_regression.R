@@ -62,40 +62,40 @@ soybean_moddat <- as.data.frame(soybean_moddat)
 
 # Corn
 p.corn.mod1 <- lm(ln_corn_rrev ~ tavg + tavg_sq + prec + prec_sq - 1, 
-                data = corn_cropdat, weights = corn_cropdat$corn_grain_a)
+                data = corn_cropdat)
 summary(p.corn.mod1)
 
-p.corn.mod2 <- lm(ln_corn_rrev ~ dday10C_30C  + dday10C_30C_sq + dday30C +
-               prec + prec_sq - 1, data = corn_cropdat, weights = corn_cropdat$corn_grain_a)
+p.corn.mod2 <- lm(ln_corn_rrev ~ dday10C_30C  + dday30C +
+               prec + prec_sq - 1, data = corn_cropdat)
 summary(p.corn.mod2)
 
 # Cotton
-p.cotton.mod1 <- update(p.corn.mod1, ln_cotton_rrev ~ ., weights = cotton_cropdat$cotton_a, data = cotton_moddat)
+p.cotton.mod1 <- update(p.corn.mod1, ln_cotton_rrev ~ ., data = cotton_moddat, weights = NULL)
 summary(p.cotton.mod1)
 
-p.cotton.mod2 <- update(p.corn.mod2, ln_cotton_rrev ~ ., weights = cotton_cropdat$cotton_a, data = cotton_moddat)
-summary(p.cotton.mod1)
+p.cotton.mod2 <- update(p.corn.mod2, ln_cotton_rrev ~ ., weights = NULL, data = cotton_moddat)
+summary(p.cotton.mod2)
 
 # Hay
-p.hay.mod1 <- update(p.corn.mod1, ln_hay_rrev ~ ., weights = hay_cropdat$hay_a, data = hay_moddat)
+p.hay.mod1 <- update(p.corn.mod1, ln_hay_rrev ~ ., weights = NULL, data = hay_moddat)
 summary(p.hay.mod1)
 
-p.hay.mod2 <- update(p.corn.mod2, ln_hay_rrev ~ ., weights = hay_cropdat$hay_a, data = hay_moddat)
-summary(p.hay.mod1)
+p.hay.mod2 <- update(p.corn.mod2, ln_hay_rrev ~ ., weights = NULL, data = hay_moddat)
+summary(p.hay.mod2)
 
 # Wheat
 p.wheat.mod1 <- update(p.corn.mod1, ln_wheat_rrev ~ ., weights = wheat_cropdat$wheat_a, data = wheat_moddat)
 summary(p.wheat.mod1)
 
-p.wheat.mod2 <- update(p.corn.mod2, ln_wheat_rrev ~ ., weights = wheat_cropdat$wheat_a, data = wheat_moddat)
-summary(p.wheat.mod1)
+p.wheat.mod2 <- update(p.corn.mod2, ln_wheat_rrev ~ ., weights = NULL, data = wheat_moddat)
+summary(p.wheat.mod2)
 
 # Soybean
 p.soybean.mod1 <- update(p.corn.mod1, ln_soybean_rrev ~ ., weights = soybean_cropdat$soybean_a, data = soybean_moddat)
 summary(p.soybean.mod1)
 
-p.soybean.mod2 <- update(p.corn.mod2, ln_soybean_rrev ~ ., weights = soybean_cropdat$soybean_a, data = soybean_moddat)
-summary(p.soybean.mod1)
+p.soybean.mod2 <- update(p.corn.mod2, ln_soybean_rrev ~ ., weights = NULL, data = soybean_moddat)
+summary(p.soybean.mod2)
 
 saveRDS(p.corn.mod1, "models/p.temp.ln_corn_rrev")
 saveRDS(p.corn.mod2, "models/p.dd.ln_corn_rrev")

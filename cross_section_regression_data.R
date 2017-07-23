@@ -29,14 +29,8 @@ cropdat$ln_cotton_rrev <- log(cropdat$cotton_rrev)
 cropdat$ln_hay_rrev <- log(cropdat$hay_rrev)
 cropdat$ln_wheat_rrev <- log(cropdat$wheat_rrev)
 cropdat$ln_soybean_rrev <- log(cropdat$soybean_rrev)
-cropdat$dday10_30 <- cropdat$dday10C - cropdat$dday30C
-cropdat$dday10_30_sq <- cropdat$dday10_30^2
-cropdat$dday8_32 <- cropdat$dday8C - cropdat$dday32C
-cropdat$dday8_32_sq <- cropdat$dday8_32^2
-cropdat$pop_dens_sq <- cropdat$pop_dens^2
-cropdat$tavg_sq <- cropdat$tavg^2
-cropdat$prec_sq <- cropdat$prec^2
-cropdat$dday34C_sqrt <- sqrt(cropdat$dday34C)
+#cropdat$dday10_30 <- cropdat$dday10C - cropdat$dday30C
+#cropdat$dday8_32 <- cropdat$dday8C - cropdat$dday32C
 cropdat$total_a <- rowSums(cropdat[,c("corn_grain_a", "cotton_a", "hay_a", "wheat_a", "soybean_a")])
 cropdat$state <- factor(cropdat$state)
 

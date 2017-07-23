@@ -68,8 +68,9 @@ summary(cs.corn.mod1)
 
 # summary(mod2)
 
-cs.corn.mod2 <- lm(ln_corn_rrev ~ dday10_30 + dday30C + prec + prec_sq +
-                    lat + ipc + pop_dens + pop_dens_sq + waterCapacity + percentClay + minPermeability + kFactor + bestSoil - 1,
+cs.corn.mod2 <- lm(ln_corn_rrev ~ dday10_30 + dday34C + prec + prec_sq +
+                    lat + ipc + pop_dens + pop_dens_sq + 
+                    waterCapacity + percentClay + minPermeability + kFactor + bestSoil- 1,
                   data = corn_moddat, weights = corn_cropdat$corn_grain_a)
 
 summary(cs.corn.mod2)
@@ -85,7 +86,7 @@ summary(cs.cotton.mod2)
 cs.hay.mod1 <- update(cs.corn.mod1, ln_hay_rrev ~ ., weights = hay_cropdat$hay_a, data = hay_moddat)
 summary(cs.hay.mod1)
 
-cs.hay.mod2 <- update(cs.corn.mod2, ln_hay_rrev ~ ., weights = hay_cropdat$hay_a, data = hay_moddat)
+cs.hay.mod2 <- update(cs.corn.mod2, ln_hay_rrev ~ ., weights = hay_cropdat$hay_a,  data = hay_moddat)
 summary(cs.hay.mod2)
 
 # Wheat
@@ -99,7 +100,7 @@ summary(cs.wheat.mod2)
 cs.soybean.mod1 <- update(cs.corn.mod1, ln_soybean_rrev ~ ., weights = soybean_cropdat$soybean_a, data = soybean_moddat)
 summary(cs.soybean.mod1)
 
-cs.soybean.mod2 <- update(cs.corn.mod2, ln_soybean_rrev ~ ., weights = soybean_cropdat$soybean_a, data = soybean_moddat)
+cs.soybean.mod2 <- update(cs.corn.mod2, ln_soybean_rrev ~ ., data = soybean_moddat)
 summary(cs.soybean.mod2)
 
 
