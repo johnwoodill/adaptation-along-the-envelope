@@ -3,6 +3,10 @@ library(readr)
 library(dplyr)
 library(Hmisc)
 
+#######################
+# Data
+
+
 
 ##############################################
 ##############################################
@@ -12,62 +16,61 @@ library(Hmisc)
 p.dat <- readRDS("data/panel_regression_data.rds")
 
 
-td <- read_csv("data/fips_degree_time_1900-2013.csv")
-names(td)[3:48] <- paste0(names(td)[3:48], "C")
+td <- readRDS("data/fips_degree_time_1900-2013.rds")
+td <- filteR(td, year >= 1950 & year <= 2010)
+#names(td)[3:49] <- paste0(names(td)[3:48], "C")
 td$year <- factor(td$year)
 td$fips <- factor(td$fips)
 p.dat <- left_join(p.dat, td, by = c("year", "fips"))
 
 #dat <- filter(dat, !is.na(corn_yield))
 
-DMat <- rcspline.eval(0:40, nk = 7)
-#DMat <- diag(41)
-
-XMat <- as.matrix(p.dat[, 71:111])
-XMat <- XMat %*% DMat
+# DMat <- rcspline.eval(0:40, nk = 7)
+# #DMat <- diag(41)
+# 
+# XMat <- as.matrix(p.dat[, 71:111])
+# XMat <- XMat %*% DMat
 #newXmat <- as.data.frame(XMat)
-p.dat$zero <- rowSums(p.dat[,71:80])
+p.dat$zero <- rowSums(p.dat[, 71:80])
 p.dat$ten <- rowSums(p.dat[, 81:100])
 p.dat$thirty <- rowSums(p.dat[, 101:110])
 p.dat$fourty <- rowSums(p.dat[, 111:116])
 
-corn.fit <- felm(ln_corn_rrev ~  zero + ten + thirty + fourty  + prec + prec_sq | fips + year | 0 | state, data = p.dat)
+corn.fit <- felm(ln_corn_rrev ~  Ntd +  ten + thirty + fourty  + prec + prec_sq | fips + year | 0 | state, data = p.dat)
 summary(corn.fit)
 plot(corn.fit$coefficients[1:4])
 summary(corn.fit)
 
-cotton.fit <- felm(ln_cotton_rrev ~ zero + ten + thirty + fourty + prec + prec_sq | fips + year | 0 | state, data = p.dat)
+cotton.fit <- felm(ln_cotton_rrev ~ Ntd + ten + thirty + fourty + prec + prec_sq | fips + year | 0 | state, data = p.dat)
 summary(cotton.fit)
 plot(scale(cotton.fit$coefficients[1:4]))
 
-hay.fit <- felm(ln_hay_rrev ~ zero + ten + thirty + fourty + prec + prec_sq | fips + year | 0 | state, data = p.dat)
+hay.fit <- felm(ln_hay_rrev ~ Ntd + ten + thirty + fourty + prec + prec_sq | fips + year | 0 | state, data = p.dat)
 summary(hay.fit)
 
-wheat.fit <- felm(ln_wheat_rrev ~  zero + ten + thirty + fourty + prec + prec_sq | fips + year | 0 | state, data = p.dat)
+wheat.fit <- felm(ln_wheat_rrev ~  Ntd + ten + thirty + fourty + prec + prec_sq | fips + year | 0 | state, data = p.dat)
 summary(wheat.fit)
 
-soybean.fit <- felm(ln_soybean_rrev ~ zero +  ten + thirty + fourty +  prec + prec_sq | fips + year | 0 | state, data = p.dat)
+soybean.fit <- felm(ln_soybean_rrev ~ Ntd +  ten + thirty + fourty +  prec + prec_sq | fips + year | 0 | state, data = p.dat)
 summary(soybean.fit)
 
-# summary(corn.fit)
-# corn.coef <- as.numeric(scale(corn.fit$coefficients[c(1,1:4)]))
-# cotton.coef <- as.numeric(scale(cotton.fit$coefficients[c(1,1:4)]))
-# hay.coef <- as.numeric(scale(hay.fit$coefficients[c(1,1:4)]))
-# wheat.coef <- as.numeric(scale(wheat.fit$coefficients[c(1,1:4)]))
-# soybean.coef <- as.numeric(scale(soybean.fit$coefficients[c(1,1:4)]))
+corn.coef <- as.numeric(scale(corn.fit$coefficients[c(1:4)]))
+cotton.coef <- as.numeric(scale(cotton.fit$coefficients[c(1:4)]))
+hay.coef <- as.numeric(scale(hay.fit$coefficients[c(1:4)]))
+wheat.coef <- as.numeric(scale(wheat.fit$coefficients[c(1:4)]))
+soybean.coef <- as.numeric(scale(soybean.fit$coefficients[c(1:4)]))
 
-corn.coef <- as.numeric(corn.fit$coefficients[c(1,1:4)])
-#corn.fit$se
-cotton.coef <- as.numeric(cotton.fit$coefficients[c(1,1:4)])
-hay.coef <- as.numeric(hay.fit$coefficients[c(1,1:4)])
-wheat.coef <- as.numeric(wheat.fit$coefficients[c(1,1:4)])
-soybean.coef <- as.numeric(soybean.fit$coefficients[c(1,1:4)])
+# corn.coef <- as.numeric(corn.fit$coefficients[c(1:4)])
+# cotton.coef <- as.numeric(cotton.fit$coefficients[c(1:4)])
+# hay.coef <- as.numeric(hay.fit$coefficients[c(1:4)])
+# wheat.coef <- as.numeric(wheat.fit$coefficients[c(1:4)])
+# soybean.coef <- as.numeric(soybean.fit$coefficients[c(1:4)])
 
-pdat <- data.frame(degree = rep(c(0, 10, 30, 40, 45), 5),
+pdat <- data.frame(degree = rep(c(0, 10, 30, 40), 5),
                    coef = c(corn.coef, cotton.coef, hay.coef, wheat.coef, soybean.coef),
-                   se = c(corn.fit$se[c(1,1:4)], cotton.fit$se[c(1,1:4)], hay.fit$se[c(1,1:4)], 
-                        wheat.fit$se[c(1,1:4)], soybean.fit$se[c(1,1:4)]), 
-                   crop = rep(c("Corn", "Cotton", "Hay", "Wheat", "Soybean"), each = 5))
+                   se = c(corn.fit$se[c(1:4)], cotton.fit$se[c(1:4)], hay.fit$se[c(1:4)], 
+                        wheat.fit$se[c(1:4)], soybean.fit$se[c(1:4)]), 
+                   crop = rep(c("Corn", "Cotton", "Hay", "Wheat", "Soybean"), each = 4))
 pdat$ymin <- pdat$coef - pdat$se*1.97
 pdat$ymax <- pdat$coef + pdat$se*1.97
 pdat$reg <- "Panel"
@@ -77,8 +80,9 @@ ggplot(pdat, aes(x = degree, y = coef, color = crop)) + geom_line()
 cs.dat <- readRDS("data/cross_section_regression_data.rds")
 
 
-td <- read_csv("data/fips_degree_time_1900-2013.csv")
-names(td)[3:48] <- paste0(names(td)[3:48], "C")
+td <- readRDS("data/fips_degree_time_1900-2013.rds")
+td <- filter(td, year >= 1970 & year <= 2010)
+#names(td)[3:48] <- paste0(names(td)[3:48], "C")
 td$year <- NULL
 td <- td %>% 
   group_by(fips) %>% 
@@ -89,61 +93,61 @@ td$fips <- factor(td$fips)
 cs.dat$fips <- factor(cs.dat$fips)
 cs.dat <- left_join(cs.dat, td, by = c("fips"))
 
-cs.dat$zero <- rowSums(cs.dat[,38:47])
-cs.dat$ten <- rowSums(cs.dat[, 48:67])
-cs.dat$thirty <- rowSums(cs.dat[, 68:77])
-cs.dat$fourty <- rowSums(cs.dat[, 78:83])
+cs.dat$zero <- cs.dat[, 83]
+cs.dat$ten <- rowSums(cs.dat[, 47:66])
+cs.dat$thirty <- rowSums(cs.dat[, 67:76])
+cs.dat$fourty <- rowSums(cs.dat[, 77:82])
 
 #cs.dat$fourty <- rowSums(cs.dat[, 101:112])
 
-corn.fit <- felm(ln_corn_rrev ~  zero + ten + thirty + fourty + prec + prec_sq + lat + ipc + pop_dens + pop_dens_sq + 
+corn.fit <- felm(ln_corn_rrev ~  Ntd + ten + thirty + fourty + prec + prec_sq + lat + ipc + pop_dens + pop_dens_sq + 
                    waterCapacity + percentClay + minPermeability + kFactor + bestSoil | state | 0 | state,
                   data = cs.dat)
 
 summary(corn.fit)
 plot(corn.fit$coefficients[1:4])
-cotton.fit <- felm(ln_cotton_rrev ~ zero + ten + thirty + fourty + prec + prec_sq + lat + ipc + pop_dens + pop_dens_sq + 
+cotton.fit <- felm(ln_cotton_rrev ~ Ntd + ten + thirty + fourty + prec + prec_sq + lat + ipc + pop_dens + pop_dens_sq + 
                    waterCapacity + percentClay + minPermeability + kFactor + bestSoil | state | 0 | state,
                   data = cs.dat)
 summary(cotton.fit)
 plot(cotton.fit$coefficients[1:4])
 
-hay.fit <- felm(ln_hay_rrev ~  zero + ten + thirty + fourty + prec + prec_sq + lat + ipc + pop_dens + pop_dens_sq + 
+hay.fit <- felm(ln_hay_rrev ~  Ntd + ten + thirty + fourty + prec + prec_sq + lat + ipc + pop_dens + pop_dens_sq + 
                    waterCapacity + percentClay + minPermeability + kFactor + bestSoil | state | 0 | state,
                   data = cs.dat)
 summary(hay.fit)
 plot(hay.fit$coefficients[1:4])
-wheat.fit <- felm(ln_wheat_rrev ~  zero + ten + thirty + fourty +  prec + prec_sq + lat + ipc + pop_dens + pop_dens_sq + 
+
+wheat.fit <- felm(ln_wheat_rrev ~  Ntd + ten + thirty + fourty +  prec + prec_sq + lat + ipc + pop_dens + pop_dens_sq + 
                    waterCapacity + percentClay + minPermeability + kFactor + bestSoil | state | 0 | state, data = cs.dat)
 summary(wheat.fit)
-soybean.fit <- felm(ln_soybean_rrev ~  zero + ten + thirty + fourty +  prec + prec_sq + lat + ipc + pop_dens + pop_dens_sq + 
+
+soybean.fit <- felm(ln_soybean_rrev ~  Ntd + ten + thirty + fourty +  prec + prec_sq + lat + ipc + pop_dens + pop_dens_sq + 
                    waterCapacity + percentClay + minPermeability + kFactor + bestSoil | state | 0 | state, data = cs.dat)
 summary(soybean.fit)
 plot(soybean.fit$coefficients[2:5])
 
+# corn.coef <- as.numeric(corn.fit$coefficients[1:4])
+# cotton.coef <- as.numeric(cotton.fit$coefficients[1:4])
+# hay.coef <- as.numeric(hay.fit$coefficients[1:4])
+# wheat.coef <- as.numeric(wheat.fit$coefficients[1:4])
+# soybean.coef <- as.numeric(soybean.fit$coefficients[1:4])
 
-# 
-# summary(corn.fit)
-# corn.coef <- as.numeric(scale(corn.fit$coefficients[c(2,2:5)]))
-# cotton.coef <- as.numeric(scale(cotton.fit$coefficients[c(2,2:5)]))
-# hay.coef <- as.numeric(scale(hay.fit$coefficients[c(2,2:5)]))
-# wheat.coef <- as.numeric(scale(wheat.fit$coefficients[c(2,2:5)]))
-# soybean.coef <- as.numeric(scale(soybean.fit$coefficients[c(2,2:5)]))
+corn.coef <- as.numeric(scale(corn.fit$coefficients[1:4]))
+cotton.coef <- as.numeric(scale(cotton.fit$coefficients[1:4]))
+hay.coef <- as.numeric(scale(hay.fit$coefficients[1:4]))
+wheat.coef <- as.numeric(scale(wheat.fit$coefficients[1:4]))
+soybean.coef <- as.numeric(scale(soybean.fit$coefficients[1:4]))
 
-corn.coef <- as.numeric(corn.fit$coefficients[c(2,2:5)])
-cotton.coef <- as.numeric(cotton.fit$coefficients[c(2,2:5)])
-hay.coef <- as.numeric(hay.fit$coefficients[c(2,2:5)])
-wheat.coef <- as.numeric(wheat.fit$coefficients[c(2,2:5)])
-soybean.coef <- as.numeric(soybean.fit$coefficients[c(2,2:5)])
-
-csdat <- data.frame(degree = rep(c(0, 10, 30, 40, 45), 5),
+csdat <- data.frame(degree = rep(c(0, 10, 30, 40), 5),
                    coef = c(corn.coef, cotton.coef, hay.coef, wheat.coef, soybean.coef),
-                   se = c(corn.fit$se[c(2,2:5)], cotton.fit$se[c(2,2:5)], hay.fit$se[c(2,2:5)], 
-                          wheat.fit$se[c(2,2:5)], soybean.fit$se[c(2,2:5)]), 
-                   crop = rep(c("Corn", "Cotton", "Hay", "Wheat", "Soybean"), each = 5))
+                   se = c(corn.fit$se[1:4], cotton.fit$se[1:4], hay.fit$se[1:4], 
+                          wheat.fit$se[1:4], soybean.fit$se[1:4]), 
+                   crop = rep(c("Corn", "Cotton", "Hay", "Wheat", "Soybean"), each = 4))
+
 csdat$ymin <- csdat$coef - csdat$se*1.97
 csdat$ymax <- csdat$coef + csdat$se*1.97
-csdat$reg <- "Cross-section"
+csdat$reg<- "Cross-section"
 csdat
 seg.pcsdat <- rbind(csdat, pdat)
 
@@ -308,12 +312,12 @@ spline.plot
 p.dat <- readRDS("data/panel_regression_data.rds")
 
 
-td <- read_csv("data/fips_degree_time_1900-2013.csv")
+td <- readRDS("data/fips_degree_time_1900-2013.rds")
 
 
 
 
-names(td)[3:48] <- paste0(names(td)[3:48], "C")
+#names(td)[3:48] <- paste0(names(td)[3:48], "C")
 td$year <- factor(td$year)
 td$fips <- factor(td$fips)
 p.dat <- left_join(p.dat, td, by = c("year", "fips"))
@@ -342,33 +346,33 @@ p.dat$l <- rowSums(p.dat[, 104:106])
 p.dat$m <- rowSums(p.dat[, 107:109])
 p.dat$n <- rowSums(p.dat[, 110:116])
 
-corn.fit <- felm(ln_corn_rrev ~  a + b + c + d + e + f + g + h + i + j + k + l + m + n  + prec + prec_sq | fips + year | 0 | state, data = p.dat)
+corn.fit <- felm(ln_corn_rrev ~  Ntd + a + b + c + d + e + f + g + h + i + j + k + l + m + n  + prec + prec_sq | fips + year | 0 | state, data = p.dat)
 summary(corn.fit)
-plot(scale(corn.fit$coefficients[1:14]))
+plot(scale(corn.fit$coefficients[1:15]))
 summary(corn.fit)
 
-cotton.fit <- felm(ln_cotton_rrev ~ a + b + c + d + e + f + g + h + i + j + k + l + m + n + prec + prec_sq | fips + year | 0 | state, data = p.dat)
+cotton.fit <- felm(ln_cotton_rrev ~ Ntd + a + b + c + d + e + f + g + h + i + j + k + l + m + n + prec + prec_sq | fips + year | 0 | state, data = p.dat)
 summary(cotton.fit)
 plot(cotton.fit$coefficients[1:14])
 
-hay.fit <- felm(ln_hay_rrev ~ a + b + c + d + e + f + g + h + i + j + k + l + m + n + prec + prec_sq | fips + year | 0 | state, data = p.dat)
+hay.fit <- felm(ln_hay_rrev ~ Ntd + a + b + c + d + e + f + g + h + i + j + k + l + m + n + prec + prec_sq | fips + year | 0 | state, data = p.dat)
 summary(hay.fit)
 plot(hay.fit$coefficients[1:14])
 
-wheat.fit <- felm(ln_wheat_rrev ~  a + b + c + d + e + f + g + h + i + j + k + l + m + n + prec + prec_sq | fips + year | 0 | state, data = p.dat)
+wheat.fit <- felm(ln_wheat_rrev ~  Ntd + a + b + c + d + e + f + g + h + i + j + k + l + m + n + prec + prec_sq | fips + year | 0 | state, data = p.dat)
 summary(wheat.fit)
 plot(hay.fit$coefficients[1:14])
 
-soybean.fit <- felm(ln_soybean_rrev ~ a + b + c + d + e + f + g + h + i + j + k + l + m + n +  prec + prec_sq | fips + year | 0 | state, data = p.dat)
+soybean.fit <- felm(ln_soybean_rrev ~ Ntd + a + b + c + d + e + f + g + h + i + j + k + l + m + n +  prec + prec_sq | fips + year | 0 | state, data = p.dat)
 summary(soybean.fit)
 plot(hay.fit$coefficients[1:14])
 
 summary(corn.fit)
-corn.coef <- as.numeric(corn.fit$coefficients[1:14])
-cotton.coef <- as.numeric(cotton.fit$coefficients[1:14])
-hay.coef <- as.numeric(hay.fit$coefficients[1:14])
-wheat.coef <- as.numeric(wheat.fit$coefficients[1:14])
-soybean.coef <- as.numeric(soybean.fit$coefficients[1:14])
+corn.coef <- as.numeric(corn.fit$coefficients[1:15])
+cotton.coef <- as.numeric(cotton.fit$coefficients[1:15])
+hay.coef <- as.numeric(hay.fit$coefficients[1:15])
+wheat.coef <- as.numeric(wheat.fit$coefficients[1:15])
+soybean.coef <- as.numeric(soybean.fit$coefficients[1:15])
 
 # corn.coef <- as.numeric(corn.fit$coefficients[c(1,1:4)])
 # #corn.fit$se
@@ -377,11 +381,11 @@ soybean.coef <- as.numeric(soybean.fit$coefficients[1:14])
 # wheat.coef <- as.numeric(wheat.fit$coefficients[c(1,1:4)])
 # soybean.coef <- as.numeric(soybean.fit$coefficients[c(1,1:4)])
 
-pdat <- data.frame(degree = seq(0, 40, by = 3), 
+pdat <- data.frame(degree = seq(0, 43, by = 3), 
                    coef = c(corn.coef, cotton.coef, hay.coef, wheat.coef, soybean.coef),
-                   se = c(corn.fit$se[1:14], cotton.fit$se[1:14], hay.fit$se[1:14], 
-                        wheat.fit$se[1:14], soybean.fit$se[1:14]), 
-                   crop = rep(c("Corn", "Cotton", "Hay", "Wheat", "Soybean"), each = 14))
+                   se = c(corn.fit$se[1:15], cotton.fit$se[1:15], hay.fit$se[1:15], 
+                        wheat.fit$se[1:15], soybean.fit$se[1:15]), 
+                   crop = rep(c("Corn", "Cotton", "Hay", "Wheat", "Soybean"), each = 15))
 
 pdat$ymin <- pdat$coef - pdat$se*1.97
 pdat$ymax <- pdat$coef + pdat$se*1.97
@@ -392,9 +396,9 @@ ggplot(pdat, aes(x = degree, y = coef, color = crop)) +
 
 cs.dat <- readRDS("data/cross_section_regression_data.rds")
 
-td <- read_csv("data/fips_degree_time_1900-2013.csv")
-names(td)[3:48] <- paste0(names(td)[3:48], "C")
-
+td <- readRDS("data/fips_degree_time_1900-2013.rds")
+#names(td)[3:48] <- paste0(names(td)[3:48], "C")
+td <- filter(td, year >= 1970 & year <= 2010)
 td$year <- NULL
 td <- td %>% 
   group_by(fips) %>% 
@@ -404,58 +408,59 @@ td$fips <- factor(td$fips)
 cs.dat$fips <- factor(cs.dat$fips)
 cs.dat <- left_join(cs.dat, td, by = c("fips"))
 
-cs.dat$a <- rowSums(cs.dat[, 38:40])
-cs.dat$b <- rowSums(cs.dat[, 41:43])
-cs.dat$c <- rowSums(cs.dat[, 44:46])
-cs.dat$d <- rowSums(cs.dat[, 47:49])
-cs.dat$e <- rowSums(cs.dat[, 50:52])
-cs.dat$f <- rowSums(cs.dat[, 53:55])
-cs.dat$g <- rowSums(cs.dat[, 56:57])
-cs.dat$h <- rowSums(cs.dat[, 59:61])
-cs.dat$i <- rowSums(cs.dat[, 62:64])
-cs.dat$j <- rowSums(cs.dat[, 65:67])
-cs.dat$k <- rowSums(cs.dat[, 68:70])
-cs.dat$l <- rowSums(cs.dat[, 71:73])
-cs.dat$m <- rowSums(cs.dat[, 74:76])
-cs.dat$n <- rowSums(cs.dat[, 77:83])
+
+cs.dat$a <- rowSums(cs.dat[, 37:39])
+cs.dat$b <- rowSums(cs.dat[, 40:42])
+cs.dat$c <- rowSums(cs.dat[, 43:45])
+cs.dat$d <- rowSums(cs.dat[, 46:48])
+cs.dat$e <- rowSums(cs.dat[, 49:51])
+cs.dat$f <- rowSums(cs.dat[, 52:54])
+cs.dat$g <- rowSums(cs.dat[, 55:57])
+cs.dat$h <- rowSums(cs.dat[, 58:60])
+cs.dat$i <- rowSums(cs.dat[, 61:63])
+cs.dat$j <- rowSums(cs.dat[, 64:66])
+cs.dat$k <- rowSums(cs.dat[, 67:69])
+cs.dat$l <- rowSums(cs.dat[, 70:72])
+cs.dat$m <- rowSums(cs.dat[, 73:75])
+cs.dat$n <- rowSums(cs.dat[, 76:82])
 
 
-corn.fit <- felm(ln_corn_rrev ~  a + b + c + d + e + f + g + h + i + j + k + l + m + n + prec + prec_sq + lat + ipc + pop_dens + pop_dens_sq + 
-                   waterCapacity + percentClay + minPermeability + kFactor + bestSoil | 0 | 0 | state,
+corn.fit <- felm(ln_corn_rrev ~  Ntd + a + b + c + d + e + f + g + h + i + j + k + l + m + n + prec + prec_sq + lat + ipc + pop_dens + pop_dens_sq + 
+                   waterCapacity + percentClay + minPermeability + kFactor + bestSoil | state | 0 | state,
                   data = cs.dat)
 
 summary(corn.fit)
-plot(corn.fit$coefficients[2:15])
+plot(corn.fit$coefficients[2:16])
 
-cotton.fit <- felm(ln_cotton_rrev ~ a + b + c + d + e + f + g + h + i + j + k + l + m + n + prec + prec_sq + lat + ipc + pop_dens + pop_dens_sq + 
-                   waterCapacity + percentClay + minPermeability + kFactor + bestSoil | 0 | 0 | state,
+cotton.fit <- felm(ln_cotton_rrev ~ Ntd + a + b + c + d + e + f + g + h + i + j + k + l + m + n + prec + prec_sq + lat + ipc + pop_dens + pop_dens_sq + 
+                   waterCapacity + percentClay + minPermeability + kFactor + bestSoil | state | 0 | state,
                   data = cs.dat)
 summary(cotton.fit)
 plot(cotton.fit$coefficients[2:15])
 
-hay.fit <- felm(ln_hay_rrev ~  a + b + c + d + e + f + g + h + i + j + k + l + m + n + prec + prec_sq + lat + ipc + pop_dens + pop_dens_sq + 
-                   waterCapacity + percentClay + minPermeability + kFactor + bestSoil | 0 | 0 | state,
+hay.fit <- felm(ln_hay_rrev ~  Ntd + a + b + c + d + e + f + g + h + i + j + k + l + m + n + prec + prec_sq + lat + ipc + pop_dens + pop_dens_sq + 
+                   waterCapacity + percentClay + minPermeability + kFactor + bestSoil | state | 0 | state,
                   data = cs.dat)
 summary(hay.fit)
 plot(hay.fit$coefficients[2:15])
 
-wheat.fit <- felm(ln_wheat_rrev ~  a + b + c + d + e + f + g + h + i + j + k + l + m + n +  prec + prec_sq + lat + ipc + pop_dens + pop_dens_sq + 
-                   waterCapacity + percentClay + minPermeability + kFactor + bestSoil | 0 | 0 | state, data = cs.dat)
+wheat.fit <- felm(ln_wheat_rrev ~  Ntd + a + b + c + d + e + f + g + h + i + j + k + l + m + n +  prec + prec_sq + lat + ipc + pop_dens + pop_dens_sq + 
+                   waterCapacity + percentClay + minPermeability + kFactor + bestSoil | state | 0 | state, data = cs.dat)
 summary(wheat.fit)
 
-soybean.fit <- felm(ln_soybean_rrev ~  a + b + c + d + e + f + g + h + i + j + k + l + m + n +  prec + prec_sq + lat + ipc + pop_dens + pop_dens_sq + 
-                   waterCapacity + percentClay + minPermeability + kFactor + bestSoil | 0 | 0 | state, data = cs.dat)
+soybean.fit <- felm(ln_soybean_rrev ~  Ntd + a + b + c + d + e + f + g + h + i + j + k + l + m + n +  prec + prec_sq + lat + ipc + pop_dens + pop_dens_sq + 
+                   waterCapacity + percentClay + minPermeability + kFactor + bestSoil | state | 0 | state, data = cs.dat)
 summary(soybean.fit)
 plot(soybean.fit$coefficients[2:5])
 
 
 
 summary(corn.fit)
-corn.coef <- as.numeric(corn.fit$coefficients[2:15])
-cotton.coef <- as.numeric(cotton.fit$coefficients[2:15])
-hay.coef <- as.numeric(hay.fit$coefficients[2:15])
-wheat.coef <- as.numeric(wheat.fit$coefficients[2:15])
-soybean.coef <- as.numeric(soybean.fit$coefficients[2:15])
+corn.coef <- as.numeric(corn.fit$coefficients[1:15])
+cotton.coef <- as.numeric(cotton.fit$coefficients[1:15])
+hay.coef <- as.numeric(hay.fit$coefficients[1:15])
+wheat.coef <- as.numeric(wheat.fit$coefficients[1:15])
+soybean.coef <- as.numeric(soybean.fit$coefficients[1:15])
 
 # corn.coef <- as.numeric(corn.fit$coefficients[c(2,2:5)])
 # cotton.coef <- as.numeric(cotton.fit$coefficients[c(2,2:5)])
@@ -463,11 +468,11 @@ soybean.coef <- as.numeric(soybean.fit$coefficients[2:15])
 # wheat.coef <- as.numeric(wheat.fit$coefficients[c(2,2:5)])
 # soybean.coef <- as.numeric(soybean.fit$coefficients[c(2,2:5)])
 
-csdat <- data.frame(degree = seq(0, 40, by = 3), 
+csdat <- data.frame(degree = seq(0, 43, by = 3), 
                    coef = c(corn.coef, cotton.coef, hay.coef, wheat.coef, soybean.coef),
-                   se = c(corn.fit$se[1:14], cotton.fit$se[1:14], hay.fit$se[1:14], 
-                        wheat.fit$se[1:14], soybean.fit$se[1:14]), 
-                   crop = rep(c("Corn", "Cotton", "Hay", "Wheat", "Soybean"), each = 14))
+                   se = c(corn.fit$se[1:15], cotton.fit$se[1:15], hay.fit$se[1:15], 
+                        wheat.fit$se[1:15], soybean.fit$se[1:15]), 
+                   crop = rep(c("Corn", "Cotton", "Hay", "Wheat", "Soybean"), each = 15))
 
 csdat$ymin <- csdat$coef - csdat$se*1.97
 csdat$ymax <- csdat$coef + csdat$se*1.97
