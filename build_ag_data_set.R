@@ -215,8 +215,10 @@ cropdat <- left_join(cropdat, soybean, by = c("state", "fips", "year"))
    group_by(year, fips) %>%
    summarise(dday8C = sum(dday8C),
              dday10C = sum(dday10C),
+             dday29C = sum(dday29C),
              dday30C = sum(dday30C),
              dday32C = sum(dday32C),
+             dday33C = sum(dday33C),
              dday34C = sum(dday34C),
              prec = sum(ppt),
              tavg = mean(tavg))

@@ -14,7 +14,7 @@ cropdat <- readRDS("data/cross_section_regression_data.rds")
 # Demean values
 corn_cropdat <- as.data.frame(filter(cropdat, !is.na(ln_corn_rrev)))
 corn_moddat <- demeanlist(
-  mtx = as.matrix(corn_cropdat[,3:36]), 
+  mtx = as.matrix(corn_cropdat[,3:39]), 
   fl = list(state = corn_cropdat$state),
   weights = sqrt(corn_cropdat$corn_grain_a))
 corn_moddat <- as.data.frame(corn_moddat)
@@ -68,32 +68,41 @@ summary(cs.corn.mod1)
 
 # summary(mod2)
 
-cs.corn.mod2 <- lm(ln_corn_rrev ~ dday10_30 + dday34C + prec + prec_sq +
+cs.corn.mod2 <- lm(ln_corn_rrev ~ dday10_29  + dday30C + prec + prec_sq +
                     lat + ipc + pop_dens + pop_dens_sq + 
-                    waterCapacity + percentClay + minPermeability + kFactor + bestSoil- 1,
-                  data = corn_moddat, weights = corn_cropdat$corn_grain_a)
+                    waterCapacity + percentClay + minPermeability + kFactor + bestSoil - 1,
+                  data = corn_moddat)
+summary(cs.corn.mod2)
+
+cropdat <- filter(cropdat, !is.na(ln_corn_rrev))
+cs.corn.mod2 <- felm(ln_corn_rrev ~ dday10_29w + dday34w + prec + prec_sq + 
+                       lat + ipc + pop_dens + pop_dens_sq + waterCapacity + 
+                       percentClay + minPermeability + kFactor + bestSoil | state,
+                     data = cropdat)
 
 summary(cs.corn.mod2)
 
++ 
+     lat + ipc + pop_dens + pop_dens_sq               waterCapacity + percentClay + minPermeability + kFactor + bestSoil
 # Cotton
-cs.cotton.mod1 <- update(cs.corn.mod1, ln_cotton_rrev ~ ., weights = cotton_cropdat$cotton_a, data = cotton_moddat)
+cs.cotton.mod1 <- update(cs.corn.mod1, ln_cotton_rrev ~ ., data = cropdat)
 summary(cs.cotton.mod1)
 
-cs.cotton.mod2 <- update(cs.corn.mod2, ln_cotton_rrev ~ ., weights = cotton_cropdat$cotton_a, data = cotton_moddat)
+cs.cotton.mod2 <- update(cs.corn.mod2, ln_cotton_rrev ~ ., data = cropdat)
 summary(cs.cotton.mod2)
 
 # Hay
 cs.hay.mod1 <- update(cs.corn.mod1, ln_hay_rrev ~ ., weights = hay_cropdat$hay_a, data = hay_moddat)
 summary(cs.hay.mod1)
 
-cs.hay.mod2 <- update(cs.corn.mod2, ln_hay_rrev ~ ., weights = hay_cropdat$hay_a,  data = hay_moddat)
+cs.hay.mod2 <- update(cs.corn.mod2, ln_hay_rrev ~ ., data = hay_moddat)
 summary(cs.hay.mod2)
 
 # Wheat
-cs.wheat.mod1 <- update(cs.corn.mod1, ln_wheat_rrev ~ ., weights = wheat_cropdat$wheat_a, data = wheat_moddat)
+cs.wheat.mod1 <- update(cs.corn.mod1, ln_wheat_rrev ~ ., data = wheat_moddat)
 summary(cs.wheat.mod1)
 
-cs.wheat.mod2 <- update(cs.corn.mod2, ln_wheat_rrev ~ ., weights = wheat_cropdat$wheat_a, data = wheat_moddat)
+cs.wheat.mod2 <- update(cs.corn.mod2, ln_wheat_rrev ~ ., data = wheat_moddat)
 summary(cs.wheat.mod2)
 
 # Soybean

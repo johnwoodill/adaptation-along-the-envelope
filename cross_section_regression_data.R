@@ -38,10 +38,10 @@ cropdat$state <- factor(cropdat$state)
 is.na(cropdat) <- do.call(cbind, lapply(cropdat, is.infinite))
 
 
-# Need to remove mean from weather variables too
 cropdat <- cropdat %>%
   group_by(year) %>%
   mutate(dm_ln_corn_rrev = ln_corn_rrev - mean(ln_corn_rrev, na.rm = TRUE),
+         #dm_ln_corn_rrev = log(corn_rrev) - log(mean(corn_rrev, na.rm = TRUE)),
          dm_ln_cotton_rrev = ln_cotton_rrev - mean(ln_cotton_rrev, na.rm = TRUE),
          dm_ln_hay_rrev = ln_hay_rrev - mean(ln_hay_rrev, na.rm = TRUE),
          dm_ln_wheat_rrev = ln_wheat_rrev - mean(ln_wheat_rrev, na.rm = TRUE),
@@ -55,7 +55,8 @@ cropdat <- cropdat %>%
          p_cotton_share = p_cotton_share - mean(p_cotton_share, na.rm = TRUE),
          p_hay_share = p_hay_share - mean(p_hay_share, na.rm = TRUE),
          p_wheat_share = p_wheat_share - mean(p_wheat_share, na.rm = TRUE),
-         p_soybean_share = p_soybean_share - mean(p_soybean_share, na.rm = TRUE)) %>% 
+         p_soybean_share = p_soybean_share - mean(p_soybean_share, na.rm = TRUE),
+         corn_w = corn_grain_a/mean(corn_grain_a, na.rm = TRUE)) %>% 
     group_by(state, fips) %>%
     summarise(ln_corn_rrev = mean(dm_ln_corn_rrev, na.rm = TRUE),
               ln_cotton_rrev = mean(dm_ln_cotton_rrev, na.rm = TRUE),
@@ -76,8 +77,11 @@ cropdat <- cropdat %>%
               soybean_a = mean(soybean_a, na.rm = TRUE),
               total_a = mean(total_a, na.rm = TRUE),
               lat = mean(lat, na.rm = TRUE),
+              dday10_30 = mean(dday10C, na.rm = TRUE) - mean(dday30C, na.rm = TRUE),
+              dday29C = mean(dday29C, na.rm = TRUE),
               dday30C = mean(dday30C, na.rm = TRUE),
               dday10C = mean(dday10C, na.rm = TRUE),
+              dday33C = mean(dday33C, na.rm = TRUE),
               dday34C = mean(dday34C, na.rm = TRUE),
               ipc = mean(ipc, na.rm = TRUE),
               pop_dens = mean(pop_dens, na.rm = TRUE)) %>% 
@@ -85,9 +89,16 @@ cropdat <- cropdat %>%
 
 cropdat$tavg_sq <- cropdat$tavg^2
 cropdat$prec_sq <- cropdat$prec^2
+cropdat$corn_w <- cropdat$corn_grain_a/mean(cropdat$corn_grain_a, na.rm = TRUE)
 cropdat$dday10_30 <- cropdat$dday10C - cropdat$dday30C
+cropdat$dday10_29 <- cropdat$dday10C - cropdat$dday29C
 cropdat$dday30_sq <- cropdat$dday30C^2
 cropdat$pop_dens_sq <- cropdat$pop_dens^2
+
+cropdat$dday10_30w <- cropdat$dday10_30*cropdat$corn_w
+cropdat$dday10_29w <- cropdat$dday10_29*cropdat$corn_w
+cropdat$dday30w <- cropdat$dday30C*cropdat$corn_w
+cropdat$dday34w <- cropdat$dday34C*cropdat$corn_w
 
 cropdat <- left_join(cropdat, soil, by = "fips")
 
