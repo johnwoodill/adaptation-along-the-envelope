@@ -23,22 +23,14 @@ diff.dd.p_corn_share <- readRDS("models/diff.dd.p_corn_share")
 
 # Calculate robust standard errors to place in tables
 
-# Cluster by state
-vcov_state <- cluster.vcov(cs.temp.ln_corn_rrev, cluster = cropdat$state)
-cs.temp.ln_corn_rrev_se <- coeftest(cs.temp.ln_corn_rrev, vcov_state)[,2]
-
 # Cross Section Model
-names(cs.temp.ln_corn_rrev$coefficients)
-names(cs.temp.ln_corn_rrev$coefficients)[32:44] <- c("Avg. Temperature", "Avg. Temperature Squared", "Precipitation",
-                                 "Precipitation Squared", "Latitude", "Income per Capita", "Population Density",
-                                  "Population Density Squared", "Water Capacity", "Percent Clay", "Minimum Permeability", 
-                                  "K-factor of Top Soil", "Best Soil Class")
+attr(p.temp.ln_corn_rrev$coefficients, "dimnames")[[1]] <- 
+  c("Average Temperature", "Average Temperature Squared", "Precipitation", "Precipitation Squared")
 
-names(cs.dd.ln_corn_rrev $coefficients)
-names(cs.dd.ln_corn_rrev $coefficients)[32:45] <- c("Degree Days (10-30C)", "Degree Days (10-30C) Squared", "Degree Days (30C)",
-                                 "Precipitation", "Precipitation Squared", "Latitude", "Income per Capita", "Population Density",
-                                  "Population Density Squared",  "Water Capacity", "Percent Clay", "Minimum Permeability", 
-                                  "K-factor of Top Soil", "Best Soil Class")
+attr(p.dd.ln_corn_rrev$coefficients, "dimnames")[[1]] <- 
+  c("Degree Days (10-30C)", "Degree Days (30C)", "Precipitation", "Precipitation Squared")
+
+
 
 # Panel Model
 names(p.temp.ln_corn_rrev$coefficients)

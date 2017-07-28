@@ -2,6 +2,7 @@ library(tidyverse)
 library(plm)
 
 # 10-year interval 1960's and 2000's --------------------------------------
+
 cropdat <- readRDS("data/full_ag_data.rds")
 cropdat <- filter(cropdat, abs(long) <= 100)
 
@@ -131,8 +132,9 @@ diff.corn.mod1 <- felm(ln_corn_rrev ~ tavg + I(tavg^2) + prec + I(prec^2) | fips
                    data = newcropdat)
 summary(diff.corn.mod1)
 
+newcropdat <- filter(newcropdat, !is.na(ln_corn_rrev))
 diff.corn.mod2 <- felm(ln_corn_rrev ~ dday10_30 + dday30 + prec + prec_sq | fips + year | 0 | state, 
-                   data = newcropdat)
+                   data = newcropdat, weights = newcropdat$corn_grain_a)
 summary(diff.corn.mod2)
 
 diff.corn.mod3 <- felm(p_corn_share ~ tavg + I(tavg^2) + prec + prec_sq | fips + year | 0 | state, 

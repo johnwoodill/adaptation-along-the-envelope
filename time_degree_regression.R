@@ -156,9 +156,9 @@ td$fips <- factor(td$fips)
 p.dat <- left_join(p.dat, td, by = c("year", "fips"))
 
 # Spline
-Tindex = 10:45 + .5
-DMat = as.matrix(ns(Tindex, df = 7))
-XMat <- as.matrix(p.dat[, 81:116]) %*% DMat
+Tindex = 0:40 + .5
+DMat = as.matrix(ns(Tindex, df = 5))
+XMat <- as.matrix(p.dat[, 72:112]) %*% DMat
 
 # Fit
 p.corn.fit <- felm(ln_corn_rrev ~  XMat + prec + prec_sq | fips + year | 0 | state, data = p.dat)
@@ -176,25 +176,34 @@ summary(p.wheat.fit)
 p.soybean.fit <- felm(ln_soybean_rrev ~ XMat +  prec + prec_sq | fips + year | 0 | state, data = p.dat)
 summary(p.soybean.fit)
 
-# Spline through coefficients
-p.corn.coef <- spline(x = c(10, 15.5, 20.5, 25.5, 30.5, 35.5, 40.5), y = p.corn.fit$coefficients[1:7], n = 7*10)
-p.cotton.coef <- spline(x = c(10, 15.5, 20.5, 25.5, 30.5, 35.5, 40.5), y = p.cotton.fit$coefficients[1:7], n = 7*10)
-p.hay.coef <- spline(x = c(10, 15.5, 20.5, 25.5, 30.5, 35.5, 40.5), y = p.hay.fit$coefficients[1:7], n = 7*10)
-p.wheat.coef <- spline(x = c(10, 15.5, 20.5, 25.5, 30.5, 35.5, 40.5), y = p.wheat.fit$coefficients[1:7], n = 7*10)
-p.soybean.coef <- spline(x = c(10, 15.5, 20.5, 25.5, 30.5, 35.5, 40.5), y = p.soybean.fit$coefficients[1:7], n = 7*10)
+# Fit coefficients into DMat
+p.corn.coef <- DMat %*% matrix(p.corn.fit$coefficients[1:5], ncol = 1)
+plot(scale(p.corn.coef))
+p.corn.se <- DMat %*% matrix(p.corn.fit$se[1:5], ncol = 1)
+plot(scale(p.corn.se))
 
-# Spline through Se
-p.corn.se <- spline(x = c(10, 15.5, 20.5, 25.5, 30.5, 35.5, 40.5), y = p.corn.fit$se[1:7], n = 7*10)
-p.cotton.se <- spline(x = c(10, 15.5, 20.5, 25.5, 30.5, 35.5, 40.5), y = p.cotton.fit$se[1:7], n = 7*10)
-p.hay.se <- spline(x = c(10, 15.5, 20.5, 25.5, 30.5, 35.5, 40.5), y = p.hay.fit$se[1:7], n = 7*10)
-p.wheat.se <- spline(x = c(10, 15.5, 20.5, 25.5, 30.5, 35.5, 40.5), y = p.wheat.fit$se[1:7], n = 7*10)
-p.soybean.se <- spline(x = c(10, 15.5, 20.5, 25.5, 30.5, 35.5, 40.5), y = p.soybean.fit$se[1:7], n = 7*10)
+p.cotton.coef <- DMat %*% matrix(p.cotton.fit$coefficients[1:5], ncol = 1)
+p.cotton.se <- DMat %*% matrix(p.cotton.fit$se[1:5], ncol = 1)
+plot(p.cotton.coef)
+
+p.hay.coef <- DMat %*% matrix(p.hay.fit$coefficients[1:5], ncol = 1)
+p.hay.se <- DMat %*% matrix(p.hay.fit$se[1:5], ncol = 1)
+plot(p.hay.coef)
+
+p.wheat.coef <- DMat %*% matrix(p.wheat.fit$coefficients[1:5], ncol = 1)
+p.wheat.se <- DMat %*% matrix(p.wheat.fit$se[1:5], ncol = 1)
+plot(p.wheat.coef)
+
+p.soybean.coef <- DMat %*% matrix(p.soybean.fit$coefficients[1:5], ncol = 1)
+p.soybean.se <- DMat %*% matrix(p.soybean.fit$se[1:5], ncol = 1)
+plot(p.soybean.coef)
+
 
 # Spline data set to plot
-spline.pdat <- data.frame(degree = c(p.corn.coef$x, p.cotton.coef$x, p.hay.coef$x, p.wheat.coef$x, p.soybean.coef$x),
-                   coef = c(p.corn.coef$y, p.cotton.coef$y, p.hay.coef$y, p.wheat.coef$y, p.soybean.coef$y),
-                   se = c(p.corn.se$y, p.cotton.se$y, p.hay.se$y, p.wheat.se$y, p.soybean.se$y),
-                   crop = rep(c("Corn", "Cotton", "Hay", "Wheat", "Soybean"), each = 70))
+spline.pdat <- data.frame(degree = 0:45,
+                   coef = c(p.corn.coef, p.cotton.coef, p.hay.coef, p.wheat.coef, p.soybean.coef),
+                   se = c(p.corn.se, p.cotton.se, p.hay.se, p.wheat.se, p.soybean.se),
+                   crop = rep(c("Corn", "Cotton", "Hay", "Wheat", "Soybean"), each = 46))
 
 spline.pdat$ymin <- spline.pdat$coef - spline.pdat$se*1.97
 spline.pdat$ymax <- spline.pdat$coef + spline.pdat$se*1.97
