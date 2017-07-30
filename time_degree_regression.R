@@ -33,51 +33,51 @@ diff.dd.ln_hay_rrev <- readRDS("models/diff.dd.ln_hay_rrev")
 diff.dd.ln_wheat_rrev <- readRDS("models/diff.dd.ln_wheat_rrev")
 diff.dd.ln_soybean_rrev <- readRDS("models/diff.dd.ln_soybean_rrev")
 
-cs.corn.coef <- as.numeric(cs.dd.ln_corn_rrev$coefficients[c(1, 1:3)])
-cs.cotton.coef <- as.numeric(cs.dd.ln_cotton_rrev$coefficients[c(1, 1:3)])
-cs.hay.coef <- as.numeric(cs.dd.ln_hay_rrev$coefficients[c(1, 1:3)])
-cs.wheat.coef <- as.numeric(cs.dd.ln_wheat_rrev$coefficients[c(1, 1:3)])
-cs.soybean.coef <- as.numeric(cs.dd.ln_soybean_rrev$coefficients[c(1, 1:3)])
+cs.corn.coef <- as.numeric(cs.dd.ln_corn_rrev$coefficients[c(1, 1:3, 3)])
+cs.cotton.coef <- as.numeric(cs.dd.ln_cotton_rrev$coefficients[c(1, 1:3, 3)])
+cs.hay.coef <- as.numeric(cs.dd.ln_hay_rrev$coefficients[c(1, 1:3, 3)])
+cs.wheat.coef <- as.numeric(cs.dd.ln_wheat_rrev$coefficients[c(1, 1:3, 3)])
+cs.soybean.coef <- as.numeric(cs.dd.ln_soybean_rrev$coefficients[c(1, 1:3, 3)])
 
-p.corn.coef <- as.numeric(p.dd.ln_corn_rrev$coefficients[c(1, 1:3)])
-p.cotton.coef <- as.numeric(p.dd.ln_cotton_rrev$coefficients[c(1, 1:3)])
-p.hay.coef <- as.numeric(p.dd.ln_hay_rrev$coefficients[c(1, 1:3)])
-p.wheat.coef <- as.numeric(p.dd.ln_wheat_rrev$coefficients[c(1, 1:3)])
-p.soybean.coef <- as.numeric(p.dd.ln_soybean_rrev$coefficients[c(1, 1:3)])
+p.corn.coef <- as.numeric(p.dd.ln_corn_rrev$coefficients[c(1, 1:3, 3)])
+p.cotton.coef <- as.numeric(p.dd.ln_cotton_rrev$coefficients[c(1, 1:3, 3)])
+p.hay.coef <- as.numeric(p.dd.ln_hay_rrev$coefficients[c(1, 1:3, 3)])
+p.wheat.coef <- as.numeric(p.dd.ln_wheat_rrev$coefficients[c(1, 1:3, 3)])
+p.soybean.coef <- as.numeric(p.dd.ln_soybean_rrev$coefficients[c(1, 1:3, 3)])
 
-diff.corn.coef <- as.numeric(diff.dd.ln_corn_rrev$coefficients[c(1, 1:3)])
-diff.cotton.coef <- as.numeric(diff.dd.ln_cotton_rrev$coefficients[c(1, 1:3)])
-diff.hay.coef <- as.numeric(diff.dd.ln_hay_rrev$coefficients[c(1, 1:3)])
-diff.wheat.coef <- as.numeric(diff.dd.ln_wheat_rrev$coefficients[c(1, 1:3)])
-diff.soybean.coef <- as.numeric(diff.dd.ln_soybean_rrev$coefficients[c(1, 1:3)])
+diff.corn.coef <- as.numeric(diff.dd.ln_corn_rrev$coefficients[c(1, 1:3, 3)])
+diff.cotton.coef <- as.numeric(diff.dd.ln_cotton_rrev$coefficients[c(1, 1:3, 3)])
+diff.hay.coef <- as.numeric(diff.dd.ln_hay_rrev$coefficients[c(1, 1:3, 3)])
+diff.wheat.coef <- as.numeric(diff.dd.ln_wheat_rrev$coefficients[c(1, 1:3, 3)])
+diff.soybean.coef <- as.numeric(diff.dd.ln_soybean_rrev$coefficients[c(1, 1:3, 3)])
 
-cs.corn.se <- as.numeric(cs.dd.ln_corn_rrev$se[c(1, 1:3)])
-cs.cotton.se <- as.numeric(cs.dd.ln_cotton_rrev$se[c(1, 1:3)])
-cs.hay.se <- as.numeric(cs.dd.ln_hay_rrev$se[c(1, 1:3)])
-cs.wheat.se <- as.numeric(cs.dd.ln_wheat_rrev$se[c(1, 1:3)])
-cs.soybean.se <- as.numeric(cs.dd.ln_soybean_rrev$se[c(1, 1:3)])
+cs.corn.se <- as.numeric(cs.dd.ln_corn_rrev$se[c(1, 1:3, 3)])
+cs.cotton.se <- as.numeric(cs.dd.ln_cotton_rrev$se[c(1, 1:3, 3)])
+cs.hay.se <- as.numeric(cs.dd.ln_hay_rrev$se[c(1, 1:3, 3)])
+cs.wheat.se <- as.numeric(cs.dd.ln_wheat_rrev$se[c(1, 1:3, 3)])
+cs.soybean.se <- as.numeric(cs.dd.ln_soybean_rrev$se[c(1, 1:3, 3)])
 
-p.corn.se <- as.numeric(p.dd.ln_corn_rrev$se[c(1, 1:3)])
-p.cotton.se <- as.numeric(p.dd.ln_cotton_rrev$se[c(1, 1:3)])
-p.hay.se <- as.numeric(p.dd.ln_hay_rrev$se[c(1, 1:3)])
-p.wheat.se <- as.numeric(p.dd.ln_wheat_rrev$se[c(1, 1:3)])
-p.soybean.se <- as.numeric(p.dd.ln_soybean_rrev$se[c(1, 1:3)])
+p.corn.se <- as.numeric(p.dd.ln_corn_rrev$se[c(1, 1:3, 3)])
+p.cotton.se <- as.numeric(p.dd.ln_cotton_rrev$se[c(1, 1:3, 3)])
+p.hay.se <- as.numeric(p.dd.ln_hay_rrev$se[c(1, 1:3, 3)])
+p.wheat.se <- as.numeric(p.dd.ln_wheat_rrev$se[c(1, 1:3, 3)])
+p.soybean.se <- as.numeric(p.dd.ln_soybean_rrev$se[c(1, 1:3, 3)])
 
-diff.corn.se <- as.numeric(diff.dd.ln_corn_rrev$se[c(1, 1:3)])
-diff.cotton.se <- as.numeric(diff.dd.ln_cotton_rrev$se[c(1, 1:3)])
-diff.hay.se <- as.numeric(diff.dd.ln_hay_rrev$se[c(1, 1:3)])
-diff.wheat.se <- as.numeric(diff.dd.ln_wheat_rrev$se[c(1, 1:3)])
-diff.soybean.se <- as.numeric(diff.dd.ln_soybean_rrev$se[c(1, 1:3)])
+diff.corn.se <- as.numeric(diff.dd.ln_corn_rrev$se[c(1, 1:3, 3)])
+diff.cotton.se <- as.numeric(diff.dd.ln_cotton_rrev$se[c(1, 1:3, 3)])
+diff.hay.se <- as.numeric(diff.dd.ln_hay_rrev$se[c(1, 1:3, 3)])
+diff.wheat.se <- as.numeric(diff.dd.ln_wheat_rrev$se[c(1, 1:3, 3)])
+diff.soybean.se <- as.numeric(diff.dd.ln_soybean_rrev$se[c(1, 1:3, 3)])
 
-seg.dat <- data.frame(degree = rep(c(0, 10, 30, 35), 15, each = 1),
+seg.dat <- data.frame(degree = rep(c(0, 10, 30, 35, 40), 15, each = 1),
                     coef = c(cs.corn.coef, cs.cotton.coef, cs.hay.coef, cs.wheat.coef, cs.soybean.coef,
                                p.corn.coef, p.cotton.coef, p.hay.coef, p.wheat.coef, p.soybean.coef,
                                diff.corn.coef, diff.cotton.coef, diff.hay.coef, diff.wheat.coef, diff.soybean.coef),
                       se = c(cs.corn.se, cs.cotton.se, cs.hay.se, cs.wheat.se, cs.soybean.se,
                                p.corn.se, p.cotton.se, p.hay.se, p.wheat.se, p.soybean.se,
                                diff.corn.se, diff.cotton.se, diff.hay.se, diff.wheat.se, diff.soybean.se),
-                      crop = rep(c("corn", "cotton", "hay", "wheat", "soybean"), 3, each = 4),
-                      reg = rep(c("cross-section", "panel", "diff"), 1, each = 20))
+                      crop = rep(c("corn", "cotton", "hay", "wheat", "soybean"), 3, each = 5),
+                      reg = rep(c("cross-section", "panel", "diff"), 1, each = 25))
 
 
 seg.dat$ymin <- seg.dat$coef - 1.96*seg.dat$se
