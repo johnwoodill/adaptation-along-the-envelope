@@ -208,18 +208,24 @@ cropdat <- left_join(cropdat, soybean, by = c("state", "fips", "year"))
  dd$year <- as.integer(dd$year)
  dd$fips <- as.integer(dd$fips)
  dd_dat <- left_join(dd, prec, by = c("fips", "year", "month"))
- dd_dat <- filter(dd_dat, month >= 3 & month <= 9)
+ dd_dat <- filter(dd_dat, month >= 3 & month <= 8)
+ #dd_dat <- filter(dd_dat, month <= 5 | month >= 9)
  dd_dat$X1 <- NULL
  
  dd_dat <- dd_dat %>%
    group_by(year, fips) %>%
-   summarise(dday8C = sum(dday8C),
+   summarise(dday0C = sum(dday0C),
+             dday8C = sum(dday8C),
              dday10C = sum(dday10C),
+             dday17C = sum(dday17C),
+             dday20C = sum(dday20C),
              dday29C = sum(dday29C),
              dday30C = sum(dday30C),
              dday32C = sum(dday32C),
              dday33C = sum(dday33C),
              dday34C = sum(dday34C),
+             dday35C = sum(dday35C),
+             ndday0C = sum(ndday0C),
              prec = sum(ppt),
              tavg = mean(tavg))
 

@@ -75,6 +75,8 @@ cropdat <- cropdat %>%
               soybean_a = mean(soybean_a, na.rm = TRUE),
               total_a = mean(total_a, na.rm = TRUE),
               lat = mean(lat, na.rm = TRUE),
+              dday0C = mean(dday0C, na.rm = TRUE),
+              dday10C = mean(dday10C, na.rm = TRUE),
               dday10_30 = mean(dday10C, na.rm = TRUE) - mean(dday30C, na.rm = TRUE),
               dday29C = mean(dday29C, na.rm = TRUE),
               dday30C = mean(dday30C, na.rm = TRUE),

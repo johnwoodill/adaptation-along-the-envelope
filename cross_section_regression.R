@@ -22,7 +22,7 @@ cs.corn.mod1 <- felm(ln_corn_rrev ~ tavg + tavg_sq + prec + prec_sq | state,
                    data = corndat, weights = corndat$corn_grain_a)
 summary(cs.corn.mod1)
 
-cs.corn.mod2 <- felm(ln_corn_rrev ~ dday10_30  + dday30C + prec + prec_sq | state,
+cs.corn.mod2 <- felm(ln_corn_rrev ~ I(dday0C - dday10C) +dday10_30  + dday30C + prec + prec_sq | state,
                   data = corndat, weights = corndat$corn_grain_a)
 summary(cs.corn.mod2)
 
@@ -31,7 +31,7 @@ cs.cotton.mod1 <- felm(ln_cotton_rrev ~ tavg + tavg_sq + prec + prec_sq | state,
                    data = cottondat, weights = cottondat$cotton_a)
 summary(cs.cotton.mod1)
 
-cs.cotton.mod2 <- felm(ln_cotton_rrev ~ dday10_30  + dday30C + prec + prec_sq | state,
+cs.cotton.mod2 <- felm(ln_cotton_rrev ~ I(dday0C - dday10C) +dday10_30  + dday30C + prec + prec_sq | state,
                   data = cottondat, weights = cottondat$cotton_a)
 summary(cs.cotton.mod2)
 
@@ -40,7 +40,7 @@ cs.hay.mod1 <- felm(ln_hay_rrev ~ tavg + tavg_sq + prec + prec_sq | state,
                    data = haydat, weights = haydat$hay_a)
 summary(cs.hay.mod1)
 
-cs.hay.mod2 <- felm(ln_hay_rrev ~ dday10_30  + dday30C + prec + prec_sq | state,
+cs.hay.mod2 <- felm(ln_hay_rrev ~I(dday0C - dday10C) + dday10_30  + dday30C + prec + prec_sq | state,
                   data = haydat, weights = haydat$hay_a)
 summary(cs.hay.mod2)
 
@@ -49,7 +49,7 @@ cs.wheat.mod1 <- felm(ln_wheat_rrev ~ tavg + tavg_sq + prec + prec_sq | state,
                    data = wheatdat, weights = wheatdat$wheat_a)
 summary(cs.wheat.mod1)
 
-cs.wheat.mod2 <- felm(ln_wheat_rrev ~ dday10_30  + dday30C + prec + prec_sq | state,
+cs.wheat.mod2 <- felm(ln_wheat_rrev ~I(dday0C - dday10C) + dday10_30  + dday30C + prec + prec_sq | state,
                   data = wheatdat, weights = wheatdat$wheat_a)
 summary(cs.wheat.mod2)
 
@@ -58,7 +58,7 @@ cs.soybean.mod1 <- felm(ln_soybean_rrev ~ tavg + tavg_sq + prec + prec_sq | stat
                    data = soybeandat, weights = soybeandat$soybean_a)
 summary(cs.soybean.mod1)
 
-cs.soybean.mod2 <- felm(ln_soybean_rrev ~ dday10_30  + dday30C + prec + prec_sq | state,
+cs.soybean.mod2 <- felm(ln_soybean_rrev ~I(dday0C - dday10C) + dday10_30  + dday30C + prec + prec_sq | state,
                   data = soybeandat, weights = soybeandat$soybean_a)
 summary(cs.soybean.mod2)
 
