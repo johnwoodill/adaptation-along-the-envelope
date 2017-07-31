@@ -36,7 +36,7 @@ for (i in unique(states)){
       check <- 1
     },error=function(e) e)
 
-      params = list("state_alpha"=i, "agg_level_desc"="STATE","commodity_desc"="WHEAT", "source_desc"="SURVEY", "statisticcat_desc" = "PRICE RECEIVED", "short_desc"="WHEAT - PRICE RECEIVED, MEASURED IN $ / BU")
+      params = list("state_alpha"=i, "agg_level_desc"="STATE","commodity_desc"="WHEAT", "source_desc"="SURVEY", "statisticcat_desc" = "PRICE RECEIVED", "short_desc"="WHEAT, SPRING, (EXCL DURUM) - PRICE RECEIVED, MEASURED IN $ / BU")
     d <- tryCatch({
       req = nassqs_GET(params=params, key=NASSQS_TOKEN)
       wdat <- data.frame()
@@ -75,7 +75,7 @@ newdat$year <- as.integer(newdat$year)
 newdat$state <- tolower(newdat$state)
 
 # Save to 'data/'
-saveRDS(newdat, "/run/media/john/1TB/MEGA/Projects/adaptation-and-an-envelope/data/crop_statelevel_prices.RDS")
+saveRDS(newdat, "/run/media/john/1TB/SpiderOak/Projects/adaptation-along-the-envelope/data/crop_statelevel_prices.RDS")
 
 
 # NASS Corn Data ----------------------------------------------------------
@@ -255,7 +255,7 @@ dat <- data.frame()
 for (i in unique(states)){
   
 # Get acres harvested
-    params = list("state_alpha"=i, "agg_level_desc"="COUNTY","commodity_desc"="WHEAT", "source_desc"="SURVEY", "statisticcat_desc" = "AREA HARVESTED", "short_desc"="WHEAT - ACRES HARVESTED")
+    params = list("state_alpha"=i, "agg_level_desc"="COUNTY","commodity_desc"="WHEAT", "source_desc"="SURVEY", "statisticcat_desc" = "AREA HARVESTED", "short_desc"="WHEAT, SPRING, (EXCL DURUM) - ACRES HARVESTED")
     a <- tryCatch({
       req = nassqs_GET(params=params, key=NASSQS_TOKEN)
       hdat = nassqs_parse(req)
@@ -263,7 +263,7 @@ for (i in unique(states)){
     },error=function(e) e)
   
   # Get Production
-  params = list("state_alpha"=i, "agg_level_desc"="COUNTY","commodity_desc"="WHEAT", "source_desc"="SURVEY", "statisticcat_desc" = "PRODUCTION", "short_desc"="WHEAT - PRODUCTION, MEASURED IN BU")
+  params = list("state_alpha"=i, "agg_level_desc"="COUNTY","commodity_desc"="WHEAT", "source_desc"="SURVEY", "statisticcat_desc" = "PRODUCTION", "short_desc"="WHEAT, SPRING, (EXCL DURUM) - PRODUCTION, MEASURED IN BU")
       b <- tryCatch({
       req = nassqs_GET(params=params, key=NASSQS_TOKEN)
       pdat = nassqs_parse(req)

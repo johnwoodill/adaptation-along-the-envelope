@@ -9,6 +9,7 @@ library(lfe)
 
 # Cross-section: Log(Corn Rev) --------------------------------------------
 
+
 setwd("/run/media/john/1TB/SpiderOak/Projects/adaptation-along-the-envelope/")
 
 # Crop data
@@ -77,10 +78,13 @@ cropdat <- cropdat %>%
               lat = mean(lat, na.rm = TRUE),
               dday0C = mean(dday0C, na.rm = TRUE),
               dday10C = mean(dday10C, na.rm = TRUE),
+              dday15C = mean(dday15C, na.rm = TRUE),
+              dday17C = mean(dday17C, na.rm = TRUE),
               dday10_30 = mean(dday10C, na.rm = TRUE) - mean(dday30C, na.rm = TRUE),
               dday29C = mean(dday29C, na.rm = TRUE),
               dday30C = mean(dday30C, na.rm = TRUE),
               dday10C = mean(dday10C, na.rm = TRUE),
+              dday32C = mean(dday32C, na.rm = TRUE),
               dday33C = mean(dday33C, na.rm = TRUE),
               dday34C = mean(dday34C, na.rm = TRUE),
               ipc = mean(ipc, na.rm = TRUE),

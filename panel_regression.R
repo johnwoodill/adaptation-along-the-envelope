@@ -54,7 +54,7 @@ p.wheat.mod1 <- felm(ln_wheat_rrev ~ tavg + tavg_sq + prec + prec_sq | fips + ye
                    data = wheatdat, weights = wheatdat$wheat_a)
 summary(p.wheat.mod1)
 
-p.wheat.mod2 <- felm(ln_wheat_rrev ~ I(dday0C - dday10C) + dday10_30 + dday30C +
+p.wheat.mod2 <- felm(ln_wheat_rrev ~I(dday0C - dday10C)  + I(dday10C - dday30C) + dday30C+
                        prec + prec_sq | fips + year | 0 | state,
                   data = wheatdat, weights = wheatdat$wheat_a)
 summary(p.wheat.mod2)

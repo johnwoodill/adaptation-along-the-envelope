@@ -18,47 +18,48 @@ wheatdat <- filter(cropdat, !is.na(ln_wheat_rrev))
 soybeandat <- filter(cropdat, !is.na(ln_soybean_rrev))
 
 # Corn
-cs.corn.mod1 <- felm(ln_corn_rrev ~ tavg + tavg_sq + prec + prec_sq | state, 
+cs.corn.mod1 <- felm(ln_corn_rrev ~ tavg + tavg_sq + prec + prec_sq | state | 0 | state, 
                    data = corndat, weights = corndat$corn_grain_a)
 summary(cs.corn.mod1)
 
-cs.corn.mod2 <- felm(ln_corn_rrev ~ I(dday0C - dday10C) +dday10_30  + dday30C + prec + prec_sq | state,
+cs.corn.mod2 <- felm(ln_corn_rrev ~ I(dday0C - dday10C) +dday10_30  + dday30C + prec + prec_sq | state | 0 | state,
                   data = corndat, weights = corndat$corn_grain_a)
 summary(cs.corn.mod2)
 
 # Cotton
-cs.cotton.mod1 <- felm(ln_cotton_rrev ~ tavg + tavg_sq + prec + prec_sq | state, 
+cs.cotton.mod1 <- felm(ln_cotton_rrev ~ tavg + tavg_sq + prec + prec_sq | state | 0 | state, 
                    data = cottondat, weights = cottondat$cotton_a)
 summary(cs.cotton.mod1)
 
-cs.cotton.mod2 <- felm(ln_cotton_rrev ~ I(dday0C - dday10C) +dday10_30  + dday30C + prec + prec_sq | state,
+cs.cotton.mod2 <- felm(ln_cotton_rrev ~ I(dday0C - dday10C)  + I(dday10C - dday30C) + dday30C + prec + prec_sq | state | 0 | state,
                   data = cottondat, weights = cottondat$cotton_a)
 summary(cs.cotton.mod2)
 
 # Hay
-cs.hay.mod1 <- felm(ln_hay_rrev ~ tavg + tavg_sq + prec + prec_sq | state, 
+cs.hay.mod1 <- felm(ln_hay_rrev ~ tavg + tavg_sq + prec + prec_sq | state | 0 | state, 
                    data = haydat, weights = haydat$hay_a)
 summary(cs.hay.mod1)
 
-cs.hay.mod2 <- felm(ln_hay_rrev ~I(dday0C - dday10C) + dday10_30  + dday30C + prec + prec_sq | state,
+cs.hay.mod2 <- felm(ln_hay_rrev ~I(dday0C - dday10C) + dday10_30  + dday30C + prec + prec_sq | state | 0 | state,
                   data = haydat, weights = haydat$hay_a)
 summary(cs.hay.mod2)
 
 # Wheat
-cs.wheat.mod1 <- felm(ln_wheat_rrev ~ tavg + tavg_sq + prec + prec_sq | state, 
+cs.wheat.mod1 <- felm(ln_wheat_rrev ~ tavg + tavg_sq + prec + prec_sq | state | 0 | state, 
                    data = wheatdat, weights = wheatdat$wheat_a)
 summary(cs.wheat.mod1)
 
-cs.wheat.mod2 <- felm(ln_wheat_rrev ~I(dday0C - dday10C) + dday10_30  + dday30C + prec + prec_sq | state,
+cs.wheat.mod2 <- felm(ln_wheat_rrev ~  I(dday0C - dday10C)  + I(dday10C - dday30C) + dday30C + 
+                        prec + prec_sq | state | 0 | state,
                   data = wheatdat, weights = wheatdat$wheat_a)
 summary(cs.wheat.mod2)
 
 # Soybean
-cs.soybean.mod1 <- felm(ln_soybean_rrev ~ tavg + tavg_sq + prec + prec_sq | state, 
+cs.soybean.mod1 <- felm(ln_soybean_rrev ~ tavg + tavg_sq + prec + prec_sq | state | 0 | state, 
                    data = soybeandat, weights = soybeandat$soybean_a)
 summary(cs.soybean.mod1)
 
-cs.soybean.mod2 <- felm(ln_soybean_rrev ~I(dday0C - dday10C) + dday10_30  + dday30C + prec + prec_sq | state,
+cs.soybean.mod2 <- felm(ln_soybean_rrev ~I(dday0C - dday10C) + dday10_30  + dday30C + prec + prec_sq | state | 0 | state,
                   data = soybeandat, weights = soybeandat$soybean_a)
 summary(cs.soybean.mod2)
 
@@ -101,47 +102,47 @@ soybeandat <- filter(cropdat, !is.na(ln_soybean_rrev))
 
 
 # Corn
-cc.corn.mod1 <- felm(p_corn_share ~ tavg + tavg_sq + prec + prec_sq | state, 
+cc.corn.mod1 <- felm(p_corn_share ~ tavg + tavg_sq + prec + prec_sq | state | 0 | state, 
                    data = corndat, weights = corndat$total_a)
 summary(cc.corn.mod1)
 
-cc.corn.mod2 <- felm(p_corn_share ~ dday10_30  + dday30C + prec + prec_sq | state,
+cc.corn.mod2 <- felm(p_corn_share ~ dday10_30  + dday30C + prec + prec_sq | state | 0 | state,
                   data = corndat, weights = corndat$total_a)
 summary(cc.corn.mod2)
 
 # Cotton
-cc.cotton.mod1 <- felm(p_cotton_share ~ tavg + tavg_sq + prec + prec_sq | state, 
+cc.cotton.mod1 <- felm(p_cotton_share ~ tavg + tavg_sq + prec + prec_sq | state | 0 | state, 
                    data = cottondat, weights = cottondat$total_a)
 summary(cc.cotton.mod1)
 
-cc.cotton.mod2 <- felm(p_cotton_share ~ dday10_30  + dday30C + prec + prec_sq | state,
+cc.cotton.mod2 <- felm(p_cotton_share ~ dday10_30  + dday30C + prec + prec_sq | state | 0 | state,
                   data = cottondat, weights = cottondat$total_a)
 summary(cc.cotton.mod2)
 
 # Hay
-cc.hay.mod1 <- felm(p_hay_share ~ tavg + tavg_sq + prec + prec_sq | state, 
+cc.hay.mod1 <- felm(p_hay_share ~ tavg + tavg_sq + prec + prec_sq | state | 0 | state, 
                    data = haydat, weights = haydat$total_a)
 summary(cc.hay.mod1)
 
-cc.hay.mod2 <- felm(p_hay_share ~ dday10_30  + dday30C + prec + prec_sq | state,
+cc.hay.mod2 <- felm(p_hay_share ~ dday10_30  + dday30C + prec + prec_sq | state | 0 | state,
                   data = haydat, weights = haydat$total_a)
 summary(cc.hay.mod2)
 
 # Wheat
-cc.wheat.mod1 <- felm(p_wheat_share ~ tavg + tavg_sq + prec + prec_sq | state, 
+cc.wheat.mod1 <- felm(p_wheat_share ~ tavg + tavg_sq + prec + prec_sq | state | 0 | state, 
                    data = wheatdat, weights = wheatdat$total_a)
 summary(cc.wheat.mod1)
 
-cc.wheat.mod2 <- felm(p_wheat_share ~ dday10_30  + dday30C + prec + prec_sq | state,
+cc.wheat.mod2 <- felm(p_wheat_share ~ dday10_30  + dday30C + prec + prec_sq | state | 0 | state,
                   data = wheatdat, weights = wheatdat$total_a)
 summary(cc.wheat.mod2)
 
 # Soybean
-cc.soybean.mod1 <- felm(p_soybean_share ~ tavg + tavg_sq + prec + prec_sq | state, 
+cc.soybean.mod1 <- felm(p_soybean_share ~ tavg + tavg_sq + prec + prec_sq | state | 0 | state, 
                    data = soybeandat, weights = soybeandat$total_a)
 summary(cc.soybean.mod1)
 
-cc.soybean.mod2 <- felm(p_soybean_share ~ dday10_30  + dday30C + prec + prec_sq | state,
+cc.soybean.mod2 <- felm(p_soybean_share ~ dday10_30  + dday30C + prec + prec_sq | state | 0 | state,
                   data = soybeandat, weights = soybeandat$total_a)
 summary(cc.soybean.mod2)
 

@@ -58,6 +58,8 @@ decade_merge <- function(dat, begd, endd, int){
             tavg = mean(tavg, na.rm = TRUE),
             dday0C = mean(dday0C, na.rm = TRUE),
             dday10C = mean(dday10C, na.rm = TRUE),
+            dday15C = mean(dday15C, na.rm = TRUE),
+            dday17C = mean(dday17C, na.rm = TRUE),
             dday30C = mean(dday30C, na.rm = TRUE),
             dday10_30 = dday10C - dday30C,
             prec = mean(prec, na.rm = TRUE),
@@ -113,7 +115,7 @@ diff.wheat.mod1 <- felm(ln_wheat_rrev ~ tavg + I(tavg^2) + prec + I(prec^2) | st
                    data = wheatdat, weights = wheatdat$wheat_a)
 summary(diff.wheat.mod1)
 
-diff.wheat.mod2 <- felm(ln_wheat_rrev ~ I(dday0C - dday10C) +dday10_30 + dday30C + prec + prec_sq | state + year | 0 | state, 
+diff.wheat.mod2 <- felm(ln_wheat_rrev ~ I(dday0C - dday10C)  + dday10_30 + dday30C + prec + prec_sq | state + year | 0 | state, 
                    data = wheatdat, weights = wheatdat$wheat_a)
 summary(diff.wheat.mod2)
 
@@ -138,6 +140,7 @@ saveRDS(diff.wheat.mod2, "models/diff.dd.ln_wheat_rrev")
 saveRDS(diff.soybean.mod1, "models/diff.temp.ln_soybean_rrev")
 saveRDS(diff.soybean.mod2, "models/diff.dd.ln_soybean_rrev")
 
+saveRDS(decadedat, "data/diff_regression_data.rds")
 
 
 # Proportion of acreage regressions
