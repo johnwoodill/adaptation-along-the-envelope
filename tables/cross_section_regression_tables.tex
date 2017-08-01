@@ -4,7 +4,7 @@
 \usepackage[a4paper, total={8in, 10in}]{geometry}
 \begin{document}
 % Table created by stargazer v.5.2 by Marek Hlavac, Harvard University. E-mail: hlavac at fas.harvard.edu
-% Date and time: Thu, Jul 27, 2017 - 09:11:49 PM
+% Date and time: Mon, Jul 31, 2017 - 01:45:57 PM
 \begin{table}[!htbp] \centering 
   \caption{Cross-section Regression Models explaining Crop Revenue per Acre} 
   \label{} 
@@ -16,25 +16,25 @@
  & Cross-section & Cross-section & Cross-section & Cross-section & Cross-section \\ 
 \\[-1.8ex] & (1) & (2) & (3) & (4) & (5)\\ 
 \hline \\[-1.8ex] 
- Average Temperature & 12.51$^{***}$ & $-$92.66$^{***}$ & 32.41$^{***}$ & $-$17.28$^{***}$ & 25.97$^{***}$ \\ 
-  & (2.70) & (11.95) & (2.65) & (1.53) & (2.37) \\ 
+ Average Temperature & 12.51 & $-$92.66$^{***}$ & 32.41$^{**}$ & $-$50.00 & 25.97$^{**}$ \\ 
+  & (15.72) & (20.27) & (14.83) & (49.82) & (12.40) \\ 
   & & & & & \\ 
- Average Temperature Squared & $-$0.43$^{***}$ & 2.25$^{***}$ & $-$0.89$^{***}$ & 0.40$^{***}$ & $-$0.76$^{***}$ \\ 
-  & (0.08) & (0.26) & (0.08) & (0.04) & (0.07) \\ 
+ Average Temperature Squared & $-$0.43 & 2.25$^{***}$ & $-$0.89$^{**}$ & 1.38 & $-$0.76$^{**}$ \\ 
+  & (0.45) & (0.44) & (0.42) & (1.59) & (0.35) \\ 
   & & & & & \\ 
- Precipitation & 9.34$^{***}$ & 8.33$^{***}$ & 15.33$^{***}$ & 14.50$^{***}$ & 1.80$^{**}$ \\ 
-  & (1.00) & (1.53) & (1.42) & (0.62) & (0.86) \\ 
+ Precipitation & 9.34 & 8.33 & 15.33$^{*}$ & 44.83 & 1.80 \\ 
+  & (7.03) & (5.28) & (8.75) & (28.63) & (3.14) \\ 
   & & & & & \\ 
- Precipitation Squared & $-$0.16$^{***}$ & $-$0.18$^{***}$ & $-$0.31$^{***}$ & $-$0.26$^{***}$ & $-$0.02 \\ 
-  & (0.02) & (0.03) & (0.03) & (0.01) & (0.02) \\ 
+ Precipitation Squared & $-$0.16 & $-$0.18 & $-$0.31$^{*}$ & $-$1.00 & $-$0.02 \\ 
+  & (0.13) & (0.11) & (0.17) & (0.66) & (0.06) \\ 
   & & & & & \\ 
 \hline \\[-1.8ex] 
 Weights & Acres & Acres & Acres & Acres & Acres \\ 
 Fixed-effect & State & State & State & State & State \\ 
 Cluster SE & State & State & State & State & State \\ 
-Observations & 2,346 & 823 & 1,897 & 2,260 & 2,127 \\ 
-R$^{2}$ & 0.79 & 0.65 & 0.74 & 0.80 & 0.76 \\ 
-Adjusted R$^{2}$ & 0.78 & 0.64 & 0.74 & 0.80 & 0.76 \\ 
+Observations & 2,346 & 823 & 1,897 & 226 & 2,127 \\ 
+R$^{2}$ & 0.79 & 0.65 & 0.74 & 0.63 & 0.76 \\ 
+Adjusted R$^{2}$ & 0.78 & 0.64 & 0.74 & 0.62 & 0.76 \\ 
 \hline 
 \hline \\[-1.8ex] 
 \textit{Notes:} & \multicolumn{5}{l}{All coefficients multiplied by 100} \\ 
@@ -42,7 +42,7 @@ Adjusted R$^{2}$ & 0.78 & 0.64 & 0.74 & 0.80 & 0.76 \\
 \end{table} 
 
 % Table created by stargazer v.5.2 by Marek Hlavac, Harvard University. E-mail: hlavac at fas.harvard.edu
-% Date and time: Thu, Jul 27, 2017 - 09:11:49 PM
+% Date and time: Mon, Jul 31, 2017 - 01:45:57 PM
 \begin{table}[!htbp] \centering 
   \caption{Cross-section Regression Models explaining Crop Revenue per Acre} 
   \label{} 
@@ -54,25 +54,28 @@ Adjusted R$^{2}$ & 0.78 & 0.64 & 0.74 & 0.80 & 0.76 \\
  & Cross-section & Cross-section & Cross-section & Cross-section & Cross-section \\ 
 \\[-1.8ex] & (1) & (2) & (3) & (4) & (5)\\ 
 \hline \\[-1.8ex] 
- Degree Days (10-30C) & 0.01$^{**}$ & 0.09$^{***}$ & 0.03$^{***}$ & $-$0.02$^{***}$ & 0.02$^{***}$ \\ 
-  & (0.01) & (0.01) & (0.01) & (0.00) & (0.00) \\ 
+ Degree Days (0-10C) & $-$0.09 & $-$0.19$^{***}$ & 0.11 & $-$1.82$^{***}$ & $-$0.05 \\ 
+  & (0.10) & (0.02) & (0.09) & (0.68) & (0.04) \\ 
   & & & & & \\ 
- Degree Days (30C) & $-$0.36$^{***}$ & $-$0.37$^{***}$ & $-$0.26$^{***}$ & 0.00 & $-$0.43$^{***}$ \\ 
-  & (0.06) & (0.06) & (0.06) & (0.03) & (0.05) \\ 
+ Degree Days (10-30C) & 0.04 & 0.12$^{***}$ & $-$0.00 & 0.89$^{***}$ & 0.04$^{***}$ \\ 
+  & (0.03) & (0.01) & (0.03) & (0.32) & (0.02) \\ 
   & & & & & \\ 
- Precipitaton & 9.17$^{***}$ & 2.08 & 18.05$^{***}$ & 12.71$^{***}$ & 5.10$^{***}$ \\ 
-  & (0.98) & (1.68) & (1.46) & (0.62) & (0.76) \\ 
+ Degree Days (30C) & $-$0.41$^{**}$ & $-$0.47$^{***}$ & $-$0.19 & $-$3.65$^{**}$ & $-$0.49$^{***}$ \\ 
+  & (0.21) & (0.13) & (0.21) & (1.60) & (0.15) \\ 
   & & & & & \\ 
- Precipitation Squared & $-$0.17$^{***}$ & $-$0.10$^{***}$ & $-$0.38$^{***}$ & $-$0.23$^{***}$ & $-$0.10$^{***}$ \\ 
-  & (0.02) & (0.03) & (0.03) & (0.01) & (0.01) \\ 
+ Precipitaton & 9.99 & 2.01 & 17.24$^{**}$ & 3.32 & 5.71 \\ 
+  & (6.77) & (5.90) & (7.99) & (2.53) & (5.36) \\ 
+  & & & & & \\ 
+ Precipitation Squared & $-$0.19 & $-$0.10 & $-$0.36$^{**}$ & $-$0.03 & $-$0.11 \\ 
+  & (0.13) & (0.12) & (0.16) & (0.08) & (0.09) \\ 
   & & & & & \\ 
 \hline \\[-1.8ex] 
 Weights & Acres & Acres & Acres & Acres & Acres \\ 
 Fixed-effect & State & State & State & State & State \\ 
 Cluster SE & State & State & State & State & State \\ 
-Observations & 2,346 & 823 & 1,897 & 2,260 & 2,127 \\ 
-R$^{2}$ & 0.79 & 0.65 & 0.72 & 0.79 & 0.75 \\ 
-Adjusted R$^{2}$ & 0.79 & 0.65 & 0.72 & 0.79 & 0.75 \\ 
+Observations & 2,346 & 823 & 1,897 & 226 & 2,127 \\ 
+R$^{2}$ & 0.79 & 0.68 & 0.73 & 0.79 & 0.76 \\ 
+Adjusted R$^{2}$ & 0.79 & 0.67 & 0.72 & 0.78 & 0.75 \\ 
 \hline 
 \hline \\[-1.8ex] 
 \textit{Notes:} & \multicolumn{5}{l}{All coefficients multiplied by 100} \\ 
@@ -80,7 +83,7 @@ Adjusted R$^{2}$ & 0.79 & 0.65 & 0.72 & 0.79 & 0.75 \\
 \end{table} 
 \newpage
 % Table created by stargazer v.5.2 by Marek Hlavac, Harvard University. E-mail: hlavac at fas.harvard.edu
-% Date and time: Thu, Jul 27, 2017 - 09:11:49 PM
+% Date and time: Mon, Jul 31, 2017 - 01:45:57 PM
 \begin{table}[!htbp] \centering 
   \caption{Cross-section Regression Models explaining Proportion of Acres by Crop} 
   \label{} 
@@ -92,25 +95,25 @@ Adjusted R$^{2}$ & 0.79 & 0.65 & 0.72 & 0.79 & 0.75 \\
  & Cross-section & Cross-section & Cross-section & Cross-section & Cross-section \\ 
 \\[-1.8ex] & (1) & (2) & (3) & (4) & (5)\\ 
 \hline \\[-1.8ex] 
- Average Temperature & $-$0.0092 & 0.2486$^{**}$ & $-$0.0543 & 1.2670$^{***}$ & 0.4147$^{***}$ \\ 
-  & (0.0871) & (0.1152) & (0.0428) & (0.4385) & (0.1142) \\ 
+ Average Temperature & 273.5996$^{**}$ & 350.6467$^{**}$ & $-$161.8425 & $-$56.9302$^{**}$ & 81.0202 \\ 
+  & (123.3346) & (154.5733) & (177.5992) & (26.8759) & (81.0352) \\ 
   & & & & & \\ 
- Average Temperature Squared & 0.0005 & $-$0.0048$^{*}$ & 0.0009 & $-$0.0301$^{***}$ & $-$0.0090$^{***}$ \\ 
-  & (0.0020) & (0.0027) & (0.0010) & (0.0102) & (0.0026) \\ 
+ Average Temperature Squared & $-$7.7489$^{**}$ & $-$7.4757$^{**}$ & 2.8965 & 0.5647 & $-$1.4560 \\ 
+  & (3.4592) & (3.3027) & (4.9816) & (1.6005) & (2.2247) \\ 
   & & & & & \\ 
- Precipitation & 0.0202$^{**}$ & $-$0.0225$^{**}$ & 0.0341$^{***}$ & $-$0.1059$^{**}$ & $-$0.0021 \\ 
-  & (0.0087) & (0.0111) & (0.0043) & (0.0440) & (0.0114) \\ 
+ Precipitation & 38.6639 & $-$110.5715$^{***}$ & $-$24.3835 & $-$330.7217$^{***}$ & 39.1313 \\ 
+  & (36.7314) & (17.5613) & (75.1498) & (115.4245) & (35.2905) \\ 
   & & & & & \\ 
- Precipitation Squared & $-$0.0003 & 0.0001 & $-$0.0005$^{***}$ & 0.0011 & 0.0001 \\ 
-  & (0.0002) & (0.0002) & (0.0001) & (0.0008) & (0.0002) \\ 
+ Precipitation Squared & $-$0.5612 & 1.4706$^{***}$ & 0.7261 & 7.0256$^{***}$ & $-$0.6653 \\ 
+  & (0.7206) & (0.3082) & (1.4596) & (2.6072) & (0.6476) \\ 
   & & & & & \\ 
 \hline \\[-1.8ex] 
 Weights & Total Acres & Total Acres & Total Acres & Total Acres & Total Acres \\ 
 Fixed-effect & State & State & State & State & State \\ 
 Cluster SE & State & State & State & State & State \\ 
-Observations & 414 & 383 & 414 & 414 & 414 \\ 
-R$^{2}$ & 0.5514 & 0.4578 & 0.6865 & 0.5815 & 0.7903 \\ 
-Adjusted R$^{2}$ & 0.5356 & 0.4372 & 0.6755 & 0.5668 & 0.7830 \\ 
+Observations & 2,348 & 877 & 1,897 & 227 & 2,127 \\ 
+R$^{2}$ & 0.7312 & 0.6038 & 0.4993 & 0.8941 & 0.5927 \\ 
+Adjusted R$^{2}$ & 0.7272 & 0.5950 & 0.4918 & 0.8907 & 0.5861 \\ 
 \hline 
 \hline \\[-1.8ex] 
 \textit{Notes:} & \multicolumn{5}{l}{All coefficients multiplied by 1000} \\ 
@@ -118,7 +121,7 @@ Adjusted R$^{2}$ & 0.5356 & 0.4372 & 0.6755 & 0.5668 & 0.7830 \\
 \end{table} 
 
 % Table created by stargazer v.5.2 by Marek Hlavac, Harvard University. E-mail: hlavac at fas.harvard.edu
-% Date and time: Thu, Jul 27, 2017 - 09:11:49 PM
+% Date and time: Mon, Jul 31, 2017 - 01:45:58 PM
 \begin{table}[!htbp] \centering 
   \caption{Cross-section Regression Models explaining Proportion of Acres by Crop} 
   \label{} 
@@ -130,25 +133,28 @@ Adjusted R$^{2}$ & 0.5356 & 0.4372 & 0.6755 & 0.5668 & 0.7830 \\
  & Cross-section & Cross-section & Cross-section & Cross-section & Cross-section \\ 
 \\[-1.8ex] & (1) & (2) & (3) & (4) & (5)\\ 
 \hline \\[-1.8ex] 
- Degree Days (10-30C) & 0.0001 & 0.0004 & $-$0.0002 & $-$0.0020 & 0.0002 \\ 
-  & (0.0005) & (0.0007) & (0.0003) & (0.0025) & (0.0007) \\ 
+ Degree Days (0-10C) & 0.2798 & 0.0255 & 2.8780 & $-$3.7352 & $-$0.5932 \\ 
+  & (5.8004) & (2.3879) & (14.1516) & (18.6070) & (6.1020) \\ 
   & & & & & \\ 
- Degree Days (30C) & $-$0.0007 & $-$0.0014 & 0.0005 & 0.0214 & $-$0.0010 \\ 
-  & (0.0049) & (0.0062) & (0.0024) & (0.0224) & (0.0065) \\ 
+ Degree Days (10-30C) & 0.0913 & 0.0728 & $-$1.9736 & 1.7484 & 0.7611 \\ 
+  & (1.3816) & (1.2349) & (5.5086) & (7.2338) & (2.7974) \\ 
   & & & & & \\ 
- Precipitaton & 0.0121 & $-$0.0364 & 0.0390 & 0.1525 & $-$0.0066 \\ 
-  & (0.1014) & (0.1318) & (0.0495) & (0.4668) & (0.1348) \\ 
+ Degree Days (30C) & $-$1.9811 & 1.4090 & 8.7490 & $-$11.0169 & $-$4.6716 \\ 
+  & (10.7395) & (9.4995) & (34.9004) & (36.2188) & (14.5219) \\ 
   & & & & & \\ 
- Precipitation Squared & $-$0.0002 & 0.0003 & $-$0.0006 & $-$0.0023 & 0.0001 \\ 
-  & (0.0018) & (0.0023) & (0.0009) & (0.0082) & (0.0024) \\ 
+ Precipitaton & 76.1325 & $-$83.2485 & $-$35.8523 & $-$383.2215 & 37.1045 \\ 
+  & (443.4097) & (258.8133) & (588.7664) & (841.5087) & (261.8144) \\ 
+  & & & & & \\ 
+ Precipitation Squared & $-$1.3518 & 1.0648 & 1.1558 & 8.0873 & $-$0.8106 \\ 
+  & (8.7052) & (3.9525) & (11.9950) & (20.3064) & (5.0724) \\ 
   & & & & & \\ 
 \hline \\[-1.8ex] 
 Weights & Total Acres & Total Acres & Total Acres & Total Acres & Total Acres \\ 
 Fixed-effect & State & State & State & State & State \\ 
 Cluster SE & State & State & State & State & State \\ 
-Observations & 414 & 383 & 414 & 414 & 414 \\ 
-R$^{2}$ & 0.5545 & 0.4555 & 0.6918 & 0.6522 & 0.7857 \\ 
-Adjusted R$^{2}$ & 0.5388 & 0.4348 & 0.6810 & 0.6400 & 0.7782 \\ 
+Observations & 2,348 & 877 & 1,897 & 227 & 2,127 \\ 
+R$^{2}$ & 0.7057 & 0.6023 & 0.5425 & 0.9184 & 0.6114 \\ 
+Adjusted R$^{2}$ & 0.7012 & 0.5930 & 0.5354 & 0.9154 & 0.6049 \\ 
 \hline 
 \hline \\[-1.8ex] 
 \textit{Notes:} & \multicolumn{5}{l}{All coefficients multiplied by 1000} \\ 

@@ -10,7 +10,7 @@ library(lfe)
 
 # Panel for Corn Revenue per Acre -----------------------------------------
 
-
+setwd("/run/media/john/1TB/SpiderOak/Projects/adaptation-along-the-envelope/")
 cropdat <- readRDS("data/panel_regression_data.rds")
 
 corndat <- filter(cropdat, !is.na(ln_corn_rrev))
@@ -24,7 +24,7 @@ p.corn.mod1 <- felm(ln_corn_rrev ~ tavg + tavg_sq + prec + prec_sq | fips + year
                    data = corndat, weights = corndat$corn_grain_a)
 summary(p.corn.mod1)
 
-p.corn.mod2 <- felm(ln_corn_rrev ~ I(dday0C - dday10C) +dday10_30 + dday30C + 
+p.corn.mod2 <- felm(ln_corn_rrev ~ dday0_10 + dday10_30 + dday30C + 
                       prec + prec_sq | fips + year | 0 | state,
                   data = corndat, weights = corndat$corn_grain_a)
 summary(p.corn.mod2)
@@ -34,7 +34,7 @@ p.cotton.mod1 <- felm(ln_cotton_rrev ~ tavg + tavg_sq + prec + prec_sq | fips + 
                    data = cottondat, weights = cottondat$cotton_a)
 summary(p.cotton.mod1)
 
-p.cotton.mod2 <- felm(ln_cotton_rrev ~I(dday0C - dday10C) + dday10_30  + dday30C + 
+p.cotton.mod2 <- felm(ln_cotton_rrev ~dday0_10 + dday10_30  + dday30C + 
                         prec + prec_sq | fips + year | 0 | state,
                   data = cottondat, weights = cottondat$cotton_a)
 summary(p.cotton.mod2)
@@ -44,7 +44,7 @@ p.hay.mod1 <- felm(ln_hay_rrev ~ tavg + tavg_sq + prec + prec_sq | fips + year |
                    data = haydat, weights = haydat$hay_a)
 summary(p.hay.mod1)
 
-p.hay.mod2 <- felm(ln_hay_rrev ~I(dday0C - dday10C) + dday10_30  + dday30C + 
+p.hay.mod2 <- felm(ln_hay_rrev ~ dday0_10 + dday10_30  + dday30C + 
                      prec + prec_sq | fips + year | 0 | state,
                   data = haydat, weights = haydat$hay_a)
 summary(p.hay.mod2)
@@ -54,7 +54,7 @@ p.wheat.mod1 <- felm(ln_wheat_rrev ~ tavg + tavg_sq + prec + prec_sq | fips + ye
                    data = wheatdat, weights = wheatdat$wheat_a)
 summary(p.wheat.mod1)
 
-p.wheat.mod2 <- felm(ln_wheat_rrev ~I(dday0C - dday10C)  + I(dday10C - dday30C) + dday30C+
+p.wheat.mod2 <- felm(ln_wheat_rrev ~ dday0_10  + dday10_30 + dday30C +
                        prec + prec_sq | fips + year | 0 | state,
                   data = wheatdat, weights = wheatdat$wheat_a)
 summary(p.wheat.mod2)
@@ -64,7 +64,7 @@ p.soybean.mod1 <- felm(ln_soybean_rrev ~ tavg + tavg_sq + prec + prec_sq | fips 
                    data = soybeandat, weights = soybeandat$soybean_a)
 summary(p.soybean.mod1)
 
-p.soybean.mod2 <- felm(ln_soybean_rrev ~I(dday0C - dday10C) + dday10_30  + dday30C +
+p.soybean.mod2 <- felm(ln_soybean_rrev ~ dday0_10 + dday10_30  + dday30C +
                          prec + prec_sq | fips + year | 0 | state,
                   data = soybeandat, weights = soybeandat$soybean_a)
 summary(p.soybean.mod2)
@@ -86,22 +86,24 @@ saveRDS(p.soybean.mod1, "models/p.temp.ln_soybean_rrev")
 saveRDS(p.soybean.mod2, "models/p.dd.ln_soybean_rrev")
 
 
-# Panel Corn Acres --------------------------------------------------------
+# Panel Acres --------------------------------------------------------
 
-cropdat <- filter(cropdat, corn_grain_a != 0 & cotton_a != 0 & hay_a != 0 & wheat_a != 0 & soybean_a != 0)
+setwd("/run/media/john/1TB/SpiderOak/Projects/adaptation-along-the-envelope/")
+cropdat <- readRDS("data/panel_p_share_regression_data.rds")
 
-corndat <- filter(cropdat, !is.na(ln_corn_rrev))
-cottondat <- filter(cropdat, !is.na(ln_cotton_rrev))
-haydat <- filter(cropdat, !is.na(ln_hay_rrev))
-wheatdat <- filter(cropdat, !is.na(ln_wheat_rrev))
-soybeandat <- filter(cropdat, !is.na(ln_soybean_rrev))
+
+corndat <- filter(cropdat, !is.na(p_corn_share))
+cottondat <- filter(cropdat, !is.na(p_cotton_share))
+haydat <- filter(cropdat, !is.na(p_hay_share))
+wheatdat <- filter(cropdat, !is.na(p_wheat_share))
+soybeandat <- filter(cropdat, !is.na(p_soybean_share))
 
 # Corn
-p.corn.mod1 <- felm(p_corn_share ~ tavg + tavg_sq + prec + prec_sq | fips + year | 0 | state, 
+p.corn.mod1 <- felm(log(p_corn_share) ~ tavg + tavg_sq + prec + prec_sq | fips + year | 0 | state, 
                    data = corndat, weights = corndat$total_a)
 summary(p.corn.mod1)
 
-p.corn.mod2 <- felm(p_corn_share ~ dday10_30 + dday30C + prec + prec_sq | fips + year | 0 | state,
+p.corn.mod2 <- felm(p_corn_share ~  dday0_10 + dday10_30  + dday30C + prec + prec_sq | fips + year | 0 | state,
                   data = corndat, weights = corndat$total_a)
 summary(p.corn.mod2)
 
@@ -110,34 +112,34 @@ p.cotton.mod1 <- felm(p_cotton_share ~ tavg + tavg_sq + prec + prec_sq | fips + 
                    data = cottondat, weights = cottondat$total_a)
 summary(p.cotton.mod1)
 
-p.cotton.mod2 <- felm(ln_cotton_rrev ~ dday10_30  + dday30C + prec + prec_sq | fips + year | 0 | state,
+p.cotton.mod2 <- felm(p_cotton_share ~ dday0_10 +dday10_30  + dday30C +  prec + prec_sq | fips + year | 0 | state,
                   data = cottondat, weights = cottondat$total_a)
 summary(p.cotton.mod2)
 
 # Hay
-p.hay.mod1 <- felm(ln_hay_rrev ~ tavg + tavg_sq + prec + prec_sq | fips + year | 0 | state, 
+p.hay.mod1 <- felm(p_hay_share ~ tavg + tavg_sq + prec + prec_sq | fips + year | 0 | state, 
                    data = haydat, weights = haydat$total_a)
 summary(p.hay.mod1)
 
-p.hay.mod2 <- felm(ln_hay_rrev ~ dday10_30  + dday30C + prec + prec_sq | fips + year | 0 | state,
+p.hay.mod2 <- felm(p_hay_share ~ dday0_10 +  dday10_30  + dday30C +  prec + prec_sq | fips + year | 0 | 0,
                   data = haydat, weights = haydat$total_a)
 summary(p.hay.mod2)
 
 # Wheat
-p.wheat.mod1 <- felm(ln_wheat_rrev ~ tavg + tavg_sq + prec + prec_sq | fips + year | 0 | state, 
+p.wheat.mod1 <- felm(p_wheat_share ~ tavg + tavg_sq + prec + prec_sq | fips + year | 0 | state, 
                    data = wheatdat, weights = wheatdat$total_a)
 summary(p.wheat.mod1)
 
-p.wheat.mod2 <- felm(ln_wheat_rrev ~ dday10_30  + dday30C + prec + prec_sq | fips + year | 0 | state,
+p.wheat.mod2 <- felm(p_wheat_share ~ dday0_10 + dday10_30  + dday30C +  prec + prec_sq | fips + year | 0 | state,
                   data = wheatdat, weights = wheatdat$total_a)
 summary(p.wheat.mod2)
 
 # Soybean
-p.soybean.mod1 <- felm(ln_soybean_rrev ~ tavg + tavg_sq + prec + prec_sq | fips + year | 0 | state, 
+p.soybean.mod1 <- felm(p_soybean_share ~ tavg + tavg_sq + prec + prec_sq | fips + year | 0 | state, 
                    data = soybeandat, weights = soybeandat$total_a)
 summary(p.soybean.mod1)
 
-p.soybean.mod2 <- felm(ln_soybean_rrev ~ dday10_30  + dday30C + prec + prec_sq | fips + year | 0 | state,
+p.soybean.mod2 <- felm(p_soybean_share ~ dday0_10 + dday10_30  + dday30C +  prec + prec_sq | fips + year | 0 | state,
                   data = soybeandat, weights = soybeandat$total_a)
 summary(p.soybean.mod2)
 

@@ -89,8 +89,109 @@ ggplot(seg.dat) +
   geom_line(aes(x = degree, y = coef, color = reg, group = interaction(crop, reg))) +
   geom_line(aes(y = ymin, x = degree, color = reg, group = interaction(crop, reg)), linetype = "dotted", alpha = 1) + 
   geom_line(aes(y = ymax, x = degree, color = reg, group = interaction(crop, reg)), linetype = "dotted", alpha = 1) + 
-  facet_wrap(~crop) + xlab("Temperature (Celsius)") + ylab("Log Revenue") + ggtitle("Segemented Regressions") + 
-  theme(legend.position="top")
+  facet_wrap(~crop) + xlab("Temperature (Celsius)") + ylab("Log Revenue") + ggtitle("Log Revenue Segemented Regressions") + 
+   theme_tufte() + theme(legend.position="top")
+
+# Proportion Seg Regression
+library(lfe)
+library(readr)
+library(dplyr)
+library(Hmisc)
+library(ggthemes)
+library(splines)
+
+
+##############################################
+##############################################
+# Segmented Regressions ---------------------------------------------------
+
+source("cross_section_regression_data.R")
+source("panel_regression_data.R")
+source("cross_section_regression.R")
+source("panel_regression.R")
+source("diff_regression.R")
+
+setwd("/run/media/john/1TB/SpiderOak/Projects/adaptation-along-the-envelope/")
+
+# Cross-section Revenue Per Acre
+cs.dd.p_corn_share <- readRDS("models/cs.dd.p_corn_share")
+cs.dd.p_cotton_share <- readRDS("models/cs.dd.p_cotton_share")
+cs.dd.p_hay_share <- readRDS("models/cs.dd.p_hay_share")
+cs.dd.p_wheat_share <- readRDS("models/cs.dd.p_wheat_share")
+cs.dd.p_soybean_share <- readRDS("models/cs.dd.p_soybean_share")
+
+# Panel Revenue Per Acre
+p.dd.p_corn_share <- readRDS("models/p.dd.p_corn_share")
+p.dd.p_cotton_share <- readRDS("models/p.dd.p_cotton_share")
+p.dd.p_hay_share <- readRDS("models/p.dd.p_hay_share")
+p.dd.p_wheat_share <- readRDS("models/p.dd.p_wheat_share")
+p.dd.p_soybean_share <- readRDS("models/p.dd.p_soybean_share")
+
+# Diff Revenue Per Acre
+diff.dd.p_corn_share <- readRDS("models/diff.dd.p_corn_share")
+diff.dd.p_cotton_share <- readRDS("models/diff.dd.p_cotton_share")
+diff.dd.p_hay_share <- readRDS("models/diff.dd.p_hay_share")
+diff.dd.p_wheat_share <- readRDS("models/diff.dd.p_wheat_share")
+diff.dd.p_soybean_share <- readRDS("models/diff.dd.p_soybean_share")
+
+cs.corn.coef <- as.numeric(cs.dd.p_corn_share$coefficients[c(1, 1:3, 3)])
+cs.cotton.coef <- as.numeric(cs.dd.p_cotton_share$coefficients[c(1, 1:3, 3)])
+cs.hay.coef <- as.numeric(cs.dd.p_hay_share$coefficients[c(1, 1:3, 3)])
+cs.wheat.coef <- as.numeric(cs.dd.p_wheat_share$coefficients[c(1, 1:3, 3)])
+cs.soybean.coef <- as.numeric(cs.dd.p_soybean_share$coefficients[c(1, 1:3, 3)])
+
+p.corn.coef <- as.numeric(p.dd.p_corn_share$coefficients[c(1, 1:3, 3)])
+p.cotton.coef <- as.numeric(p.dd.p_cotton_share$coefficients[c(1, 1:3, 3)])
+p.hay.coef <- as.numeric(p.dd.p_hay_share$coefficients[c(1, 1:3, 3)])
+p.wheat.coef <- as.numeric(p.dd.p_wheat_share$coefficients[c(1, 1:3, 3)])
+p.soybean.coef <- as.numeric(p.dd.p_soybean_share$coefficients[c(1, 1:3, 3)])
+
+diff.corn.coef <- as.numeric(diff.dd.p_corn_share$coefficients[c(1, 1:3, 3)])
+diff.cotton.coef <- as.numeric(diff.dd.p_cotton_share$coefficients[c(1, 1:3, 3)])
+diff.hay.coef <- as.numeric(diff.dd.p_hay_share$coefficients[c(1, 1:3, 3)])
+diff.wheat.coef <- as.numeric(diff.dd.p_wheat_share$coefficients[c(1, 1:3, 3)])
+diff.soybean.coef <- as.numeric(diff.dd.p_soybean_share$coefficients[c(1, 1:3, 3)])
+
+cs.corn.se <- as.numeric(cs.dd.p_corn_share$se[c(1, 1:3, 3)])
+cs.cotton.se <- as.numeric(cs.dd.p_cotton_share$se[c(1, 1:3, 3)])
+cs.hay.se <- as.numeric(cs.dd.p_hay_share$se[c(1, 1:3, 3)])
+cs.wheat.se <- as.numeric(cs.dd.p_wheat_share$se[c(1, 1:3, 3)])
+cs.soybean.se <- as.numeric(cs.dd.p_soybean_share$se[c(1, 1:3, 3)])
+
+p.corn.se <- as.numeric(p.dd.p_corn_share$se[c(1, 1:3, 3)])
+p.cotton.se <- as.numeric(p.dd.p_cotton_share$se[c(1, 1:3, 3)])
+p.hay.se <- as.numeric(p.dd.p_hay_share$se[c(1, 1:3, 3)])
+p.wheat.se <- as.numeric(p.dd.p_wheat_share$se[c(1, 1:3, 3)])
+p.soybean.se <- as.numeric(p.dd.p_soybean_share$se[c(1, 1:3, 3)])
+
+diff.corn.se <- as.numeric(diff.dd.p_corn_share$se[c(1, 1:3, 3)])
+diff.cotton.se <- as.numeric(diff.dd.p_cotton_share$se[c(1, 1:3, 3)])
+diff.hay.se <- as.numeric(diff.dd.p_hay_share$se[c(1, 1:3, 3)])
+diff.wheat.se <- as.numeric(diff.dd.p_wheat_share$se[c(1, 1:3, 3)])
+diff.soybean.se <- as.numeric(diff.dd.p_soybean_share$se[c(1, 1:3, 3)])
+
+seg.dat <- data.frame(degree = rep(c(0, 10, 30, 35, 40), 15, each = 1),
+                    coef = c(cs.corn.coef, cs.cotton.coef, cs.hay.coef, cs.wheat.coef, cs.soybean.coef,
+                               p.corn.coef, p.cotton.coef, p.hay.coef, p.wheat.coef, p.soybean.coef,
+                               diff.corn.coef, diff.cotton.coef, diff.hay.coef, diff.wheat.coef, diff.soybean.coef),
+                      se = c(cs.corn.se, cs.cotton.se, cs.hay.se, cs.wheat.se, cs.soybean.se,
+                               p.corn.se, p.cotton.se, p.hay.se, p.wheat.se, p.soybean.se,
+                               diff.corn.se, diff.cotton.se, diff.hay.se, diff.wheat.se, diff.soybean.se),
+                      crop = rep(c("corn", "cotton", "hay", "wheat", "soybean"), 3, each = 5),
+                      reg = rep(c("cross-section", "panel", "diff"), 1, each = 25))
+
+
+seg.dat$ymin <- seg.dat$coef - 1.96*seg.dat$se
+seg.dat$ymax <- seg.dat$coef + 1.96*seg.dat$se
+
+
+ggplot(seg.dat) + 
+  geom_hline(yintercept = 0, linetype = "dashed", alpha = 0.3) + 
+  geom_line(aes(x = degree, y = coef, color = reg, group = interaction(crop, reg))) +
+  geom_line(aes(y = ymin, x = degree, color = reg, group = interaction(crop, reg)), linetype = "dotted", alpha = 1) + 
+  geom_line(aes(y = ymax, x = degree, color = reg, group = interaction(crop, reg)), linetype = "dotted", alpha = 1) + 
+  facet_wrap(~crop) + xlab("Temperature (Celsius)") + ylab("Proportion of Crop Acres") + ggtitle("Proportion of Crop Acres Segemented Regressions") + 
+  theme_tufte() + theme(legend.position="top")
 
 
 ##############################################
@@ -105,24 +206,24 @@ p.dat <- left_join(p.dat, td, by = c("year", "fips"))
 
 p.dat[, 118] <- rowSums(p.dat[, 118:123])
 # Spline
-Tindex = 0:35 + .5
+Tindex = 0:40 + .5
 DMat = as.matrix(ns(Tindex, df = 7))
-XMat <- as.matrix(p.dat[, 78:113]) %*% DMat
+XMat <- as.matrix(p.dat[, 78:118]) %*% DMat
 
 p.corndat <- filter(p.dat, !is.na(ln_corn_rrev))
-corn.XMat <- as.matrix(p.corndat[, 78:113]) %*% DMat
+corn.XMat <- as.matrix(p.corndat[, 78:118]) %*% DMat
 
 p.cottondat <- filter(p.dat, !is.na(ln_cotton_rrev))
-cotton.XMat <- as.matrix(p.cottondat[, 78:113]) %*% DMat
+cotton.XMat <- as.matrix(p.cottondat[, 78:118]) %*% DMat
 
 p.haydat <- filter(p.dat, !is.na(ln_hay_rrev))
-hay.XMat <- as.matrix(p.haydat[, 78:113]) %*% DMat
+hay.XMat <- as.matrix(p.haydat[, 78:118]) %*% DMat
 
 p.wheatdat <- filter(p.dat, !is.na(ln_wheat_rrev))
-wheat.XMat <- as.matrix(p.wheatdat[, 78:113]) %*% DMat
+wheat.XMat <- as.matrix(p.wheatdat[, 78:118]) %*% DMat
 
 p.soybeandat <- filter(p.dat, !is.na(ln_soybean_rrev))
-soybean.XMat <- as.matrix(p.soybeandat[, 78:113]) %*% DMat
+soybean.XMat <- as.matrix(p.soybeandat[, 78:118]) %*% DMat
 
 # Fit
 p.corn.fit <- felm(ln_corn_rrev ~  corn.XMat + prec + prec_sq | fips + year | 0 | state, 
@@ -167,10 +268,10 @@ plot(p.soybean.coef)
 
 
 # Spline data set to plot
-spline.pdat <- data.frame(degree = 0:35,
+spline.pdat <- data.frame(degree = 0:40,
                    coef = c(p.corn.coef, p.cotton.coef, p.hay.coef, p.wheat.coef, p.soybean.coef),
                    se = c(p.corn.se, p.cotton.se, p.hay.se, p.wheat.se, p.soybean.se),
-                   crop = rep(c("Corn", "Cotton", "Hay", "Wheat", "Soybean"), each = 36))
+                   crop = rep(c("Corn", "Cotton", "Hay", "Wheat", "Soybean"), each = 41))
 
 spline.pdat$ymin <- spline.pdat$coef - spline.pdat$se*1.97
 spline.pdat$ymax <- spline.pdat$coef + spline.pdat$se*1.97
@@ -189,7 +290,7 @@ ggplot(spline.pdat, aes(x = degree, y = coef, color = crop)) +
 # Cross-section
 cs.dat <- readRDS("data/cross_section_regression_data.rds")
 td <- readRDS("data/fips_degree_time_1900-2013.rds")
-td <- filter(td, year >= 1970 & year <= 2010)
+td <- filter(td, year >= 1950 & year <= 2010)
 td$year <- NULL
 
 td <- td %>% 
@@ -200,27 +301,27 @@ td$fips <- factor(td$fips)
 cs.dat$fips <- factor(cs.dat$fips)
 cs.dat <- left_join(cs.dat, td, by = c("fips"))
 
-cs.dat[, 79] <- rowSums(cs.dat[, 79:89])
+#cs.dat[, 84] <- rowSums(cs.dat[, 84:89])
 
 # Spline
-Tindex = 10:35 + .5
-DMat = as.matrix(ns(Tindex, df = 5))
-XMat <- as.matrix(cs.dat[, 54:79]) %*% DMat
+Tindex = 0:40 + .5
+DMat = as.matrix(ns(Tindex, df = 7))
+XMat <- as.matrix(cs.dat[, 44:84]) %*% DMat
 
 cs.corndat <- filter(cs.dat, !is.na(ln_corn_rrev))
-corn.XMat <- as.matrix(cs.corndat[, 54:79]) %*% DMat
+corn.XMat <- as.matrix(cs.corndat[, 44:84]) %*% DMat
 
 cs.cottondat <- filter(cs.dat, !is.na(ln_cotton_rrev))
-cotton.XMat <- as.matrix(cs.cottondat[, 44:79]) %*% DMat
+cotton.XMat <- as.matrix(cs.cottondat[44:84]) %*% DMat
 
 cs.haydat <- filter(cs.dat, !is.na(ln_hay_rrev))
-hay.XMat <- as.matrix(cs.haydat[, 44:79]) %*% DMat
+hay.XMat <- as.matrix(cs.haydat[, 44:84]) %*% DMat
 
 cs.wheatdat <- filter(cs.dat, !is.na(ln_wheat_rrev))
-wheat.XMat <- as.matrix(cs.wheatdat[, 44:79]) %*% DMat
+wheat.XMat <- as.matrix(cs.wheatdat[, 44:84]) %*% DMat
 
 cs.soybeandat <- filter(cs.dat, !is.na(ln_soybean_rrev))
-soybean.XMat <- as.matrix(cs.soybeandat[, 44:79]) %*% DMat
+soybean.XMat <- as.matrix(cs.soybeandat[, 44:84]) %*% DMat
 
 # Fit
 cs.corn.fit <- felm(ln_corn_rrev ~  corn.XMat + prec + prec_sq | state | 0 | state, 
@@ -244,32 +345,32 @@ cs.soybean.fit <- felm(ln_soybean_rrev ~ soybean.XMat +  prec + prec_sq | state 
 summary(cs.soybean.fit)
 
 # Fit coefficients into DMat
-cs.corn.coef <- DMat %*% matrix(cs.corn.fit$coefficients[1:5], ncol = 1)
+cs.corn.coef <- DMat %*% matrix(cs.corn.fit$coefficients[1:7], ncol = 1)
 cs.corn.se <- DMat %*% matrix(cs.corn.fit$se[1:7], ncol = 1)
 plot(cs.corn.coef)
 
-cs.cotton.coef <- DMat %*% matrix(cs.cotton.fit$coefficients[1:5], ncol = 1)
-cs.cotton.se <- DMat %*% matrix(cs.cotton.fit$se[1:5], ncol = 1)
+cs.cotton.coef <- DMat %*% matrix(cs.cotton.fit$coefficients[1:7], ncol = 1)
+cs.cotton.se <- DMat %*% matrix(cs.cotton.fit$se[1:7], ncol = 1)
 plot(cs.cotton.coef)
 
-cs.hay.coef <- DMat %*% matrix(cs.hay.fit$coefficients[1:5], ncol = 1)
-cs.hay.se <- DMat %*% matrix(cs.hay.fit$se[1:5], ncol = 1)
+cs.hay.coef <- DMat %*% matrix(cs.hay.fit$coefficients[1:7], ncol = 1)
+cs.hay.se <- DMat %*% matrix(cs.hay.fit$se[1:7], ncol = 1)
 plot(cs.hay.coef)
 
-cs.wheat.coef <- DMat %*% matrix(cs.wheat.fit$coefficients[1:5], ncol = 1)
-cs.wheat.se <- DMat %*% matrix(cs.wheat.fit$se[1:5], ncol = 1)
+cs.wheat.coef <- DMat %*% matrix(cs.wheat.fit$coefficients[1:7], ncol = 1)
+cs.wheat.se <- DMat %*% matrix(cs.wheat.fit$se[1:7], ncol = 1)
 plot(cs.wheat.coef)
 
-cs.soybean.coef <- DMat %*% matrix(cs.soybean.fit$coefficients[1:5], ncol = 1)
-cs.soybean.se <- DMat %*% matrix(cs.soybean.fit$se[1:5], ncol = 1)
+cs.soybean.coef <- DMat %*% matrix(cs.soybean.fit$coefficients[1:7], ncol = 1)
+cs.soybean.se <- DMat %*% matrix(cs.soybean.fit$se[1:7], ncol = 1)
 plot(cs.soybean.coef)
 
 
 # Spline data set to plot
-spline.csdat <- data.frame(degree = 0:35,
+spline.csdat <- data.frame(degree = 0:40,
                    coef = c(cs.corn.coef, cs.cotton.coef, cs.hay.coef, cs.wheat.coef, cs.soybean.coef),
                    se = c(cs.corn.se, cs.cotton.se, cs.hay.se, cs.wheat.se, cs.soybean.se),
-                   crop = rep(c("Corn", "Cotton", "Hay", "Wheat", "Soybean"), each = 36))
+                   crop = rep(c("Corn", "Cotton", "Hay", "Wheat", "Soybean"), each = 41))
 
 spline.csdat$ymin <- spline.csdat$coef - spline.csdat$se*1.97
 spline.csdat$ymax <- spline.csdat$coef + spline.csdat$se*1.97
@@ -286,38 +387,38 @@ ggplot(spline.csdat, aes(x = degree, y = coef, color = crop)) +
 # Difference
 diff.dat <- readRDS("data/diff_regression_data.rds")
 td <- readRDS("data/fips_degree_time_1900-2013.rds")
-td <- filter(td, year >= 1950 & year <= 2010)
-td$year <- NULL
+td <- filter(td, year >= 1930 & year <= 2010)
+td$year <- (td$year %/% 10)  * 10
 
 td <- td %>% 
-  group_by(fips) %>% 
+  group_by(fips, year) %>% 
   summarise_all(funs(mean))
 
 td$fips <- factor(td$fips)
 diff.dat$fips <- factor(diff.dat$fips)
-diff.dat <- left_join(diff.dat, td, by = c("fips"))
+diff.dat <- left_join(diff.dat, td, by = c("fips", "year"))
 
-# diff.dat[, 84] <- rowSums(diff.dat[, 84:89])
+#diff.dat[, 69] <- rowSums(diff.dat[, 69:74])
 
 # Spline
-Tindex = 0:40 + .5
-DMat = as.matrix(ns(Tindex, df = 5))
-XMat <- as.matrix(diff.dat[, 29:69]) %*% DMat
+Tindex = 0:35 + .5
+DMat = as.matrix(ns(Tindex, df = 7))
+XMat <- as.matrix(diff.dat[, 29:64]) %*% DMat
 
 diff.corndat <- filter(diff.dat, !is.na(ln_corn_rrev))
-corn.XMat <- as.matrix(diff.corndat[, 29:69]) %*% DMat
+corn.XMat <- as.matrix(diff.corndat[, 29:64]) %*% DMat
 
 diff.cottondat <- filter(diff.dat, !is.na(ln_cotton_rrev))
-cotton.XMat <- as.matrix(diff.cottondat[, 29:69]) %*% DMat
+cotton.XMat <- as.matrix(diff.cottondat[, 29:64]) %*% DMat
 
 diff.haydat <- filter(diff.dat, !is.na(ln_hay_rrev))
-hay.XMat <- as.matrix(diff.haydat[, 29:69]) %*% DMat
+hay.XMat <- as.matrix(diff.haydat[, 29:64]) %*% DMat
 
 diff.wheatdat <- filter(diff.dat, !is.na(ln_wheat_rrev))
-wheat.XMat <- as.matrix(diff.wheatdat[, 29:69]) %*% DMat
+wheat.XMat <- as.matrix(diff.wheatdat[, 29:64]) %*% DMat
 
 diff.soybeandat <- filter(diff.dat, !is.na(ln_soybean_rrev))
-soybean.XMat <- as.matrix(diff.soybeandat[, 29:69]) %*% DMat
+soybean.XMat <- as.matrix(diff.soybeandat[, 29:64]) %*% DMat
 
 # Fit
 diff.corn.fit <- felm(ln_corn_rrev ~  corn.XMat + prec + prec_sq | state | 0 | state, 
@@ -341,24 +442,24 @@ diff.soybean.fit <- felm(ln_soybean_rrev ~ soybean.XMat +  prec + prec_sq | stat
 summary(diff.soybean.fit)
 
 # Fit coefficients into DMat
-diff.corn.coef <- DMat %*% matrix(diff.corn.fit$coefficients[1:5], ncol = 1)
-diff.corn.se <- DMat %*% matrix(diff.corn.fit$se[1:5], ncol = 1)
+diff.corn.coef <- DMat %*% matrix(diff.corn.fit$coefficients[1:7], ncol = 1)
+diff.corn.se <- DMat %*% matrix(diff.corn.fit$se[1:7], ncol = 1)
 plot(diff.corn.coef)
 
-diff.cotton.coef <- DMat %*% matrix(diff.cotton.fit$coefficients[1:5], ncol = 1)
-diff.cotton.se <- DMat %*% matrix(diff.cotton.fit$se[1:5], ncol = 1)
+diff.cotton.coef <- DMat %*% matrix(diff.cotton.fit$coefficients[1:7], ncol = 1)
+diff.cotton.se <- DMat %*% matrix(diff.cotton.fit$se[1:7], ncol = 1)
 plot(diff.cotton.coef)
 
-diff.hay.coef <- DMat %*% matrix(diff.hay.fit$coefficients[1:5], ncol = 1)
-diff.hay.se <- DMat %*% matrix(diff.hay.fit$se[1:5], ncol = 1)
+diff.hay.coef <- DMat %*% matrix(diff.hay.fit$coefficients[1:7], ncol = 1)
+diff.hay.se <- DMat %*% matrix(diff.hay.fit$se[1:7], ncol = 1)
 plot(diff.hay.coef)
 
-diff.wheat.coef <- DMat %*% matrix(diff.wheat.fit$coefficients[1:5], ncol = 1)
-diff.wheat.se <- DMat %*% matrix(diff.wheat.fit$se[1:5], ncol = 1)
+diff.wheat.coef <- DMat %*% matrix(diff.wheat.fit$coefficients[1:7], ncol = 1)
+diff.wheat.se <- DMat %*% matrix(diff.wheat.fit$se[1:7], ncol = 1)
 plot(diff.wheat.coef)
 
-diff.soybean.coef <- DMat %*% matrix(diff.soybean.fit$coefficients[1:5], ncol = 1)
-diff.soybean.se <- DMat %*% matrix(diff.soybean.fit$se[1:5], ncol = 1)
+diff.soybean.coef <- DMat %*% matrix(diff.soybean.fit$coefficients[1:7], ncol = 1)
+diff.soybean.se <- DMat %*% matrix(diff.soybean.fit$se[1:7], ncol = 1)
 plot(diff.soybean.coef)
 
 
@@ -366,13 +467,13 @@ plot(diff.soybean.coef)
 spline.diffdat <- data.frame(degree = 0:35,
                    coef = c(diff.corn.coef, diff.cotton.coef, diff.hay.coef, diff.wheat.coef, diff.soybean.coef),
                    se = c(diff.corn.se, diff.cotton.se, diff.hay.se, diff.wheat.se, diff.soybean.se),
-                   crop = rep(c("Corn", "Cotton", "Hay", "Wheat", "Soybean"), each = 31))
+                   crop = rep(c("Corn", "Cotton", "Hay", "Wheat", "Soybean"), each = 36))
 
 spline.diffdat$ymin <- spline.diffdat$coef - spline.diffdat$se*1.97
 spline.diffdat$ymax <- spline.diffdat$coef + spline.diffdat$se*1.97
-spline.diffdat$reg <- "Panel"
+spline.diffdat$reg <- "Diff"
 
-ggplot(spline.csdat, aes(x = degree, y = coef, color = crop)) + 
+ggplot(spline.diffdat, aes(x = degree, y = coef, color = crop)) + 
   geom_line() + facet_wrap(~crop) + 
   geom_hline(yintercept = 0, linetype = "dotted", alpha = 0.3) +
   geom_line(aes(y = ymin, x = degree), linetype = "dotted") +

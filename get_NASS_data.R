@@ -255,7 +255,7 @@ dat <- data.frame()
 for (i in unique(states)){
   
 # Get acres harvested
-    params = list("state_alpha"=i, "agg_level_desc"="COUNTY","commodity_desc"="WHEAT", "source_desc"="SURVEY", "statisticcat_desc" = "AREA HARVESTED", "short_desc"="WHEAT, SPRING, (EXCL DURUM) - ACRES HARVESTED")
+    params = list("state_alpha"=i, "agg_level_desc"="COUNTY","commodity_desc"="WHEAT", "source_desc"="SURVEY", "statisticcat_desc" = "AREA HARVESTED", "short_desc"="WHEAT - ACRES HARVESTED")
     a <- tryCatch({
       req = nassqs_GET(params=params, key=NASSQS_TOKEN)
       hdat = nassqs_parse(req)
@@ -263,7 +263,7 @@ for (i in unique(states)){
     },error=function(e) e)
   
   # Get Production
-  params = list("state_alpha"=i, "agg_level_desc"="COUNTY","commodity_desc"="WHEAT", "source_desc"="SURVEY", "statisticcat_desc" = "PRODUCTION", "short_desc"="WHEAT, SPRING, (EXCL DURUM) - PRODUCTION, MEASURED IN BU")
+  params = list("state_alpha"=i, "agg_level_desc"="COUNTY","commodity_desc"="WHEAT", "source_desc"="SURVEY", "statisticcat_desc" = "PRODUCTION", "short_desc"="WHEAT - PRODUCTION, MEASURED IN BU")
       b <- tryCatch({
       req = nassqs_GET(params=params, key=NASSQS_TOKEN)
       pdat = nassqs_parse(req)

@@ -55,11 +55,11 @@ crop.density <- function(x, start, end, var){ # 1 - crop rev per acre, 2 - crop 
     sum.soybean1 <- sum(soybean_dat1$soybean_var)
     sum.all1 <- sum.corn1 + sum.cotton1 + sum.hay1 + sum.wheat1 + sum.soybean1
     
-    dens.corn1 <- density(corn_dat1$tavg, weight = corn_dat1$corn_var/sum.all1, from = 0, to = 25, n = 30)
-    dens.cotton1 <- density(cotton_dat1$tavg, weight = cotton_dat1$cotton_var/sum.all1, from = 0, to = 25, n = 30)
-    dens.hay1 <- density(hay_dat1$tavg, weight = hay_dat1$hay_var/sum.all1, from = 0, to = 25, n = 30)
-    dens.wheat1 <- density(wheat_dat1$tavg, weight = wheat_dat1$wheat_var/sum.all1, from = 0, to = 25, n = 30)
-    dens.soybean1 <- density(soybean_dat1$tavg, weight = soybean_dat1$soybean_var/sum.all1, from = 0, to = 25, n = 30)
+    dens.corn1 <- density(corn_dat1$tavg, weight = corn_dat1$corn_var/sum.all1, from = 0, to = 30, n = 30)
+    dens.cotton1 <- density(cotton_dat1$tavg, weight = cotton_dat1$cotton_var/sum.all1, from = 0, to = 30, n = 30)
+    dens.hay1 <- density(hay_dat1$tavg, weight = hay_dat1$hay_var/sum.all1, from = 0, to = 30, n = 30)
+    dens.wheat1 <- density(wheat_dat1$tavg, weight = wheat_dat1$wheat_var/sum.all1, from = 0, to = 30, n = 30)
+    dens.soybean1 <- density(soybean_dat1$tavg, weight = soybean_dat1$soybean_var/sum.all1, from = 0, to = 30, n = 30)
     
     dens.wheat1$y <- dens.wheat1$y + dens.cotton1$y
     dens.hay1$y <- dens.hay1$y + dens.wheat1$y
@@ -95,11 +95,11 @@ crop.density <- function(x, start, end, var){ # 1 - crop rev per acre, 2 - crop 
     sum.soybean2 <- sum(soybean_dat2$soybean_var)
     sum.all2 <- sum.corn2 + sum.cotton2 + sum.hay2 + sum.wheat2 + sum.soybean2
     
-    dens.corn2 <- density(corn_dat2$tavg, weight = corn_dat2$corn_var/sum.all2, from = 0, to = 25, n = 30)
-    dens.cotton2 <- density(cotton_dat2$tavg, weight = cotton_dat2$cotton_var/sum.all2, from = 0, to = 25, n = 30)
-    dens.hay2 <- density(hay_dat2$tavg, weight = hay_dat2$hay_var/sum.all2, from = 0, to = 25, n = 30)
-    dens.wheat2 <- density(wheat_dat2$tavg, weight = wheat_dat2$wheat_var/sum.all2, from = 0, to = 25, n = 30)
-    dens.soybean2 <- density(soybean_dat2$tavg, weight = soybean_dat2$soybean_var/sum.all2, from = 0, to = 25, n = 30)
+    dens.corn2 <- density(corn_dat2$tavg, weight = corn_dat2$corn_var/sum.all2, from = 0, to = 30, n = 30)
+    dens.cotton2 <- density(cotton_dat2$tavg, weight = cotton_dat2$cotton_var/sum.all2, from = 0, to = 30, n = 30)
+    dens.hay2 <- density(hay_dat2$tavg, weight = hay_dat2$hay_var/sum.all2, from = 0, to = 30, n = 30)
+    dens.wheat2 <- density(wheat_dat2$tavg, weight = wheat_dat2$wheat_var/sum.all2, from = 0, to = 30, n = 30)
+    dens.soybean2 <- density(soybean_dat2$tavg, weight = soybean_dat2$soybean_var/sum.all2, from = 0, to = 30, n = 30)
     
     dens.wheat2$y <- dens.wheat2$y + dens.cotton2$y
     dens.hay2$y <- dens.hay2$y + dens.wheat2$y
@@ -134,6 +134,7 @@ crop.density <- function(x, start, end, var){ # 1 - crop rev per acre, 2 - crop 
     plott <- plot_grid(plot1, plot2, ncol = 1)
     plott
     save_plot(paste0("figures/", title, ".png"), plott, base_height = 10)
+    return(plott)
 }
 
 # Revenue per acre share
