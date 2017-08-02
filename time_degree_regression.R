@@ -69,7 +69,7 @@ diff.hay.se <- as.numeric(diff.dd.ln_hay_rrev$se[c(1, 1:3, 3)])
 diff.wheat.se <- as.numeric(diff.dd.ln_wheat_rrev$se[c(1, 1:3, 3)])
 diff.soybean.se <- as.numeric(diff.dd.ln_soybean_rrev$se[c(1, 1:3, 3)])
 
-seg.dat <- data.frame(degree = rep(c(0, 10, 30, 35, 40), 15, each = 1),
+revseg.dat <- data.frame(degree = rep(c(0, 10, 30, 35, 40), 15, each = 1),
                     coef = c(cs.corn.coef, cs.cotton.coef, cs.hay.coef, cs.wheat.coef, cs.soybean.coef,
                                p.corn.coef, p.cotton.coef, p.hay.coef, p.wheat.coef, p.soybean.coef,
                                diff.corn.coef, diff.cotton.coef, diff.hay.coef, diff.wheat.coef, diff.soybean.coef),
@@ -80,18 +80,18 @@ seg.dat <- data.frame(degree = rep(c(0, 10, 30, 35, 40), 15, each = 1),
                       reg = rep(c("cross-section", "panel", "diff"), 1, each = 25))
 
 
-seg.dat$ymin <- seg.dat$coef - 1.96*seg.dat$se
-seg.dat$ymax <- seg.dat$coef + 1.96*seg.dat$se
+revseg.dat$ymin <- revseg.dat$coef - 1.96*revseg.dat$se
+revseg.dat$ymax <- revseg.dat$coef + 1.96*revseg.dat$se
 
 
-ggplot(seg.dat) + 
+rev.seg <- ggplot(revseg.dat) + 
   geom_hline(yintercept = 0, linetype = "dashed", alpha = 0.3) + 
   geom_line(aes(x = degree, y = coef, color = reg, group = interaction(crop, reg))) +
   geom_line(aes(y = ymin, x = degree, color = reg, group = interaction(crop, reg)), linetype = "dotted", alpha = 1) + 
   geom_line(aes(y = ymax, x = degree, color = reg, group = interaction(crop, reg)), linetype = "dotted", alpha = 1) + 
   facet_wrap(~crop) + xlab("Temperature (Celsius)") + ylab("Log Revenue") + ggtitle("Log Revenue Segemented Regressions") + 
    theme_tufte() + theme(legend.position="top")
-
+rev.seg
 # Proportion Seg Regression
 library(lfe)
 library(readr)
@@ -104,12 +104,6 @@ library(splines)
 ##############################################
 ##############################################
 # Segmented Regressions ---------------------------------------------------
-
-source("cross_section_regression_data.R")
-source("panel_regression_data.R")
-source("cross_section_regression.R")
-source("panel_regression.R")
-source("diff_regression.R")
 
 setwd("/run/media/john/1TB/SpiderOak/Projects/adaptation-along-the-envelope/")
 
@@ -170,7 +164,7 @@ diff.hay.se <- as.numeric(diff.dd.p_hay_share$se[c(1, 1:3, 3)])
 diff.wheat.se <- as.numeric(diff.dd.p_wheat_share$se[c(1, 1:3, 3)])
 diff.soybean.se <- as.numeric(diff.dd.p_soybean_share$se[c(1, 1:3, 3)])
 
-seg.dat <- data.frame(degree = rep(c(0, 10, 30, 35, 40), 15, each = 1),
+pseg.dat <- data.frame(degree = rep(c(0, 10, 30, 35, 40), 15, each = 1),
                     coef = c(cs.corn.coef, cs.cotton.coef, cs.hay.coef, cs.wheat.coef, cs.soybean.coef,
                                p.corn.coef, p.cotton.coef, p.hay.coef, p.wheat.coef, p.soybean.coef,
                                diff.corn.coef, diff.cotton.coef, diff.hay.coef, diff.wheat.coef, diff.soybean.coef),
@@ -181,18 +175,19 @@ seg.dat <- data.frame(degree = rep(c(0, 10, 30, 35, 40), 15, each = 1),
                       reg = rep(c("cross-section", "panel", "diff"), 1, each = 25))
 
 
-seg.dat$ymin <- seg.dat$coef - 1.96*seg.dat$se
-seg.dat$ymax <- seg.dat$coef + 1.96*seg.dat$se
+pseg.dat$ymin <- pseg.dat$coef - 1.96*pseg.dat$se
+pseg.dat$ymax <- pseg.dat$coef + 1.96*pseg.dat$se
 
 
-ggplot(seg.dat) + 
+p.seg <- ggplot(pseg.dat) + 
   geom_hline(yintercept = 0, linetype = "dashed", alpha = 0.3) + 
   geom_line(aes(x = degree, y = coef, color = reg, group = interaction(crop, reg))) +
   geom_line(aes(y = ymin, x = degree, color = reg, group = interaction(crop, reg)), linetype = "dotted", alpha = 1) + 
   geom_line(aes(y = ymax, x = degree, color = reg, group = interaction(crop, reg)), linetype = "dotted", alpha = 1) + 
   facet_wrap(~crop) + xlab("Temperature (Celsius)") + ylab("Proportion of Crop Acres") + ggtitle("Proportion of Crop Acres Segemented Regressions") + 
   theme_tufte() + theme(legend.position="top")
-
+p.seg
+plot_grid(rev.seg, p.seg, ncol = 1)
 
 ##############################################
 ##############################################
@@ -227,19 +222,19 @@ soybean.XMat <- as.matrix(p.soybeandat[, 78:118]) %*% DMat
 
 # Fit
 p.corn.fit <- felm(ln_corn_rrev ~  corn.XMat + prec + prec_sq | fips + year | 0 | state, 
-                   data = p.corndat, weights = p.corndat$corn_grain_a)
+                   data = p.corndat, weights = p.corndat$corn_w)
 summary(p.corn.fit)
 
 p.cotton.fit <- felm(ln_cotton_rrev ~ cotton.XMat + prec + prec_sq | fips + year | 0 | state, 
-                     data = p.cottondat, weights = p.cottondat$cotton_a)
+                     data = p.cottondat, weights = p.cottondat$cotton_w)
 summary(p.cotton.fit)
 
 p.hay.fit <- felm(ln_hay_rrev ~ hay.XMat + prec + prec_sq | fips + year | 0 | state, 
-                  data = p.haydat, weights = p.haydat$hay_a)
+                  data = p.haydat, weights = p.haydat$hay_w)
 summary(p.hay.fit)
 
 p.wheat.fit <- felm(ln_wheat_rrev ~  wheat.XMat + prec + prec_sq | fips + year | 0 | state, 
-                    data = p.wheatdat, weights = p.wheatdat$wheat_a)
+                    data = p.wheatdat, weights = p.wheatdat$wheat_w)
 summary(p.wheat.fit)
 
 p.soybean.fit <- felm(ln_soybean_rrev ~ soybean.XMat +  prec + prec_sq | fips + year | 0 | state, 

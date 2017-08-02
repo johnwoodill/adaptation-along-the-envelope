@@ -4,6 +4,7 @@ library(ggplot2)
 
 setwd("/run/media/john/1TB/SpiderOak/Projects/adaptation-along-the-envelope/")
 
+# Function for predicting change in single variable (tavg)
 predictFelm.baseline <- function(felm.fit, bvar, impact = FALSE){
   felm.formula <- as.character(felm.fit$call[[2]])
   rhs          = felm.formula[3]
@@ -153,42 +154,32 @@ cs.cropdat <- readRDS("data/cross_section_regression_data.rds")
 
 # Corn
 corn_cropdat <- filter(cs.cropdat, !is.na(ln_corn_rrev))          
-cs.corn.mod1 <- felm(ln_corn_rrev ~ tavg + tavg_sq + prec + prec_sq + 
-                     lat + ipc + pop_dens + pop_dens_sq + 
-                     waterCapacity + percentClay + minPermeability + kFactor + bestSoil | state | 0 | state, 
-                   data = corn_cropdat, keepCX = TRUE, keepX = TRUE)
+cs.corn.mod1 <- felm(ln_corn_rrev ~ tavg + tavg_sq + prec + prec_sq | state | 0 | state, 
+                   data = corn_cropdat, weights = corn_cropdat$corn_grain_a)
 summary(cs.corn.mod1)
 
 # Cotton
 cotton_cropdat <- filter(cs.cropdat, !is.na(ln_cotton_rrev))          
-cs.cotton.mod1 <- felm(ln_cotton_rrev ~ tavg + tavg_sq + prec + prec_sq + 
-                     lat + ipc + pop_dens + pop_dens_sq + 
-                     waterCapacity + percentClay + minPermeability + kFactor + bestSoil | state  | 0 | state, 
-                   data = cotton_cropdat, keepCX = TRUE, keepX = TRUE)
+cs.cotton.mod1 <- felm(ln_cotton_rrev ~ tavg + tavg_sq + prec + prec_sq | state  | 0 | state, 
+                   data = cotton_cropdat, weights = cotton_cropdat$cotton_a)
 summary(cs.cotton.mod1)
 
 # hay
 hay_cropdat <- filter(cs.cropdat, !is.na(ln_hay_rrev))          
-cs.hay.mod1 <- felm(ln_hay_rrev ~ tavg + tavg_sq + prec + prec_sq + 
-                     lat + ipc + pop_dens + pop_dens_sq + 
-                     waterCapacity + percentClay + minPermeability + kFactor + bestSoil | state | 0 | state, 
-                   data = hay_cropdat, keepCX = TRUE, keepX = TRUE)
+cs.hay.mod1 <- felm(ln_hay_rrev ~ tavg + tavg_sq + prec + prec_sq | state | 0 | state, 
+                   data = hay_cropdat, weights = hay_cropdat$hay_a)
 summary(cs.hay.mod1)
 
 # wheat
 wheat_cropdat <- filter(cs.cropdat, !is.na(ln_wheat_rrev))          
-cs.wheat.mod1 <- felm(ln_wheat_rrev ~ tavg + tavg_sq + prec + prec_sq + 
-                     lat + ipc + pop_dens + pop_dens_sq + 
-                     waterCapacity + percentClay + minPermeability + kFactor + bestSoil | state | 0 | state, 
-                   data = wheat_cropdat, keepCX = TRUE, keepX = TRUE)
+cs.wheat.mod1 <- felm(ln_wheat_rrev ~ tavg + tavg_sq + prec + prec_sq | state | 0 | state, 
+                   data = wheat_cropdat, weights = wheat_cropdat$wheat_a)
 summary(cs.wheat.mod1)
 
 # soybean
 soybean_cropdat <- filter(cs.cropdat, !is.na(ln_soybean_rrev))          
-cs.soybean.mod1 <- felm(ln_soybean_rrev ~ tavg + tavg_sq + prec + prec_sq + 
-                     lat + ipc + pop_dens + pop_dens_sq + 
-                     waterCapacity + percentClay + minPermeability + kFactor + bestSoil | state | 0 | state, 
-                   data = soybean_cropdat, keepCX = TRUE, keepX = TRUE)
+cs.soybean.mod1 <- felm(ln_soybean_rrev ~ tavg + tavg_sq + prec + prec_sq | state | 0 | state, 
+                   data = soybean_cropdat, weights = soybean_cropdat$soybean_a)
 summary(cs.soybean.mod1)
 
 # Cross-section Predictions
