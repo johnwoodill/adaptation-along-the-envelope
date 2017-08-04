@@ -12,19 +12,28 @@ cropdat$ln_hay_rrev <- log(cropdat$hay_rrev)
 cropdat$ln_wheat_rrev <- log(cropdat$wheat_rrev)
 cropdat$ln_soybean_rrev <- log(cropdat$soybean_rrev)
 
-cropdat$total_a <- rowSums(cropdat[,c("corn_grain_a", "cotton_a", "hay_a", "wheat_a", "soybean_a")], na.rm = TRUE)
+# Crop weights
+cropdat$corn_w <- cropdat$corn_grain_a
+cropdat$cotton_w <- cropdat$cotton_a
+cropdat$hay_w <- cropdat$hay_a
+cropdat$wheat_w <- cropdat$wheat_a
+cropdat$soybean_w <- cropdat$soybean_a
 
+# NA = 0
+cropdat$corn_grain_a <- ifelse(is.na(cropdat$corn_grain_a), 0, cropdat$corn_grain_a)
+cropdat$cotton_a <- ifelse(is.na(cropdat$cotton_a), 0, cropdat$cotton_a)
+cropdat$cotton_a <- ifelse(is.na(cropdat$hay_a), 0, cropdat$hay_a)
+cropdat$wheat_a <- ifelse(is.na(cropdat$wheat_a), 0, cropdat$wheat_a)
+cropdat$soybean_a <- ifelse(is.na(cropdat$soybean_a), 0, cropdat$soybean_a)
+
+# Get proportion of crop share
+cropdat$total_a <- rowSums(cropdat[,c("corn_grain_a", "cotton_a", "hay_a", "wheat_a", "soybean_a")], na.rm = TRUE)
 cropdat$p_corn_share <- cropdat$corn_grain_a/cropdat$total_a
 cropdat$p_cotton_share <- cropdat$cotton_a/cropdat$total_a
 cropdat$p_hay_share <- cropdat$hay_a/cropdat$total_a
 cropdat$p_wheat_share <- cropdat$wheat_a/cropdat$total_a
 cropdat$p_soybean_share <- cropdat$soybean_a/cropdat$total_a
 
-cropdat$p_corn_share <- ifelse(is.na(cropdat$p_corn_share), 0, cropdat$p_corn_share)
-cropdat$p_cotton_share <- ifelse(is.na(cropdat$p_cotton_share), 0, cropdat$p_cotton_share)
-cropdat$p_hay_share <- ifelse(is.na(cropdat$p_hay_share), 0, cropdat$p_hay_share)
-cropdat$p_wheat_share <- ifelse(is.na(cropdat$p_wheat_share), 0, cropdat$p_wheat_share)
-cropdat$p_soybean_share <- ifelse(is.na(cropdat$p_soybean_share), 0, cropdat$p_soybean_share)
 
 decade_merge <- function(dat, begd, endd, int){
   mergdat <- data.frame()
@@ -32,6 +41,7 @@ decade_merge <- function(dat, begd, endd, int){
   for (i in decades){
     int.dat <- filter(dat, year >= i & year < (i + int))
     int.dat <- int.dat %>%
+      #group_by(year) %>% 
     mutate(ln_corn_rrev = ln_corn_rrev - mean(ln_corn_rrev, na.rm = TRUE),
          ln_cotton_rrev = ln_cotton_rrev - mean(ln_cotton_rrev, na.rm = TRUE),
          ln_hay_rrev = ln_hay_rrev - mean(ln_hay_rrev, na.rm = TRUE),
@@ -65,12 +75,12 @@ decade_merge <- function(dat, begd, endd, int){
             dday17C = mean(dday17C, na.rm = TRUE),
             dday30C = mean(dday30C, na.rm = TRUE),
             prec = mean(prec, na.rm = TRUE),
-            total_a = mean(total_a, na.rm = TRUE),
-            corn_w = mean(corn_grain_a, na.rm = TRUE),
-            cotton_w = mean(cotton_a, na.rm = TRUE),
-            hay_w = mean(hay_a, na.rm = TRUE),
-            wheat_w = mean(wheat_a, na.rm = TRUE),
-            soybean_w = mean(soybean_a, na.rm = TRUE)) %>% 
+            total_w = mean(total_a, na.rm = TRUE),
+            corn_w = mean(corn_w, na.rm = TRUE),
+            cotton_w = mean(cotton_w, na.rm = TRUE),
+            hay_w = mean(hay_w, na.rm = TRUE),
+            wheat_w = mean(wheat_w, na.rm = TRUE),
+            soybean_w = mean(soybean_w, na.rm = TRUE)) %>% 
       ungroup()
     int.dat$year <- i
     mergdat <- rbind(mergdat, int.dat)
@@ -83,27 +93,27 @@ decadedat <- decade_merge(cropdat, 1950, 2000, 20)
 
 decadedat$dday0_10 <- decadedat$dday0C - decadedat$dday10C
 decadedat$dday10_30 <- decadedat$dday10C - decadedat$dday30C
-decadedat$prec <- decadedat$prec
-decadedat$prec_sq <- decadedat$prec^2
 
 # Exposure weighted values equal zero
+decadedat$tavg <- decadedat$tavg - mean(decadedat$tavg, na.rm = TRUE)
 decadedat$dday0_10 <- decadedat$dday0_10 - mean(decadedat$dday0_10, na.rm = TRUE)
 decadedat$dday10_30 <- decadedat$dday10_30 - mean(decadedat$dday10_30, na.rm = TRUE)
 decadedat$dday30C <- decadedat$dday30C - mean(decadedat$dday30C, na.rm = TRUE)
 decadedat$prec <- decadedat$prec - mean(decadedat$prec, na.rm = TRUE)
+decadedat$tavg_sq <- decadedat$tavg^2
 decadedat$prec_sq <- decadedat$prec^2
 
-decadedat$ln_corn_rrev <- decadedat$ln_corn_rrev - mean(decadedat$ln_corn_rrev, na.rm = TRUE)
-decadedat$ln_cotton_rrev <- decadedat$ln_cotton_rrev - mean(decadedat$ln_cotton_rrev, na.rm = TRUE)
-decadedat$ln_hay_rrev <- decadedat$ln_hay_rrev - mean(decadedat$ln_hay_rrev, na.rm = TRUE)
-decadedat$ln_wheat_rrev <- decadedat$ln_wheat_rrev - mean(decadedat$ln_wheat_rrev, na.rm = TRUE)
-decadedat$ln_soybean_rrev <- decadedat$ln_soybean_rrev - mean(decadedat$ln_soybean_rrev, na.rm = TRUE)
-
-decadedat$p_corn_share <- decadedat$p_corn_share - mean(decadedat$p_corn_share)
-decadedat$p_cotton_share <- decadedat$p_cotton_share - mean(decadedat$p_cotton_share)
-decadedat$p_hay_share <- decadedat$p_hay_share - mean(decadedat$p_hay_share)
-decadedat$p_wheat_share <- decadedat$p_wheat_share - mean(decadedat$p_wheat_share)
-decadedat$p_soybean_share <- decadedat$p_soybean_share - mean(decadedat$p_soybean_share)
+# decadedat$ln_corn_rrev <- decadedat$ln_corn_rrev - mean(decadedat$ln_corn_rrev, na.rm = TRUE)
+# decadedat$ln_cotton_rrev <- decadedat$ln_cotton_rrev - mean(decadedat$ln_cotton_rrev, na.rm = TRUE)
+# decadedat$ln_hay_rrev <- decadedat$ln_hay_rrev - mean(decadedat$ln_hay_rrev, na.rm = TRUE)
+# decadedat$ln_wheat_rrev <- decadedat$ln_wheat_rrev - mean(decadedat$ln_wheat_rrev, na.rm = TRUE)
+# decadedat$ln_soybean_rrev <- decadedat$ln_soybean_rrev - mean(decadedat$ln_soybean_rrev, na.rm = TRUE)
+# 
+# decadedat$p_corn_share <- decadedat$p_corn_share - mean(decadedat$p_corn_share, na.rm = TRUE)
+# decadedat$p_cotton_share <- decadedat$p_cotton_share - mean(decadedat$p_cotton_share, na.rm = TRUE)
+# decadedat$p_hay_share <- decadedat$p_hay_share - mean(decadedat$p_hay_share, na.rm = TRUE)
+# decadedat$p_wheat_share <- decadedat$p_wheat_share - mean(decadedat$p_wheat_share, na.rm = TRUE)
+# decadedat$p_soybean_share <- decadedat$p_soybean_share - mean(decadedat$p_soybean_share, na.rm = TRUE)
 
 
 # Setup data sets for regression
@@ -175,49 +185,52 @@ saveRDS(diff.soybean.mod2, "models/diff.dd.ln_soybean_rrev")
 # Proportion of acreage regressions
 
 # Corn
-diff.corn.mod1 <- felm(p_corn_share ~ tavg + I(tavg^2) + prec + I(prec^2) | fips + year | 0 | state, 
+diffcorn.mod1 <- tobit(p_corn_share ~ tavg + tavg_sq + prec + prec_sq + cluster(state), 
                    data = corndat, weights = corndat$total_a)
-summary(diff.corn.mod1)
+summary(diffcorn.mod1)
 
-diff.corn.mod2 <- felm(p_corn_share ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq | fips + year | 0 | state, 
-                   data = corndat, weights = corndat$total_a)
-summary(diff.corn.mod2)
+diffcorn.mod2 <- tobit(p_corn_share ~  dday0_10 + dday10_30  + dday30C + prec + prec_sq + cluster(state),
+                  data = corndat, weights = corndat$total_w)
+summary(diffcorn.mod2)
+
 
 # Cotton
-diff.cotton.mod1 <- felm(p_cotton_share ~ tavg + I(tavg^2) + prec + I(prec^2) | fips + year | 0 | state, 
-                   data = cottondat, weights = cottondat$total_a)
-summary(diff.cotton.mod1)
+diffcotton.mod1 <- tobit(p_cotton_share ~ tavg + tavg_sq + prec + prec_sq + cluster(state), 
+                   data = cottondat, weights = cottondat$total_w)
+summary(diffcotton.mod1)
 
-diff.cotton.mod2 <- felm(p_cotton_share ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq | fips + year | 0 | state, 
-                   data = cottondat, weights = cottondat$total_a)
-summary(diff.cotton.mod2)
+diffcotton.mod2 <- tobit(p_cotton_share ~ dday0_10 + dday10_30  + dday30C +  prec + prec_sq + cluster(state),
+                  data = cottondat, weights = cottondat$total_w)
+summary(diffcotton.mod2)
+
 
 # Hay
-diff.hay.mod1 <- felm(p_hay_share ~ tavg + I(tavg^2) + prec + I(prec^2) | fips + year | 0 | state, 
-                   data = haydat, weights = haydat$total_a)
-summary(diff.hay.mod1)
+diffhay.mod1 <- tobit(p_hay_share ~ tavg + tavg_sq + prec + prec_sq + cluster(state), 
+                   data = haydat, weights = haydat$total_w)
+summary(diffhay.mod1)
 
-diff.hay.mod2 <- felm(p_hay_share ~dday0_10 + dday10_30 + dday30C + prec + prec_sq | fips + year | 0 | state, 
-                   data = haydat, weights = haydat$total_a)
-summary(diff.hay.mod2)
+diffhay.mod2 <- tobit(p_hay_share ~ dday0_10 +  dday10_30  + dday30C +  prec + prec_sq + cluster(state),
+                  data = haydat, weights = haydat$total_w)
+summary(diffhay.mod2)
 
 # Wheat
-diff.wheat.mod1 <- felm(p_wheat_share ~ tavg + I(tavg^2) + prec + I(prec^2) | fips + year | 0 | state, 
-                   data = wheatdat, weights = wheatdat$total_a)
-summary(diff.wheat.mod1)
+diffwheat.mod1 <- tobit(p_wheat_share ~ tavg + tavg_sq + prec + prec_sq + cluster(state), 
+                   data = wheatdat, weights = wheatdat$total_w)
+summary(diffwheat.mod1)
 
-diff.wheat.mod2 <- felm(p_wheat_share ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq | fips + year | 0 | state, 
-                   data = wheatdat, weights = wheatdat$total_a)
-summary(diff.wheat.mod2)
+diffwheat.mod2 <- tobit(p_wheat_share ~ dday0_10 + dday10_30  + dday30C +  prec + prec_sq + cluster(state),
+                  data = wheatdat, weights = wheatdat$total_w)
+summary(diffwheat.mod2)
 
 # Soybean
-diff.soybean.mod1 <- felm(p_soybean_share ~ tavg + I(tavg^2) + prec + I(prec^2) | fips + year | 0 | state, 
-                   data = soybeandat, weights = soybeandat$total_a)
-summary(diff.soybean.mod1)
+diffsoybean.mod1 <- tobit(p_soybean_share ~ tavg + tavg_sq + prec + prec_sq + cluster(state), 
+                   data = soybeandat, weights = soybeandat$total_w)
+summary(diffsoybean.mod1)
 
-diff.soybean.mod2 <- felm(p_soybean_share ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq | fips + year | 0 | state, 
-                   data = soybeandat, weights = soybeandat$total_a)
-summary(diff.soybean.mod2)
+diffsoybean.mod2 <- tobit(p_soybean_share ~ dday0_10 + dday10_30  + dday30C +  prec + prec_sq + cluster(state),
+                  data = soybeandat, weights = soybeandat$total_w)
+summary(diffsoybean.mod2)
+
 
 
 saveRDS(diff.corn.mod1, "models/diff.temp.p_corn_share")

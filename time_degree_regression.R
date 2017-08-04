@@ -89,9 +89,10 @@ rev.seg <- ggplot(revseg.dat) +
   geom_line(aes(x = degree, y = coef, color = reg, group = interaction(crop, reg))) +
   geom_line(aes(y = ymin, x = degree, color = reg, group = interaction(crop, reg)), linetype = "dotted", alpha = 1) + 
   geom_line(aes(y = ymax, x = degree, color = reg, group = interaction(crop, reg)), linetype = "dotted", alpha = 1) + 
-  facet_wrap(~crop) + xlab("Temperature (Celsius)") + ylab("Log Revenue") + ggtitle("Log Revenue Segemented Regressions") + 
+  facet_wrap(~crop) + xlab("Temperature (Celsius)") + ylab("Log Revenue") + ggtitle("Log Revenue Segmented Regressions") + 
    theme_tufte() + theme(legend.position="top")
 rev.seg
+
 # Proportion Seg Regression
 library(lfe)
 library(readr)
@@ -128,17 +129,17 @@ diff.dd.p_hay_share <- readRDS("models/diff.dd.p_hay_share")
 diff.dd.p_wheat_share <- readRDS("models/diff.dd.p_wheat_share")
 diff.dd.p_soybean_share <- readRDS("models/diff.dd.p_soybean_share")
 
-cs.corn.coef <- as.numeric(cs.dd.p_corn_share$coefficients[c(1, 1:3, 3)])
-cs.cotton.coef <- as.numeric(cs.dd.p_cotton_share$coefficients[c(1, 1:3, 3)])
-cs.hay.coef <- as.numeric(cs.dd.p_hay_share$coefficients[c(1, 1:3, 3)])
-cs.wheat.coef <- as.numeric(cs.dd.p_wheat_share$coefficients[c(1, 1:3, 3)])
-cs.soybean.coef <- as.numeric(cs.dd.p_soybean_share$coefficients[c(1, 1:3, 3)])
+cs.corn.coef <- as.numeric(cs.dd.p_corn_share$coefficients[c(2, 2:4, 4)])
+cs.cotton.coef <- as.numeric(cs.dd.p_cotton_share$coefficients[c(2, 2:4, 4)])
+cs.hay.coef <- as.numeric(cs.dd.p_hay_share$coefficients[c(2, 2:4, 4)])
+cs.wheat.coef <- as.numeric(cs.dd.p_wheat_share$coefficients[c(2, 2:4, 4)])
+cs.soybean.coef <- as.numeric(cs.dd.p_soybean_share$coefficients[c(2, 2:4, 4)])
 
-p.corn.coef <- as.numeric(p.dd.p_corn_share$coefficients[c(1, 1:3, 3)])
-p.cotton.coef <- as.numeric(p.dd.p_cotton_share$coefficients[c(1, 1:3, 3)])
-p.hay.coef <- as.numeric(p.dd.p_hay_share$coefficients[c(1, 1:3, 3)])
-p.wheat.coef <- as.numeric(p.dd.p_wheat_share$coefficients[c(1, 1:3, 3)])
-p.soybean.coef <- as.numeric(p.dd.p_soybean_share$coefficients[c(1, 1:3, 3)])
+p.corn.coef <- as.numeric(p.dd.p_corn_share$coefficients[c(2, 2:4, 4)])
+p.cotton.coef <- as.numeric(p.dd.p_cotton_share$coefficients[c(2, 2:4, 4)])
+p.hay.coef <- as.numeric(p.dd.p_hay_share$coefficients[c(2, 2:4, 4)])
+p.wheat.coef <- as.numeric(p.dd.p_wheat_share$coefficients[c(2, 2:4, 4)])
+p.soybean.coef <- as.numeric(p.dd.p_soybean_share$coefficients[c(2, 2:4, 4)])
 
 diff.corn.coef <- as.numeric(diff.dd.p_corn_share$coefficients[c(1, 1:3, 3)])
 diff.cotton.coef <- as.numeric(diff.dd.p_cotton_share$coefficients[c(1, 1:3, 3)])
@@ -146,23 +147,23 @@ diff.hay.coef <- as.numeric(diff.dd.p_hay_share$coefficients[c(1, 1:3, 3)])
 diff.wheat.coef <- as.numeric(diff.dd.p_wheat_share$coefficients[c(1, 1:3, 3)])
 diff.soybean.coef <- as.numeric(diff.dd.p_soybean_share$coefficients[c(1, 1:3, 3)])
 
-cs.corn.se <- as.numeric(cs.dd.p_corn_share$se[c(1, 1:3, 3)])
-cs.cotton.se <- as.numeric(cs.dd.p_cotton_share$se[c(1, 1:3, 3)])
-cs.hay.se <- as.numeric(cs.dd.p_hay_share$se[c(1, 1:3, 3)])
-cs.wheat.se <- as.numeric(cs.dd.p_wheat_share$se[c(1, 1:3, 3)])
-cs.soybean.se <- as.numeric(cs.dd.p_soybean_share$se[c(1, 1:3, 3)])
+cs.corn.se <- as.numeric(cs.dd.p_corn_share$se[c(2, 2:4, 4)])
+cs.cotton.se <- as.numeric(cs.dd.p_cotton_share$se[c(2, 2:4, 4)])
+cs.hay.se <- as.numeric(cs.dd.p_hay_share$se[c(2, 2:4, 4)])
+cs.wheat.se <- as.numeric(cs.dd.p_wheat_share$se[c(2, 2:4, 4)])
+cs.soybean.se <- as.numeric(cs.dd.p_soybean_share$se[c(2, 2:4, 4)])
 
-p.corn.se <- as.numeric(p.dd.p_corn_share$se[c(1, 1:3, 3)])
-p.cotton.se <- as.numeric(p.dd.p_cotton_share$se[c(1, 1:3, 3)])
-p.hay.se <- as.numeric(p.dd.p_hay_share$se[c(1, 1:3, 3)])
-p.wheat.se <- as.numeric(p.dd.p_wheat_share$se[c(1, 1:3, 3)])
-p.soybean.se <- as.numeric(p.dd.p_soybean_share$se[c(1, 1:3, 3)])
+p.corn.se <- as.numeric(p.dd.p_corn_share$se[c(2, 2:4, 4)])
+p.cotton.se <- as.numeric(p.dd.p_cotton_share$se[c(2, 2:4, 4)])
+p.hay.se <- as.numeric(p.dd.p_hay_share$se[c(2, 2:4, 4)])
+p.wheat.se <- as.numeric(p.dd.p_wheat_share$se[c(2, 2:4, 4)])
+p.soybean.se <- as.numeric(p.dd.p_soybean_share$se[c(2, 2:4, 4)])
 
-diff.corn.se <- as.numeric(diff.dd.p_corn_share$se[c(1, 1:3, 3)])
-diff.cotton.se <- as.numeric(diff.dd.p_cotton_share$se[c(1, 1:3, 3)])
-diff.hay.se <- as.numeric(diff.dd.p_hay_share$se[c(1, 1:3, 3)])
-diff.wheat.se <- as.numeric(diff.dd.p_wheat_share$se[c(1, 1:3, 3)])
-diff.soybean.se <- as.numeric(diff.dd.p_soybean_share$se[c(1, 1:3, 3)])
+diff.corn.se <- as.numeric(diff.dd.p_corn_share$se[c(2, 2:4, 4)])
+diff.cotton.se <- as.numeric(diff.dd.p_cotton_share$se[c(2, 2:4, 4)])
+diff.hay.se <- as.numeric(diff.dd.p_hay_share$se[c(2, 2:4, 4)])
+diff.wheat.se <- as.numeric(diff.dd.p_wheat_share$se[c(2, 2:4, 4)])
+diff.soybean.se <- as.numeric(diff.dd.p_soybean_share$se[c(2, 2:4, 4)])
 
 pseg.dat <- data.frame(degree = rep(c(0, 10, 30, 35, 40), 15, each = 1),
                     coef = c(cs.corn.coef, cs.cotton.coef, cs.hay.coef, cs.wheat.coef, cs.soybean.coef,
@@ -184,7 +185,7 @@ p.seg <- ggplot(pseg.dat) +
   geom_line(aes(x = degree, y = coef, color = reg, group = interaction(crop, reg))) +
   geom_line(aes(y = ymin, x = degree, color = reg, group = interaction(crop, reg)), linetype = "dotted", alpha = 1) + 
   geom_line(aes(y = ymax, x = degree, color = reg, group = interaction(crop, reg)), linetype = "dotted", alpha = 1) + 
-  facet_wrap(~crop) + xlab("Temperature (Celsius)") + ylab("Proportion of Crop Acres") + ggtitle("Proportion of Crop Acres Segemented Regressions") + 
+  facet_wrap(~crop) + xlab("Temperature (Celsius)") + ylab("Proportion of Crop Acres") + ggtitle("Proportion of Crop Acres Segmented Regressions") + 
   theme_tufte() + theme(legend.position="top")
 p.seg
 plot_grid(rev.seg, p.seg, ncol = 1)

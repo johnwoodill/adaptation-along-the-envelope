@@ -1,10 +1,5 @@
-library(plm)
 library(tidyverse)
-library(stargazer)
-library(rms)
 library(cowplot)
-library(multiwayvcov)
-library(lmtest)
 library(lfe)
 
 cropdat <- readRDS("data/cross_section_regression_data.rds")
@@ -23,7 +18,7 @@ cs.corn.mod1 <- felm(ln_corn_rrev ~ tavg + tavg_sq + prec + prec_sq | state | 0 
 summary(cs.corn.mod1)
 
 cs.corn.mod2 <- felm(ln_corn_rrev ~ dday0_10 + dday10_30  + dday30C + prec + prec_sq | state | 0 | state,
-                  data = corndat, weights = corndat$w)
+                  data = corndat, weights = corndat$corn_w)
 summary(cs.corn.mod2)
 
 # Cotton
@@ -85,49 +80,52 @@ saveRDS(cs.soybean.mod2, "models/cs.dd.ln_soybean_rrev")
 # Cross-section (Crop Choice): Corn Acres -----------------------------------------------
 
 # Corn
-cc.corn.mod1 <- felm(p_corn_share ~ tavg + tavg_sq + prec + prec_sq | state | 0 | state, 
+cc.corn.mod1 <- tobit(p_corn_share ~ tavg + tavg_sq + prec + prec_sq + cluster(state), 
                    data = corndat, weights = corndat$total_w)
 summary(cc.corn.mod1)
 
-cc.corn.mod2 <- felm(p_corn_share ~ dday0_10 + dday10_30  + dday30C + prec + prec_sq | state | 0 | state,
+cc.corn.mod2 <- tobit(p_corn_share ~ dday0_10 + dday10_30  + dday30C + prec + prec_sq + cluster(state),
                   data = corndat, weights = corndat$total_w)
 summary(cc.corn.mod2)
 
+
 # Cotton
-cc.cotton.mod1 <- felm(p_cotton_share ~ tavg + tavg_sq + prec + prec_sq | state | 0 | state, 
+cc.cotton.mod1 <- tobit(p_cotton_share ~ tavg + tavg_sq + prec + prec_sq + cluster(state), 
                    data = cottondat, weights = cottondat$total_w)
 summary(cc.cotton.mod1)
 
-cc.cotton.mod2 <- felm(p_cotton_share ~ dday0_10 + dday10_30  + dday30C + prec + prec_sq | state | 0 | state,
+cc.cotton.mod2 <- tobit(p_cotton_share ~ dday0_10 + dday10_30  + dday30C +  prec + prec_sq + cluster(state),
                   data = cottondat, weights = cottondat$total_w)
 summary(cc.cotton.mod2)
 
+
 # Hay
-cc.hay.mod1 <- felm(p_hay_share ~ tavg + tavg_sq + prec + prec_sq | state | 0 | state, 
+cc.hay.mod1 <- tobit(p_hay_share ~ tavg + tavg_sq + prec + prec_sq + cluster(state), 
                    data = haydat, weights = haydat$total_w)
 summary(cc.hay.mod1)
 
-cc.hay.mod2 <- felm(p_hay_share ~ dday0_10 + dday10_30  + dday30C + prec + prec_sq | state | 0 | state,
+cc.hay.mod2 <- tobit(p_hay_share ~ dday0_10 +  dday10_30  + dday30C +  prec + prec_sq + cluster(state),
                   data = haydat, weights = haydat$total_w)
 summary(cc.hay.mod2)
 
 # Wheat
-cc.wheat.mod1 <- felm(p_wheat_share ~ tavg + tavg_sq + prec + prec_sq | state | 0 | state, 
+cc.wheat.mod1 <- tobit(p_wheat_share ~ tavg + tavg_sq + prec + prec_sq + cluster(state), 
                    data = wheatdat, weights = wheatdat$total_w)
 summary(cc.wheat.mod1)
 
-cc.wheat.mod2 <- felm(p_wheat_share ~ dday0_10 + dday10_30  + dday30C + prec + prec_sq | state | 0 | state,
-                  data = cropdat, weights = cropdat$total_w)
+cc.wheat.mod2 <- tobit(p_wheat_share ~ dday0_10 + dday10_30  + dday30C +  prec + prec_sq + cluster(state),
+                  data = wheatdat, weights = wheatdat$total_w)
 summary(cc.wheat.mod2)
 
 # Soybean
-cc.soybean.mod1 <- felm(p_soybean_share ~ tavg + tavg_sq + prec + prec_sq | state | 0 | state, 
+cc.soybean.mod1 <- tobit(p_soybean_share ~ tavg + tavg_sq + prec + prec_sq + cluster(state), 
                    data = soybeandat, weights = soybeandat$total_w)
 summary(cc.soybean.mod1)
 
-cc.soybean.mod2 <- felm(p_soybean_share ~ dday0_10 + dday10_30  + dday30C + prec + prec_sq | state | 0 | state,
+cc.soybean.mod2 <- tobit(p_soybean_share ~ dday0_10 + dday10_30  + dday30C +  prec + prec_sq + cluster(state),
                   data = soybeandat, weights = soybeandat$total_w)
 summary(cc.soybean.mod2)
+
 
 
 

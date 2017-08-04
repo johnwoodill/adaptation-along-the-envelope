@@ -90,48 +90,50 @@ saveRDS(p.soybean.mod2, "models/p.dd.ln_soybean_rrev")
 # Panel Acres --------------------------------------------------------
 
 # Corn
-p.corn.mod1 <- felm(log(p_corn_share) ~ tavg + tavg_sq + prec + prec_sq | fips + year | 0 | state, 
-                   data = corndat, weights = corndat$total_a)
+p.corn.mod1 <- tobit(p_corn_share ~ tavg + tavg_sq + prec + prec_sq + cluster(state), 
+                   data = corndat, weights = corndat$total_w)
 summary(p.corn.mod1)
 
-p.corn.mod2 <- felm(p_corn_share ~  dday0_10 + dday10_30  + dday30C + prec + prec_sq | fips + year | 0 | state,
-                  data = corndat, weights = corndat$total_a)
+p.corn.mod2 <- tobit(p_corn_share ~  dday0_10 + dday10_30  + dday30C + prec + prec_sq + cluster(state),
+                  data = corndat, weights = corndat$total_w)
 summary(p.corn.mod2)
 
+
 # Cotton
-p.cotton.mod1 <- felm(p_cotton_share ~ tavg + tavg_sq + prec + prec_sq | fips + year | 0 | state, 
-                   data = cottondat, weights = cottondat$total_a)
+p.cotton.mod1 <- tobit(p_cotton_share ~ tavg + tavg_sq + prec + prec_sq + cluster(state), 
+                   data = cottondat, weights = cottondat$total_w)
 summary(p.cotton.mod1)
 
-p.cotton.mod2 <- felm(p_cotton_share ~ dday0_10 +dday10_30  + dday30C +  prec + prec_sq | fips + year | 0 | state,
-                  data = cottondat, weights = cottondat$total_a)
+p.cotton.mod2 <- tobit(p_cotton_share ~ dday0_10 + dday10_30  + dday30C +  prec + prec_sq + cluster(state),
+                  data = cottondat, weights = cottondat$total_w)
 summary(p.cotton.mod2)
 
+
 # Hay
-p.hay.mod1 <- felm(p_hay_share ~ tavg + tavg_sq + prec + prec_sq | fips + year | 0 | state, 
+p.hay.mod1 <- tobit(p_hay_share ~ tavg + tavg_sq + prec + prec_sq + cluster(state), 
                    data = haydat, weights = haydat$total_a)
 summary(p.hay.mod1)
 
-p.hay.mod2 <- felm(p_hay_share ~ dday0_10 +  dday10_30  + dday30C +  prec + prec_sq | fips + year | 0 | 0,
-                  data = haydat, weights = haydat$total_a)
+p.hay.mod2 <- tobit(p_hay_share ~ dday0_10 +  dday10_30  + dday30C +  prec + prec_sq + cluster(state),
+                  data = haydat, weights = haydat$total_w)
 summary(p.hay.mod2)
 
 # Wheat
-p.wheat.mod1 <- felm(p_wheat_share ~ tavg + tavg_sq + prec + prec_sq | fips + year | 0 | state, 
-                   data = wheatdat, weights = wheatdat$total_a)
+p.wheat.mod1 <- tobit(p_wheat_share ~ tavg + tavg_sq + prec + prec_sq + cluster(state), 
+                   data = wheatdat, weights = wheatdat$total_w)
 summary(p.wheat.mod1)
 
-p.wheat.mod2 <- felm(p_wheat_share ~ dday0_10 + dday10_30  + dday30C +  prec + prec_sq | fips + year | 0 | state,
-                  data = wheatdat, weights = wheatdat$total_a)
+p.wheat.mod2 <- tobit(p_wheat_share ~ dday0_10 + dday10_30  + dday30C +  prec + prec_sq + cluster(state),
+                  data = wheatdat, weights = wheatdat$total_w)
 summary(p.wheat.mod2)
 
 # Soybean
-p.soybean.mod1 <- felm(p_soybean_share ~ tavg + tavg_sq + prec + prec_sq | fips + year | 0 | state, 
-                   data = soybeandat, weights = soybeandat$total_a)
+p.soybean.mod1 <- tobit(p_soybean_share ~ tavg + tavg_sq + prec + prec_sq + cluster(state), 
+                   data = soybeandat, weights = soybeandat$total_w)
 summary(p.soybean.mod1)
 
-p.soybean.mod2 <- felm(p_soybean_share ~ dday0_10 + dday10_30  + dday30C +  prec + prec_sq | fips + year | 0 | state,
-                  data = soybeandat, weights = soybeandat$total_a)
+p.soybean.mod2 <- tobit(p_soybean_share ~ dday0_10 + dday10_30  + dday30C +  prec + prec_sq + cluster(state),
+                  data = soybeandat, weights = soybeandat$total_w)
 summary(p.soybean.mod2)
 
 

@@ -1,11 +1,4 @@
-library(plm)
 library(tidyverse)
-library(stargazer)
-library(rms)
-library(cowplot)
-library(multiwayvcov)
-library(lmtest)
-library(lfe)
 
 # Cross-section: Log(Corn Rev) --------------------------------------------
 
@@ -27,23 +20,33 @@ cropdat$total_a <- rowSums(cropdat[,c("corn_grain_a", "cotton_a", "hay_a", "whea
 # East of 100th meridian
 cropdat <- filter(cropdat, abs(long) <= 100)
 
+# Log revenue
 cropdat$ln_corn_rrev <- log(cropdat$corn_rrev)
 cropdat$ln_cotton_rrev <- log(cropdat$cotton_rrev)
 cropdat$ln_hay_rrev <- log(cropdat$hay_rrev)
 cropdat$ln_wheat_rrev <- log(cropdat$wheat_rrev)
 cropdat$ln_soybean_rrev <- log(cropdat$soybean_rrev)
 
+# Crop weights
+cropdat$corn_w <- cropdat$corn_grain_a
+cropdat$cotton_w <- cropdat$cotton_a
+cropdat$hay_w <- cropdat$hay_a
+cropdat$wheat_w <- cropdat$wheat_a
+cropdat$soybean_w <- cropdat$soybean_a
+
+# NA = 0
+cropdat$corn_grain_a <- ifelse(is.na(cropdat$corn_grain_a), 0, cropdat$corn_grain_a)
+cropdat$cotton_a <- ifelse(is.na(cropdat$cotton_a), 0, cropdat$cotton_a)
+cropdat$cotton_a <- ifelse(is.na(cropdat$hay_a), 0, cropdat$hay_a)
+cropdat$wheat_a <- ifelse(is.na(cropdat$wheat_a), 0, cropdat$wheat_a)
+cropdat$soybean_a <- ifelse(is.na(cropdat$soybean_a), 0, cropdat$soybean_a)
+
+# Get proportion of crop share
 cropdat$p_corn_share <- cropdat$corn_grain_a/cropdat$total_a
 cropdat$p_cotton_share <- cropdat$cotton_a/cropdat$total_a
 cropdat$p_hay_share <- cropdat$hay_a/cropdat$total_a
 cropdat$p_wheat_share <- cropdat$wheat_a/cropdat$total_a
 cropdat$p_soybean_share <- cropdat$soybean_a/cropdat$total_a
-
-cropdat$p_corn_share <- ifelse(is.na(cropdat$p_corn_share), 0, cropdat$p_corn_share)
-cropdat$p_cotton_share <- ifelse(is.na(cropdat$p_cotton_share), 0, cropdat$p_cotton_share)
-cropdat$p_hay_share <- ifelse(is.na(cropdat$p_hay_share), 0, cropdat$p_hay_share)
-cropdat$p_wheat_share <- ifelse(is.na(cropdat$p_wheat_share), 0, cropdat$p_wheat_share)
-cropdat$p_soybean_share <- ifelse(is.na(cropdat$p_soybean_share), 0, cropdat$p_soybean_share)
 
 # Remove inf to na
 is.na(cropdat) <- do.call(cbind, lapply(cropdat, is.infinite))
@@ -83,38 +86,38 @@ cropdat <- cropdat %>%
               dday32C = mean(dday32C, na.rm = TRUE),
               dday33C = mean(dday33C, na.rm = TRUE),
               dday34C = mean(dday34C, na.rm = TRUE),
-              corn_w = mean(corn_grain_a, na.rm = TRUE),
-              cotton_w = mean(cotton_a, na.rm = TRUE),
-              hay_w = mean(hay_a, na.rm = TRUE),
-              wheat_w = mean(wheat_a, na.rm = TRUE),
-              soybean_w = mean(soybean_a, na.rm = TRUE),
+              corn_w = mean(corn_w, na.rm = TRUE),
+              cotton_w = mean(cotton_w, na.rm = TRUE),
+              hay_w = mean(hay_w, na.rm = TRUE),
+              wheat_w = mean(wheat_w, na.rm = TRUE),
+              soybean_w = mean(soybean_w, na.rm = TRUE),
               total_w = mean(total_a, na.rm = TRUE)) %>% 
   ungroup()
 
 
-cropdat$tavg_sq <- cropdat$tavg^2
-cropdat$prec_sq <- cropdat$prec^2
 cropdat$dday0_10 <- cropdat$dday0C - cropdat$dday10C
 cropdat$dday10_30 <- cropdat$dday10C - cropdat$dday30C
 
 # Exposure weighted values equal zero
+cropdat$tavg <- cropdat$tavg - mean(cropdat$tavg, na.rm = TRUE)
 cropdat$dday0_10 <- cropdat$dday0_10 - mean(cropdat$dday0_10, na.rm = TRUE)
 cropdat$dday10_30 <- cropdat$dday10_30 - mean(cropdat$dday10_30, na.rm = TRUE)
 cropdat$dday30C <- cropdat$dday30C - mean(cropdat$dday30C, na.rm = TRUE)
 cropdat$prec <- cropdat$prec - mean(cropdat$prec, na.rm = TRUE)
 cropdat$prec_sq <- cropdat$prec^2
+cropdat$tavg_sq <- cropdat$tavg^2
 
-cropdat$ln_corn_rrev <- cropdat$ln_corn_rrev - mean(cropdat$ln_corn_rrev, na.rm = TRUE)
-cropdat$ln_cotton_rrev <- cropdat$ln_cotton_rrev - mean(cropdat$ln_cotton_rrev, na.rm = TRUE)
-cropdat$ln_hay_rrev <- cropdat$ln_hay_rrev - mean(cropdat$ln_hay_rrev, na.rm = TRUE)
-cropdat$ln_wheat_rrev <- cropdat$ln_wheat_rrev - mean(cropdat$ln_wheat_rrev, na.rm = TRUE)
-cropdat$ln_soybean_rrev <- cropdat$ln_soybean_rrev - mean(cropdat$ln_soybean_rrev, na.rm = TRUE)
-
-cropdat$p_corn_share <- cropdat$p_corn_share - mean(cropdat$p_corn_share)
-cropdat$p_cotton_share <- cropdat$p_cotton_share - mean(cropdat$p_cotton_share)
-cropdat$p_hay_share <- cropdat$p_hay_share - mean(cropdat$p_hay_share)
-cropdat$p_wheat_share <- cropdat$p_wheat_share - mean(cropdat$p_wheat_share)
-cropdat$p_soybean_share <- cropdat$p_soybean_share - mean(cropdat$p_soybean_share)
+# cropdat$ln_corn_rrev <- cropdat$ln_corn_rrev - mean(cropdat$ln_corn_rrev, na.rm = TRUE)
+# cropdat$ln_cotton_rrev <- cropdat$ln_cotton_rrev - mean(cropdat$ln_cotton_rrev, na.rm = TRUE)
+# cropdat$ln_hay_rrev <- cropdat$ln_hay_rrev - mean(cropdat$ln_hay_rrev, na.rm = TRUE)
+# cropdat$ln_wheat_rrev <- cropdat$ln_wheat_rrev - mean(cropdat$ln_wheat_rrev, na.rm = TRUE)
+# cropdat$ln_soybean_rrev <- cropdat$ln_soybean_rrev - mean(cropdat$ln_soybean_rrev, na.rm = TRUE)
+# 
+# cropdat$p_corn_share <- cropdat$p_corn_share - mean(cropdat$p_corn_share, na.rm = TRUE)
+# cropdat$p_cotton_share <- cropdat$p_cotton_share - mean(cropdat$p_cotton_share, na.rm = TRUE)
+# cropdat$p_hay_share <- cropdat$p_hay_share - mean(cropdat$p_hay_share, na.rm = TRUE)
+# cropdat$p_wheat_share <- cropdat$p_wheat_share - mean(cropdat$p_wheat_share, na.rm = TRUE)
+# cropdat$p_soybean_share <- cropdat$p_soybean_share - mean(cropdat$p_soybean_share, na.rm = TRUE)
 
 # cropdat <- left_join(cropdat, soil, by = "fips")
 

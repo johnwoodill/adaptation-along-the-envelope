@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=pdflatex 2017.3.1)  31 JUL 2017 13:45
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=pdflatex 2017.3.1)  3 AUG 2017 11:58
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -227,7 +227,7 @@ LaTeX Warning: There were multiply-defined labels.
 Here is how much of TeX's memory you used:
  2014 strings out of 493069
  29102 string characters out of 6138223
- 106270 words of memory out of 5000000
+ 107270 words of memory out of 5000000
  5543 multiletter control sequences out of 15000+600000
  5815 words of font info for 21 fonts, out of 8000000 for 9000
  1137 hyphenation exceptions out of 8191
@@ -238,7 +238,7 @@ exlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/t
 exmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/share/texlive/texmf-di
 st/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/share/texlive/texmf-dist/font
 s/type1/public/amsfonts/cm/cmti8.pfb>
-Output written on cross_section_regression_tables.pdf (2 pages, 67209 bytes).
+Output written on cross_section_regression_tables.pdf (2 pages, 67088 bytes).
 PDF statistics:
  35 PDF objects out of 1000 (max. 8388607)
  24 compressed objects within 1 object stream
