@@ -14,6 +14,7 @@ setwd("/run/media/john/1TB/SpiderOak/Projects/adaptation-along-the-envelope/")
 
 cropdat <- readRDS("data/panel_regression_data.rds")
 
+
 corndat <- filter(cropdat, !is.na(ln_corn_rrev))
 cottondat <- filter(cropdat, !is.na(ln_cotton_rrev))
 haydat <- filter(cropdat, !is.na(ln_hay_rrev))

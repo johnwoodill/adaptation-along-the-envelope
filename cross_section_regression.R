@@ -1,6 +1,7 @@
 library(tidyverse)
 library(cowplot)
 library(lfe)
+library(AER)
 
 cropdat <- readRDS("data/cross_section_regression_data.rds")
 

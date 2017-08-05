@@ -10,6 +10,8 @@ library(lfe)
 
 cropdat <- readRDS("data/full_ag_data.rds")
 cropdat <- filter(cropdat, abs(long) <= 100)
+cropdat <- filter(cropdat, year >= 1930)
+
 
 cropdat$prec_sq <- cropdat$prec^2
 cropdat$tavg_sq <- cropdat$tavg^2

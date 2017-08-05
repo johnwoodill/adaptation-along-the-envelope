@@ -7,7 +7,7 @@ setwd("/run/media/john/1TB/SpiderOak/Projects/adaptation-along-the-envelope/")
 
 # Crop data
 cropdat <- readRDS("data/full_ag_data.rds")
-
+cropdat <- filter(cropdat, year >= 1930)
 
 # Soil data
 #soil <- read_dta("data/soilData.dta")
