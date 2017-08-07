@@ -4,8 +4,10 @@ library(ggplot2)
 
 setwd("/run/media/john/1TB/SpiderOak/Projects/adaptation-along-the-envelope/")
 
-# Function for predicting change in single variable (tavg)
-predictFelm.baseline <- function(felm.fit, bvar, impact = FALSE){
+newdata <- readRDS("data/degree_day_changes/cross_section_regression_data_5C")
+
+# Custom predict funciton for Felm object models
+predictFelm.baseline <- function(felm.fit, newdata, impact = FALSE){
   felm.formula <- as.character(felm.fit$call[[2]])
   rhs          = felm.formula[3]
   last         = which(strsplit(rhs,"")[[1]]=="|")[1] - 1
@@ -19,7 +21,7 @@ predictFelm.baseline <- function(felm.fit, bvar, impact = FALSE){
   dat <- as.data.frame(cbind(felm.fit$response, felm.fit$X))
   
   # Get demeaned data from felm object
-  dmdat <- as.data.frame(cbind(felm.fit$cY, felm.fit$cX)   )
+  dmdat <- as.data.frame(cbind(felm.fit$cY, felm.fit$cX))
   
   # No fixed-effects
      if( is.null(getfe( felm.fit )) ) {
@@ -37,19 +39,9 @@ predictFelm.baseline <- function(felm.fit, bvar, impact = FALSE){
       lm.formula   = paste(lm.formula, "- 1" )
        lm.fit       = lm( lm.formula, data=dmdat, weights = w^2  )
     }   
-    if (!isTRUE(impact)){
-     rangedat = range(dat[, bvar])
-     #rangeAveT = c(0, 40)
-     newdata <- data.frame(rows = 1:20)
-     for (i in exp.var){
-       newdata[, i] <- rep(mean(dat[, i], na.rm = TRUE), 20)
-     }
-     newdata[, bvar] <- seq(rangedat[1], rangedat[2], length = 20)  
-     newdata[, paste0(bvar, "_sq")] <- seq(rangedat[1], rangedat[2], length = 20)^2  
-     newdata$rows <- NULL
-
+  
+  
      pred <- predict(lm.fit, newdata = newdata, se.fit = TRUE) 
-     pred$tavg <- newdata$tavg
      return(pred)
   }
   
