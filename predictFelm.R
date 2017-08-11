@@ -34,7 +34,7 @@ predictFelm <- function(felm.fit, newdata){
     }   
   
     pred <- predict(lm.fit, newdata = newdata, se.fit = TRUE) 
-    res <- resid(lm.fit)
+    res <- resid(felm.fit)
   
     # Return pred if no fixed-effects
   	if( is.null(getfe( felm.fit )) ) {
@@ -47,7 +47,7 @@ predictFelm <- function(felm.fit, newdata){
       # data.frame
       fe           = getfe( felm.fit )
       eff.dat <- data.frame(fit = pred$fit)
-      eff.dat$res <- res
+      
 
       # Get each fixed effect and merge
       for (j in names(felm.fit$fe)){
@@ -83,3 +83,4 @@ cc.pred.se = function( xmat, vcovMat, w, block.size=300 ) {
   w    = matrix( w, ncol = 1, nrow=n )
   sqrt( t(w)%*%xmat%*%vcovMat%*%t(xmat)%*%w / ( sum(w)^2 ) )
 }
+
