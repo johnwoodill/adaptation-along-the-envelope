@@ -10,7 +10,7 @@ library(lfe)
 
 cropdat <- readRDS("data/full_ag_data.rds")
 cropdat <- filter(cropdat, abs(long) <= 100)
-cropdat <- filter(cropdat, year >= 1930)
+cropdat <- filter(cropdat, year >= 1930 & year <= 2010)
 
 
 cropdat$prec_sq <- cropdat$prec^2
@@ -58,11 +58,11 @@ cropdat <- cropdat %>%
          total_w = mean(total_a, na.rm = TRUE))
 
 # # Exposure weighted values equal zero
-cropdat$tavg <- cropdat$tavg - mean(cropdat$tavg, na.rm = TRUE)
-cropdat$dday0_10 <- cropdat$dday0_10 - mean(cropdat$dday0_10, na.rm = TRUE)
-cropdat$dday10_30 <- cropdat$dday10_30 - mean(cropdat$dday10_30, na.rm = TRUE)
-cropdat$dday30C <- cropdat$dday30C - mean(cropdat$dday30C, na.rm = TRUE)
-cropdat$prec <- cropdat$prec - mean(cropdat$prec, na.rm = TRUE)
+# cropdat$tavg <- cropdat$tavg - mean(cropdat$tavg, na.rm = TRUE)
+# cropdat$dday0_10 <- cropdat$dday0_10 - mean(cropdat$dday0_10, na.rm = TRUE)
+# cropdat$dday10_30 <- cropdat$dday10_30 - mean(cropdat$dday10_30, na.rm = TRUE)
+# cropdat$dday30C <- cropdat$dday30C - mean(cropdat$dday30C, na.rm = TRUE)
+# cropdat$prec <- cropdat$prec - mean(cropdat$prec, na.rm = TRUE)
 cropdat$tavg_sq <- cropdat$tavg^2
 cropdat$prec_sq <- cropdat$prec^2
 

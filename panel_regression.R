@@ -6,6 +6,7 @@ library(lfe)
 library(cowplot)
 library(plm)
 library(lfe)
+library(AER)
 
 
 # Panel for Corn Revenue per Acre -----------------------------------------

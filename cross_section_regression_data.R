@@ -7,7 +7,7 @@ setwd("/run/media/john/1TB/SpiderOak/Projects/adaptation-along-the-envelope/")
 
 # Crop data
 cropdat <- readRDS("data/full_ag_data.rds")
-cropdat <- filter(cropdat, year >= 1930)
+cropdat <- filter(cropdat, year >= 1930 & year <= 2010)
 
 # Soil data
 #soil <- read_dta("data/soilData.dta")
@@ -99,11 +99,11 @@ cropdat$dday0_10 <- cropdat$dday0C - cropdat$dday10C
 cropdat$dday10_30 <- cropdat$dday10C - cropdat$dday30C
 
 # Exposure weighted values equal zero
-cropdat$tavg <- cropdat$tavg - mean(cropdat$tavg, na.rm = TRUE)
-cropdat$dday0_10 <- cropdat$dday0_10 - mean(cropdat$dday0_10, na.rm = TRUE)
-cropdat$dday10_30 <- cropdat$dday10_30 - mean(cropdat$dday10_30, na.rm = TRUE)
-cropdat$dday30C <- cropdat$dday30C - mean(cropdat$dday30C, na.rm = TRUE)
-cropdat$prec <- cropdat$prec - mean(cropdat$prec, na.rm = TRUE)
+# cropdat$tavg <- cropdat$tavg - mean(cropdat$tavg, na.rm = TRUE)
+# cropdat$dday0_10 <- cropdat$dday0_10 - mean(cropdat$dday0_10, na.rm = TRUE)
+# cropdat$dday10_30 <- cropdat$dday10_30 - mean(cropdat$dday10_30, na.rm = TRUE)
+# cropdat$dday30C <- cropdat$dday30C - mean(cropdat$dday30C, na.rm = TRUE)
+# cropdat$prec <- cropdat$prec - mean(cropdat$prec, na.rm = TRUE)
 cropdat$prec_sq <- cropdat$prec^2
 cropdat$tavg_sq <- cropdat$tavg^2
 
