@@ -34,7 +34,6 @@ predictFelm <- function(felm.fit, newdata){
     }   
   
     pred <- predict(lm.fit, newdata = newdata, se.fit = TRUE) 
-    res <- resid(felm.fit)
   
     # Return pred if no fixed-effects
   	if( is.null(getfe( felm.fit )) ) {
@@ -68,7 +67,7 @@ predictFelm <- function(felm.fit, newdata){
       } else {
         pred$effect <- as.numeric(rowSums(eff.dat[, grep("_effect", colnames(eff.dat))]))
       }
-      pred$res <- res
+      pred$res <- felm.fit$residuals
       return(pred)  
       
 

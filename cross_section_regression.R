@@ -89,13 +89,12 @@ cc.corn.mod2 <- tobit(p_corn_share ~ dday0_10 + dday10_30  + dday30C + prec + pr
                   data = corndat, weights = corndat$total_w)
 summary(cc.corn.mod2)
 
-
 # Cotton
 cc.cotton.mod1 <- tobit(p_cotton_share ~ tavg + tavg_sq + prec + prec_sq + cluster(state), 
                    data = cottondat, weights = cottondat$total_w)
 summary(cc.cotton.mod1)
 
-cc.cotton.mod2 <- tobit(p_cotton_share ~ dday0_10 + dday10_30  + dday30C +  prec + prec_sq + cluster(state),
+cc.cotton.mod2 <- tobit(p_cotton_share ~ dday0_10 + dday10_30 + dday30C +  prec + prec_sq + cluster(state),
                   data = cottondat, weights = cottondat$total_w)
 summary(cc.cotton.mod2)
 

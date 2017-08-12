@@ -406,7 +406,7 @@ cotton.plotdat <- data.frame(temp = rep(c(1,2,3,4,5), 3),
 
 ggplot(cotton.plotdat, aes(temp, rev, color = reg)) + 
   geom_line() + geom_line(aes(temp, min), linetype = "dashed") + 
-  geom_line(aes(temp, max), linetype = "dashed")
+  geom_line(aes(temp, max), linetype = "dashed") + geom_hline(yintercept = 0, linetype = "dashed")
 }
 
 # Merge data

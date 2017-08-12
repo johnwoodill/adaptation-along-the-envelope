@@ -36,7 +36,7 @@ for (i in unique(states)){
       check <- 1
     },error=function(e) e)
 
-      params = list("state_alpha"=i, "agg_level_desc"="STATE","commodity_desc"="WHEAT", "source_desc"="SURVEY", "statisticcat_desc" = "PRICE RECEIVED", "short_desc"="WHEAT, SPRING, (EXCL DURUM) - PRICE RECEIVED, MEASURED IN $ / BU")
+      params = list("state_alpha"=i, "agg_level_desc"="STATE","commodity_desc"="WHEAT", "source_desc"="SURVEY", "statisticcat_desc" = "PRICE RECEIVED", "short_desc"="WHEAT - PRICE RECEIVED, MEASURED IN $ / BU")
     d <- tryCatch({
       req = nassqs_GET(params=params, key=NASSQS_TOKEN)
       wdat <- data.frame()
