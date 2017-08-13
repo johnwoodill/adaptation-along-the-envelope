@@ -82,4 +82,3 @@ cc.pred.se = function( xmat, vcovMat, w, block.size=300 ) {
   w    = matrix( w, ncol = 1, nrow=n )
   sqrt( t(w)%*%xmat%*%vcovMat%*%t(xmat)%*%w / ( sum(w)^2 ) )
 }
-
