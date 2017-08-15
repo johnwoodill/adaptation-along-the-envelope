@@ -1,6 +1,7 @@
 library(tidyverse)
 library(lfe)
 library(AER)
+library(cowplot)
 
 source("predictFelm.R")
 
@@ -494,11 +495,12 @@ ggplot(soybean.plotdat, aes(temp, rev, color = reg)) + geom_line()
 # Merge data
 plotdat <- rbind(corn.plotdat, cotton.plotdat, hay.plotdat, wheat.plotdat, soybean.plotdat)
 
-ggplot(plotdat, aes(temp, rev, color = reg)) + geom_line() + ylab("Impact (% Change) ") + xlab("Change in Temperature (C)") + facet_wrap(~crop)
+sharep1 <- ggplot(plotdat, aes(temp, rev, color = reg)) + geom_line() + ylab("Impact (% Change) ") + xlab("Change in Temperature (C)") + facet_wrap(~crop)
 
 # Just Corn and Soybean
-ggplot(filter(plotdat, crop %in% c("corn", "soybean")), aes(temp, rev, color = reg)) + geom_line() + ylab("Impact (% Change) ") + xlab("Change in Temperature (C)") + facet_wrap(~crop)
+sharep2 <- ggplot(filter(plotdat, crop %in% c("corn", "soybean")), aes(temp, rev, color = reg)) + geom_line() + ylab("Impact (% Change) ") + xlab("Change in Temperature (C)") + facet_wrap(~crop)
 
+plot_grid(sharep1, sharep2, ncol = 1)
 
 
 

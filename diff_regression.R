@@ -1,6 +1,8 @@
 library(tidyverse)
 library(AER)
+library(lfe)
 
+setwd("/run/media/john/1TB/SpiderOak/Projects/adaptation-along-the-envelope/")
 decadedat <- readRDS("data/diff_regression_data.rds")
 
 # Setup data sets for regression
