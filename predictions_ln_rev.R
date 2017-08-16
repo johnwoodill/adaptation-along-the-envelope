@@ -570,25 +570,55 @@ ggplot(wheat.plotdat, aes(temp, rev, color = reg)) + geom_line()
 # Soybean
 {
 cs1C.pred_ln_soybean_rrev <- predictFelm(felm.fit = cs.ln_soybean_rrev, newdata = cs.ln_soybean_rrev_1C)
+cs1C.pred_ln_soybean_rrev_se <- cc.pred.se(cs.ln_soybean_rrev$X - cs.ln_soybean_rrev_1C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
+           cs.ln_soybean_rrev$clustervcv, cs.ln_soybean_rrev$weights^2)
 cs2C.pred_ln_soybean_rrev <- predictFelm(felm.fit = cs.ln_soybean_rrev, newdata = cs.ln_soybean_rrev_2C)
+cs2C.pred_ln_soybean_rrev_se <- cc.pred.se(cs.ln_soybean_rrev$X - cs.ln_soybean_rrev_2C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
+           cs.ln_soybean_rrev$clustervcv, cs.ln_soybean_rrev$weights^2)
 cs3C.pred_ln_soybean_rrev <- predictFelm(felm.fit = cs.ln_soybean_rrev, newdata = cs.ln_soybean_rrev_3C)
+cs3C.pred_ln_soybean_rrev_se <- cc.pred.se(cs.ln_soybean_rrev$X - cs.ln_soybean_rrev_3C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
+           cs.ln_soybean_rrev$clustervcv, cs.ln_soybean_rrev$weights^2)
 cs4C.pred_ln_soybean_rrev <- predictFelm(felm.fit = cs.ln_soybean_rrev, newdata = cs.ln_soybean_rrev_4C)
+cs4C.pred_ln_soybean_rrev_se <- cc.pred.se(cs.ln_soybean_rrev$X - cs.ln_soybean_rrev_4C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
+           cs.ln_soybean_rrev$clustervcv, cs.ln_soybean_rrev$weights^2)
 cs5C.pred_ln_soybean_rrev <- predictFelm(felm.fit = cs.ln_soybean_rrev, newdata = cs.ln_soybean_rrev_5C)
+cs5C.pred_ln_soybean_rrev_se <- cc.pred.se(cs.ln_soybean_rrev$X - cs.ln_soybean_rrev_5C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
+           cs.ln_soybean_rrev$clustervcv, cs.ln_soybean_rrev$weights^2)
 
 p1C.pred_ln_soybean_rrev <- predictFelm(felm.fit = p.ln_soybean_rrev, newdata = p.ln_soybean_rrev_1C)
+p1C.pred_ln_soybean_rrev_se <- cc.pred.se(p.ln_soybean_rrev$X - p.ln_soybean_rrev_1C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
+           p.ln_soybean_rrev$clustervcv, p.ln_soybean_rrev$weights^2)
 p2C.pred_ln_soybean_rrev <- predictFelm(felm.fit = p.ln_soybean_rrev, newdata = p.ln_soybean_rrev_2C)
+p2C.pred_ln_soybean_rrev_se <- cc.pred.se(p.ln_soybean_rrev$X - p.ln_soybean_rrev_2C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
+           p.ln_soybean_rrev$clustervcv, p.ln_soybean_rrev$weights^2)
 p3C.pred_ln_soybean_rrev <- predictFelm(felm.fit = p.ln_soybean_rrev, newdata = p.ln_soybean_rrev_3C)
+p3C.pred_ln_soybean_rrev_se <- cc.pred.se(p.ln_soybean_rrev$X - p.ln_soybean_rrev_3C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
+           p.ln_soybean_rrev$clustervcv, p.ln_soybean_rrev$weights^2)
 p4C.pred_ln_soybean_rrev <- predictFelm(felm.fit = p.ln_soybean_rrev, newdata = p.ln_soybean_rrev_4C)
+p4C.pred_ln_soybean_rrev_se <- cc.pred.se(p.ln_soybean_rrev$X - p.ln_soybean_rrev_4C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
+           p.ln_soybean_rrev$clustervcv, p.ln_soybean_rrev$weights^2)
 p5C.pred_ln_soybean_rrev <- predictFelm(felm.fit = p.ln_soybean_rrev, newdata = p.ln_soybean_rrev_5C)
+p5C.pred_ln_soybean_rrev_se <- cc.pred.se(p.ln_soybean_rrev$X - p.ln_soybean_rrev_5C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
+           p.ln_soybean_rrev$clustervcv, p.ln_soybean_rrev$weights^2)
 
 diff1C.pred_ln_soybean_rrev <- predictFelm(felm.fit = diff.ln_soybean_rrev, newdata = diff.ln_soybean_rrev_1C)
+diff1C.pred_ln_soybean_rrev_se <- cc.pred.se(diff.ln_soybean_rrev$X - diff.ln_soybean_rrev_1C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
+           diff.ln_soybean_rrev$clustervcv, diff.ln_soybean_rrev$weights^2)
 diff2C.pred_ln_soybean_rrev <- predictFelm(felm.fit = diff.ln_soybean_rrev, newdata = diff.ln_soybean_rrev_2C)
+diff2C.pred_ln_soybean_rrev_se <- cc.pred.se(diff.ln_soybean_rrev$X - diff.ln_soybean_rrev_2C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
+           diff.ln_soybean_rrev$clustervcv, diff.ln_soybean_rrev$weights^2)
 diff3C.pred_ln_soybean_rrev <- predictFelm(felm.fit = diff.ln_soybean_rrev, newdata = diff.ln_soybean_rrev_3C)
+diff3C.pred_ln_soybean_rrev_se <- cc.pred.se(diff.ln_soybean_rrev$X - diff.ln_soybean_rrev_3C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
+           diff.ln_soybean_rrev$clustervcv, diff.ln_soybean_rrev$weights^2)
 diff4C.pred_ln_soybean_rrev <- predictFelm(felm.fit = diff.ln_soybean_rrev, newdata = diff.ln_soybean_rrev_4C)
+diff4C.pred_ln_soybean_rrev_se <- cc.pred.se(diff.ln_soybean_rrev$X - diff.ln_soybean_rrev_4C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
+           diff.ln_soybean_rrev$clustervcv, diff.ln_soybean_rrev$weights^2)
 diff5C.pred_ln_soybean_rrev <- predictFelm(felm.fit = diff.ln_soybean_rrev, newdata = diff.ln_soybean_rrev_5C)
+diff5C.pred_ln_soybean_rrev_se <- cc.pred.se(diff.ln_soybean_rrev$X - diff.ln_soybean_rrev_5C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
+           diff.ln_soybean_rrev$clustervcv, diff.ln_soybean_rrev$weights^2)
 
 
-cs.rev1C <- exp(cs1C.pred_ln_soybean_rrev$fit + cs1C.pred_ln_soybean_rrev$res + cs1C.pred_ln_soybean_rrev$effect)
+cs.rev1C <- exp(cs1C.pred_ln_soybean_rrev$fit)
 cs.rev2C <- exp(cs2C.pred_ln_soybean_rrev$fit + cs2C.pred_ln_soybean_rrev$res + cs2C.pred_ln_soybean_rrev$effect)
 cs.rev3C <- exp(cs3C.pred_ln_soybean_rrev$fit + cs3C.pred_ln_soybean_rrev$res + cs3C.pred_ln_soybean_rrev$effect)
 cs.rev4C <- exp(cs4C.pred_ln_soybean_rrev$fit + cs4C.pred_ln_soybean_rrev$res + cs4C.pred_ln_soybean_rrev$effect)
@@ -606,8 +636,8 @@ diff.rev3C <- exp(diff3C.pred_ln_soybean_rrev$fit + diff3C.pred_ln_soybean_rrev$
 diff.rev4C <- exp(diff4C.pred_ln_soybean_rrev$fit + diff4C.pred_ln_soybean_rrev$res + diff4C.pred_ln_soybean_rrev$effect)
 diff.rev5C <- exp(diff5C.pred_ln_soybean_rrev$fit + diff5C.pred_ln_soybean_rrev$res + diff5C.pred_ln_soybean_rrev$effect)
 
-cs.rev <- data.frame(rev = c(cs.rev1C, cs.rev2C, cs.rev3C, cs.rev4C, cs.rev5C),
-                     change = rep(c("1C", "2C", "3C", "4C", "5C"), each = length(cs.rev1C)))
+cs.rev <- data.frame(rev = c(exp(cs.ln_soybean_rrev), cs.rev1C, cs.rev2C, cs.rev3C, cs.rev4C, cs.rev5C),
+                     change = rep(c("Base", "1C", "2C", "3C", "4C", "5C"), each = length(cs.rev1C)))
 
 p.rev <- data.frame(rev = c(p.rev1C, p.rev2C, p.rev3C, p.rev4C, p.rev5C),
                      change = rep(c("1C", "2C", "3C", "4C", "5C"), each = length(p.rev1C)))
@@ -623,49 +653,104 @@ ggplot(diff.rev, aes(rev, fill = change)) + geom_histogram() + scale_fill_brewer
 
 cs.soybean.rev0 <- sum( exp(cs.ln_soybean_rrev$response))
 cs.soybean.rev1 <- (sum( exp(cs1C.pred_ln_soybean_rrev$fit + cs1C.pred_ln_soybean_rrev$res + cs1C.pred_ln_soybean_rrev$effect ))/cs.soybean.rev0 - 1)*100
+cs.soybean.rev1.min <- (sum( exp(cs1C.pred_ln_soybean_rrev$fit - c(cs1C.pred_ln_soybean_rrev_se*1.96) + cs1C.pred_ln_soybean_rrev$res + cs1C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/cs.soybean.rev0 - 1)*100
+cs.soybean.rev1.max <- (sum( exp(cs1C.pred_ln_soybean_rrev$fit + c(cs1C.pred_ln_soybean_rrev_se*1.96) + cs1C.pred_ln_soybean_rrev$res + cs1C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/cs.soybean.rev0 - 1)*100
+
 cs.soybean.rev2 <- (sum( exp(cs2C.pred_ln_soybean_rrev$fit + cs2C.pred_ln_soybean_rrev$res + cs2C.pred_ln_soybean_rrev$effect ))/cs.soybean.rev0 - 1)*100
+cs.soybean.rev2.min <- (sum( exp(cs2C.pred_ln_soybean_rrev$fit - c(cs2C.pred_ln_soybean_rrev_se*1.96) + cs2C.pred_ln_soybean_rrev$res + cs2C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/cs.soybean.rev0 - 1)*100
+cs.soybean.rev2.max <- (sum( exp(cs2C.pred_ln_soybean_rrev$fit + c(cs2C.pred_ln_soybean_rrev_se*1.96) + cs2C.pred_ln_soybean_rrev$res + cs2C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/cs.soybean.rev0 - 1)*100
+
 cs.soybean.rev3 <- (sum( exp(cs3C.pred_ln_soybean_rrev$fit + cs3C.pred_ln_soybean_rrev$res + cs3C.pred_ln_soybean_rrev$effect ))/cs.soybean.rev0 - 1)*100
+cs.soybean.rev3.min <- (sum( exp(cs3C.pred_ln_soybean_rrev$fit - c(cs3C.pred_ln_soybean_rrev_se*1.96) + cs3C.pred_ln_soybean_rrev$res + cs3C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/cs.soybean.rev0 - 1)*100
+cs.soybean.rev3.max <- (sum( exp(cs3C.pred_ln_soybean_rrev$fit + c(cs3C.pred_ln_soybean_rrev_se*1.96) + cs3C.pred_ln_soybean_rrev$res + cs3C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/cs.soybean.rev0 - 1)*100
+
 cs.soybean.rev4 <- (sum( exp(cs4C.pred_ln_soybean_rrev$fit + cs4C.pred_ln_soybean_rrev$res + cs4C.pred_ln_soybean_rrev$effect ))/cs.soybean.rev0 - 1)*100
+cs.soybean.rev4.min <- (sum( exp(cs4C.pred_ln_soybean_rrev$fit - c(cs4C.pred_ln_soybean_rrev_se*1.96) + cs4C.pred_ln_soybean_rrev$res + cs4C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/cs.soybean.rev0 - 1)*100
+cs.soybean.rev4.max <- (sum( exp(cs4C.pred_ln_soybean_rrev$fit + c(cs4C.pred_ln_soybean_rrev_se*1.96) + cs4C.pred_ln_soybean_rrev$res + cs4C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/cs.soybean.rev0 - 1)*100
+
 cs.soybean.rev5 <- (sum( exp(cs5C.pred_ln_soybean_rrev$fit + cs5C.pred_ln_soybean_rrev$res + cs5C.pred_ln_soybean_rrev$effect ))/cs.soybean.rev0 - 1)*100
+cs.soybean.rev5.min <- (sum( exp(cs5C.pred_ln_soybean_rrev$fit - c(cs5C.pred_ln_soybean_rrev_se*1.96) + cs5C.pred_ln_soybean_rrev$res + cs5C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/cs.soybean.rev0 - 1)*100
+cs.soybean.rev5.max <- (sum( exp(cs5C.pred_ln_soybean_rrev$fit + c(cs5C.pred_ln_soybean_rrev_se*1.96) + cs5C.pred_ln_soybean_rrev$res + cs5C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/cs.soybean.rev0 - 1)*100
+
 
 p.soybean.rev0 <- sum( exp(p.ln_soybean_rrev$response))
-p.soybean.rev1 <- (sum( exp(p1C.pred_ln_soybean_rrev$fit + p1C.pred_ln_soybean_rrev$res + p1C.pred_ln_soybean_rrev$effect ))/p.soybean.rev0 - 1)*100
-p.soybean.rev2 <- (sum( exp(p2C.pred_ln_soybean_rrev$fit + p2C.pred_ln_soybean_rrev$res + p2C.pred_ln_soybean_rrev$effect ))/p.soybean.rev0 - 1)*100
-p.soybean.rev3 <- (sum( exp(p3C.pred_ln_soybean_rrev$fit + p3C.pred_ln_soybean_rrev$res + p3C.pred_ln_soybean_rrev$effect ))/p.soybean.rev0 - 1)*100
-p.soybean.rev4 <- (sum( exp(p4C.pred_ln_soybean_rrev$fit + p4C.pred_ln_soybean_rrev$res + p4C.pred_ln_soybean_rrev$effect ))/p.soybean.rev0 - 1)*100
-p.soybean.rev5 <- (sum( exp(p5C.pred_ln_soybean_rrev$fit + p5C.pred_ln_soybean_rrev$res + p5C.pred_ln_soybean_rrev$effect ))/p.soybean.rev0 - 1)*100
+p.soybean.rev1 <- (sum( exp(p1C.pred_ln_soybean_rrev$fit + p1C.pred_ln_soybean_rrev$res + p1C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/p.soybean.rev0 - 1)*100
+p.soybean.rev1.min <- (sum( exp(p1C.pred_ln_soybean_rrev$fit - c(p1C.pred_ln_soybean_rrev_se*1.96) + p1C.pred_ln_soybean_rrev$res + p1C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/p.soybean.rev0 - 1)*100
+p.soybean.rev1.max <- (sum( exp(p1C.pred_ln_soybean_rrev$fit + c(p1C.pred_ln_soybean_rrev_se*1.96) + p1C.pred_ln_soybean_rrev$res + p1C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/p.soybean.rev0 - 1)*100
+
+p.soybean.rev2 <- (sum( exp(p2C.pred_ln_soybean_rrev$fit + p2C.pred_ln_soybean_rrev$res + p2C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/p.soybean.rev0 - 1)*100
+p.soybean.rev2.min <- (sum( exp(p2C.pred_ln_soybean_rrev$fit - c(p2C.pred_ln_soybean_rrev_se*1.96) + p2C.pred_ln_soybean_rrev$res + p2C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/p.soybean.rev0 - 1)*100
+p.soybean.rev2.max <- (sum( exp(p2C.pred_ln_soybean_rrev$fit + c(p2C.pred_ln_soybean_rrev_se*1.96) + p2C.pred_ln_soybean_rrev$res + p2C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/p.soybean.rev0 - 1)*100
+
+p.soybean.rev3 <- (sum( exp(p3C.pred_ln_soybean_rrev$fit + p3C.pred_ln_soybean_rrev$res + p3C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/p.soybean.rev0 - 1)*100
+p.soybean.rev3.min <- (sum( exp(p3C.pred_ln_soybean_rrev$fit - c(p3C.pred_ln_soybean_rrev_se*1.96) + p3C.pred_ln_soybean_rrev$res + p3C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/p.soybean.rev0 - 1)*100
+p.soybean.rev3.max <- (sum( exp(p3C.pred_ln_soybean_rrev$fit + c(p3C.pred_ln_soybean_rrev_se*1.96) + p3C.pred_ln_soybean_rrev$res + p3C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/p.soybean.rev0 - 1)*100
+
+p.soybean.rev4 <- (sum( exp(p4C.pred_ln_soybean_rrev$fit + p4C.pred_ln_soybean_rrev$res + p4C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/p.soybean.rev0 - 1)*100
+p.soybean.rev4.min <- (sum( exp(p4C.pred_ln_soybean_rrev$fit - c(p4C.pred_ln_soybean_rrev_se*1.96) + p4C.pred_ln_soybean_rrev$res + p4C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/p.soybean.rev0 - 1)*100
+p.soybean.rev4.max <- (sum( exp(p4C.pred_ln_soybean_rrev$fit + c(p4C.pred_ln_soybean_rrev_se*1.96) + p4C.pred_ln_soybean_rrev$res + p4C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/p.soybean.rev0 - 1)*100
+
+p.soybean.rev5 <- (sum( exp(p5C.pred_ln_soybean_rrev$fit + p5C.pred_ln_soybean_rrev$res + p5C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/p.soybean.rev0 - 1)*100
+p.soybean.rev5.min <- (sum( exp(p5C.pred_ln_soybean_rrev$fit - c(p5C.pred_ln_soybean_rrev_se*1.96) + p5C.pred_ln_soybean_rrev$res + p5C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/p.soybean.rev0 - 1)*100
+p.soybean.rev5.max <- (sum( exp(p5C.pred_ln_soybean_rrev$fit + c(p5C.pred_ln_soybean_rrev_se*1.96) + p5C.pred_ln_soybean_rrev$res + p5C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/p.soybean.rev0 - 1)*100
 
 diff.soybean.rev0 <- sum( exp(diff.ln_soybean_rrev$response))
-diff.soybean.rev1 <- (sum( exp(diff1C.pred_ln_soybean_rrev$fit + diff1C.pred_ln_soybean_rrev$res + diff1C.pred_ln_soybean_rrev$effect ))/diff.soybean.rev0 - 1)*100
-diff.soybean.rev2 <- (sum( exp(diff2C.pred_ln_soybean_rrev$fit + diff2C.pred_ln_soybean_rrev$res + diff2C.pred_ln_soybean_rrev$effect ))/diff.soybean.rev0 - 1)*100
-diff.soybean.rev3 <- (sum( exp(diff3C.pred_ln_soybean_rrev$fit + diff3C.pred_ln_soybean_rrev$res + diff3C.pred_ln_soybean_rrev$effect ))/diff.soybean.rev0 - 1)*100
-diff.soybean.rev4 <- (sum( exp(diff4C.pred_ln_soybean_rrev$fit + diff4C.pred_ln_soybean_rrev$res + diff4C.pred_ln_soybean_rrev$effect ))/diff.soybean.rev0 - 1)*100
-diff.soybean.rev5 <- (sum( exp(diff5C.pred_ln_soybean_rrev$fit + diff5C.pred_ln_soybean_rrev$res + diff5C.pred_ln_soybean_rrev$effect ))/diff.soybean.rev0 - 1)*100
+diff.soybean.rev1 <- (sum( exp(diff1C.pred_ln_soybean_rrev$fit + diff1C.pred_ln_soybean_rrev$res + diff1C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/diff.soybean.rev0 - 1)*100
+diff.soybean.rev1.min <- (sum( exp(diff1C.pred_ln_soybean_rrev$fit - c(diff1C.pred_ln_soybean_rrev_se*1.96) + diff1C.pred_ln_soybean_rrev$res + diff1C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/diff.soybean.rev0 - 1)*100
+diff.soybean.rev1.max <- (sum( exp(diff1C.pred_ln_soybean_rrev$fit + c(diff1C.pred_ln_soybean_rrev_se*1.96) + diff1C.pred_ln_soybean_rrev$res + diff1C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/diff.soybean.rev0 - 1)*100
+
+diff.soybean.rev2 <- (sum( exp(diff2C.pred_ln_soybean_rrev$fit + diff2C.pred_ln_soybean_rrev$res + diff2C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/diff.soybean.rev0 - 1)*100
+diff.soybean.rev2.min <- (sum( exp(diff2C.pred_ln_soybean_rrev$fit - c(diff2C.pred_ln_soybean_rrev_se*1.96) + diff2C.pred_ln_soybean_rrev$res + diff2C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/diff.soybean.rev0 - 1)*100
+diff.soybean.rev2.max <- (sum( exp(diff2C.pred_ln_soybean_rrev$fit + c(diff2C.pred_ln_soybean_rrev_se*1.96) + diff2C.pred_ln_soybean_rrev$res + diff2C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/diff.soybean.rev0 - 1)*100
+
+diff.soybean.rev3 <- (sum( exp(diff3C.pred_ln_soybean_rrev$fit + diff3C.pred_ln_soybean_rrev$res + diff3C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/diff.soybean.rev0 - 1)*100
+diff.soybean.rev3.min <- (sum( exp(diff3C.pred_ln_soybean_rrev$fit - c(diff3C.pred_ln_soybean_rrev_se*1.96) + diff3C.pred_ln_soybean_rrev$res + diff3C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/diff.soybean.rev0 - 1)*100
+diff.soybean.rev3.max <- (sum( exp(diff3C.pred_ln_soybean_rrev$fit + c(diff3C.pred_ln_soybean_rrev_se*1.96) + diff3C.pred_ln_soybean_rrev$res + diff3C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/diff.soybean.rev0 - 1)*100
+
+diff.soybean.rev4 <- (sum( exp(diff4C.pred_ln_soybean_rrev$fit + diff4C.pred_ln_soybean_rrev$res + diff4C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/diff.soybean.rev0 - 1)*100
+diff.soybean.rev4.min <- (sum( exp(diff4C.pred_ln_soybean_rrev$fit - c(diff4C.pred_ln_soybean_rrev_se*1.96) + diff4C.pred_ln_soybean_rrev$res + diff4C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/diff.soybean.rev0 - 1)*100
+diff.soybean.rev4.max <- (sum( exp(diff4C.pred_ln_soybean_rrev$fit + c(diff4C.pred_ln_soybean_rrev_se*1.96) + diff4C.pred_ln_soybean_rrev$res + diff4C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/diff.soybean.rev0 - 1)*100
+
+diff.soybean.rev5 <- (sum( exp(diff5C.pred_ln_soybean_rrev$fit + diff5C.pred_ln_soybean_rrev$res + diff5C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/diff.soybean.rev0 - 1)*100
+diff.soybean.rev5.min <- (sum( exp(diff5C.pred_ln_soybean_rrev$fit - c(diff5C.pred_ln_soybean_rrev_se*1.96) + diff5C.pred_ln_soybean_rrev$res + diff5C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/diff.soybean.rev0 - 1)*100
+diff.soybean.rev5.max <- (sum( exp(diff5C.pred_ln_soybean_rrev$fit + c(diff5C.pred_ln_soybean_rrev_se*1.96) + diff5C.pred_ln_soybean_rrev$res + diff5C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/diff.soybean.rev0 - 1)*100
 
 soybean.plotdat <- data.frame(temp = rep(c(1,2,3,4,5), 3),
                            rev = c(cs.soybean.rev1, cs.soybean.rev2, cs.soybean.rev3, cs.soybean.rev4, cs.soybean.rev5,
                                    p.soybean.rev1, p.soybean.rev2, p.soybean.rev3, p.soybean.rev4, p.soybean.rev5,
                                    diff.soybean.rev1, diff.soybean.rev2, diff.soybean.rev3, diff.soybean.rev4, diff.soybean.rev5),
+                           min = c(cs.soybean.rev1.min, cs.soybean.rev2.min, cs.soybean.rev3.min, cs.soybean.rev4.min, cs.soybean.rev5.min,
+                                   p.soybean.rev1.min, p.soybean.rev2.min, p.soybean.rev3.min, p.soybean.rev4.min, p.soybean.rev5.min,
+                                   diff.soybean.rev1.min, diff.soybean.rev2.min, diff.soybean.rev3.min, diff.soybean.rev4.min, diff.soybean.rev5.min),
+                           max = c(cs.soybean.rev1.max, cs.soybean.rev2.max, cs.soybean.rev3.max, cs.soybean.rev4.max, cs.soybean.rev5.max,
+                                   p.soybean.rev1.max, p.soybean.rev2.max, p.soybean.rev3.max, p.soybean.rev4.max, p.soybean.rev5.max,
+                                   diff.soybean.rev1.max, diff.soybean.rev2.max, diff.soybean.rev3.max, diff.soybean.rev4.max, diff.soybean.rev5.max),
                            reg = rep(c("cross-section", "panel", "diff"), each = 5),
                            crop = "soybean")
 
-ggplot(soybean.plotdat, aes(temp, rev, color = reg)) + geom_line()
+ggplot(soybean.plotdat, aes(temp, rev, group = reg)) + 
+  geom_ribbon(aes(ymin = min, ymax = max), fill = "#C0CCD5", alpha = 0.5) + 
+  geom_line(aes(temp, rev, color = reg)) + geom_hline(yintercept = 0, linetype = "dashed")
 }
 
 # Merge data
-plotdat <- rbind(corn.plotdat, cotton.plotdat, hay.plotdat, wheat.plotdat, soybean.plotdat)
+plotdat <- rbind(corn.plotdat[,c(1,2,5,6)], cotton.plotdat, hay.plotdat, wheat.plotdat, soybean.plotdat[, c(1,2,5,6)])
+plotdat2 <- rbind(corn.plotdat, soybean.plotdat)
 
-ggplot(plotdat, aes(temp, rev, color = reg)) + 
+p1 <- ggplot(plotdat, aes(temp, rev, color = reg)) + 
   geom_line() + ylab("Impact (% Change) ") + 
   xlab("Change in Temperature (C)") + geom_hline(yintercept = 0, linetype = "dashed")+
   facet_wrap(~crop)
 
-ggplot(filter(plotdat, crop %in% c("corn", "soybean")), aes(temp, rev, color = reg)) + 
-  geom_line() + ylab("Impact (% Change) ") + 
+ggplot(filter(plotdat2, crop %in% c("corn", "soybean")), aes(temp, rev, color = reg)) + 
+  geom_line() + ylab("Impact (% Change) ") + geom_line(aes(temp, max), linetype = "dashed") +
   xlab("Change in Temperature (C)") + geom_hline(yintercept = 0, linetype = "dashed")+
   facet_wrap(~crop)
 
-ggplot(filter(plotdat, crop %in% c("corn", "cotton", "hay", "soybean")), aes(temp, rev, color = reg)) + 
+p2 <- ggplot(filter(plotdat, crop %in% c("corn", "cotton", "hay", "soybean")), aes(temp, rev, color = reg)) + 
   geom_line() + ylab("Impact (% Change) ") + 
   xlab("Change in Temperature (C)") + geom_hline(yintercept = 0, linetype = "dashed")+
   facet_wrap(~crop)
+p2
+
+plot_grid(p1, p2, ncol = 1)

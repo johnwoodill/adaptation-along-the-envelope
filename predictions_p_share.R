@@ -192,12 +192,12 @@ diff5C.pred_p_corn_share <- predict(diff.p_corn_share, newdata = diff.p_corn_sha
 # ggplot(filter(p.rev, rev < 50), aes(rev, fill = change)) + geom_histogram(bins = 100) + scale_fill_brewer(palette = "OrRd")
 # ggplot(diff.rev, aes(rev, fill = change)) + geom_density() + scale_fill_brewer(palette = "OrRd")
 
-cs.corn.rev0 <- sum( tobit.ey(predict(cs.p_corn_share), cs.p_corn_share$scale))
-cs.corn.rev1 <- (sum( tobit.ey(cs1C.pred_p_corn_share, cs.p_corn_share$scale))/cs.corn.rev0 - 1)*100
-cs.corn.rev2 <- (sum( tobit.ey(cs2C.pred_p_corn_share, cs.p_corn_share$scale))/cs.corn.rev0 - 1)*100
-cs.corn.rev3 <- (sum( tobit.ey(cs3C.pred_p_corn_share, cs.p_corn_share$scale))/cs.corn.rev0 - 1)*100
-cs.corn.rev4 <- (sum( tobit.ey(cs4C.pred_p_corn_share, cs.p_corn_share$scale))/cs.corn.rev0 - 1)*100
-cs.corn.rev5 <- (sum( tobit.ey(cs5C.pred_p_corn_share, cs.p_corn_share$scale))/cs.corn.rev0 - 1)*100
+cs.corn.rev0 <- sum( tobit.ey(predict(cs.p_corn_share), cs.p_corn_share$scale), na.rm = TRUE)
+cs.corn.rev1 <- (sum( tobit.ey(cs1C.pred_p_corn_share, cs.p_corn_share$scale), na.rm = TRUE)/cs.corn.rev0 - 1)*100
+cs.corn.rev2 <- (sum( tobit.ey(cs2C.pred_p_corn_share, cs.p_corn_share$scale), na.rm = TRUE)/cs.corn.rev0 - 1)*100
+cs.corn.rev3 <- (sum( tobit.ey(cs3C.pred_p_corn_share, cs.p_corn_share$scale), na.rm = TRUE)/cs.corn.rev0 - 1)*100
+cs.corn.rev4 <- (sum( tobit.ey(cs4C.pred_p_corn_share, cs.p_corn_share$scale), na.rm = TRUE)/cs.corn.rev0 - 1)*100
+cs.corn.rev5 <- (sum( tobit.ey(cs5C.pred_p_corn_share, cs.p_corn_share$scale), na.rm = TRUE)/cs.corn.rev0 - 1)*100
 
 p.corn.rev0 <- sum( tobit.ey(predict(p.p_corn_share), p.p_corn_share$scale))
 p.corn.rev1 <- (sum( tobit.ey(p1C.pred_p_corn_share, p.p_corn_share$scale))/p.corn.rev0 - 1)*100
