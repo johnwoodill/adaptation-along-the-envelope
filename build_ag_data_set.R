@@ -10,7 +10,6 @@ library(haven)
 setwd("/run/media/john/1TB/SpiderOak/Projects/adaptation-along-the-envelope/")
 
 # Function to extract data
-
 data(county.fips) 
 county.fips$state <- sapply(str_split(county.fips$polyname, ","),'[',1)
 county.fips$county <- sapply(str_split(county.fips$polyname, ","),'[',2)
@@ -64,32 +63,15 @@ stateabb <- select(states, state, name)
 stateabb$state <- tolower(stateabb$state)
 stateabb$name <- tolower(stateabb$name)
 
-# Aggregate state level prices --------------------------------------------
-# 
-# corn <- read_csv("data/corn_statelevel_prices_1900-2016.csv")
-# cotton <- read_csv("data/cotton_statelevel_prices_1922-2016.csv")
-# hay <- read_csv("data/hay_statelevel_prices_1908-2016.csv")
-# wheat <- read_csv("data/wheat_statelevel_prices_1909-2016.csv")
-# soybeans <- read_csv("data/soybean_statelevel_prices_1924-2016.csv")
-
+# Import crop prices from get_NASS_data.R
 crop_prices <- readRDS("data/crop_statelevel_prices.RDS")
 
-# corn <- extract_d_state(corn)
-# wheat <- extract_d_state(wheat)
-# hay <- extract_d_state(hay)
-# soybeans <- extract_d_state(soybeans)
-# cotton <- extract_d_state(cotton)
-
+# Full grid
 newgrid <- expand.grid(tolower(states$state), 1900:2016, stringsAsFactors = FALSE)
 names(newgrid) <- c("state", "year")
 
+# Join grid to prices
 crop_prices <- left_join(newgrid, crop_prices, by = c("year", "state"))
-
-# crop <- left_join(newgrid, wheat, by = c("year", "state"))
-# crop <- left_join(crop, corn, by = c("year", "state")) 
-# crop <- left_join(crop, hay, by = c("year", "state")) 
-# crop <- left_join(crop, soybeans, by = c("year", "state")) 
-# crop <- left_join(crop, cotton, by = c("year", "state"))
 
 crop_prices <- filter(crop_prices, year >= 1900)
 
@@ -105,30 +87,23 @@ crop_prices <- filter(crop_prices, year >= 1900)
 
 crop_prices$cotton_nprice <- crop_prices$cotton_nprice*480
 
-#names(crop_prices) <- c("state", "year", "wheat_nprice", "corn_nprice", "hay_nprice", "soybean_nprice", "cotton_nprice")
-
 # Nominal to Real prices using GDP product index deflator (base=2010)
-#def <- read.csv("data/gdp_def_base2010.csv")
-#def$year <- year(def$DATE)
-# def <- def %>% 
-#   group_by(year) %>% 
-#   summarise(gdp_price_def = mean(GDPDEF_NBD20100101, na.rm = TRUE))
-# def$gdp_price_def <- ifelse(def$year == 2010, 100, def$gdp_price_def)
-
 def <- read.csv("data/gdp_def_base2009.csv")
 
 # Adjust prices to 2010 levels
 def$gdp_price_def <- def$gdp_price_def/1.01221
 
-#def$gdp_price_def <- ifelse(def$year == 2010, 100, def$gdp_price_def)
-
+# Merge crop prices and deflator data
 crop_prices <- left_join(crop_prices, def, by = "year")
+
+# Adjust prices to real
 crop_prices$corn_rprice <- (crop_prices$corn_nprice*crop_prices$gdp_price_def/100)
 crop_prices$cotton_rprice <- (crop_prices$cotton_nprice*crop_prices$gdp_price_def/100)
 crop_prices$hay_rprice <- (crop_prices$hay_nprice*crop_prices$gdp_price_def/100)
 crop_prices$wheat_rprice <- (crop_prices$wheat_nprice*crop_prices$gdp_price_def/100)
 crop_prices$soybean_rprice <- (crop_prices$soybean_nprice*crop_prices$gdp_price_def/100)
 
+# Select variables
 crop_prices <- as.data.frame(crop_prices)
 crop_prices <- select(crop_prices, year, state, gdp_price_def, wheat_nprice, wheat_rprice, corn_nprice, corn_rprice, 
                       hay_nprice, hay_rprice, soybean_nprice, soybean_rprice, cotton_nprice, cotton_rprice)
@@ -136,35 +111,26 @@ crop_prices <- select(crop_prices, year, state, gdp_price_def, wheat_nprice, whe
 
 # Aggregate county level ag data ------------------------------------------
 
-
 # Load crop data (balanced years 1927-2007)
 corn <- read_csv("data/corn_1910-2016.csv")
-#corn <- extract_d_county(corn)
 corn$state <- tolower(corn$state)
 corn$fips <- as.integer(corn$fips)
-#names(corn) <- c("year", "state", "fips", "corn_grain_a", "corn_grain_p")
 
 cotton <- read_csv("data/cotton_1919-2016.csv")
-#cotton <- extract_d_county(cotton)
 cotton$state <- tolower(cotton$state)
 cotton$fips <- as.integer(cotton$fips)
-#names(cotton) <- c("year", "state", "fips", "cotton_a", "cotton_p")
 
 hay <- read_csv("data/hay_1918-2008.csv")
-#hay <- extract_d_county(hay)
 hay$state <- tolower(hay$state)
 hay$fips <- as.integer(hay$fips)
-#names(hay) <- c("year", "state", "fips", "hay_a", "hay_p")
 
 wheat <- read_csv("data/wheat_1909-2007.csv")
 wheat$state <- tolower(wheat$state)
 wheat$fips <- as.integer(wheat$fips)
 
 soybean <- read_csv("data/soybean_1927-2016.csv")
-#soybean <- extract_d_county(soybean)
 soybean$state <- tolower(soybean$state)
 soybean$fips <- as.integer(soybean$fips)
-#names(soybean) <- c("year", "state", "fips", "soybean_a", "soybean_p")
 
 # Get all combinations of years and states
 newgrid <- expand.grid(county.fips$fips, 1900:2016)#
@@ -176,27 +142,19 @@ mergdat <- left_join(mergdat, statedat, by = c("name"))
 mergdat <- select(mergdat, county, state)
 names(newgrid) <- c("county", "year")
 newgrid <- left_join(newgrid, mergdat, by = "county")
-
 newgrid <- left_join(newgrid, zip_codes, by = "county")
-
 newgrid <- newgrid[!duplicated(newgrid[,1:3]),]
-
 newgrid$county <- as.character(newgrid$county)
 names(newgrid) <- c("fips", "year", "state", "lat", "long")
 newgrid$fips <- as.integer(newgrid$fips)
 
+# Merge crop data
 cropdat <- left_join(newgrid, corn, by = c("year", "state", "fips"))
 cropdat <- left_join(cropdat, cotton, by = c("state", "fips", "year"))
 cropdat <- left_join(cropdat, hay, by = c("state", "fips", "year"))
 cropdat <- left_join(cropdat, wheat, by = c("state", "fips", "year"))
 cropdat <- left_join(cropdat, soybean, by = c("state", "fips", "year"))
 
-#names(cropdat)[1] <- "fips"
-#cropdat$fips <- as.integer(cropdat$fips)
-
-
-# rm(list=setdiff(ls(), c("crop_prices", "cropdat", "extract_d_state", "extract_d_county", "dd_dat")))
-# gc()
 
 # Aggregate county-level degree days -----------------------------------------------
 
@@ -268,53 +226,6 @@ cropdat <- left_join(cropdat, soybean, by = c("state", "fips", "year"))
 #              prec = sum(prec),
 #              tavg = mean(tAvg))
 # 
-# dd_dat <- dd_dat %>% 
-#     group_by(year, fips) %>% 
-#     summarise(dday0C = sum(dday0C),
-#             dday1C = sum(dday1C),
-#             dday2C = sum(dday2C),
-#             dday3C = sum(dday3C),
-#             dday4C = sum(dday4C),
-#             dday5C = sum(dday5C),
-#             dday6C = sum(dday6C),
-#             dday7C = sum(dday7C),
-#             dday8C = sum(dday8C),
-#             dday9C = sum(dday9C),
-#             dday10C = sum(dday10C),
-#             dday11C = sum(dday11C),
-#             dday12C = sum(dday12C),
-#             dday13C = sum(dday13C),
-#             dday14C = sum(dday14C),
-#             dday15C = sum(dday15C),
-#             dday16C = sum(dday16C),
-#             dday17C= sum(dday17C),
-#             dday18C = sum(dday18C),
-#             dday19C = sum(dday19C),
-#             dday20C = sum(dday20C),
-#             dday21C = sum(dday21C),
-#             dday22C = sum(dday22C),
-#             dday23C = sum(dday23C),
-#             dday24C = sum(dday24C),
-#             dday25C = sum(dday25C),
-#             dday26C = sum(dday26C),
-#             dday27C = sum(dday27C),
-#             dday28C = sum(dday28C),
-#             dday29C = sum(dday29C),
-#             dday30C = sum(dday30C),
-#             dday31C = sum(dday31C),
-#             dday32C = sum(dday32C),
-#             dday33C = sum(dday33C),
-#             dday34C = sum(dday34C),
-#             dday35C = sum(dday35C),
-#             ndday0C = sum(ndday0C),
-#             prec = sum(ppt),
-#             tmin = mean(tmin),
-#             tmax = mean(tmax),
-#             tavg = mean(tavg))
-
-#rm(list=setdiff(ls(), c("crop_prices", "cropdat", "extract_d_state", "extract_d_county", "dd_dat")))
-#gc()
-
 
 
 # Merge ag prices, ag crop data, and degree day data ----------------------
@@ -342,8 +253,6 @@ fulldat$hay_nrev <- (fulldat$hay_p*fulldat$hay_nprice)/fulldat$hay_a
 fulldat$wheat_nrev <- (fulldat$wheat_p*fulldat$wheat_nprice)/fulldat$wheat_a
 fulldat$soybean_nrev <- (fulldat$soybean_p*fulldat$soybean_nprice)/fulldat$soybean_a
 
-
-
 # Organize before degree day merge
 fulldat <- select(fulldat, year, state, fips, lat, long, gdp_price_def,
                   corn_grain_a, corn_grain_p, corn_yield, corn_nprice, corn_rprice, corn_rrev, corn_nrev,
@@ -366,7 +275,6 @@ fulldat <- left_join(fulldat, popland, by = c("year", "fips"))
 fulldat <- do.call(data.frame,lapply(fulldat, function(x) replace(x, is.infinite(x),NA)))
 
 
-# 
 # # Label names
 # attr(fulldat$year, "label") <- "year"
 # attr(fulldat$state, "label") <- "state"
