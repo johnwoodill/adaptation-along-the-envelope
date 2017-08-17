@@ -1,12 +1,4 @@
-library(ggplot2)
-library(dplyr)
-library(stargazer)
-library(rms)
-library(lfe)
-library(cowplot)
-library(plm)
-library(arm)
-library(lfe)
+library(tidyverse)
 
 cropdat <- readRDS("data/full_ag_data.rds")
 cropdat <- filter(cropdat, abs(long) <= 100)
@@ -32,7 +24,7 @@ cropdat$hay_w <- cropdat$hay_a
 cropdat$wheat_w <- cropdat$wheat_a
 cropdat$soybean_w <- cropdat$soybean_a
 
-# NA = 0
+# NA = 0 for tobit
 cropdat$corn_grain_a <- ifelse(is.na(cropdat$corn_grain_a), 0, cropdat$corn_grain_a)
 cropdat$cotton_a <- ifelse(is.na(cropdat$cotton_a), 0, cropdat$cotton_a)
 cropdat$cotton_a <- ifelse(is.na(cropdat$hay_a), 0, cropdat$hay_a)

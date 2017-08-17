@@ -2,7 +2,6 @@ library(tidyverse)
 
 # Cross-section: Log(Corn Rev) --------------------------------------------
 
-
 setwd("/run/media/john/1TB/SpiderOak/Projects/adaptation-along-the-envelope/")
 
 # Crop data
@@ -14,8 +13,7 @@ cropdat <- filter(cropdat, year >= 1930 & year <= 2010)
 #soil <- readRDS("data/soilData.rds")
 #soil$fips <- as.numeric(soil$fips)
 
-# Total acres
-cropdat$total_a <- rowSums(cropdat[,c("corn_grain_a", "cotton_a", "hay_a", "wheat_a", "soybean_a")], na.rm = TRUE)
+
 
 # East of 100th meridian
 cropdat <- filter(cropdat, abs(long) <= 100)
@@ -34,12 +32,15 @@ cropdat$hay_w <- cropdat$hay_a
 cropdat$wheat_w <- cropdat$wheat_a
 cropdat$soybean_w <- cropdat$soybean_a
 
-# NA = 0
+# NA = 0 for tobit
 cropdat$corn_grain_a <- ifelse(is.na(cropdat$corn_grain_a), 0, cropdat$corn_grain_a)
 cropdat$cotton_a <- ifelse(is.na(cropdat$cotton_a), 0, cropdat$cotton_a)
 cropdat$cotton_a <- ifelse(is.na(cropdat$hay_a), 0, cropdat$hay_a)
 cropdat$wheat_a <- ifelse(is.na(cropdat$wheat_a), 0, cropdat$wheat_a)
 cropdat$soybean_a <- ifelse(is.na(cropdat$soybean_a), 0, cropdat$soybean_a)
+
+# Total acres
+cropdat$total_a <- rowSums(cropdat[,c("corn_grain_a", "cotton_a", "hay_a", "wheat_a", "soybean_a")], na.rm = TRUE)
 
 # Get proportion of crop share
 cropdat$p_corn_share <- cropdat$corn_grain_a/cropdat$total_a
