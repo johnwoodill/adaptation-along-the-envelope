@@ -93,7 +93,9 @@ cropdat <- cropdat %>%
               hay_w = mean(hay_w, na.rm = TRUE),
               wheat_w = mean(wheat_w, na.rm = TRUE),
               soybean_w = mean(soybean_w, na.rm = TRUE),
-              total_w = mean(total_a, na.rm = TRUE)) %>% 
+              total_w = mean(total_a, na.rm = TRUE),
+              lat = mean(lat, na.rm = TRUE),
+              long = mean(long, na.rm = TRUE)) %>% 
   ungroup()
 
 
