@@ -16,6 +16,11 @@ tobit.ey <- function(mu, sigma){
 }
 
 ###################
+# # Baseline Degree Day Data
+# cs.dat <- readRDS("data/baseline_cross_section_regression_data.rds")
+# p.dat <- readRDS("data/baseline_panel_regression_data.rds")
+# diff.dat <- readRDS("data/baseline_diff_regression_data.rds")
+
 # New Degree Day Data
 cs.1C <- readRDS("data/degree_day_changes/cross_section_regression_data_1C")
 cs.2C <- readRDS("data/degree_day_changes/cross_section_regression_data_2C")
@@ -60,30 +65,34 @@ diff.p_soybean_share <- readRDS("models/diff.dd.p_soybean_share")
 
 ########################
 # Cross section data
+cs.p_corn_share_0C <- filter(cs.dat, !is.na(ln_corn_rrev))
 cs.p_corn_share_1C <- filter(cs.1C, !is.na(ln_corn_rrev))
 cs.p_corn_share_2C <- filter(cs.2C, !is.na(ln_corn_rrev))
 cs.p_corn_share_3C <- filter(cs.3C, !is.na(ln_corn_rrev))
 cs.p_corn_share_4C <- filter(cs.4C, !is.na(ln_corn_rrev))
 cs.p_corn_share_5C <- filter(cs.5C, !is.na(ln_corn_rrev))
 
+cs.p_cotton_share_0C <- filter(cs.dat, !is.na(ln_cotton_rrev))
 cs.p_cotton_share_1C <- filter(cs.1C, !is.na(ln_cotton_rrev))
 cs.p_cotton_share_2C <- filter(cs.2C, !is.na(ln_cotton_rrev))
 cs.p_cotton_share_3C <- filter(cs.3C, !is.na(ln_cotton_rrev))
 cs.p_cotton_share_4C <- filter(cs.4C, !is.na(ln_cotton_rrev))
 cs.p_cotton_share_5C <- filter(cs.5C, !is.na(ln_cotton_rrev))
 
-cs.p_hay_share_1C <- filter(cs.1C, !is.na(ln_hay_rrev))
+cs.p_hay_share_0C <- filter(cs.dat, !is.na(ln_hay_rrev))
 cs.p_hay_share_2C <- filter(cs.2C, !is.na(ln_hay_rrev))
 cs.p_hay_share_3C <- filter(cs.3C, !is.na(ln_hay_rrev))
 cs.p_hay_share_4C <- filter(cs.4C, !is.na(ln_hay_rrev))
 cs.p_hay_share_5C <- filter(cs.5C, !is.na(ln_hay_rrev))
 
+cs.p_wheat_share_0C <- filter(cs.dat, !is.na(ln_wheat_rrev))
 cs.p_wheat_share_1C <- filter(cs.1C, !is.na(ln_wheat_rrev))
 cs.p_wheat_share_2C <- filter(cs.2C, !is.na(ln_wheat_rrev))
 cs.p_wheat_share_3C <- filter(cs.3C, !is.na(ln_wheat_rrev))
 cs.p_wheat_share_4C <- filter(cs.4C, !is.na(ln_wheat_rrev))
 cs.p_wheat_share_5C <- filter(cs.5C, !is.na(ln_wheat_rrev))
 
+cs.p_soybean_share_0C <- filter(cs.dat, !is.na(ln_soybean_rrev))
 cs.p_soybean_share_1C <- filter(cs.1C, !is.na(ln_soybean_rrev))
 cs.p_soybean_share_2C <- filter(cs.2C, !is.na(ln_soybean_rrev))
 cs.p_soybean_share_3C <- filter(cs.3C, !is.na(ln_soybean_rrev))
@@ -91,30 +100,34 @@ cs.p_soybean_share_4C <- filter(cs.4C, !is.na(ln_soybean_rrev))
 cs.p_soybean_share_5C <- filter(cs.5C, !is.na(ln_soybean_rrev))
 
 # Panel data
+p.p_corn_share_0C <- filter(p.dat, !is.na(ln_corn_rrev))
 p.p_corn_share_1C <- filter(p.1C, !is.na(ln_corn_rrev))
 p.p_corn_share_2C <- filter(p.2C, !is.na(ln_corn_rrev))
 p.p_corn_share_3C <- filter(p.3C, !is.na(ln_corn_rrev))
 p.p_corn_share_4C <- filter(p.4C, !is.na(ln_corn_rrev))
 p.p_corn_share_5C <- filter(p.5C, !is.na(ln_corn_rrev))
 
+p.p_cotton_share_0C <- filter(p.dat, !is.na(ln_cotton_rrev))
 p.p_cotton_share_1C <- filter(p.1C, !is.na(ln_cotton_rrev))
 p.p_cotton_share_2C <- filter(p.2C, !is.na(ln_cotton_rrev))
 p.p_cotton_share_3C <- filter(p.3C, !is.na(ln_cotton_rrev))
 p.p_cotton_share_4C <- filter(p.4C, !is.na(ln_cotton_rrev))
 p.p_cotton_share_5C <- filter(p.5C, !is.na(ln_cotton_rrev))
 
-p.p_hay_share_1C <- filter(p.1C, !is.na(ln_hay_rrev))
+p.p_hay_share_0C <- filter(p.dat, !is.na(ln_hay_rrev))
 p.p_hay_share_2C <- filter(p.2C, !is.na(ln_hay_rrev))
 p.p_hay_share_3C <- filter(p.3C, !is.na(ln_hay_rrev))
 p.p_hay_share_4C <- filter(p.4C, !is.na(ln_hay_rrev))
 p.p_hay_share_5C <- filter(p.5C, !is.na(ln_hay_rrev))
 
+p.p_wheat_share_0C <- filter(p.dat, !is.na(ln_wheat_rrev))
 p.p_wheat_share_1C <- filter(p.1C, !is.na(ln_wheat_rrev))
 p.p_wheat_share_2C <- filter(p.2C, !is.na(ln_wheat_rrev))
 p.p_wheat_share_3C <- filter(p.3C, !is.na(ln_wheat_rrev))
 p.p_wheat_share_4C <- filter(p.4C, !is.na(ln_wheat_rrev))
 p.p_wheat_share_5C <- filter(p.5C, !is.na(ln_wheat_rrev))
 
+p.p_soybean_share_0C <- filter(p.dat, !is.na(ln_soybean_rrev))
 p.p_soybean_share_1C <- filter(p.1C, !is.na(ln_soybean_rrev))
 p.p_soybean_share_2C <- filter(p.2C, !is.na(ln_soybean_rrev))
 p.p_soybean_share_3C <- filter(p.3C, !is.na(ln_soybean_rrev))
@@ -122,43 +135,45 @@ p.p_soybean_share_4C <- filter(p.4C, !is.na(ln_soybean_rrev))
 p.p_soybean_share_5C <- filter(p.5C, !is.na(ln_soybean_rrev))
 
 # Diff data
+diff.p_corn_share_0C <- filter(diff.dat, !is.na(ln_corn_rrev))
 diff.p_corn_share_1C <- filter(diff.1C, !is.na(ln_corn_rrev))
 diff.p_corn_share_2C <- filter(diff.2C, !is.na(ln_corn_rrev))
 diff.p_corn_share_3C <- filter(diff.3C, !is.na(ln_corn_rrev))
 diff.p_corn_share_4C <- filter(diff.4C, !is.na(ln_corn_rrev))
 diff.p_corn_share_5C <- filter(diff.5C, !is.na(ln_corn_rrev))
 
+diff.p_cotton_share_0C <- filter(diff.dat, !is.na(ln_cotton_rrev))
 diff.p_cotton_share_1C <- filter(diff.1C, !is.na(ln_cotton_rrev))
 diff.p_cotton_share_2C <- filter(diff.2C, !is.na(ln_cotton_rrev))
 diff.p_cotton_share_3C <- filter(diff.3C, !is.na(ln_cotton_rrev))
 diff.p_cotton_share_4C <- filter(diff.4C, !is.na(ln_cotton_rrev))
 diff.p_cotton_share_5C <- filter(diff.5C, !is.na(ln_cotton_rrev))
 
-diff.p_hay_share_1C <- filter(diff.1C, !is.na(ln_hay_rrev))
+diff.p_hay_share_0C <- filter(diff.dat, !is.na(ln_hay_rrev))
 diff.p_hay_share_2C <- filter(diff.2C, !is.na(ln_hay_rrev))
 diff.p_hay_share_3C <- filter(diff.3C, !is.na(ln_hay_rrev))
 diff.p_hay_share_4C <- filter(diff.4C, !is.na(ln_hay_rrev))
 diff.p_hay_share_5C <- filter(diff.5C, !is.na(ln_hay_rrev))
 
+diff.p_wheat_share_0C <- filter(diff.dat, !is.na(ln_wheat_rrev))
 diff.p_wheat_share_1C <- filter(diff.1C, !is.na(ln_wheat_rrev))
 diff.p_wheat_share_2C <- filter(diff.2C, !is.na(ln_wheat_rrev))
 diff.p_wheat_share_3C <- filter(diff.3C, !is.na(ln_wheat_rrev))
 diff.p_wheat_share_4C <- filter(diff.4C, !is.na(ln_wheat_rrev))
 diff.p_wheat_share_5C <- filter(diff.5C, !is.na(ln_wheat_rrev))
 
+diff.p_soybean_share_0C <- filter(diff.dat, !is.na(ln_soybean_rrev))
 diff.p_soybean_share_1C <- filter(diff.1C, !is.na(ln_soybean_rrev))
 diff.p_soybean_share_2C <- filter(diff.2C, !is.na(ln_soybean_rrev))
 diff.p_soybean_share_3C <- filter(diff.3C, !is.na(ln_soybean_rrev))
 diff.p_soybean_share_4C <- filter(diff.4C, !is.na(ln_soybean_rrev))
 diff.p_soybean_share_5C <- filter(diff.5C, !is.na(ln_soybean_rrev))
 
-
 ###########################
 # Predictions
 
 # Corn
 
-{
 cs1C.pred_p_corn_share <- predict(cs.p_corn_share, newdata = cs.p_corn_share_1C)
 cs2C.pred_p_corn_share <- predict(cs.p_corn_share, newdata = cs.p_corn_share_2C)
 cs3C.pred_p_corn_share <- predict(cs.p_corn_share, newdata = cs.p_corn_share_3C)
@@ -191,6 +206,8 @@ diff5C.pred_p_corn_share <- predict(diff.p_corn_share, newdata = diff.p_corn_sha
 # ggplot(cs.rev, aes(rev, fill = change)) + geom_density(bins = 100) + scale_fill_brewer(palette = "OrRd")
 # ggplot(filter(p.rev, rev < 50), aes(rev, fill = change)) + geom_histogram(bins = 100) + scale_fill_brewer(palette = "OrRd")
 # ggplot(diff.rev, aes(rev, fill = change)) + geom_density() + scale_fill_brewer(palette = "OrRd")
+
+#cs.corn.rev0 <- sum((predict(cs.p_corn_share, newdata = cs.p_corn_share_0C)))
 
 cs.corn.rev0 <- sum( tobit.ey(predict(cs.p_corn_share), cs.p_corn_share$scale), na.rm = TRUE)
 cs.corn.rev1 <- (sum( tobit.ey(cs1C.pred_p_corn_share, cs.p_corn_share$scale), na.rm = TRUE)/cs.corn.rev0 - 1)*100
@@ -379,20 +396,6 @@ diff4C.pred_p_wheat_share <- predict(diff.p_wheat_share, newdata = diff.p_wheat_
 diff5C.pred_p_wheat_share <- predict(diff.p_wheat_share, newdata = diff.p_wheat_share_5C)
 
 
-# cs.rev <- data.frame(rev = c(predict(cs.p_wheat_share), cs.rev1C, cs.rev2C, cs.rev3C, cs.rev4C, cs.rev5C),
-#                      change = rep(c("base", "1C", "2C", "3C", "4C", "5C"), each = length(cs.rev1C)))
-# 
-# p.rev <- data.frame(rev = c(predict(p.p_wheat_share), p.rev1C, p.rev2C, p.rev3C, p.rev4C, p.rev5C),
-#                      change = rep(c("base", "1C", "2C", "3C", "4C", "5C"), each = length(p.rev1C)))
-# 
-# diff.rev <- data.frame(rev = c(predict(diff.p_wheat_share), diff.rev1C, diff.rev2C, diff.rev3C, diff.rev4C, diff.rev5C),
-#                      change = rep(c("base", "1C", "2C", "3C", "4C", "5C"), each = length(diff.rev1C)))
-# 
-# 
-# ggplot(cs.rev, aes(rev, fill = change)) + geom_density(bins = 100) + scale_fill_brewer(palette = "OrRd")
-# ggplot(filter(p.rev, rev < 50), aes(rev, fill = change)) + geom_histogram(bins = 100) + scale_fill_brewer(palette = "OrRd")
-# ggplot(diff.rev, aes(rev, fill = change)) + geom_density() + scale_fill_brewer(palette = "OrRd")
-
 cs.wheat.rev0 <- sum( tobit.ey(predict(cs.p_wheat_share), cs.p_wheat_share$scale))
 cs.wheat.rev1 <- (sum( tobit.ey(cs1C.pred_p_wheat_share, cs.p_wheat_share$scale))/cs.wheat.rev0 - 1)*100
 cs.wheat.rev2 <- (sum( tobit.ey(cs2C.pred_p_wheat_share, cs.p_wheat_share$scale))/cs.wheat.rev0 - 1)*100
@@ -465,8 +468,8 @@ cs.soybean.rev0 <- sum( tobit.ey(predict(cs.p_soybean_share), cs.p_soybean_share
 cs.soybean.rev1 <- (sum( tobit.ey(cs1C.pred_p_soybean_share, cs.p_soybean_share$scale))/cs.soybean.rev0 - 1)*100
 cs.soybean.rev2 <- (sum( tobit.ey(cs2C.pred_p_soybean_share, cs.p_soybean_share$scale))/cs.soybean.rev0 - 1)*100
 cs.soybean.rev3 <- (sum( tobit.ey(cs3C.pred_p_soybean_share, cs.p_soybean_share$scale))/cs.soybean.rev0 - 1)*100
-cs.soybean.rev4 <- (sum( tobit.ey(cs4C.pred_p_soybean_share, cs.p_soybean_share$scale))/cs.soybean.rev0 - 1)*100
-cs.soybean.rev5 <- (sum( tobit.ey(cs5C.pred_p_soybean_share, cs.p_soybean_share$scale))/cs.soybean.rev0 - 1)*100
+cs.soybean.rev4 <- (sum( tobit.ey(cs4C.pred_p_soybean_share, cs.p_soybean_share$scale), na.rm = TRUE)/cs.soybean.rev0 - 1)*100
+cs.soybean.rev5 <- (sum( tobit.ey(cs5C.pred_p_soybean_share, cs.p_soybean_share$scale), na.rm = TRUE)/cs.soybean.rev0 - 1)*100
 
 p.soybean.rev0 <- sum( tobit.ey(predict(p.p_soybean_share), p.p_soybean_share$scale))
 p.soybean.rev1 <- (sum( tobit.ey(p1C.pred_p_soybean_share, p.p_soybean_share$scale))/p.soybean.rev0 - 1)*100
@@ -499,6 +502,7 @@ sharep1 <- ggplot(plotdat, aes(temp, rev, color = reg)) + geom_line() + ylab("Im
 
 # Just Corn and Soybean
 sharep2 <- ggplot(filter(plotdat, crop %in% c("corn", "soybean")), aes(temp, rev, color = reg)) + geom_line() + ylab("Impact (% Change) ") + xlab("Change in Temperature (C)") + facet_wrap(~crop)
+sharep2
 
 plot_grid(sharep1, sharep2, ncol = 1)
 
