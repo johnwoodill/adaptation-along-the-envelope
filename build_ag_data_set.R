@@ -207,8 +207,10 @@ cropdat <- left_join(cropdat, soybean, by = c("state", "fips", "year"))
             dday34C = sum(dday34C),
             dday35C = sum(dday35C),
             ndday0C = sum(ndday0C),
-             prec = sum(ppt),
-             tavg = mean(tavg))
+            prec = sum(ppt),
+            tavg = mean(tavg),
+            tmax = mean(tmax),
+            tmin = mean(tmin))
 
 
 

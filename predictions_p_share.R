@@ -17,9 +17,9 @@ tobit.ey <- function(mu, sigma){
 
 ###################
 # # Baseline Degree Day Data
-# cs.dat <- readRDS("data/baseline_cross_section_regression_data.rds")
-# p.dat <- readRDS("data/baseline_panel_regression_data.rds")
-# diff.dat <- readRDS("data/baseline_diff_regression_data.rds")
+cs.dat <- readRDS("data/baseline_cross_section_regression_data.rds")
+p.dat <- readRDS("data/baseline_panel_regression_data.rds")
+diff.dat <- readRDS("data/baseline_diff_regression_data.rds")
 
 # New Degree Day Data
 cs.1C <- readRDS("data/degree_day_changes/cross_section_regression_data_1C")
@@ -80,6 +80,7 @@ cs.p_cotton_share_4C <- filter(cs.4C, !is.na(ln_cotton_rrev))
 cs.p_cotton_share_5C <- filter(cs.5C, !is.na(ln_cotton_rrev))
 
 cs.p_hay_share_0C <- filter(cs.dat, !is.na(ln_hay_rrev))
+cs.p_hay_share_1C <- filter(cs.dat, !is.na(ln_hay_rrev))
 cs.p_hay_share_2C <- filter(cs.2C, !is.na(ln_hay_rrev))
 cs.p_hay_share_3C <- filter(cs.3C, !is.na(ln_hay_rrev))
 cs.p_hay_share_4C <- filter(cs.4C, !is.na(ln_hay_rrev))
@@ -115,6 +116,7 @@ p.p_cotton_share_4C <- filter(p.4C, !is.na(ln_cotton_rrev))
 p.p_cotton_share_5C <- filter(p.5C, !is.na(ln_cotton_rrev))
 
 p.p_hay_share_0C <- filter(p.dat, !is.na(ln_hay_rrev))
+p.p_hay_share_1C <- filter(p.1C, !is.na(ln_hay_rrev))
 p.p_hay_share_2C <- filter(p.2C, !is.na(ln_hay_rrev))
 p.p_hay_share_3C <- filter(p.3C, !is.na(ln_hay_rrev))
 p.p_hay_share_4C <- filter(p.4C, !is.na(ln_hay_rrev))
@@ -150,6 +152,7 @@ diff.p_cotton_share_4C <- filter(diff.4C, !is.na(ln_cotton_rrev))
 diff.p_cotton_share_5C <- filter(diff.5C, !is.na(ln_cotton_rrev))
 
 diff.p_hay_share_0C <- filter(diff.dat, !is.na(ln_hay_rrev))
+diff.p_hay_share_1C <- filter(diff.1C, !is.na(ln_hay_rrev))
 diff.p_hay_share_2C <- filter(diff.2C, !is.na(ln_hay_rrev))
 diff.p_hay_share_3C <- filter(diff.3C, !is.na(ln_hay_rrev))
 diff.p_hay_share_4C <- filter(diff.4C, !is.na(ln_hay_rrev))
@@ -238,11 +241,9 @@ corn.plotdat <- data.frame(temp = rep(c(1,2,3,4,5), 3),
                            crop = "corn")
 
 ggplot(corn.plotdat, aes(temp, rev, color = reg)) + geom_line()
-}
+
 
 # Cotton
-
-{
 cs1C.pred_p_cotton_share <- predict(cs.p_cotton_share, newdata = cs.p_cotton_share_1C)
 cs2C.pred_p_cotton_share <- predict(cs.p_cotton_share, newdata = cs.p_cotton_share_2C)
 cs3C.pred_p_cotton_share <- predict(cs.p_cotton_share, newdata = cs.p_cotton_share_3C)
@@ -305,11 +306,11 @@ cotton.plotdat <- data.frame(temp = rep(c(1,2,3,4,5), 3),
                            crop = "cotton")
 
 ggplot(cotton.plotdat, aes(temp, rev, color = reg)) + geom_line()
-}
+
 
 # Hay
 
-{
+
 cs1C.pred_p_hay_share <- predict(cs.p_hay_share, newdata = cs.p_hay_share_1C)
 cs2C.pred_p_hay_share <- predict(cs.p_hay_share, newdata = cs.p_hay_share_2C)
 cs3C.pred_p_hay_share <- predict(cs.p_hay_share, newdata = cs.p_hay_share_3C)
@@ -372,11 +373,11 @@ hay.plotdat <- data.frame(temp = rep(c(1,2,3,4,5), 3),
                            crop = "hay")
 
 ggplot(hay.plotdat, aes(temp, rev, color = reg)) + geom_line()
-}
+
 
 # Wheat
 
-{
+
 cs1C.pred_p_wheat_share <- predict(cs.p_wheat_share, newdata = cs.p_wheat_share_1C)
 cs2C.pred_p_wheat_share <- predict(cs.p_wheat_share, newdata = cs.p_wheat_share_2C)
 cs3C.pred_p_wheat_share <- predict(cs.p_wheat_share, newdata = cs.p_wheat_share_3C)
@@ -425,12 +426,11 @@ wheat.plotdat <- data.frame(temp = rep(c(1,2,3,4,5), 3),
                            crop = "wheat")
 
 ggplot(wheat.plotdat, aes(temp, rev, color = reg)) + geom_line()
-}
+
 
 
 # Soybean
 
-{
 cs1C.pred_p_soybean_share <- predict(cs.p_soybean_share, newdata = cs.p_soybean_share_1C)
 cs2C.pred_p_soybean_share <- predict(cs.p_soybean_share, newdata = cs.p_soybean_share_2C)
 cs3C.pred_p_soybean_share <- predict(cs.p_soybean_share, newdata = cs.p_soybean_share_3C)
@@ -493,12 +493,13 @@ soybean.plotdat <- data.frame(temp = rep(c(1,2,3,4,5), 3),
                            crop = "soybean")
 
 ggplot(soybean.plotdat, aes(temp, rev, color = reg)) + geom_line()
-}
+
 
 # Merge data
 plotdat <- rbind(corn.plotdat, cotton.plotdat, hay.plotdat, wheat.plotdat, soybean.plotdat)
 
 sharep1 <- ggplot(plotdat, aes(temp, rev, color = reg)) + geom_line() + ylab("Impact (% Change) ") + xlab("Change in Temperature (C)") + facet_wrap(~crop)
+sharep1
 
 # Just Corn and Soybean
 sharep2 <- ggplot(filter(plotdat, crop %in% c("corn", "soybean")), aes(temp, rev, color = reg)) + geom_line() + ylab("Impact (% Change) ") + xlab("Change in Temperature (C)") + facet_wrap(~crop)

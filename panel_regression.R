@@ -55,9 +55,15 @@ saveRDS(p.soybean.mod2, "models/p.dd.ln_soybean_rrev")
 
 cropdat <- readRDS("data/baseline_panel_regression_data.rds")
 
+corndat <- filter(cropdat, !is.na(ln_corn_rrev))
+cottondat <- filter(cropdat, !is.na(ln_cotton_rrev))
+haydat <- filter(cropdat, !is.na(ln_hay_rrev))
+wheatdat <- filter(cropdat, !is.na(ln_wheat_rrev))
+soybeandat <- filter(cropdat, !is.na(ln_soybean_rrev))
+
 # Corn
 p.corn.mod2 <- tobit(p_corn_share ~  dday0_10 + dday10_30  + dday30C + prec + prec_sq + lat + long + lat:long + cluster(state),
-                  data = corndat, weights = corndat$total_w)
+                  data = corndat, weights = corndat$total_w, model = TRUE, left = 0)
 summary(p.corn.mod2)
 
 

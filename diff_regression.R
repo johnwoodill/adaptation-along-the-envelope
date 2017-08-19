@@ -51,6 +51,12 @@ saveRDS(diff.soybean.mod2, "models/diff.dd.ln_soybean_rrev")
 
 decadedat <- readRDS("data/baseline_diff_regression_data.rds")
 
+corndat <- filter(decadedat, !is.na(ln_corn_rrev))
+cottondat <- filter(decadedat, !is.na(ln_cotton_rrev))
+haydat <- filter(decadedat, !is.na(ln_hay_rrev))
+wheatdat <- filter(decadedat, !is.na(ln_wheat_rrev))
+soybeandat <- filter(decadedat, !is.na(ln_soybean_rrev))
+
 # Corn
 diff.corn.mod2 <- tobit(p_corn_share ~  dday0_10 + dday10_30  + dday30C + prec + prec_sq + lat + long + lat:long +  cluster(state),
                   data = corndat, weights = corndat$total_w)
