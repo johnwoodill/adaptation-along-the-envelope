@@ -37,6 +37,8 @@ p.wheat.mod2 <- felm(ln_wheat_rrev ~ dday0_10 +  dday10_30 + dday30C + prec + pr
                   data = wheatdat, weights = wheatdat$wheat_w)
 summary(p.wheat.mod2)
 
+
+
 # Soybean
 p.soybean.mod2 <- felm(ln_soybean_rrev ~ dday0_10 +  dday10_30  + dday30C + prec + prec_sq | fips + year | 0 | state,
                   data = soybeandat, weights = soybeandat$soybean_w)

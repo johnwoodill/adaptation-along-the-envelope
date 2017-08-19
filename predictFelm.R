@@ -1,3 +1,6 @@
+# felm.fit : felm object from lfe package
+# newdata  : new prediction data
+
 # Custom predict funciton for Felm object models
 predictFelm <- function(felm.fit, newdata){
   felm.formula <- as.character(felm.fit$call[[2]])
@@ -55,8 +58,8 @@ predictFelm <- function(felm.fit, newdata){
         mergedat <- filter(fe, fe == j) %>%
                  dplyr::select(1, 5) %>%
                  setNames(c(paste0(j, "_effect"), paste0(fename)))
-        mergedat[, 2] <- factor(mergedat[, 2])
-        eff.dat[, `j`] <- factor(eff.dat[, `j`])
+        mergedat[, 2] <- as.character(mergedat[, 2])
+        #eff.dat[, `j`] <- factor(eff.dat[, `j`])
         eff.dat <- left_join(eff.dat, mergedat, by = `j`)
       }
       

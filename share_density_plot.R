@@ -114,7 +114,7 @@ crop.density <- function(x, start, end, var){ # 1 - crop rev per acre, 2 - crop 
       geom_polygon(aes(x = dens.hay1$x, y = dens.hay1$y, fill = "hay")) + 
       geom_polygon(aes(x = dens.wheat1$x, y = dens.wheat1$y, fill = "wheat")) +
       geom_polygon(aes(x = dens.cotton1$x, y = dens.cotton1$y, fill = "cotton")) + 
-      annotate("text", y = 0.09, x = 20, label = "1960's", size = 8) + xlab(NULL) + ylab(NULL)+ ylim(0, ymax) +
+      xlab(NULL) + ylab(NULL)+ ylim(0, ymax) +
       scale_fill_discrete(breaks = c("corn", "soybean", "hay", "wheat", "cotton")) + theme(legend.position="top") + 
       theme(legend.title=element_blank()) + ggtitle(gt)
     plot1
@@ -126,7 +126,6 @@ crop.density <- function(x, start, end, var){ # 1 - crop rev per acre, 2 - crop 
       geom_polygon(aes(x = dens.wheat2$x, y = dens.wheat2$y, fill = "wheat")) +
       geom_polygon(aes(x = dens.cotton2$x, y = dens.cotton2$y, fill = "cotton")) + 
       xlab("Average Temp (C)") + ylab(NULL) + ylim(0, ymax) +
-        annotate("text", y = 0.09, x = 20, label = "2000's", size = 8) +
       scale_fill_discrete(breaks = c("corn", "soybean", "hay", "wheat", "cotton")) + theme(legend.position="none") + 
       theme(legend.title=element_blank())
     plot2
@@ -138,7 +137,7 @@ crop.density <- function(x, start, end, var){ # 1 - crop rev per acre, 2 - crop 
 }
 
 # Revenue per acre share
-crop.density(cropdat, 1960, 2000, 1)
+crop.density(cropdat, 1940, 2000, 1)
 
 # Revenue share
 crop.density(cropdat, 1960, 2000, 2)
