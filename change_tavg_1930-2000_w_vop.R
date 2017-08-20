@@ -1,5 +1,6 @@
 library(ggplot2)
 library(dplyr)
+library(ggthemes)
 
 # Load data set
 setwd("/run/media/john/1TB/SpiderOak/Projects/adaptation-along-the-envelope/")

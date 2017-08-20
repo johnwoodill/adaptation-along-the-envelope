@@ -143,7 +143,7 @@ crop.density(cropdat, 1940, 2000, 1)
 crop.density(cropdat, 1960, 2000, 2)
 
 # Acreage share
-crop.density(cropdat, 1960, 2000, 3)
+crop.density(cropdat, 1940, 2000, 3)
 
 
 

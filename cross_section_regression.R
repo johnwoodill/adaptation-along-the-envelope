@@ -13,7 +13,7 @@ wheatdat <- filter(cropdat, !is.na(ln_wheat_rrev))
 soybeandat <- filter(cropdat, !is.na(ln_soybean_rrev))
 
 # Corn 
-cs.corn.mod2 <- felm(ln_corn_rrev ~ dday0_10 + dday10_30  + dday30C + prec + prec_sq + lat + long | 0 | 0 | state,
+cs.corn.mod2 <- felm(ln_corn_rrev ~ dday0_10 + dday10_30  + dday30C + prec + prec_sq + lat + long + lat:long| 0 | 0 | state,
                   data = corndat, weights = corndat$corn_w)
 summary(cs.corn.mod2)
 

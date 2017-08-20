@@ -94,7 +94,7 @@ decade_merge <- function(dat, begd, endd, int){
 }
 
 
-decadedat <- decade_merge(cropdat, 1930, 2000, 20)
+decadedat <- decade_merge(cropdat, 1930, 2000, 15)
 
 decadedat <- decadedat %>% 
   group_by(fips) %>% 
@@ -125,8 +125,6 @@ decadedat$dday30C <- decadedat$dday30C - mean(decadedat$dday30C, na.rm = TRUE)
 decadedat$prec <- decadedat$prec - mean(decadedat$prec, na.rm = TRUE)
 decadedat$tavg_sq <- decadedat$tavg^2
 decadedat$prec_sq <- decadedat$prec^2
-cropdat$`lat:long` <- cropdat$lat*cropdat$long
-cropdat$`(Intercept)` <- 1
 
 saveRDS(decadedat, "data/diff_regression_data.rds")
 
@@ -226,7 +224,7 @@ decade_merge <- function(dat, begd, endd, int){
 }
 
 
-decadedat <- decade_merge(cropdat, 1930, 2000, 20)
+decadedat <- decade_merge(cropdat, 1930, 2000, 15)
 
 decadedat <- decadedat %>% 
   group_by(fips) %>% 

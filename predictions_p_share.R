@@ -237,8 +237,8 @@ corn.plotdat <- data.frame(temp = rep(c(1,2,3,4,5), 3),
                            rev = c(cs.corn.rev1, cs.corn.rev2, cs.corn.rev3, cs.corn.rev4, cs.corn.rev5,
                                    p.corn.rev1, p.corn.rev2, p.corn.rev3, p.corn.rev4, p.corn.rev5,
                                    diff.corn.rev1, diff.corn.rev2, diff.corn.rev3, diff.corn.rev4, diff.corn.rev5),
-                           reg = rep(c("cross-section", "panel", "diff"), each = 5),
-                           crop = "corn")
+                           reg = rep(c("Cross-section", "Panel", "Difference"), each = 5),
+                           crop = "Corn")
 
 ggplot(corn.plotdat, aes(temp, rev, color = reg)) + geom_line()
 
@@ -302,14 +302,13 @@ cotton.plotdat <- data.frame(temp = rep(c(1,2,3,4,5), 3),
                            rev = c(cs.cotton.rev1, cs.cotton.rev2, cs.cotton.rev3, cs.cotton.rev4, cs.cotton.rev5,
                                    p.cotton.rev1, p.cotton.rev2, p.cotton.rev3, p.cotton.rev4, p.cotton.rev5,
                                    diff.cotton.rev1, diff.cotton.rev2, diff.cotton.rev3, diff.cotton.rev4, diff.cotton.rev5),
-                           reg = rep(c("cross-section", "panel", "diff"), each = 5),
-                           crop = "cotton")
+                           reg = rep(c("Cross-section", "Panel", "Difference"), each = 5),
+                           crop = "Cotton")
 
 ggplot(cotton.plotdat, aes(temp, rev, color = reg)) + geom_line()
 
 
 # Hay
-
 
 cs1C.pred_p_hay_share <- predict(cs.p_hay_share, newdata = cs.p_hay_share_1C)
 cs2C.pred_p_hay_share <- predict(cs.p_hay_share, newdata = cs.p_hay_share_2C)
@@ -369,8 +368,8 @@ hay.plotdat <- data.frame(temp = rep(c(1,2,3,4,5), 3),
                            rev = c(cs.hay.rev1, cs.hay.rev2, cs.hay.rev3, cs.hay.rev4, cs.hay.rev5,
                                    p.hay.rev1, p.hay.rev2, p.hay.rev3, p.hay.rev4, p.hay.rev5,
                                    diff.hay.rev1, diff.hay.rev2, diff.hay.rev3, diff.hay.rev4, diff.hay.rev5),
-                           reg = rep(c("cross-section", "panel", "diff"), each = 5),
-                           crop = "hay")
+                           reg = rep(c("Cross-section", "Panel", "Difference"), each = 5),
+                           crop = "Hay")
 
 ggplot(hay.plotdat, aes(temp, rev, color = reg)) + geom_line()
 
@@ -422,8 +421,8 @@ wheat.plotdat <- data.frame(temp = rep(c(1,2,3,4,5), 3),
                            rev = c(cs.wheat.rev1, cs.wheat.rev2, cs.wheat.rev3, cs.wheat.rev4, cs.wheat.rev5,
                                    p.wheat.rev1, p.wheat.rev2, p.wheat.rev3, p.wheat.rev4, p.wheat.rev5,
                                    diff.wheat.rev1, diff.wheat.rev2, diff.wheat.rev3, diff.wheat.rev4, diff.wheat.rev5),
-                           reg = rep(c("cross-section", "panel", "diff"), each = 5),
-                           crop = "wheat")
+                           reg = rep(c("Cross-section", "Panel", "Difference"), each = 5),
+                           crop = "Wheat")
 
 ggplot(wheat.plotdat, aes(temp, rev, color = reg)) + geom_line()
 
@@ -489,8 +488,8 @@ soybean.plotdat <- data.frame(temp = rep(c(1,2,3,4,5), 3),
                            rev = c(cs.soybean.rev1, cs.soybean.rev2, cs.soybean.rev3, cs.soybean.rev4, cs.soybean.rev5,
                                    p.soybean.rev1, p.soybean.rev2, p.soybean.rev3, p.soybean.rev4, p.soybean.rev5,
                                    diff.soybean.rev1, diff.soybean.rev2, diff.soybean.rev3, diff.soybean.rev4, diff.soybean.rev5),
-                           reg = rep(c("cross-section", "panel", "diff"), each = 5),
-                           crop = "soybean")
+                           reg = rep(c("Cross-section", "Panel", "Difference"), each = 5),
+                           crop = "Soybean")
 
 ggplot(soybean.plotdat, aes(temp, rev, color = reg)) + geom_line()
 
@@ -502,7 +501,14 @@ sharep1 <- ggplot(plotdat, aes(temp, rev, color = reg)) + geom_line() + ylab("Im
 sharep1
 
 # Just Corn and Soybean
-sharep2 <- ggplot(filter(plotdat, crop %in% c("corn", "soybean")), aes(temp, rev, color = reg)) + geom_line() + ylab("Impact (% Change) ") + xlab("Change in Temperature (C)") + facet_wrap(~crop)
+sharep1 <- ggplot(filter(plotdat, crop %in% c("Corn", "Soybean", "Hay")), aes(temp, rev, color = reg)) + 
+  geom_line() + ylab("Impact (% Change) ") + xlab("Change in Temperature (C)") + facet_wrap(~crop) +
+  theme_tufte() + geom_hline(yintercept = 0, linetype = "dashed", color = "grey") 
+sharep1
+
+sharep2 <- ggplot(filter(plotdat, crop %in% c("Wheat", "Cotton")), aes(temp, rev, color = reg)) + 
+  geom_line() + ylab("Impact (% Change) ") + xlab("Change in Temperature (C)") + facet_wrap(~crop) +
+  theme_tufte() + geom_hline(yintercept = 0, linetype = "dashed", color = "grey") 
 sharep2
 
 plot_grid(sharep1, sharep2, ncol = 1)

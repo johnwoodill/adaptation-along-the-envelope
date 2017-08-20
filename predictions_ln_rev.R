@@ -36,9 +36,9 @@ cs.ln_corn_rrev <- readRDS("models/cs.dd.ln_corn_rrev")
 p.ln_corn_rrev <- readRDS("models/p.dd.ln_corn_rrev")
 diff.ln_corn_rrev <- readRDS("models/diff.dd.ln_corn_rrev")
 
-cs.ln_wheat_rrev <- readRDS("models/cs.dd.ln_wheat_rrev")
-p.ln_wheat_rrev <- readRDS("models/p.dd.ln_wheat_rrev")
-diff.ln_wheat_rrev <- readRDS("models/diff.dd.ln_wheat_rrev")
+cs.ln_cotton_rrev <- readRDS("models/cs.dd.ln_cotton_rrev")
+p.ln_cotton_rrev <- readRDS("models/p.dd.ln_cotton_rrev")
+diff.ln_cotton_rrev <- readRDS("models/diff.dd.ln_cotton_rrev")
 
 cs.ln_hay_rrev <- readRDS("models/cs.dd.ln_hay_rrev")
 p.ln_hay_rrev <- readRDS("models/p.dd.ln_hay_rrev")
@@ -226,112 +226,69 @@ diff5C.pred_ln_corn_rrev <- predictFelm(felm.fit = diff.ln_corn_rrev, newdata = 
 diff5C.pred_ln_corn_rrev_se <- cc.pred.se(diff.ln_corn_rrev$X - diff.ln_corn_rrev_5C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
            diff.ln_corn_rrev$clustervcv, diff.ln_corn_rrev$weights^2)
 
-mean(residuals(cs.ln_corn_rrev))
-mean(residuals(cs0C.pred_ln_corn_rrev))
-
-
-cs.rev0C <- exp(cs0C.pred_ln_corn_rrev$fit + residuals(cs.ln_corn_rrev))
-cs.rev1C <- exp(cs1C.pred_ln_corn_rrev$fit + residuals(cs.ln_corn_rrev))
-cs.rev2C <- exp(cs2C.pred_ln_corn_rrev$fit + residuals(cs.ln_corn_rrev))
-cs.rev3C <- exp(cs3C.pred_ln_corn_rrev$fit + residuals(cs.ln_corn_rrev))
-cs.rev4C <- exp(cs4C.pred_ln_corn_rrev$fit + residuals(cs.ln_corn_rrev))
-cs.rev5C <- exp(cs5C.pred_ln_corn_rrev$fit + residuals(cs.ln_corn_rrev))
-
-p.rev0C <- exp(p0C.pred_ln_corn_rrev$fit + residuals(p.ln_corn_rrev) + p0C.pred_ln_corn_rrev$effect)
-p.rev1C <- exp(p1C.pred_ln_corn_rrev$fit + residuals(p.ln_corn_rrev) + p1C.pred_ln_corn_rrev$effect)
-p.rev2C <- exp(p2C.pred_ln_corn_rrev$fit + residuals(p.ln_corn_rrev) + p2C.pred_ln_corn_rrev$effect)
-p.rev3C <- exp(p3C.pred_ln_corn_rrev$fit + residuals(p.ln_corn_rrev) + p3C.pred_ln_corn_rrev$effect)
-p.rev4C <- exp(p4C.pred_ln_corn_rrev$fit + residuals(p.ln_corn_rrev) + p4C.pred_ln_corn_rrev$effect)
-p.rev5C <- exp(p5C.pred_ln_corn_rrev$fit + residuals(p.ln_corn_rrev) + p5C.pred_ln_corn_rrev$effect)
-
-
-mean(residuals(diff.ln_corn_rrev))
-diff.rev0C <- exp(diff0C.pred_ln_corn_rrev$fit + residuals(diff.ln_corn_rrev) + diff0C.pred_ln_corn_rrev$effect)
-diff.rev1C <- exp(diff1C.pred_ln_corn_rrev$fit + residuals(diff.ln_corn_rrev) + diff1C.pred_ln_corn_rrev$effect)
-diff.rev2C <- exp(diff2C.pred_ln_corn_rrev$fit + residuals(diff.ln_corn_rrev) + diff2C.pred_ln_corn_rrev$effect)
-diff.rev3C <- exp(diff3C.pred_ln_corn_rrev$fit + residuals(diff.ln_corn_rrev) + diff3C.pred_ln_corn_rrev$effect)
-diff.rev4C <- exp(diff4C.pred_ln_corn_rrev$fit + residuals(diff.ln_corn_rrev) + diff4C.pred_ln_corn_rrev$effect)
-diff.rev5C <- exp(diff5C.pred_ln_corn_rrev$fit + residuals(diff.ln_corn_rrev) + diff5C.pred_ln_corn_rrev$effect)
-
-cs.rev <- data.frame(rev = c(cs.rev0C, cs.rev1C, cs.rev2C, cs.rev3C, cs.rev4C, cs.rev5C),
-                     change = rep(c("Base", "1C", "2C", "3C", "4C", "5C"), each = length(cs.rev1C)))
-
-p.rev <- data.frame(rev = c(p.rev0C, p.rev1C, p.rev2C, p.rev3C, p.rev4C, p.rev5C),
-                     change = rep(c("Base", "1C", "2C", "3C", "4C", "5C"), each = length(p.rev1C)))
-
-diff.rev <- data.frame(rev = c(diff.rev0C, diff.rev1C, diff.rev2C, diff.rev3C, diff.rev4C, diff.rev5C),
-                     change = rep(c("Base", "1C", "2C", "3C", "4C", "5C"), each = length(diff.rev1C)))
-
-
-ggplot(cs.rev, aes(rev, fill = change)) + geom_density() + scale_fill_brewer(palette = "OrRd")
-ggplot(filter(p.rev, rev < 20), aes(rev, fill = change)) + geom_histogram(bins = 50) + scale_fill_brewer(palette = "OrRd")
-ggplot(diff.rev, aes(rev, fill = change)) + geom_histogram(bins = 50) + scale_fill_brewer(palette = "OrRd")
-
-
-
-cs.corn.rev0 <- (sum( exp(cs0C.pred_ln_corn_rrev$fit + cs0C.pred_ln_corn_rrev$res)))
+# Get % changes
+cs.corn.rev0 <- (sum( exp(cs0C.pred_ln_corn_rrev$fit + cs0C.pred_ln_corn_rrev$res )))
 cs.corn.rev1 <- (sum( exp(cs1C.pred_ln_corn_rrev$fit + cs1C.pred_ln_corn_rrev$res  ))/cs.corn.rev0 - 1)*100
-cs.corn.rev1.min <- (sum( exp(cs1C.pred_ln_corn_rrev$fit - c(cs1C.pred_ln_corn_rrev_se*1.96) + cs1C.pred_ln_corn_rrev$res ), na.rm = TRUE)/cs.corn.rev0 - 1)*100
-cs.corn.rev1.max <- (sum( exp(cs1C.pred_ln_corn_rrev$fit + c(cs1C.pred_ln_corn_rrev_se*1.96) + cs1C.pred_ln_corn_rrev$res  ), na.rm = TRUE)/cs.corn.rev0 - 1)*100
+cs.corn.rev1.min <- ((sum( exp(cs1C.pred_ln_corn_rrev$fit + cs1C.pred_ln_corn_rrev$res + cs1C.pred_ln_corn_rrev$effect)) - exp(cs1C.pred_ln_corn_rrev_se*1.96))/cs.corn.rev0 - 1)*100
+cs.corn.rev1.max <- ((sum( exp(cs1C.pred_ln_corn_rrev$fit + cs1C.pred_ln_corn_rrev$res + cs1C.pred_ln_corn_rrev$effect)) + exp(cs1C.pred_ln_corn_rrev_se*1.96))/cs.corn.rev0 - 1)*100
 
-cs.corn.rev2 <- (sum( exp(cs2C.pred_ln_corn_rrev$fit + cs2C.pred_ln_corn_rrev$res  ))/cs.corn.rev0 - 1)*100
-cs.corn.rev2.min <- (sum( exp(cs2C.pred_ln_corn_rrev$fit - c(cs2C.pred_ln_corn_rrev_se*1.96) + cs2C.pred_ln_corn_rrev$res  ), na.rm = TRUE)/cs.corn.rev0 - 1)*100
-cs.corn.rev2.max <- (sum( exp(cs2C.pred_ln_corn_rrev$fit + c(cs2C.pred_ln_corn_rrev_se*1.96) + cs2C.pred_ln_corn_rrev$res  ), na.rm = TRUE)/cs.corn.rev0 - 1)*100
+cs.corn.rev2 <- (sum( exp(cs2C.pred_ln_corn_rrev$fit + cs2C.pred_ln_corn_rrev$res ))/cs.corn.rev0 - 1)*100
+cs.corn.rev2.min <- ((sum( exp(cs2C.pred_ln_corn_rrev$fit + cs2C.pred_ln_corn_rrev$res )) - exp(cs2C.pred_ln_corn_rrev_se*1.96))/cs.corn.rev0 - 1)*100
+cs.corn.rev2.max <- ((sum( exp(cs2C.pred_ln_corn_rrev$fit + cs2C.pred_ln_corn_rrev$res )) + exp(cs2C.pred_ln_corn_rrev_se*1.96))/cs.corn.rev0 - 1)*100
 
-cs.corn.rev3 <- (sum( exp(cs3C.pred_ln_corn_rrev$fit + cs3C.pred_ln_corn_rrev$res  ))/cs.corn.rev0 - 1)*100
-cs.corn.rev3.min <- (sum( exp(cs3C.pred_ln_corn_rrev$fit - c(cs3C.pred_ln_corn_rrev_se*1.96) + cs3C.pred_ln_corn_rrev$res  ), na.rm = TRUE)/cs.corn.rev0 - 1)*100
-cs.corn.rev3.max <- (sum( exp(cs3C.pred_ln_corn_rrev$fit + c(cs3C.pred_ln_corn_rrev_se*1.96) + cs3C.pred_ln_corn_rrev$res  ), na.rm = TRUE)/cs.corn.rev0 - 1)*100
+cs.corn.rev3 <- (sum( exp(cs3C.pred_ln_corn_rrev$fit + cs3C.pred_ln_corn_rrev$res ))/cs.corn.rev0 - 1)*100
+cs.corn.rev3.min <- ((sum( exp(cs3C.pred_ln_corn_rrev$fit + cs3C.pred_ln_corn_rrev$res )) - exp(cs3C.pred_ln_corn_rrev_se*1.96))/cs.corn.rev0 - 1)*100
+cs.corn.rev3.max <- ((sum( exp(cs3C.pred_ln_corn_rrev$fit + cs3C.pred_ln_corn_rrev$res )) + exp(cs3C.pred_ln_corn_rrev_se*1.96))/cs.corn.rev0 - 1)*100
 
-cs.corn.rev4 <- (sum( exp(cs4C.pred_ln_corn_rrev$fit + cs4C.pred_ln_corn_rrev$res  ))/cs.corn.rev0 - 1)*100
-cs.corn.rev4.min <- (sum( exp(cs4C.pred_ln_corn_rrev$fit - c(cs4C.pred_ln_corn_rrev_se*1.96) + cs4C.pred_ln_corn_rrev$res  ), na.rm = TRUE)/cs.corn.rev0 - 1)*100
-cs.corn.rev4.max <- (sum( exp(cs4C.pred_ln_corn_rrev$fit + c(cs4C.pred_ln_corn_rrev_se*1.96) + cs4C.pred_ln_corn_rrev$res  ), na.rm = TRUE)/cs.corn.rev0 - 1)*100
+cs.corn.rev4 <- (sum( exp(cs4C.pred_ln_corn_rrev$fit + cs4C.pred_ln_corn_rrev$res ))/cs.corn.rev0 - 1)*100
+cs.corn.rev4.min <- ((sum( exp(cs4C.pred_ln_corn_rrev$fit + cs4C.pred_ln_corn_rrev$res )) - exp(cs4C.pred_ln_corn_rrev_se*1.96))/cs.corn.rev0 - 1)*100
+cs.corn.rev4.max <- ((sum( exp(cs4C.pred_ln_corn_rrev$fit + cs4C.pred_ln_corn_rrev$res )) + exp(cs4C.pred_ln_corn_rrev_se*1.96))/cs.corn.rev0 - 1)*100
 
-cs.corn.rev5 <- (sum( exp(cs5C.pred_ln_corn_rrev$fit + cs5C.pred_ln_corn_rrev$res  ))/cs.corn.rev0 - 1)*100
-cs.corn.rev5.min <- (sum( exp(cs5C.pred_ln_corn_rrev$fit - c(cs5C.pred_ln_corn_rrev_se*1.96) + cs5C.pred_ln_corn_rrev$res  ), na.rm = TRUE)/cs.corn.rev0 - 1)*100
-cs.corn.rev5.max <- (sum( exp(cs5C.pred_ln_corn_rrev$fit + c(cs5C.pred_ln_corn_rrev_se*1.96) + cs5C.pred_ln_corn_rrev$res  ), na.rm = TRUE)/cs.corn.rev0 - 1)*100
-
+cs.corn.rev5 <- (sum( exp(cs5C.pred_ln_corn_rrev$fit + cs5C.pred_ln_corn_rrev$res ))/cs.corn.rev0 - 1)*100
+cs.corn.rev5.min <- ((sum( exp(cs5C.pred_ln_corn_rrev$fit + cs5C.pred_ln_corn_rrev$res )) - exp(cs5C.pred_ln_corn_rrev_se*1.96))/cs.corn.rev0 - 1)*100
+cs.corn.rev5.max <- ((sum( exp(cs5C.pred_ln_corn_rrev$fit + cs5C.pred_ln_corn_rrev$res )) + exp(cs5C.pred_ln_corn_rrev_se*1.96))/cs.corn.rev0 - 1)*100
 
 p.corn.rev0 <- (sum( exp(p0C.pred_ln_corn_rrev$fit + p0C.pred_ln_corn_rrev$res + p0C.pred_ln_corn_rrev$effect)))
-p.corn.rev1 <- (sum( exp(p1C.pred_ln_corn_rrev$fit + p1C.pred_ln_corn_rrev$res + p1C.pred_ln_corn_rrev$effect ), na.rm = TRUE)/p.corn.rev0 - 1)*100
-p.corn.rev1.min <- (sum( exp(p1C.pred_ln_corn_rrev$fit - c(p1C.pred_ln_corn_rrev_se*1.96) + p1C.pred_ln_corn_rrev$res + p1C.pred_ln_corn_rrev$effect ), na.rm = TRUE)/p.corn.rev0 - 1)*100
-p.corn.rev1.max <- (sum( exp(p1C.pred_ln_corn_rrev$fit + c(p1C.pred_ln_corn_rrev_se*1.96) + p1C.pred_ln_corn_rrev$res + p1C.pred_ln_corn_rrev$effect ), na.rm = TRUE)/p.corn.rev0 - 1)*100
+p.corn.rev1 <- (sum( exp(p1C.pred_ln_corn_rrev$fit + p1C.pred_ln_corn_rrev$res + p1C.pred_ln_corn_rrev$effect  ))/p.corn.rev0 - 1)*100
+p.corn.rev1.min <- ((sum( exp(p1C.pred_ln_corn_rrev$fit + p1C.pred_ln_corn_rrev$res + p1C.pred_ln_corn_rrev$effect )) - exp(p1C.pred_ln_corn_rrev_se*1.96))/p.corn.rev0 - 1)*100
+p.corn.rev1.max <- ((sum( exp(p1C.pred_ln_corn_rrev$fit + p1C.pred_ln_corn_rrev$res + p1C.pred_ln_corn_rrev$effect )) + exp(p1C.pred_ln_corn_rrev_se*1.96))/p.corn.rev0 - 1)*100
 
-p.corn.rev2 <- (sum( exp(p2C.pred_ln_corn_rrev$fit + p2C.pred_ln_corn_rrev$res + p2C.pred_ln_corn_rrev$effect ), na.rm = TRUE)/p.corn.rev0 - 1)*100
-p.corn.rev2.min <- (sum( exp(p2C.pred_ln_corn_rrev$fit - c(p2C.pred_ln_corn_rrev_se*1.96) + p2C.pred_ln_corn_rrev$res + p2C.pred_ln_corn_rrev$effect ), na.rm = TRUE)/p.corn.rev0 - 1)*100
-p.corn.rev2.max <- (sum( exp(p2C.pred_ln_corn_rrev$fit + c(p2C.pred_ln_corn_rrev_se*1.96) + p2C.pred_ln_corn_rrev$res + p2C.pred_ln_corn_rrev$effect ), na.rm = TRUE)/p.corn.rev0 - 1)*100
+p.corn.rev2 <- (sum( exp(p2C.pred_ln_corn_rrev$fit + p2C.pred_ln_corn_rrev$res + p2C.pred_ln_corn_rrev$effect))/p.corn.rev0 - 1)*100
+p.corn.rev2.min <- ((sum( exp(p2C.pred_ln_corn_rrev$fit + p2C.pred_ln_corn_rrev$res + p2C.pred_ln_corn_rrev$effect)) - exp(p2C.pred_ln_corn_rrev_se*1.96))/p.corn.rev0 - 1)*100
+p.corn.rev2.max <- ((sum( exp(p2C.pred_ln_corn_rrev$fit + p2C.pred_ln_corn_rrev$res + p2C.pred_ln_corn_rrev$effect)) + exp(p2C.pred_ln_corn_rrev_se*1.96))/p.corn.rev0 - 1)*100
 
-p.corn.rev3 <- (sum( exp(p3C.pred_ln_corn_rrev$fit + p3C.pred_ln_corn_rrev$res + p3C.pred_ln_corn_rrev$effect ), na.rm = TRUE)/p.corn.rev0 - 1)*100
-p.corn.rev3.min <- (sum( exp(p3C.pred_ln_corn_rrev$fit - c(p3C.pred_ln_corn_rrev_se*1.96) + p3C.pred_ln_corn_rrev$res + p3C.pred_ln_corn_rrev$effect ), na.rm = TRUE)/p.corn.rev0 - 1)*100
-p.corn.rev3.max <- (sum( exp(p3C.pred_ln_corn_rrev$fit + c(p3C.pred_ln_corn_rrev_se*1.96) + p3C.pred_ln_corn_rrev$res + p3C.pred_ln_corn_rrev$effect ), na.rm = TRUE)/p.corn.rev0 - 1)*100
+p.corn.rev3 <- (sum( exp(p3C.pred_ln_corn_rrev$fit + p3C.pred_ln_corn_rrev$res + p3C.pred_ln_corn_rrev$effect ))/p.corn.rev0 - 1)*100
+p.corn.rev3.min <- ((sum( exp(p3C.pred_ln_corn_rrev$fit + p3C.pred_ln_corn_rrev$res + p3C.pred_ln_corn_rrev$effect)) - exp(p3C.pred_ln_corn_rrev_se*1.96))/p.corn.rev0 - 1)*100
+p.corn.rev3.max <- ((sum( exp(p3C.pred_ln_corn_rrev$fit + p3C.pred_ln_corn_rrev$res + p3C.pred_ln_corn_rrev$effect )) + exp(p3C.pred_ln_corn_rrev_se*1.96))/p.corn.rev0 - 1)*100
 
-p.corn.rev4 <- (sum( exp(p4C.pred_ln_corn_rrev$fit + p4C.pred_ln_corn_rrev$res + p4C.pred_ln_corn_rrev$effect ), na.rm = TRUE)/p.corn.rev0 - 1)*100
-p.corn.rev4.min <- (sum( exp(p4C.pred_ln_corn_rrev$fit - c(p4C.pred_ln_corn_rrev_se*1.96) + p4C.pred_ln_corn_rrev$res + p4C.pred_ln_corn_rrev$effect ), na.rm = TRUE)/p.corn.rev0 - 1)*100
-p.corn.rev4.max <- (sum( exp(p4C.pred_ln_corn_rrev$fit + c(p4C.pred_ln_corn_rrev_se*1.96) + p4C.pred_ln_corn_rrev$res + p4C.pred_ln_corn_rrev$effect ), na.rm = TRUE)/p.corn.rev0 - 1)*100
+p.corn.rev4 <- (sum( exp(p4C.pred_ln_corn_rrev$fit + p4C.pred_ln_corn_rrev$res + p4C.pred_ln_corn_rrev$effect))/p.corn.rev0 - 1)*100
+p.corn.rev4.min <- ((sum( exp(p4C.pred_ln_corn_rrev$fit + p4C.pred_ln_corn_rrev$res + p4C.pred_ln_corn_rrev$effect)) - exp(p4C.pred_ln_corn_rrev_se*1.96))/p.corn.rev0 - 1)*100
+p.corn.rev4.max <- ((sum( exp(p4C.pred_ln_corn_rrev$fit + p4C.pred_ln_corn_rrev$res + p4C.pred_ln_corn_rrev$effect)) + exp(p4C.pred_ln_corn_rrev_se*1.96))/p.corn.rev0 - 1)*100
 
-p.corn.rev5 <- (sum( exp(p5C.pred_ln_corn_rrev$fit + p5C.pred_ln_corn_rrev$res + p5C.pred_ln_corn_rrev$effect ), na.rm = TRUE)/p.corn.rev0 - 1)*100
-p.corn.rev5.min <- (sum( exp(p5C.pred_ln_corn_rrev$fit - c(p5C.pred_ln_corn_rrev_se*1.96) + p5C.pred_ln_corn_rrev$res + p5C.pred_ln_corn_rrev$effect ), na.rm = TRUE)/p.corn.rev0 - 1)*100
-p.corn.rev5.max <- (sum( exp(p5C.pred_ln_corn_rrev$fit + c(p5C.pred_ln_corn_rrev_se*1.96) + p5C.pred_ln_corn_rrev$res + p5C.pred_ln_corn_rrev$effect ), na.rm = TRUE)/p.corn.rev0 - 1)*100
+p.corn.rev5 <- (sum( exp(p5C.pred_ln_corn_rrev$fit + p5C.pred_ln_corn_rrev$res + p5C.pred_ln_corn_rrev$effect))/p.corn.rev0 - 1)*100
+p.corn.rev5.min <- ((sum( exp(p5C.pred_ln_corn_rrev$fit + p5C.pred_ln_corn_rrev$res + p5C.pred_ln_corn_rrev$effect )) - exp(p5C.pred_ln_corn_rrev_se*1.96))/p.corn.rev0 - 1)*100
+p.corn.rev5.max <- ((sum( exp(p5C.pred_ln_corn_rrev$fit + p5C.pred_ln_corn_rrev$res + p5C.pred_ln_corn_rrev$effect)) + exp(p5C.pred_ln_corn_rrev_se*1.96))/p.corn.rev0 - 1)*100
 
-diff.corn.rev0 <- (sum( exp(diff0C.pred_ln_corn_rrev$fit + diff0C.pred_ln_corn_rrev$res + diff1C.pred_ln_corn_rrev$effect )))
-diff.corn.rev1 <- (sum( exp(diff1C.pred_ln_corn_rrev$fit + diff1C.pred_ln_corn_rrev$res + diff1C.pred_ln_corn_rrev$effect ), na.rm = TRUE)/diff.corn.rev0 - 1)*100
-diff.corn.rev1.min <- (sum( exp(diff1C.pred_ln_corn_rrev$fit - c(diff1C.pred_ln_corn_rrev_se*1.96) + diff1C.pred_ln_corn_rrev$res + diff1C.pred_ln_corn_rrev$effect ), na.rm = TRUE)/diff.corn.rev0 - 1)*100
-diff.corn.rev1.max <- (sum( exp(diff1C.pred_ln_corn_rrev$fit + c(diff1C.pred_ln_corn_rrev_se*1.96) + diff1C.pred_ln_corn_rrev$res + diff1C.pred_ln_corn_rrev$effect ), na.rm = TRUE)/diff.corn.rev0 - 1)*100
+diff.corn.rev0 <- (sum( exp(diff0C.pred_ln_corn_rrev$fit + diff0C.pred_ln_corn_rrev$res + diff0C.pred_ln_corn_rrev$effect)))
+diff.corn.rev1 <- (sum( exp(diff1C.pred_ln_corn_rrev$fit + diff1C.pred_ln_corn_rrev$res + diff1C.pred_ln_corn_rrev$effect  ))/diff.corn.rev0 - 1)*100
+diff.corn.rev1.min <- ((sum( exp(diff1C.pred_ln_corn_rrev$fit + diff1C.pred_ln_corn_rrev$res + diff1C.pred_ln_corn_rrev$effect)) - exp(diff1C.pred_ln_corn_rrev_se*1.96))/diff.corn.rev0 - 1)*100
+diff.corn.rev1.max <- ((sum( exp(diff1C.pred_ln_corn_rrev$fit + diff1C.pred_ln_corn_rrev$res+ diff1C.pred_ln_corn_rrev$effect )) + exp(diff1C.pred_ln_corn_rrev_se*1.96))/diff.corn.rev0 - 1)*100
 
-diff.corn.rev2 <- (sum( exp(diff2C.pred_ln_corn_rrev$fit + diff2C.pred_ln_corn_rrev$res + diff2C.pred_ln_corn_rrev$effect ), na.rm = TRUE)/diff.corn.rev0 - 1)*100
-diff.corn.rev2.min <- (sum( exp(diff2C.pred_ln_corn_rrev$fit - c(diff2C.pred_ln_corn_rrev_se*1.96) + diff2C.pred_ln_corn_rrev$res + diff2C.pred_ln_corn_rrev$effect ), na.rm = TRUE)/diff.corn.rev0 - 1)*100
-diff.corn.rev2.max <- (sum( exp(diff2C.pred_ln_corn_rrev$fit + c(diff2C.pred_ln_corn_rrev_se*1.96) + diff2C.pred_ln_corn_rrev$res + diff2C.pred_ln_corn_rrev$effect ), na.rm = TRUE)/diff.corn.rev0 - 1)*100
+diff.corn.rev2 <- (sum( exp(diff2C.pred_ln_corn_rrev$fit + diff2C.pred_ln_corn_rrev$res + diff2C.pred_ln_corn_rrev$effect))/diff.corn.rev0 - 1)*100
+diff.corn.rev2.min <- ((sum( exp(diff2C.pred_ln_corn_rrev$fit + diff2C.pred_ln_corn_rrev$res + diff2C.pred_ln_corn_rrev$effect)) - exp(diff2C.pred_ln_corn_rrev_se*1.96))/diff.corn.rev0 - 1)*100
+diff.corn.rev2.max <- ((sum( exp(diff2C.pred_ln_corn_rrev$fit + diff2C.pred_ln_corn_rrev$res + diff2C.pred_ln_corn_rrev$effect)) + exp(diff2C.pred_ln_corn_rrev_se*1.96))/diff.corn.rev0 - 1)*100
 
-diff.corn.rev3 <- (sum( exp(diff3C.pred_ln_corn_rrev$fit + diff3C.pred_ln_corn_rrev$res + diff3C.pred_ln_corn_rrev$effect ), na.rm = TRUE)/diff.corn.rev0 - 1)*100
-diff.corn.rev3.min <- (sum( exp(diff3C.pred_ln_corn_rrev$fit - c(diff3C.pred_ln_corn_rrev_se*1.96) + diff3C.pred_ln_corn_rrev$res + diff3C.pred_ln_corn_rrev$effect ), na.rm = TRUE)/diff.corn.rev0 - 1)*100
-diff.corn.rev3.max <- (sum( exp(diff3C.pred_ln_corn_rrev$fit + c(diff3C.pred_ln_corn_rrev_se*1.96) + diff3C.pred_ln_corn_rrev$res + diff3C.pred_ln_corn_rrev$effect ), na.rm = TRUE)/diff.corn.rev0 - 1)*100
+diff.corn.rev3 <- (sum( exp(diff3C.pred_ln_corn_rrev$fit + diff3C.pred_ln_corn_rrev$res + diff3C.pred_ln_corn_rrev$effect))/diff.corn.rev0 - 1)*100
+diff.corn.rev3.min <- ((sum( exp(diff3C.pred_ln_corn_rrev$fit + diff3C.pred_ln_corn_rrev$res + diff3C.pred_ln_corn_rrev$effect)) - exp(diff3C.pred_ln_corn_rrev_se*1.96))/diff.corn.rev0 - 1)*100
+diff.corn.rev3.max <- ((sum( exp(diff3C.pred_ln_corn_rrev$fit + diff3C.pred_ln_corn_rrev$res + diff3C.pred_ln_corn_rrev$effect)) + exp(diff3C.pred_ln_corn_rrev_se*1.96))/diff.corn.rev0 - 1)*100
 
-diff.corn.rev4 <- (sum( exp(diff4C.pred_ln_corn_rrev$fit + diff4C.pred_ln_corn_rrev$res + diff4C.pred_ln_corn_rrev$effect ), na.rm = TRUE)/diff.corn.rev0 - 1)*100
-diff.corn.rev4.min <- (sum( exp(diff4C.pred_ln_corn_rrev$fit - c(diff4C.pred_ln_corn_rrev_se*1.96) + diff4C.pred_ln_corn_rrev$res + diff4C.pred_ln_corn_rrev$effect ), na.rm = TRUE)/diff.corn.rev0 - 1)*100
-diff.corn.rev4.max <- (sum( exp(diff4C.pred_ln_corn_rrev$fit + c(diff4C.pred_ln_corn_rrev_se*1.96) + diff4C.pred_ln_corn_rrev$res + diff4C.pred_ln_corn_rrev$effect ), na.rm = TRUE)/diff.corn.rev0 - 1)*100
+diff.corn.rev4 <- (sum( exp(diff4C.pred_ln_corn_rrev$fit + diff4C.pred_ln_corn_rrev$res + diff4C.pred_ln_corn_rrev$effect))/diff.corn.rev0 - 1)*100
+diff.corn.rev4.min <- ((sum( exp(diff4C.pred_ln_corn_rrev$fit + diff4C.pred_ln_corn_rrev$res + diff4C.pred_ln_corn_rrev$effect)) - exp(diff4C.pred_ln_corn_rrev_se*1.96))/diff.corn.rev0 - 1)*100
+diff.corn.rev4.max <- ((sum( exp(diff4C.pred_ln_corn_rrev$fit + diff4C.pred_ln_corn_rrev$res + diff4C.pred_ln_corn_rrev$effect)) + exp(diff4C.pred_ln_corn_rrev_se*1.96))/diff.corn.rev0 - 1)*100
 
-diff.corn.rev5 <- (sum( exp(diff5C.pred_ln_corn_rrev$fit + diff5C.pred_ln_corn_rrev$res + diff5C.pred_ln_corn_rrev$effect ), na.rm = TRUE)/diff.corn.rev0 - 1)*100
-diff.corn.rev5.min <- (sum( exp(diff5C.pred_ln_corn_rrev$fit - c(diff5C.pred_ln_corn_rrev_se*1.96) + diff5C.pred_ln_corn_rrev$res + diff5C.pred_ln_corn_rrev$effect ), na.rm = TRUE)/diff.corn.rev0 - 1)*100
-diff.corn.rev5.max <- (sum( exp(diff5C.pred_ln_corn_rrev$fit + c(diff5C.pred_ln_corn_rrev_se*1.96) + diff5C.pred_ln_corn_rrev$res + diff5C.pred_ln_corn_rrev$effect ), na.rm = TRUE)/diff.corn.rev0 - 1)*100
+diff.corn.rev5 <- (sum( exp(diff5C.pred_ln_corn_rrev$fit + diff5C.pred_ln_corn_rrev$res + diff5C.pred_ln_corn_rrev$effect))/diff.corn.rev0 - 1)*100
+diff.corn.rev5.min <- ((sum( exp(diff5C.pred_ln_corn_rrev$fit + diff5C.pred_ln_corn_rrev$res + diff5C.pred_ln_corn_rrev$effect)) - exp(diff5C.pred_ln_corn_rrev_se*1.96))/diff.corn.rev0 - 1)*100
+diff.corn.rev5.max <- ((sum( exp(diff5C.pred_ln_corn_rrev$fit + diff5C.pred_ln_corn_rrev$res+ diff5C.pred_ln_corn_rrev$effect)) + exp(diff5C.pred_ln_corn_rrev_se*1.96))/diff.corn.rev0 - 1)*100
 
 corn.plotdat <- data.frame(temp = rep(c(1,2,3,4,5), 3),
                            rev = c(cs.corn.rev1, cs.corn.rev2, cs.corn.rev3, cs.corn.rev4, cs.corn.rev5,
@@ -358,155 +315,120 @@ cs0C.pred_ln_cotton_rrev_se <- cc.pred.se(cs.ln_cotton_rrev$X - cs.ln_cotton_rre
 
 cs1C.pred_ln_cotton_rrev <- predictFelm(felm.fit = cs.ln_cotton_rrev, newdata = cs.ln_cotton_rrev_1C)
 cs1C.pred_ln_cotton_rrev_se <- cc.pred.se(cs.ln_cotton_rrev$X - cs.ln_cotton_rrev_1C[, c("(Intercept)", "dday0_10", "dday10_30", "dday30C", "prec", "prec_sq", "lat", "long", "lat:long")], 
-                                        cs.ln_cotton_rrev$clustervcv, cs.ln_cotton_rrev$weights^2)
+           cs.ln_cotton_rrev$clustervcv, cs.ln_cotton_rrev$weights^2)
 cs2C.pred_ln_cotton_rrev <- predictFelm(felm.fit = cs.ln_cotton_rrev, newdata = cs.ln_cotton_rrev_2C)
 cs2C.pred_ln_cotton_rrev_se <- cc.pred.se(cs.ln_cotton_rrev$X - cs.ln_cotton_rrev_2C[, c("(Intercept)", "dday0_10", "dday10_30", "dday30C", "prec", "prec_sq", "lat", "long", "lat:long")], 
-                                        cs.ln_cotton_rrev$clustervcv, cs.ln_cotton_rrev$weights^2)
+           cs.ln_cotton_rrev$clustervcv, cs.ln_cotton_rrev$weights^2)
 cs3C.pred_ln_cotton_rrev <- predictFelm(felm.fit = cs.ln_cotton_rrev, newdata = cs.ln_cotton_rrev_3C)
 cs3C.pred_ln_cotton_rrev_se <- cc.pred.se(cs.ln_cotton_rrev$X - cs.ln_cotton_rrev_3C[, c("(Intercept)", "dday0_10", "dday10_30", "dday30C", "prec", "prec_sq", "lat", "long", "lat:long")], 
-                                        cs.ln_cotton_rrev$clustervcv, cs.ln_cotton_rrev$weights^2)
+           cs.ln_cotton_rrev$clustervcv, cs.ln_cotton_rrev$weights^2)
 cs4C.pred_ln_cotton_rrev <- predictFelm(felm.fit = cs.ln_cotton_rrev, newdata = cs.ln_cotton_rrev_4C)
 cs4C.pred_ln_cotton_rrev_se <- cc.pred.se(cs.ln_cotton_rrev$X - cs.ln_cotton_rrev_4C[, c("(Intercept)", "dday0_10", "dday10_30", "dday30C", "prec", "prec_sq", "lat", "long", "lat:long")], 
-                                        cs.ln_cotton_rrev$clustervcv, cs.ln_cotton_rrev$weights^2)
+           cs.ln_cotton_rrev$clustervcv, cs.ln_cotton_rrev$weights^2)
 cs5C.pred_ln_cotton_rrev <- predictFelm(felm.fit = cs.ln_cotton_rrev, newdata = cs.ln_cotton_rrev_5C)
 cs5C.pred_ln_cotton_rrev_se <- cc.pred.se(cs.ln_cotton_rrev$X - cs.ln_cotton_rrev_5C[, c("(Intercept)", "dday0_10", "dday10_30", "dday30C", "prec", "prec_sq", "lat", "long", "lat:long")], 
-                                        cs.ln_cotton_rrev$clustervcv, cs.ln_cotton_rrev$weights^2)
+           cs.ln_cotton_rrev$clustervcv, cs.ln_cotton_rrev$weights^2)
 
 p0C.pred_ln_cotton_rrev <- predictFelm(felm.fit = p.ln_cotton_rrev, newdata = p.ln_cotton_rrev_0C)
 p0C.pred_ln_cotton_rrev_se <- cc.pred.se(p.ln_cotton_rrev$X - p.ln_cotton_rrev_0C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
-                                       p.ln_cotton_rrev$clustervcv, p.ln_cotton_rrev$weights^2)
+                                        p.ln_cotton_rrev$clustervcv, p.ln_cotton_rrev$weights^2)
 
 p1C.pred_ln_cotton_rrev <- predictFelm(felm.fit = p.ln_cotton_rrev, newdata = p.ln_cotton_rrev_1C)
 p1C.pred_ln_cotton_rrev_se <- cc.pred.se(p.ln_cotton_rrev$X - p.ln_cotton_rrev_1C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
-                                       p.ln_cotton_rrev$clustervcv, p.ln_cotton_rrev$weights^2)
+                                        p.ln_cotton_rrev$clustervcv, p.ln_cotton_rrev$weights^2)
 p2C.pred_ln_cotton_rrev <- predictFelm(felm.fit = p.ln_cotton_rrev, newdata = p.ln_cotton_rrev_2C)
 p2C.pred_ln_cotton_rrev_se <- cc.pred.se(p.ln_cotton_rrev$X - p.ln_cotton_rrev_2C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
-                                       p.ln_cotton_rrev$clustervcv, p.ln_cotton_rrev$weights^2)
+                                        p.ln_cotton_rrev$clustervcv, p.ln_cotton_rrev$weights^2)
 p3C.pred_ln_cotton_rrev <- predictFelm(felm.fit = p.ln_cotton_rrev, newdata = p.ln_cotton_rrev_3C)
 p3C.pred_ln_cotton_rrev_se <- cc.pred.se(p.ln_cotton_rrev$X - p.ln_cotton_rrev_3C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
-                                       p.ln_cotton_rrev$clustervcv, p.ln_cotton_rrev$weights^2)
+                                        p.ln_cotton_rrev$clustervcv, p.ln_cotton_rrev$weights^2)
 p4C.pred_ln_cotton_rrev <- predictFelm(felm.fit = p.ln_cotton_rrev, newdata = p.ln_cotton_rrev_4C)
 p4C.pred_ln_cotton_rrev_se <- cc.pred.se(p.ln_cotton_rrev$X - p.ln_cotton_rrev_4C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
-                                       p.ln_cotton_rrev$clustervcv, p.ln_cotton_rrev$weights^2)
+                                        p.ln_cotton_rrev$clustervcv, p.ln_cotton_rrev$weights^2)
 p5C.pred_ln_cotton_rrev <- predictFelm(felm.fit = p.ln_cotton_rrev, newdata = p.ln_cotton_rrev_5C)
 p5C.pred_ln_cotton_rrev_se <- cc.pred.se(p.ln_cotton_rrev$X - p.ln_cotton_rrev_5C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
-                                       p.ln_cotton_rrev$clustervcv, p.ln_cotton_rrev$weights^2)
+                                        p.ln_cotton_rrev$clustervcv, p.ln_cotton_rrev$weights^2)
 
 diff0C.pred_ln_cotton_rrev <- predictFelm(felm.fit = diff.ln_cotton_rrev, newdata = diff.ln_cotton_rrev_0C)
 diff1C.pred_ln_cotton_rrev <- predictFelm(felm.fit = diff.ln_cotton_rrev, newdata = diff.ln_cotton_rrev_1C)
 diff1C.pred_ln_cotton_rrev_se <- cc.pred.se(diff.ln_cotton_rrev$X - diff.ln_cotton_rrev_1C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
-                                          diff.ln_cotton_rrev$clustervcv, diff.ln_cotton_rrev$weights^2)
+           diff.ln_cotton_rrev$clustervcv, diff.ln_cotton_rrev$weights^2)
 diff2C.pred_ln_cotton_rrev <- predictFelm(felm.fit = diff.ln_cotton_rrev, newdata = diff.ln_cotton_rrev_2C)
 diff2C.pred_ln_cotton_rrev_se <- cc.pred.se(diff.ln_cotton_rrev$X - diff.ln_cotton_rrev_2C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
-                                          diff.ln_cotton_rrev$clustervcv, diff.ln_cotton_rrev$weights^2)
+           diff.ln_cotton_rrev$clustervcv, diff.ln_cotton_rrev$weights^2)
 diff3C.pred_ln_cotton_rrev <- predictFelm(felm.fit = diff.ln_cotton_rrev, newdata = diff.ln_cotton_rrev_3C)
 diff3C.pred_ln_cotton_rrev_se <- cc.pred.se(diff.ln_cotton_rrev$X - diff.ln_cotton_rrev_3C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
-                                          diff.ln_cotton_rrev$clustervcv, diff.ln_cotton_rrev$weights^2)
+           diff.ln_cotton_rrev$clustervcv, diff.ln_cotton_rrev$weights^2)
 diff4C.pred_ln_cotton_rrev <- predictFelm(felm.fit = diff.ln_cotton_rrev, newdata = diff.ln_cotton_rrev_4C)
 diff4C.pred_ln_cotton_rrev_se <- cc.pred.se(diff.ln_cotton_rrev$X - diff.ln_cotton_rrev_4C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
-                                          diff.ln_cotton_rrev$clustervcv, diff.ln_cotton_rrev$weights^2)
+           diff.ln_cotton_rrev$clustervcv, diff.ln_cotton_rrev$weights^2)
 diff5C.pred_ln_cotton_rrev <- predictFelm(felm.fit = diff.ln_cotton_rrev, newdata = diff.ln_cotton_rrev_5C)
 diff5C.pred_ln_cotton_rrev_se <- cc.pred.se(diff.ln_cotton_rrev$X - diff.ln_cotton_rrev_5C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
-                                          diff.ln_cotton_rrev$clustervcv, diff.ln_cotton_rrev$weights^2)
+           diff.ln_cotton_rrev$clustervcv, diff.ln_cotton_rrev$weights^2)
 
-
-cs.rev1C <- exp(cs1C.pred_ln_cotton_rrev$fit)
-cs.rev2C <- exp(cs2C.pred_ln_cotton_rrev$fit + cs2C.pred_ln_cotton_rrev$res )
-cs.rev3C <- exp(cs3C.pred_ln_cotton_rrev$fit + cs3C.pred_ln_cotton_rrev$res )
-cs.rev4C <- exp(cs4C.pred_ln_cotton_rrev$fit + cs4C.pred_ln_cotton_rrev$res )
-cs.rev5C <- exp(cs5C.pred_ln_cotton_rrev$fit + cs5C.pred_ln_cotton_rrev$res )
-
-p.rev1C <- exp(p1C.pred_ln_cotton_rrev$fit + p1C.pred_ln_cotton_rrev$res + p1C.pred_ln_cotton_rrev$effect)
-p.rev2C <- exp(p2C.pred_ln_cotton_rrev$fit + p2C.pred_ln_cotton_rrev$res + p2C.pred_ln_cotton_rrev$effect)
-p.rev3C <- exp(p3C.pred_ln_cotton_rrev$fit + p3C.pred_ln_cotton_rrev$res + p3C.pred_ln_cotton_rrev$effect)
-p.rev4C <- exp(p4C.pred_ln_cotton_rrev$fit + p4C.pred_ln_cotton_rrev$res + p4C.pred_ln_cotton_rrev$effect)
-p.rev5C <- exp(p5C.pred_ln_cotton_rrev$fit + p5C.pred_ln_cotton_rrev$res + p5C.pred_ln_cotton_rrev$effect)
-
-diff.rev1C <- exp(diff1C.pred_ln_cotton_rrev$fit + diff1C.pred_ln_cotton_rrev$res + diff1C.pred_ln_cotton_rrev$effect)
-diff.rev2C <- exp(diff2C.pred_ln_cotton_rrev$fit + diff2C.pred_ln_cotton_rrev$res + diff2C.pred_ln_cotton_rrev$effect)
-diff.rev3C <- exp(diff3C.pred_ln_cotton_rrev$fit + diff3C.pred_ln_cotton_rrev$res + diff3C.pred_ln_cotton_rrev$effect)
-diff.rev4C <- exp(diff4C.pred_ln_cotton_rrev$fit + diff4C.pred_ln_cotton_rrev$res + diff4C.pred_ln_cotton_rrev$effect)
-diff.rev5C <- exp(diff5C.pred_ln_cotton_rrev$fit + diff5C.pred_ln_cotton_rrev$res + diff5C.pred_ln_cotton_rrev$effect)
-
-cs.rev <- data.frame(rev = c(exp(cs.ln_cotton_rrev), cs.rev1C, cs.rev2C, cs.rev3C, cs.rev4C, cs.rev5C),
-                     change = rep(c("Base", "1C", "2C", "3C", "4C", "5C"), each = length(cs.rev1C)))
-
-p.rev <- data.frame(rev = c(p.rev1C, p.rev2C, p.rev3C, p.rev4C, p.rev5C),
-                    change = rep(c("1C", "2C", "3C", "4C", "5C"), each = length(p.rev1C)))
-
-diff.rev <- data.frame(rev = c(diff.rev1C, diff.rev2C, diff.rev3C, diff.rev4C, diff.rev5C),
-                       change = rep(c("1C", "2C", "3C", "4C", "5C"), each = length(diff.rev1C)))
-
-
-ggplot(cs.rev, aes(rev, fill = change)) + geom_histogram() + scale_fill_brewer(palette = "OrRd")
-ggplot(filter(p.rev, rev < 50), aes(rev, fill = change)) + geom_histogram(bins = 100) + scale_fill_brewer(palette = "OrRd")
-ggplot(diff.rev, aes(rev, fill = change)) + geom_histogram() + scale_fill_brewer(palette = "OrRd")
-
-
-
-cs.cotton.rev0 <- (sum( exp(cs0C.pred_ln_cotton_rrev$fit + cs0C.pred_ln_cotton_rrev$res)))
+# Get % changes
+cs.cotton.rev0 <- (sum( exp(cs0C.pred_ln_cotton_rrev$fit + cs0C.pred_ln_cotton_rrev$res )))
 cs.cotton.rev1 <- (sum( exp(cs1C.pred_ln_cotton_rrev$fit + cs1C.pred_ln_cotton_rrev$res  ))/cs.cotton.rev0 - 1)*100
-cs.cotton.rev1.min <- (sum( exp(cs1C.pred_ln_cotton_rrev$fit - c(cs1C.pred_ln_cotton_rrev_se*1.96) + cs1C.pred_ln_cotton_rrev$res ), na.rm = TRUE)/cs.cotton.rev0 - 1)*100
-cs.cotton.rev1.max <- (sum( exp(cs1C.pred_ln_cotton_rrev$fit + c(cs1C.pred_ln_cotton_rrev_se*1.96) + cs1C.pred_ln_cotton_rrev$res  ), na.rm = TRUE)/cs.cotton.rev0 - 1)*100
+cs.cotton.rev1.min <- ((sum( exp(cs1C.pred_ln_cotton_rrev$fit + cs1C.pred_ln_cotton_rrev$res + cs1C.pred_ln_cotton_rrev$effect)) - exp(cs1C.pred_ln_cotton_rrev_se*1.96))/cs.cotton.rev0 - 1)*100
+cs.cotton.rev1.max <- ((sum( exp(cs1C.pred_ln_cotton_rrev$fit + cs1C.pred_ln_cotton_rrev$res + cs1C.pred_ln_cotton_rrev$effect)) + exp(cs1C.pred_ln_cotton_rrev_se*1.96))/cs.cotton.rev0 - 1)*100
 
-cs.cotton.rev2 <- (sum( exp(cs2C.pred_ln_cotton_rrev$fit + cs2C.pred_ln_cotton_rrev$res  ))/cs.cotton.rev0 - 1)*100
-cs.cotton.rev2.min <- (sum( exp(cs2C.pred_ln_cotton_rrev$fit - c(cs2C.pred_ln_cotton_rrev_se*1.96) + cs2C.pred_ln_cotton_rrev$res  ), na.rm = TRUE)/cs.cotton.rev0 - 1)*100
-cs.cotton.rev2.max <- (sum( exp(cs2C.pred_ln_cotton_rrev$fit + c(cs2C.pred_ln_cotton_rrev_se*1.96) + cs2C.pred_ln_cotton_rrev$res  ), na.rm = TRUE)/cs.cotton.rev0 - 1)*100
+cs.cotton.rev2 <- (sum( exp(cs2C.pred_ln_cotton_rrev$fit + cs2C.pred_ln_cotton_rrev$res ))/cs.cotton.rev0 - 1)*100
+cs.cotton.rev2.min <- ((sum( exp(cs2C.pred_ln_cotton_rrev$fit + cs2C.pred_ln_cotton_rrev$res )) - exp(cs2C.pred_ln_cotton_rrev_se*1.96))/cs.cotton.rev0 - 1)*100
+cs.cotton.rev2.max <- ((sum( exp(cs2C.pred_ln_cotton_rrev$fit + cs2C.pred_ln_cotton_rrev$res )) + exp(cs2C.pred_ln_cotton_rrev_se*1.96))/cs.cotton.rev0 - 1)*100
 
-cs.cotton.rev3 <- (sum( exp(cs3C.pred_ln_cotton_rrev$fit + cs3C.pred_ln_cotton_rrev$res  ))/cs.cotton.rev0 - 1)*100
-cs.cotton.rev3.min <- (sum( exp(cs3C.pred_ln_cotton_rrev$fit - c(cs3C.pred_ln_cotton_rrev_se*1.96) + cs3C.pred_ln_cotton_rrev$res  ), na.rm = TRUE)/cs.cotton.rev0 - 1)*100
-cs.cotton.rev3.max <- (sum( exp(cs3C.pred_ln_cotton_rrev$fit + c(cs3C.pred_ln_cotton_rrev_se*1.96) + cs3C.pred_ln_cotton_rrev$res  ), na.rm = TRUE)/cs.cotton.rev0 - 1)*100
+cs.cotton.rev3 <- (sum( exp(cs3C.pred_ln_cotton_rrev$fit + cs3C.pred_ln_cotton_rrev$res ))/cs.cotton.rev0 - 1)*100
+cs.cotton.rev3.min <- ((sum( exp(cs3C.pred_ln_cotton_rrev$fit + cs3C.pred_ln_cotton_rrev$res )) - exp(cs3C.pred_ln_cotton_rrev_se*1.96))/cs.cotton.rev0 - 1)*100
+cs.cotton.rev3.max <- ((sum( exp(cs3C.pred_ln_cotton_rrev$fit + cs3C.pred_ln_cotton_rrev$res )) + exp(cs3C.pred_ln_cotton_rrev_se*1.96))/cs.cotton.rev0 - 1)*100
 
-cs.cotton.rev4 <- (sum( exp(cs4C.pred_ln_cotton_rrev$fit + cs4C.pred_ln_cotton_rrev$res  ))/cs.cotton.rev0 - 1)*100
-cs.cotton.rev4.min <- (sum( exp(cs4C.pred_ln_cotton_rrev$fit - c(cs4C.pred_ln_cotton_rrev_se*1.96) + cs4C.pred_ln_cotton_rrev$res  ), na.rm = TRUE)/cs.cotton.rev0 - 1)*100
-cs.cotton.rev4.max <- (sum( exp(cs4C.pred_ln_cotton_rrev$fit + c(cs4C.pred_ln_cotton_rrev_se*1.96) + cs4C.pred_ln_cotton_rrev$res  ), na.rm = TRUE)/cs.cotton.rev0 - 1)*100
+cs.cotton.rev4 <- (sum( exp(cs4C.pred_ln_cotton_rrev$fit + cs4C.pred_ln_cotton_rrev$res ))/cs.cotton.rev0 - 1)*100
+cs.cotton.rev4.min <- ((sum( exp(cs4C.pred_ln_cotton_rrev$fit + cs4C.pred_ln_cotton_rrev$res )) - exp(cs4C.pred_ln_cotton_rrev_se*1.96))/cs.cotton.rev0 - 1)*100
+cs.cotton.rev4.max <- ((sum( exp(cs4C.pred_ln_cotton_rrev$fit + cs4C.pred_ln_cotton_rrev$res )) + exp(cs4C.pred_ln_cotton_rrev_se*1.96))/cs.cotton.rev0 - 1)*100
 
-cs.cotton.rev5 <- (sum( exp(cs5C.pred_ln_cotton_rrev$fit + cs5C.pred_ln_cotton_rrev$res  ))/cs.cotton.rev0 - 1)*100
-cs.cotton.rev5.min <- (sum( exp(cs5C.pred_ln_cotton_rrev$fit - c(cs5C.pred_ln_cotton_rrev_se*1.96) + cs5C.pred_ln_cotton_rrev$res  ), na.rm = TRUE)/cs.cotton.rev0 - 1)*100
-cs.cotton.rev5.max <- (sum( exp(cs5C.pred_ln_cotton_rrev$fit + c(cs5C.pred_ln_cotton_rrev_se*1.96) + cs5C.pred_ln_cotton_rrev$res  ), na.rm = TRUE)/cs.cotton.rev0 - 1)*100
-
+cs.cotton.rev5 <- (sum( exp(cs5C.pred_ln_cotton_rrev$fit + cs5C.pred_ln_cotton_rrev$res ))/cs.cotton.rev0 - 1)*100
+cs.cotton.rev5.min <- ((sum( exp(cs5C.pred_ln_cotton_rrev$fit + cs5C.pred_ln_cotton_rrev$res )) - exp(cs5C.pred_ln_cotton_rrev_se*1.96))/cs.cotton.rev0 - 1)*100
+cs.cotton.rev5.max <- ((sum( exp(cs5C.pred_ln_cotton_rrev$fit + cs5C.pred_ln_cotton_rrev$res )) + exp(cs5C.pred_ln_cotton_rrev_se*1.96))/cs.cotton.rev0 - 1)*100
 
 p.cotton.rev0 <- (sum( exp(p0C.pred_ln_cotton_rrev$fit + p0C.pred_ln_cotton_rrev$res + p0C.pred_ln_cotton_rrev$effect)))
-p.cotton.rev1 <- (sum( exp(p1C.pred_ln_cotton_rrev$fit + p1C.pred_ln_cotton_rrev$res + p1C.pred_ln_cotton_rrev$effect ), na.rm = TRUE)/p.cotton.rev0 - 1)*100
-p.cotton.rev1.min <- (sum( exp(p1C.pred_ln_cotton_rrev$fit - c(p1C.pred_ln_cotton_rrev_se*1.96) + p1C.pred_ln_cotton_rrev$res + p1C.pred_ln_cotton_rrev$effect ), na.rm = TRUE)/p.cotton.rev0 - 1)*100
-p.cotton.rev1.max <- (sum( exp(p1C.pred_ln_cotton_rrev$fit + c(p1C.pred_ln_cotton_rrev_se*1.96) + p1C.pred_ln_cotton_rrev$res + p1C.pred_ln_cotton_rrev$effect ), na.rm = TRUE)/p.cotton.rev0 - 1)*100
+p.cotton.rev1 <- (sum( exp(p1C.pred_ln_cotton_rrev$fit + p1C.pred_ln_cotton_rrev$res + p1C.pred_ln_cotton_rrev$effect  ))/p.cotton.rev0 - 1)*100
+p.cotton.rev1.min <- ((sum( exp(p1C.pred_ln_cotton_rrev$fit + p1C.pred_ln_cotton_rrev$res + p1C.pred_ln_cotton_rrev$effect )) - exp(p1C.pred_ln_cotton_rrev_se*1.96))/p.cotton.rev0 - 1)*100
+p.cotton.rev1.max <- ((sum( exp(p1C.pred_ln_cotton_rrev$fit + p1C.pred_ln_cotton_rrev$res + p1C.pred_ln_cotton_rrev$effect )) + exp(p1C.pred_ln_cotton_rrev_se*1.96))/p.cotton.rev0 - 1)*100
 
-p.cotton.rev2 <- (sum( exp(p2C.pred_ln_cotton_rrev$fit + p2C.pred_ln_cotton_rrev$res + p2C.pred_ln_cotton_rrev$effect ), na.rm = TRUE)/p.cotton.rev0 - 1)*100
-p.cotton.rev2.min <- (sum( exp(p2C.pred_ln_cotton_rrev$fit - c(p2C.pred_ln_cotton_rrev_se*1.96) + p2C.pred_ln_cotton_rrev$res + p2C.pred_ln_cotton_rrev$effect ), na.rm = TRUE)/p.cotton.rev0 - 1)*100
-p.cotton.rev2.max <- (sum( exp(p2C.pred_ln_cotton_rrev$fit + c(p2C.pred_ln_cotton_rrev_se*1.96) + p2C.pred_ln_cotton_rrev$res + p2C.pred_ln_cotton_rrev$effect ), na.rm = TRUE)/p.cotton.rev0 - 1)*100
+p.cotton.rev2 <- (sum( exp(p2C.pred_ln_cotton_rrev$fit + p2C.pred_ln_cotton_rrev$res + p2C.pred_ln_cotton_rrev$effect))/p.cotton.rev0 - 1)*100
+p.cotton.rev2.min <- ((sum( exp(p2C.pred_ln_cotton_rrev$fit + p2C.pred_ln_cotton_rrev$res + p2C.pred_ln_cotton_rrev$effect)) - exp(p2C.pred_ln_cotton_rrev_se*1.96))/p.cotton.rev0 - 1)*100
+p.cotton.rev2.max <- ((sum( exp(p2C.pred_ln_cotton_rrev$fit + p2C.pred_ln_cotton_rrev$res + p2C.pred_ln_cotton_rrev$effect)) + exp(p2C.pred_ln_cotton_rrev_se*1.96))/p.cotton.rev0 - 1)*100
 
-p.cotton.rev3 <- (sum( exp(p3C.pred_ln_cotton_rrev$fit + p3C.pred_ln_cotton_rrev$res + p3C.pred_ln_cotton_rrev$effect ), na.rm = TRUE)/p.cotton.rev0 - 1)*100
-p.cotton.rev3.min <- (sum( exp(p3C.pred_ln_cotton_rrev$fit - c(p3C.pred_ln_cotton_rrev_se*1.96) + p3C.pred_ln_cotton_rrev$res + p3C.pred_ln_cotton_rrev$effect ), na.rm = TRUE)/p.cotton.rev0 - 1)*100
-p.cotton.rev3.max <- (sum( exp(p3C.pred_ln_cotton_rrev$fit + c(p3C.pred_ln_cotton_rrev_se*1.96) + p3C.pred_ln_cotton_rrev$res + p3C.pred_ln_cotton_rrev$effect ), na.rm = TRUE)/p.cotton.rev0 - 1)*100
+p.cotton.rev3 <- (sum( exp(p3C.pred_ln_cotton_rrev$fit + p3C.pred_ln_cotton_rrev$res + p3C.pred_ln_cotton_rrev$effect ))/p.cotton.rev0 - 1)*100
+p.cotton.rev3.min <- ((sum( exp(p3C.pred_ln_cotton_rrev$fit + p3C.pred_ln_cotton_rrev$res + p3C.pred_ln_cotton_rrev$effect)) - exp(p3C.pred_ln_cotton_rrev_se*1.96))/p.cotton.rev0 - 1)*100
+p.cotton.rev3.max <- ((sum( exp(p3C.pred_ln_cotton_rrev$fit + p3C.pred_ln_cotton_rrev$res + p3C.pred_ln_cotton_rrev$effect )) + exp(p3C.pred_ln_cotton_rrev_se*1.96))/p.cotton.rev0 - 1)*100
 
-p.cotton.rev4 <- (sum( exp(p4C.pred_ln_cotton_rrev$fit + p4C.pred_ln_cotton_rrev$res + p4C.pred_ln_cotton_rrev$effect ), na.rm = TRUE)/p.cotton.rev0 - 1)*100
-p.cotton.rev4.min <- (sum( exp(p4C.pred_ln_cotton_rrev$fit - c(p4C.pred_ln_cotton_rrev_se*1.96) + p4C.pred_ln_cotton_rrev$res + p4C.pred_ln_cotton_rrev$effect ), na.rm = TRUE)/p.cotton.rev0 - 1)*100
-p.cotton.rev4.max <- (sum( exp(p4C.pred_ln_cotton_rrev$fit + c(p4C.pred_ln_cotton_rrev_se*1.96) + p4C.pred_ln_cotton_rrev$res + p4C.pred_ln_cotton_rrev$effect ), na.rm = TRUE)/p.cotton.rev0 - 1)*100
+p.cotton.rev4 <- (sum( exp(p4C.pred_ln_cotton_rrev$fit + p4C.pred_ln_cotton_rrev$res + p4C.pred_ln_cotton_rrev$effect))/p.cotton.rev0 - 1)*100
+p.cotton.rev4.min <- ((sum( exp(p4C.pred_ln_cotton_rrev$fit + p4C.pred_ln_cotton_rrev$res + p4C.pred_ln_cotton_rrev$effect)) - exp(p4C.pred_ln_cotton_rrev_se*1.96))/p.cotton.rev0 - 1)*100
+p.cotton.rev4.max <- ((sum( exp(p4C.pred_ln_cotton_rrev$fit + p4C.pred_ln_cotton_rrev$res + p4C.pred_ln_cotton_rrev$effect)) + exp(p4C.pred_ln_cotton_rrev_se*1.96))/p.cotton.rev0 - 1)*100
 
-p.cotton.rev5 <- (sum( exp(p5C.pred_ln_cotton_rrev$fit + p5C.pred_ln_cotton_rrev$res + p5C.pred_ln_cotton_rrev$effect ), na.rm = TRUE)/p.cotton.rev0 - 1)*100
-p.cotton.rev5.min <- (sum( exp(p5C.pred_ln_cotton_rrev$fit - c(p5C.pred_ln_cotton_rrev_se*1.96) + p5C.pred_ln_cotton_rrev$res + p5C.pred_ln_cotton_rrev$effect ), na.rm = TRUE)/p.cotton.rev0 - 1)*100
-p.cotton.rev5.max <- (sum( exp(p5C.pred_ln_cotton_rrev$fit + c(p5C.pred_ln_cotton_rrev_se*1.96) + p5C.pred_ln_cotton_rrev$res + p5C.pred_ln_cotton_rrev$effect ), na.rm = TRUE)/p.cotton.rev0 - 1)*100
+p.cotton.rev5 <- (sum( exp(p5C.pred_ln_cotton_rrev$fit + p5C.pred_ln_cotton_rrev$res + p5C.pred_ln_cotton_rrev$effect))/p.cotton.rev0 - 1)*100
+p.cotton.rev5.min <- ((sum( exp(p5C.pred_ln_cotton_rrev$fit + p5C.pred_ln_cotton_rrev$res + p5C.pred_ln_cotton_rrev$effect )) - exp(p5C.pred_ln_cotton_rrev_se*1.96))/p.cotton.rev0 - 1)*100
+p.cotton.rev5.max <- ((sum( exp(p5C.pred_ln_cotton_rrev$fit + p5C.pred_ln_cotton_rrev$res + p5C.pred_ln_cotton_rrev$effect)) + exp(p5C.pred_ln_cotton_rrev_se*1.96))/p.cotton.rev0 - 1)*100
 
-diff.cotton.rev0 <- (sum( exp(diff0C.pred_ln_cotton_rrev$fit + diff0C.pred_ln_cotton_rrev$res + diff1C.pred_ln_cotton_rrev$effect )))
-diff.cotton.rev1 <- (sum( exp(diff1C.pred_ln_cotton_rrev$fit + diff1C.pred_ln_cotton_rrev$res + diff1C.pred_ln_cotton_rrev$effect ), na.rm = TRUE)/diff.cotton.rev0 - 1)*100
-diff.cotton.rev1.min <- (sum( exp(diff1C.pred_ln_cotton_rrev$fit - c(diff1C.pred_ln_cotton_rrev_se*1.96) + diff1C.pred_ln_cotton_rrev$res + diff1C.pred_ln_cotton_rrev$effect ), na.rm = TRUE)/diff.cotton.rev0 - 1)*100
-diff.cotton.rev1.max <- (sum( exp(diff1C.pred_ln_cotton_rrev$fit + c(diff1C.pred_ln_cotton_rrev_se*1.96) + diff1C.pred_ln_cotton_rrev$res + diff1C.pred_ln_cotton_rrev$effect ), na.rm = TRUE)/diff.cotton.rev0 - 1)*100
+diff.cotton.rev0 <- (sum( exp(diff0C.pred_ln_cotton_rrev$fit + diff0C.pred_ln_cotton_rrev$res + diff0C.pred_ln_cotton_rrev$effect)))
+diff.cotton.rev1 <- (sum( exp(diff1C.pred_ln_cotton_rrev$fit + diff1C.pred_ln_cotton_rrev$res + diff1C.pred_ln_cotton_rrev$effect  ))/diff.cotton.rev0 - 1)*100
+diff.cotton.rev1.min <- ((sum( exp(diff1C.pred_ln_cotton_rrev$fit + diff1C.pred_ln_cotton_rrev$res + diff1C.pred_ln_cotton_rrev$effect)) - exp(diff1C.pred_ln_cotton_rrev_se*1.96))/diff.cotton.rev0 - 1)*100
+diff.cotton.rev1.max <- ((sum( exp(diff1C.pred_ln_cotton_rrev$fit + diff1C.pred_ln_cotton_rrev$res+ diff1C.pred_ln_cotton_rrev$effect )) + exp(diff1C.pred_ln_cotton_rrev_se*1.96))/diff.cotton.rev0 - 1)*100
 
-diff.cotton.rev2 <- (sum( exp(diff2C.pred_ln_cotton_rrev$fit + diff2C.pred_ln_cotton_rrev$res + diff2C.pred_ln_cotton_rrev$effect ), na.rm = TRUE)/diff.cotton.rev0 - 1)*100
-diff.cotton.rev2.min <- (sum( exp(diff2C.pred_ln_cotton_rrev$fit - c(diff2C.pred_ln_cotton_rrev_se*1.96) + diff2C.pred_ln_cotton_rrev$res + diff2C.pred_ln_cotton_rrev$effect ), na.rm = TRUE)/diff.cotton.rev0 - 1)*100
-diff.cotton.rev2.max <- (sum( exp(diff2C.pred_ln_cotton_rrev$fit + c(diff2C.pred_ln_cotton_rrev_se*1.96) + diff2C.pred_ln_cotton_rrev$res + diff2C.pred_ln_cotton_rrev$effect ), na.rm = TRUE)/diff.cotton.rev0 - 1)*100
+diff.cotton.rev2 <- (sum( exp(diff2C.pred_ln_cotton_rrev$fit + diff2C.pred_ln_cotton_rrev$res + diff2C.pred_ln_cotton_rrev$effect))/diff.cotton.rev0 - 1)*100
+diff.cotton.rev2.min <- ((sum( exp(diff2C.pred_ln_cotton_rrev$fit + diff2C.pred_ln_cotton_rrev$res + diff2C.pred_ln_cotton_rrev$effect)) - exp(diff2C.pred_ln_cotton_rrev_se*1.96))/diff.cotton.rev0 - 1)*100
+diff.cotton.rev2.max <- ((sum( exp(diff2C.pred_ln_cotton_rrev$fit + diff2C.pred_ln_cotton_rrev$res + diff2C.pred_ln_cotton_rrev$effect)) + exp(diff2C.pred_ln_cotton_rrev_se*1.96))/diff.cotton.rev0 - 1)*100
 
-diff.cotton.rev3 <- (sum( exp(diff3C.pred_ln_cotton_rrev$fit + diff3C.pred_ln_cotton_rrev$res + diff3C.pred_ln_cotton_rrev$effect ), na.rm = TRUE)/diff.cotton.rev0 - 1)*100
-diff.cotton.rev3.min <- (sum( exp(diff3C.pred_ln_cotton_rrev$fit - c(diff3C.pred_ln_cotton_rrev_se*1.96) + diff3C.pred_ln_cotton_rrev$res + diff3C.pred_ln_cotton_rrev$effect ), na.rm = TRUE)/diff.cotton.rev0 - 1)*100
-diff.cotton.rev3.max <- (sum( exp(diff3C.pred_ln_cotton_rrev$fit + c(diff3C.pred_ln_cotton_rrev_se*1.96) + diff3C.pred_ln_cotton_rrev$res + diff3C.pred_ln_cotton_rrev$effect ), na.rm = TRUE)/diff.cotton.rev0 - 1)*100
+diff.cotton.rev3 <- (sum( exp(diff3C.pred_ln_cotton_rrev$fit + diff3C.pred_ln_cotton_rrev$res + diff3C.pred_ln_cotton_rrev$effect))/diff.cotton.rev0 - 1)*100
+diff.cotton.rev3.min <- ((sum( exp(diff3C.pred_ln_cotton_rrev$fit + diff3C.pred_ln_cotton_rrev$res + diff3C.pred_ln_cotton_rrev$effect)) - exp(diff3C.pred_ln_cotton_rrev_se*1.96))/diff.cotton.rev0 - 1)*100
+diff.cotton.rev3.max <- ((sum( exp(diff3C.pred_ln_cotton_rrev$fit + diff3C.pred_ln_cotton_rrev$res + diff3C.pred_ln_cotton_rrev$effect)) + exp(diff3C.pred_ln_cotton_rrev_se*1.96))/diff.cotton.rev0 - 1)*100
 
-diff.cotton.rev4 <- (sum( exp(diff4C.pred_ln_cotton_rrev$fit + diff4C.pred_ln_cotton_rrev$res + diff4C.pred_ln_cotton_rrev$effect ), na.rm = TRUE)/diff.cotton.rev0 - 1)*100
-diff.cotton.rev4.min <- (sum( exp(diff4C.pred_ln_cotton_rrev$fit - c(diff4C.pred_ln_cotton_rrev_se*1.96) + diff4C.pred_ln_cotton_rrev$res + diff4C.pred_ln_cotton_rrev$effect ), na.rm = TRUE)/diff.cotton.rev0 - 1)*100
-diff.cotton.rev4.max <- (sum( exp(diff4C.pred_ln_cotton_rrev$fit + c(diff4C.pred_ln_cotton_rrev_se*1.96) + diff4C.pred_ln_cotton_rrev$res + diff4C.pred_ln_cotton_rrev$effect ), na.rm = TRUE)/diff.cotton.rev0 - 1)*100
+diff.cotton.rev4 <- (sum( exp(diff4C.pred_ln_cotton_rrev$fit + diff4C.pred_ln_cotton_rrev$res + diff4C.pred_ln_cotton_rrev$effect))/diff.cotton.rev0 - 1)*100
+diff.cotton.rev4.min <- ((sum( exp(diff4C.pred_ln_cotton_rrev$fit + diff4C.pred_ln_cotton_rrev$res + diff4C.pred_ln_cotton_rrev$effect)) - exp(diff4C.pred_ln_cotton_rrev_se*1.96))/diff.cotton.rev0 - 1)*100
+diff.cotton.rev4.max <- ((sum( exp(diff4C.pred_ln_cotton_rrev$fit + diff4C.pred_ln_cotton_rrev$res + diff4C.pred_ln_cotton_rrev$effect)) + exp(diff4C.pred_ln_cotton_rrev_se*1.96))/diff.cotton.rev0 - 1)*100
 
-diff.cotton.rev5 <- (sum( exp(diff5C.pred_ln_cotton_rrev$fit + diff5C.pred_ln_cotton_rrev$res + diff5C.pred_ln_cotton_rrev$effect ), na.rm = TRUE)/diff.cotton.rev0 - 1)*100
-diff.cotton.rev5.min <- (sum( exp(diff5C.pred_ln_cotton_rrev$fit - c(diff5C.pred_ln_cotton_rrev_se*1.96) + diff5C.pred_ln_cotton_rrev$res + diff5C.pred_ln_cotton_rrev$effect ), na.rm = TRUE)/diff.cotton.rev0 - 1)*100
-diff.cotton.rev5.max <- (sum( exp(diff5C.pred_ln_cotton_rrev$fit + c(diff5C.pred_ln_cotton_rrev_se*1.96) + diff5C.pred_ln_cotton_rrev$res + diff5C.pred_ln_cotton_rrev$effect ), na.rm = TRUE)/diff.cotton.rev0 - 1)*100
+diff.cotton.rev5 <- (sum( exp(diff5C.pred_ln_cotton_rrev$fit + diff5C.pred_ln_cotton_rrev$res + diff5C.pred_ln_cotton_rrev$effect))/diff.cotton.rev0 - 1)*100
+diff.cotton.rev5.min <- ((sum( exp(diff5C.pred_ln_cotton_rrev$fit + diff5C.pred_ln_cotton_rrev$res + diff5C.pred_ln_cotton_rrev$effect)) - exp(diff5C.pred_ln_cotton_rrev_se*1.96))/diff.cotton.rev0 - 1)*100
+diff.cotton.rev5.max <- ((sum( exp(diff5C.pred_ln_cotton_rrev$fit + diff5C.pred_ln_cotton_rrev$res+ diff5C.pred_ln_cotton_rrev$effect)) + exp(diff5C.pred_ln_cotton_rrev_se*1.96))/diff.cotton.rev0 - 1)*100
 
 cotton.plotdat <- data.frame(temp = rep(c(1,2,3,4,5), 3),
                            rev = c(cs.cotton.rev1, cs.cotton.rev2, cs.cotton.rev3, cs.cotton.rev4, cs.cotton.rev5,
@@ -533,155 +455,120 @@ cs0C.pred_ln_hay_rrev_se <- cc.pred.se(cs.ln_hay_rrev$X - cs.ln_hay_rrev_0C[, c(
 
 cs1C.pred_ln_hay_rrev <- predictFelm(felm.fit = cs.ln_hay_rrev, newdata = cs.ln_hay_rrev_1C)
 cs1C.pred_ln_hay_rrev_se <- cc.pred.se(cs.ln_hay_rrev$X - cs.ln_hay_rrev_1C[, c("(Intercept)", "dday0_10", "dday10_30", "dday30C", "prec", "prec_sq", "lat", "long", "lat:long")], 
-                                        cs.ln_hay_rrev$clustervcv, cs.ln_hay_rrev$weights^2)
+           cs.ln_hay_rrev$clustervcv, cs.ln_hay_rrev$weights^2)
 cs2C.pred_ln_hay_rrev <- predictFelm(felm.fit = cs.ln_hay_rrev, newdata = cs.ln_hay_rrev_2C)
 cs2C.pred_ln_hay_rrev_se <- cc.pred.se(cs.ln_hay_rrev$X - cs.ln_hay_rrev_2C[, c("(Intercept)", "dday0_10", "dday10_30", "dday30C", "prec", "prec_sq", "lat", "long", "lat:long")], 
-                                        cs.ln_hay_rrev$clustervcv, cs.ln_hay_rrev$weights^2)
+           cs.ln_hay_rrev$clustervcv, cs.ln_hay_rrev$weights^2)
 cs3C.pred_ln_hay_rrev <- predictFelm(felm.fit = cs.ln_hay_rrev, newdata = cs.ln_hay_rrev_3C)
 cs3C.pred_ln_hay_rrev_se <- cc.pred.se(cs.ln_hay_rrev$X - cs.ln_hay_rrev_3C[, c("(Intercept)", "dday0_10", "dday10_30", "dday30C", "prec", "prec_sq", "lat", "long", "lat:long")], 
-                                        cs.ln_hay_rrev$clustervcv, cs.ln_hay_rrev$weights^2)
+           cs.ln_hay_rrev$clustervcv, cs.ln_hay_rrev$weights^2)
 cs4C.pred_ln_hay_rrev <- predictFelm(felm.fit = cs.ln_hay_rrev, newdata = cs.ln_hay_rrev_4C)
 cs4C.pred_ln_hay_rrev_se <- cc.pred.se(cs.ln_hay_rrev$X - cs.ln_hay_rrev_4C[, c("(Intercept)", "dday0_10", "dday10_30", "dday30C", "prec", "prec_sq", "lat", "long", "lat:long")], 
-                                        cs.ln_hay_rrev$clustervcv, cs.ln_hay_rrev$weights^2)
+           cs.ln_hay_rrev$clustervcv, cs.ln_hay_rrev$weights^2)
 cs5C.pred_ln_hay_rrev <- predictFelm(felm.fit = cs.ln_hay_rrev, newdata = cs.ln_hay_rrev_5C)
 cs5C.pred_ln_hay_rrev_se <- cc.pred.se(cs.ln_hay_rrev$X - cs.ln_hay_rrev_5C[, c("(Intercept)", "dday0_10", "dday10_30", "dday30C", "prec", "prec_sq", "lat", "long", "lat:long")], 
-                                        cs.ln_hay_rrev$clustervcv, cs.ln_hay_rrev$weights^2)
+           cs.ln_hay_rrev$clustervcv, cs.ln_hay_rrev$weights^2)
 
 p0C.pred_ln_hay_rrev <- predictFelm(felm.fit = p.ln_hay_rrev, newdata = p.ln_hay_rrev_0C)
 p0C.pred_ln_hay_rrev_se <- cc.pred.se(p.ln_hay_rrev$X - p.ln_hay_rrev_0C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
-                                       p.ln_hay_rrev$clustervcv, p.ln_hay_rrev$weights^2)
+                                        p.ln_hay_rrev$clustervcv, p.ln_hay_rrev$weights^2)
 
 p1C.pred_ln_hay_rrev <- predictFelm(felm.fit = p.ln_hay_rrev, newdata = p.ln_hay_rrev_1C)
 p1C.pred_ln_hay_rrev_se <- cc.pred.se(p.ln_hay_rrev$X - p.ln_hay_rrev_1C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
-                                       p.ln_hay_rrev$clustervcv, p.ln_hay_rrev$weights^2)
+                                        p.ln_hay_rrev$clustervcv, p.ln_hay_rrev$weights^2)
 p2C.pred_ln_hay_rrev <- predictFelm(felm.fit = p.ln_hay_rrev, newdata = p.ln_hay_rrev_2C)
 p2C.pred_ln_hay_rrev_se <- cc.pred.se(p.ln_hay_rrev$X - p.ln_hay_rrev_2C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
-                                       p.ln_hay_rrev$clustervcv, p.ln_hay_rrev$weights^2)
+                                        p.ln_hay_rrev$clustervcv, p.ln_hay_rrev$weights^2)
 p3C.pred_ln_hay_rrev <- predictFelm(felm.fit = p.ln_hay_rrev, newdata = p.ln_hay_rrev_3C)
 p3C.pred_ln_hay_rrev_se <- cc.pred.se(p.ln_hay_rrev$X - p.ln_hay_rrev_3C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
-                                       p.ln_hay_rrev$clustervcv, p.ln_hay_rrev$weights^2)
+                                        p.ln_hay_rrev$clustervcv, p.ln_hay_rrev$weights^2)
 p4C.pred_ln_hay_rrev <- predictFelm(felm.fit = p.ln_hay_rrev, newdata = p.ln_hay_rrev_4C)
 p4C.pred_ln_hay_rrev_se <- cc.pred.se(p.ln_hay_rrev$X - p.ln_hay_rrev_4C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
-                                       p.ln_hay_rrev$clustervcv, p.ln_hay_rrev$weights^2)
+                                        p.ln_hay_rrev$clustervcv, p.ln_hay_rrev$weights^2)
 p5C.pred_ln_hay_rrev <- predictFelm(felm.fit = p.ln_hay_rrev, newdata = p.ln_hay_rrev_5C)
 p5C.pred_ln_hay_rrev_se <- cc.pred.se(p.ln_hay_rrev$X - p.ln_hay_rrev_5C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
-                                       p.ln_hay_rrev$clustervcv, p.ln_hay_rrev$weights^2)
+                                        p.ln_hay_rrev$clustervcv, p.ln_hay_rrev$weights^2)
 
 diff0C.pred_ln_hay_rrev <- predictFelm(felm.fit = diff.ln_hay_rrev, newdata = diff.ln_hay_rrev_0C)
 diff1C.pred_ln_hay_rrev <- predictFelm(felm.fit = diff.ln_hay_rrev, newdata = diff.ln_hay_rrev_1C)
 diff1C.pred_ln_hay_rrev_se <- cc.pred.se(diff.ln_hay_rrev$X - diff.ln_hay_rrev_1C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
-                                          diff.ln_hay_rrev$clustervcv, diff.ln_hay_rrev$weights^2)
+           diff.ln_hay_rrev$clustervcv, diff.ln_hay_rrev$weights^2)
 diff2C.pred_ln_hay_rrev <- predictFelm(felm.fit = diff.ln_hay_rrev, newdata = diff.ln_hay_rrev_2C)
 diff2C.pred_ln_hay_rrev_se <- cc.pred.se(diff.ln_hay_rrev$X - diff.ln_hay_rrev_2C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
-                                          diff.ln_hay_rrev$clustervcv, diff.ln_hay_rrev$weights^2)
+           diff.ln_hay_rrev$clustervcv, diff.ln_hay_rrev$weights^2)
 diff3C.pred_ln_hay_rrev <- predictFelm(felm.fit = diff.ln_hay_rrev, newdata = diff.ln_hay_rrev_3C)
 diff3C.pred_ln_hay_rrev_se <- cc.pred.se(diff.ln_hay_rrev$X - diff.ln_hay_rrev_3C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
-                                          diff.ln_hay_rrev$clustervcv, diff.ln_hay_rrev$weights^2)
+           diff.ln_hay_rrev$clustervcv, diff.ln_hay_rrev$weights^2)
 diff4C.pred_ln_hay_rrev <- predictFelm(felm.fit = diff.ln_hay_rrev, newdata = diff.ln_hay_rrev_4C)
 diff4C.pred_ln_hay_rrev_se <- cc.pred.se(diff.ln_hay_rrev$X - diff.ln_hay_rrev_4C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
-                                          diff.ln_hay_rrev$clustervcv, diff.ln_hay_rrev$weights^2)
+           diff.ln_hay_rrev$clustervcv, diff.ln_hay_rrev$weights^2)
 diff5C.pred_ln_hay_rrev <- predictFelm(felm.fit = diff.ln_hay_rrev, newdata = diff.ln_hay_rrev_5C)
 diff5C.pred_ln_hay_rrev_se <- cc.pred.se(diff.ln_hay_rrev$X - diff.ln_hay_rrev_5C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
-                                          diff.ln_hay_rrev$clustervcv, diff.ln_hay_rrev$weights^2)
+           diff.ln_hay_rrev$clustervcv, diff.ln_hay_rrev$weights^2)
 
-
-cs.rev1C <- exp(cs1C.pred_ln_hay_rrev$fit)
-cs.rev2C <- exp(cs2C.pred_ln_hay_rrev$fit + cs2C.pred_ln_hay_rrev$res )
-cs.rev3C <- exp(cs3C.pred_ln_hay_rrev$fit + cs3C.pred_ln_hay_rrev$res )
-cs.rev4C <- exp(cs4C.pred_ln_hay_rrev$fit + cs4C.pred_ln_hay_rrev$res )
-cs.rev5C <- exp(cs5C.pred_ln_hay_rrev$fit + cs5C.pred_ln_hay_rrev$res )
-
-p.rev1C <- exp(p1C.pred_ln_hay_rrev$fit + p1C.pred_ln_hay_rrev$res + p1C.pred_ln_hay_rrev$effect)
-p.rev2C <- exp(p2C.pred_ln_hay_rrev$fit + p2C.pred_ln_hay_rrev$res + p2C.pred_ln_hay_rrev$effect)
-p.rev3C <- exp(p3C.pred_ln_hay_rrev$fit + p3C.pred_ln_hay_rrev$res + p3C.pred_ln_hay_rrev$effect)
-p.rev4C <- exp(p4C.pred_ln_hay_rrev$fit + p4C.pred_ln_hay_rrev$res + p4C.pred_ln_hay_rrev$effect)
-p.rev5C <- exp(p5C.pred_ln_hay_rrev$fit + p5C.pred_ln_hay_rrev$res + p5C.pred_ln_hay_rrev$effect)
-
-diff.rev1C <- exp(diff1C.pred_ln_hay_rrev$fit + diff1C.pred_ln_hay_rrev$res + diff1C.pred_ln_hay_rrev$effect)
-diff.rev2C <- exp(diff2C.pred_ln_hay_rrev$fit + diff2C.pred_ln_hay_rrev$res + diff2C.pred_ln_hay_rrev$effect)
-diff.rev3C <- exp(diff3C.pred_ln_hay_rrev$fit + diff3C.pred_ln_hay_rrev$res + diff3C.pred_ln_hay_rrev$effect)
-diff.rev4C <- exp(diff4C.pred_ln_hay_rrev$fit + diff4C.pred_ln_hay_rrev$res + diff4C.pred_ln_hay_rrev$effect)
-diff.rev5C <- exp(diff5C.pred_ln_hay_rrev$fit + diff5C.pred_ln_hay_rrev$res + diff5C.pred_ln_hay_rrev$effect)
-
-cs.rev <- data.frame(rev = c(exp(cs.ln_hay_rrev), cs.rev1C, cs.rev2C, cs.rev3C, cs.rev4C, cs.rev5C),
-                     change = rep(c("Base", "1C", "2C", "3C", "4C", "5C"), each = length(cs.rev1C)))
-
-p.rev <- data.frame(rev = c(p.rev1C, p.rev2C, p.rev3C, p.rev4C, p.rev5C),
-                    change = rep(c("1C", "2C", "3C", "4C", "5C"), each = length(p.rev1C)))
-
-diff.rev <- data.frame(rev = c(diff.rev1C, diff.rev2C, diff.rev3C, diff.rev4C, diff.rev5C),
-                       change = rep(c("1C", "2C", "3C", "4C", "5C"), each = length(diff.rev1C)))
-
-
-ggplot(cs.rev, aes(rev, fill = change)) + geom_histogram() + scale_fill_brewer(palette = "OrRd")
-ggplot(filter(p.rev, rev < 50), aes(rev, fill = change)) + geom_histogram(bins = 100) + scale_fill_brewer(palette = "OrRd")
-ggplot(diff.rev, aes(rev, fill = change)) + geom_histogram() + scale_fill_brewer(palette = "OrRd")
-
-
-
-cs.hay.rev0 <- (sum( exp(cs0C.pred_ln_hay_rrev$fit + cs0C.pred_ln_hay_rrev$res)))
+# Get % changes
+cs.hay.rev0 <- (sum( exp(cs0C.pred_ln_hay_rrev$fit + cs0C.pred_ln_hay_rrev$res )))
 cs.hay.rev1 <- (sum( exp(cs1C.pred_ln_hay_rrev$fit + cs1C.pred_ln_hay_rrev$res  ))/cs.hay.rev0 - 1)*100
-cs.hay.rev1.min <- (sum( exp(cs1C.pred_ln_hay_rrev$fit - c(cs1C.pred_ln_hay_rrev_se*1.96) + cs1C.pred_ln_hay_rrev$res ), na.rm = TRUE)/cs.hay.rev0 - 1)*100
-cs.hay.rev1.max <- (sum( exp(cs1C.pred_ln_hay_rrev$fit + c(cs1C.pred_ln_hay_rrev_se*1.96) + cs1C.pred_ln_hay_rrev$res  ), na.rm = TRUE)/cs.hay.rev0 - 1)*100
+cs.hay.rev1.min <- ((sum( exp(cs1C.pred_ln_hay_rrev$fit + cs1C.pred_ln_hay_rrev$res + cs1C.pred_ln_hay_rrev$effect)) - exp(cs1C.pred_ln_hay_rrev_se*1.96))/cs.hay.rev0 - 1)*100
+cs.hay.rev1.max <- ((sum( exp(cs1C.pred_ln_hay_rrev$fit + cs1C.pred_ln_hay_rrev$res + cs1C.pred_ln_hay_rrev$effect)) + exp(cs1C.pred_ln_hay_rrev_se*1.96))/cs.hay.rev0 - 1)*100
 
-cs.hay.rev2 <- (sum( exp(cs2C.pred_ln_hay_rrev$fit + cs2C.pred_ln_hay_rrev$res  ))/cs.hay.rev0 - 1)*100
-cs.hay.rev2.min <- (sum( exp(cs2C.pred_ln_hay_rrev$fit - c(cs2C.pred_ln_hay_rrev_se*1.96) + cs2C.pred_ln_hay_rrev$res  ), na.rm = TRUE)/cs.hay.rev0 - 1)*100
-cs.hay.rev2.max <- (sum( exp(cs2C.pred_ln_hay_rrev$fit + c(cs2C.pred_ln_hay_rrev_se*1.96) + cs2C.pred_ln_hay_rrev$res  ), na.rm = TRUE)/cs.hay.rev0 - 1)*100
+cs.hay.rev2 <- (sum( exp(cs2C.pred_ln_hay_rrev$fit + cs2C.pred_ln_hay_rrev$res ))/cs.hay.rev0 - 1)*100
+cs.hay.rev2.min <- ((sum( exp(cs2C.pred_ln_hay_rrev$fit + cs2C.pred_ln_hay_rrev$res )) - exp(cs2C.pred_ln_hay_rrev_se*1.96))/cs.hay.rev0 - 1)*100
+cs.hay.rev2.max <- ((sum( exp(cs2C.pred_ln_hay_rrev$fit + cs2C.pred_ln_hay_rrev$res )) + exp(cs2C.pred_ln_hay_rrev_se*1.96))/cs.hay.rev0 - 1)*100
 
-cs.hay.rev3 <- (sum( exp(cs3C.pred_ln_hay_rrev$fit + cs3C.pred_ln_hay_rrev$res  ))/cs.hay.rev0 - 1)*100
-cs.hay.rev3.min <- (sum( exp(cs3C.pred_ln_hay_rrev$fit - c(cs3C.pred_ln_hay_rrev_se*1.96) + cs3C.pred_ln_hay_rrev$res  ), na.rm = TRUE)/cs.hay.rev0 - 1)*100
-cs.hay.rev3.max <- (sum( exp(cs3C.pred_ln_hay_rrev$fit + c(cs3C.pred_ln_hay_rrev_se*1.96) + cs3C.pred_ln_hay_rrev$res  ), na.rm = TRUE)/cs.hay.rev0 - 1)*100
+cs.hay.rev3 <- (sum( exp(cs3C.pred_ln_hay_rrev$fit + cs3C.pred_ln_hay_rrev$res ))/cs.hay.rev0 - 1)*100
+cs.hay.rev3.min <- ((sum( exp(cs3C.pred_ln_hay_rrev$fit + cs3C.pred_ln_hay_rrev$res )) - exp(cs3C.pred_ln_hay_rrev_se*1.96))/cs.hay.rev0 - 1)*100
+cs.hay.rev3.max <- ((sum( exp(cs3C.pred_ln_hay_rrev$fit + cs3C.pred_ln_hay_rrev$res )) + exp(cs3C.pred_ln_hay_rrev_se*1.96))/cs.hay.rev0 - 1)*100
 
-cs.hay.rev4 <- (sum( exp(cs4C.pred_ln_hay_rrev$fit + cs4C.pred_ln_hay_rrev$res  ))/cs.hay.rev0 - 1)*100
-cs.hay.rev4.min <- (sum( exp(cs4C.pred_ln_hay_rrev$fit - c(cs4C.pred_ln_hay_rrev_se*1.96) + cs4C.pred_ln_hay_rrev$res  ), na.rm = TRUE)/cs.hay.rev0 - 1)*100
-cs.hay.rev4.max <- (sum( exp(cs4C.pred_ln_hay_rrev$fit + c(cs4C.pred_ln_hay_rrev_se*1.96) + cs4C.pred_ln_hay_rrev$res  ), na.rm = TRUE)/cs.hay.rev0 - 1)*100
+cs.hay.rev4 <- (sum( exp(cs4C.pred_ln_hay_rrev$fit + cs4C.pred_ln_hay_rrev$res ))/cs.hay.rev0 - 1)*100
+cs.hay.rev4.min <- ((sum( exp(cs4C.pred_ln_hay_rrev$fit + cs4C.pred_ln_hay_rrev$res )) - exp(cs4C.pred_ln_hay_rrev_se*1.96))/cs.hay.rev0 - 1)*100
+cs.hay.rev4.max <- ((sum( exp(cs4C.pred_ln_hay_rrev$fit + cs4C.pred_ln_hay_rrev$res )) + exp(cs4C.pred_ln_hay_rrev_se*1.96))/cs.hay.rev0 - 1)*100
 
-cs.hay.rev5 <- (sum( exp(cs5C.pred_ln_hay_rrev$fit + cs5C.pred_ln_hay_rrev$res  ))/cs.hay.rev0 - 1)*100
-cs.hay.rev5.min <- (sum( exp(cs5C.pred_ln_hay_rrev$fit - c(cs5C.pred_ln_hay_rrev_se*1.96) + cs5C.pred_ln_hay_rrev$res  ), na.rm = TRUE)/cs.hay.rev0 - 1)*100
-cs.hay.rev5.max <- (sum( exp(cs5C.pred_ln_hay_rrev$fit + c(cs5C.pred_ln_hay_rrev_se*1.96) + cs5C.pred_ln_hay_rrev$res  ), na.rm = TRUE)/cs.hay.rev0 - 1)*100
-
+cs.hay.rev5 <- (sum( exp(cs5C.pred_ln_hay_rrev$fit + cs5C.pred_ln_hay_rrev$res ))/cs.hay.rev0 - 1)*100
+cs.hay.rev5.min <- ((sum( exp(cs5C.pred_ln_hay_rrev$fit + cs5C.pred_ln_hay_rrev$res )) - exp(cs5C.pred_ln_hay_rrev_se*1.96))/cs.hay.rev0 - 1)*100
+cs.hay.rev5.max <- ((sum( exp(cs5C.pred_ln_hay_rrev$fit + cs5C.pred_ln_hay_rrev$res )) + exp(cs5C.pred_ln_hay_rrev_se*1.96))/cs.hay.rev0 - 1)*100
 
 p.hay.rev0 <- (sum( exp(p0C.pred_ln_hay_rrev$fit + p0C.pred_ln_hay_rrev$res + p0C.pred_ln_hay_rrev$effect)))
-p.hay.rev1 <- (sum( exp(p1C.pred_ln_hay_rrev$fit + p1C.pred_ln_hay_rrev$res + p1C.pred_ln_hay_rrev$effect ), na.rm = TRUE)/p.hay.rev0 - 1)*100
-p.hay.rev1.min <- (sum( exp(p1C.pred_ln_hay_rrev$fit - c(p1C.pred_ln_hay_rrev_se*1.96) + p1C.pred_ln_hay_rrev$res + p1C.pred_ln_hay_rrev$effect ), na.rm = TRUE)/p.hay.rev0 - 1)*100
-p.hay.rev1.max <- (sum( exp(p1C.pred_ln_hay_rrev$fit + c(p1C.pred_ln_hay_rrev_se*1.96) + p1C.pred_ln_hay_rrev$res + p1C.pred_ln_hay_rrev$effect ), na.rm = TRUE)/p.hay.rev0 - 1)*100
+p.hay.rev1 <- (sum( exp(p1C.pred_ln_hay_rrev$fit + p1C.pred_ln_hay_rrev$res + p1C.pred_ln_hay_rrev$effect  ))/p.hay.rev0 - 1)*100
+p.hay.rev1.min <- ((sum( exp(p1C.pred_ln_hay_rrev$fit + p1C.pred_ln_hay_rrev$res + p1C.pred_ln_hay_rrev$effect )) - exp(p1C.pred_ln_hay_rrev_se*1.96))/p.hay.rev0 - 1)*100
+p.hay.rev1.max <- ((sum( exp(p1C.pred_ln_hay_rrev$fit + p1C.pred_ln_hay_rrev$res + p1C.pred_ln_hay_rrev$effect )) + exp(p1C.pred_ln_hay_rrev_se*1.96))/p.hay.rev0 - 1)*100
 
-p.hay.rev2 <- (sum( exp(p2C.pred_ln_hay_rrev$fit + p2C.pred_ln_hay_rrev$res + p2C.pred_ln_hay_rrev$effect ), na.rm = TRUE)/p.hay.rev0 - 1)*100
-p.hay.rev2.min <- (sum( exp(p2C.pred_ln_hay_rrev$fit - c(p2C.pred_ln_hay_rrev_se*1.96) + p2C.pred_ln_hay_rrev$res + p2C.pred_ln_hay_rrev$effect ), na.rm = TRUE)/p.hay.rev0 - 1)*100
-p.hay.rev2.max <- (sum( exp(p2C.pred_ln_hay_rrev$fit + c(p2C.pred_ln_hay_rrev_se*1.96) + p2C.pred_ln_hay_rrev$res + p2C.pred_ln_hay_rrev$effect ), na.rm = TRUE)/p.hay.rev0 - 1)*100
+p.hay.rev2 <- (sum( exp(p2C.pred_ln_hay_rrev$fit + p2C.pred_ln_hay_rrev$res + p2C.pred_ln_hay_rrev$effect))/p.hay.rev0 - 1)*100
+p.hay.rev2.min <- ((sum( exp(p2C.pred_ln_hay_rrev$fit + p2C.pred_ln_hay_rrev$res + p2C.pred_ln_hay_rrev$effect)) - exp(p2C.pred_ln_hay_rrev_se*1.96))/p.hay.rev0 - 1)*100
+p.hay.rev2.max <- ((sum( exp(p2C.pred_ln_hay_rrev$fit + p2C.pred_ln_hay_rrev$res + p2C.pred_ln_hay_rrev$effect)) + exp(p2C.pred_ln_hay_rrev_se*1.96))/p.hay.rev0 - 1)*100
 
-p.hay.rev3 <- (sum( exp(p3C.pred_ln_hay_rrev$fit + p3C.pred_ln_hay_rrev$res + p3C.pred_ln_hay_rrev$effect ), na.rm = TRUE)/p.hay.rev0 - 1)*100
-p.hay.rev3.min <- (sum( exp(p3C.pred_ln_hay_rrev$fit - c(p3C.pred_ln_hay_rrev_se*1.96) + p3C.pred_ln_hay_rrev$res + p3C.pred_ln_hay_rrev$effect ), na.rm = TRUE)/p.hay.rev0 - 1)*100
-p.hay.rev3.max <- (sum( exp(p3C.pred_ln_hay_rrev$fit + c(p3C.pred_ln_hay_rrev_se*1.96) + p3C.pred_ln_hay_rrev$res + p3C.pred_ln_hay_rrev$effect ), na.rm = TRUE)/p.hay.rev0 - 1)*100
+p.hay.rev3 <- (sum( exp(p3C.pred_ln_hay_rrev$fit + p3C.pred_ln_hay_rrev$res + p3C.pred_ln_hay_rrev$effect ))/p.hay.rev0 - 1)*100
+p.hay.rev3.min <- ((sum( exp(p3C.pred_ln_hay_rrev$fit + p3C.pred_ln_hay_rrev$res + p3C.pred_ln_hay_rrev$effect)) - exp(p3C.pred_ln_hay_rrev_se*1.96))/p.hay.rev0 - 1)*100
+p.hay.rev3.max <- ((sum( exp(p3C.pred_ln_hay_rrev$fit + p3C.pred_ln_hay_rrev$res + p3C.pred_ln_hay_rrev$effect )) + exp(p3C.pred_ln_hay_rrev_se*1.96))/p.hay.rev0 - 1)*100
 
-p.hay.rev4 <- (sum( exp(p4C.pred_ln_hay_rrev$fit + p4C.pred_ln_hay_rrev$res + p4C.pred_ln_hay_rrev$effect ), na.rm = TRUE)/p.hay.rev0 - 1)*100
-p.hay.rev4.min <- (sum( exp(p4C.pred_ln_hay_rrev$fit - c(p4C.pred_ln_hay_rrev_se*1.96) + p4C.pred_ln_hay_rrev$res + p4C.pred_ln_hay_rrev$effect ), na.rm = TRUE)/p.hay.rev0 - 1)*100
-p.hay.rev4.max <- (sum( exp(p4C.pred_ln_hay_rrev$fit + c(p4C.pred_ln_hay_rrev_se*1.96) + p4C.pred_ln_hay_rrev$res + p4C.pred_ln_hay_rrev$effect ), na.rm = TRUE)/p.hay.rev0 - 1)*100
+p.hay.rev4 <- (sum( exp(p4C.pred_ln_hay_rrev$fit + p4C.pred_ln_hay_rrev$res + p4C.pred_ln_hay_rrev$effect))/p.hay.rev0 - 1)*100
+p.hay.rev4.min <- ((sum( exp(p4C.pred_ln_hay_rrev$fit + p4C.pred_ln_hay_rrev$res + p4C.pred_ln_hay_rrev$effect)) - exp(p4C.pred_ln_hay_rrev_se*1.96))/p.hay.rev0 - 1)*100
+p.hay.rev4.max <- ((sum( exp(p4C.pred_ln_hay_rrev$fit + p4C.pred_ln_hay_rrev$res + p4C.pred_ln_hay_rrev$effect)) + exp(p4C.pred_ln_hay_rrev_se*1.96))/p.hay.rev0 - 1)*100
 
-p.hay.rev5 <- (sum( exp(p5C.pred_ln_hay_rrev$fit + p5C.pred_ln_hay_rrev$res + p5C.pred_ln_hay_rrev$effect ), na.rm = TRUE)/p.hay.rev0 - 1)*100
-p.hay.rev5.min <- (sum( exp(p5C.pred_ln_hay_rrev$fit - c(p5C.pred_ln_hay_rrev_se*1.96) + p5C.pred_ln_hay_rrev$res + p5C.pred_ln_hay_rrev$effect ), na.rm = TRUE)/p.hay.rev0 - 1)*100
-p.hay.rev5.max <- (sum( exp(p5C.pred_ln_hay_rrev$fit + c(p5C.pred_ln_hay_rrev_se*1.96) + p5C.pred_ln_hay_rrev$res + p5C.pred_ln_hay_rrev$effect ), na.rm = TRUE)/p.hay.rev0 - 1)*100
+p.hay.rev5 <- (sum( exp(p5C.pred_ln_hay_rrev$fit + p5C.pred_ln_hay_rrev$res + p5C.pred_ln_hay_rrev$effect))/p.hay.rev0 - 1)*100
+p.hay.rev5.min <- ((sum( exp(p5C.pred_ln_hay_rrev$fit + p5C.pred_ln_hay_rrev$res + p5C.pred_ln_hay_rrev$effect )) - exp(p5C.pred_ln_hay_rrev_se*1.96))/p.hay.rev0 - 1)*100
+p.hay.rev5.max <- ((sum( exp(p5C.pred_ln_hay_rrev$fit + p5C.pred_ln_hay_rrev$res + p5C.pred_ln_hay_rrev$effect)) + exp(p5C.pred_ln_hay_rrev_se*1.96))/p.hay.rev0 - 1)*100
 
-diff.hay.rev0 <- (sum( exp(diff0C.pred_ln_hay_rrev$fit + diff0C.pred_ln_hay_rrev$res + diff1C.pred_ln_hay_rrev$effect )))
-diff.hay.rev1 <- (sum( exp(diff1C.pred_ln_hay_rrev$fit + diff1C.pred_ln_hay_rrev$res + diff1C.pred_ln_hay_rrev$effect ), na.rm = TRUE)/diff.hay.rev0 - 1)*100
-diff.hay.rev1.min <- (sum( exp(diff1C.pred_ln_hay_rrev$fit - c(diff1C.pred_ln_hay_rrev_se*1.96) + diff1C.pred_ln_hay_rrev$res + diff1C.pred_ln_hay_rrev$effect ), na.rm = TRUE)/diff.hay.rev0 - 1)*100
-diff.hay.rev1.max <- (sum( exp(diff1C.pred_ln_hay_rrev$fit + c(diff1C.pred_ln_hay_rrev_se*1.96) + diff1C.pred_ln_hay_rrev$res + diff1C.pred_ln_hay_rrev$effect ), na.rm = TRUE)/diff.hay.rev0 - 1)*100
+diff.hay.rev0 <- (sum( exp(diff0C.pred_ln_hay_rrev$fit + diff0C.pred_ln_hay_rrev$res + diff0C.pred_ln_hay_rrev$effect)))
+diff.hay.rev1 <- (sum( exp(diff1C.pred_ln_hay_rrev$fit + diff1C.pred_ln_hay_rrev$res + diff1C.pred_ln_hay_rrev$effect  ))/diff.hay.rev0 - 1)*100
+diff.hay.rev1.min <- ((sum( exp(diff1C.pred_ln_hay_rrev$fit + diff1C.pred_ln_hay_rrev$res + diff1C.pred_ln_hay_rrev$effect)) - exp(diff1C.pred_ln_hay_rrev_se*1.96))/diff.hay.rev0 - 1)*100
+diff.hay.rev1.max <- ((sum( exp(diff1C.pred_ln_hay_rrev$fit + diff1C.pred_ln_hay_rrev$res+ diff1C.pred_ln_hay_rrev$effect )) + exp(diff1C.pred_ln_hay_rrev_se*1.96))/diff.hay.rev0 - 1)*100
 
-diff.hay.rev2 <- (sum( exp(diff2C.pred_ln_hay_rrev$fit + diff2C.pred_ln_hay_rrev$res + diff2C.pred_ln_hay_rrev$effect ), na.rm = TRUE)/diff.hay.rev0 - 1)*100
-diff.hay.rev2.min <- (sum( exp(diff2C.pred_ln_hay_rrev$fit - c(diff2C.pred_ln_hay_rrev_se*1.96) + diff2C.pred_ln_hay_rrev$res + diff2C.pred_ln_hay_rrev$effect ), na.rm = TRUE)/diff.hay.rev0 - 1)*100
-diff.hay.rev2.max <- (sum( exp(diff2C.pred_ln_hay_rrev$fit + c(diff2C.pred_ln_hay_rrev_se*1.96) + diff2C.pred_ln_hay_rrev$res + diff2C.pred_ln_hay_rrev$effect ), na.rm = TRUE)/diff.hay.rev0 - 1)*100
+diff.hay.rev2 <- (sum( exp(diff2C.pred_ln_hay_rrev$fit + diff2C.pred_ln_hay_rrev$res + diff2C.pred_ln_hay_rrev$effect))/diff.hay.rev0 - 1)*100
+diff.hay.rev2.min <- ((sum( exp(diff2C.pred_ln_hay_rrev$fit + diff2C.pred_ln_hay_rrev$res + diff2C.pred_ln_hay_rrev$effect)) - exp(diff2C.pred_ln_hay_rrev_se*1.96))/diff.hay.rev0 - 1)*100
+diff.hay.rev2.max <- ((sum( exp(diff2C.pred_ln_hay_rrev$fit + diff2C.pred_ln_hay_rrev$res + diff2C.pred_ln_hay_rrev$effect)) + exp(diff2C.pred_ln_hay_rrev_se*1.96))/diff.hay.rev0 - 1)*100
 
-diff.hay.rev3 <- (sum( exp(diff3C.pred_ln_hay_rrev$fit + diff3C.pred_ln_hay_rrev$res + diff3C.pred_ln_hay_rrev$effect ), na.rm = TRUE)/diff.hay.rev0 - 1)*100
-diff.hay.rev3.min <- (sum( exp(diff3C.pred_ln_hay_rrev$fit - c(diff3C.pred_ln_hay_rrev_se*1.96) + diff3C.pred_ln_hay_rrev$res + diff3C.pred_ln_hay_rrev$effect ), na.rm = TRUE)/diff.hay.rev0 - 1)*100
-diff.hay.rev3.max <- (sum( exp(diff3C.pred_ln_hay_rrev$fit + c(diff3C.pred_ln_hay_rrev_se*1.96) + diff3C.pred_ln_hay_rrev$res + diff3C.pred_ln_hay_rrev$effect ), na.rm = TRUE)/diff.hay.rev0 - 1)*100
+diff.hay.rev3 <- (sum( exp(diff3C.pred_ln_hay_rrev$fit + diff3C.pred_ln_hay_rrev$res + diff3C.pred_ln_hay_rrev$effect))/diff.hay.rev0 - 1)*100
+diff.hay.rev3.min <- ((sum( exp(diff3C.pred_ln_hay_rrev$fit + diff3C.pred_ln_hay_rrev$res + diff3C.pred_ln_hay_rrev$effect)) - exp(diff3C.pred_ln_hay_rrev_se*1.96))/diff.hay.rev0 - 1)*100
+diff.hay.rev3.max <- ((sum( exp(diff3C.pred_ln_hay_rrev$fit + diff3C.pred_ln_hay_rrev$res + diff3C.pred_ln_hay_rrev$effect)) + exp(diff3C.pred_ln_hay_rrev_se*1.96))/diff.hay.rev0 - 1)*100
 
-diff.hay.rev4 <- (sum( exp(diff4C.pred_ln_hay_rrev$fit + diff4C.pred_ln_hay_rrev$res + diff4C.pred_ln_hay_rrev$effect ), na.rm = TRUE)/diff.hay.rev0 - 1)*100
-diff.hay.rev4.min <- (sum( exp(diff4C.pred_ln_hay_rrev$fit - c(diff4C.pred_ln_hay_rrev_se*1.96) + diff4C.pred_ln_hay_rrev$res + diff4C.pred_ln_hay_rrev$effect ), na.rm = TRUE)/diff.hay.rev0 - 1)*100
-diff.hay.rev4.max <- (sum( exp(diff4C.pred_ln_hay_rrev$fit + c(diff4C.pred_ln_hay_rrev_se*1.96) + diff4C.pred_ln_hay_rrev$res + diff4C.pred_ln_hay_rrev$effect ), na.rm = TRUE)/diff.hay.rev0 - 1)*100
+diff.hay.rev4 <- (sum( exp(diff4C.pred_ln_hay_rrev$fit + diff4C.pred_ln_hay_rrev$res + diff4C.pred_ln_hay_rrev$effect))/diff.hay.rev0 - 1)*100
+diff.hay.rev4.min <- ((sum( exp(diff4C.pred_ln_hay_rrev$fit + diff4C.pred_ln_hay_rrev$res + diff4C.pred_ln_hay_rrev$effect)) - exp(diff4C.pred_ln_hay_rrev_se*1.96))/diff.hay.rev0 - 1)*100
+diff.hay.rev4.max <- ((sum( exp(diff4C.pred_ln_hay_rrev$fit + diff4C.pred_ln_hay_rrev$res + diff4C.pred_ln_hay_rrev$effect)) + exp(diff4C.pred_ln_hay_rrev_se*1.96))/diff.hay.rev0 - 1)*100
 
-diff.hay.rev5 <- (sum( exp(diff5C.pred_ln_hay_rrev$fit + diff5C.pred_ln_hay_rrev$res + diff5C.pred_ln_hay_rrev$effect ), na.rm = TRUE)/diff.hay.rev0 - 1)*100
-diff.hay.rev5.min <- (sum( exp(diff5C.pred_ln_hay_rrev$fit - c(diff5C.pred_ln_hay_rrev_se*1.96) + diff5C.pred_ln_hay_rrev$res + diff5C.pred_ln_hay_rrev$effect ), na.rm = TRUE)/diff.hay.rev0 - 1)*100
-diff.hay.rev5.max <- (sum( exp(diff5C.pred_ln_hay_rrev$fit + c(diff5C.pred_ln_hay_rrev_se*1.96) + diff5C.pred_ln_hay_rrev$res + diff5C.pred_ln_hay_rrev$effect ), na.rm = TRUE)/diff.hay.rev0 - 1)*100
+diff.hay.rev5 <- (sum( exp(diff5C.pred_ln_hay_rrev$fit + diff5C.pred_ln_hay_rrev$res + diff5C.pred_ln_hay_rrev$effect))/diff.hay.rev0 - 1)*100
+diff.hay.rev5.min <- ((sum( exp(diff5C.pred_ln_hay_rrev$fit + diff5C.pred_ln_hay_rrev$res + diff5C.pred_ln_hay_rrev$effect)) - exp(diff5C.pred_ln_hay_rrev_se*1.96))/diff.hay.rev0 - 1)*100
+diff.hay.rev5.max <- ((sum( exp(diff5C.pred_ln_hay_rrev$fit + diff5C.pred_ln_hay_rrev$res+ diff5C.pred_ln_hay_rrev$effect)) + exp(diff5C.pred_ln_hay_rrev_se*1.96))/diff.hay.rev0 - 1)*100
 
 hay.plotdat <- data.frame(temp = rep(c(1,2,3,4,5), 3),
                            rev = c(cs.hay.rev1, cs.hay.rev2, cs.hay.rev3, cs.hay.rev4, cs.hay.rev5,
@@ -708,155 +595,120 @@ cs0C.pred_ln_wheat_rrev_se <- cc.pred.se(cs.ln_wheat_rrev$X - cs.ln_wheat_rrev_0
 
 cs1C.pred_ln_wheat_rrev <- predictFelm(felm.fit = cs.ln_wheat_rrev, newdata = cs.ln_wheat_rrev_1C)
 cs1C.pred_ln_wheat_rrev_se <- cc.pred.se(cs.ln_wheat_rrev$X - cs.ln_wheat_rrev_1C[, c("(Intercept)", "dday0_10", "dday10_30", "dday30C", "prec", "prec_sq", "lat", "long", "lat:long")], 
-                                        cs.ln_wheat_rrev$clustervcv, cs.ln_wheat_rrev$weights^2)
+           cs.ln_wheat_rrev$clustervcv, cs.ln_wheat_rrev$weights^2)
 cs2C.pred_ln_wheat_rrev <- predictFelm(felm.fit = cs.ln_wheat_rrev, newdata = cs.ln_wheat_rrev_2C)
 cs2C.pred_ln_wheat_rrev_se <- cc.pred.se(cs.ln_wheat_rrev$X - cs.ln_wheat_rrev_2C[, c("(Intercept)", "dday0_10", "dday10_30", "dday30C", "prec", "prec_sq", "lat", "long", "lat:long")], 
-                                        cs.ln_wheat_rrev$clustervcv, cs.ln_wheat_rrev$weights^2)
+           cs.ln_wheat_rrev$clustervcv, cs.ln_wheat_rrev$weights^2)
 cs3C.pred_ln_wheat_rrev <- predictFelm(felm.fit = cs.ln_wheat_rrev, newdata = cs.ln_wheat_rrev_3C)
 cs3C.pred_ln_wheat_rrev_se <- cc.pred.se(cs.ln_wheat_rrev$X - cs.ln_wheat_rrev_3C[, c("(Intercept)", "dday0_10", "dday10_30", "dday30C", "prec", "prec_sq", "lat", "long", "lat:long")], 
-                                        cs.ln_wheat_rrev$clustervcv, cs.ln_wheat_rrev$weights^2)
+           cs.ln_wheat_rrev$clustervcv, cs.ln_wheat_rrev$weights^2)
 cs4C.pred_ln_wheat_rrev <- predictFelm(felm.fit = cs.ln_wheat_rrev, newdata = cs.ln_wheat_rrev_4C)
 cs4C.pred_ln_wheat_rrev_se <- cc.pred.se(cs.ln_wheat_rrev$X - cs.ln_wheat_rrev_4C[, c("(Intercept)", "dday0_10", "dday10_30", "dday30C", "prec", "prec_sq", "lat", "long", "lat:long")], 
-                                        cs.ln_wheat_rrev$clustervcv, cs.ln_wheat_rrev$weights^2)
+           cs.ln_wheat_rrev$clustervcv, cs.ln_wheat_rrev$weights^2)
 cs5C.pred_ln_wheat_rrev <- predictFelm(felm.fit = cs.ln_wheat_rrev, newdata = cs.ln_wheat_rrev_5C)
 cs5C.pred_ln_wheat_rrev_se <- cc.pred.se(cs.ln_wheat_rrev$X - cs.ln_wheat_rrev_5C[, c("(Intercept)", "dday0_10", "dday10_30", "dday30C", "prec", "prec_sq", "lat", "long", "lat:long")], 
-                                        cs.ln_wheat_rrev$clustervcv, cs.ln_wheat_rrev$weights^2)
+           cs.ln_wheat_rrev$clustervcv, cs.ln_wheat_rrev$weights^2)
 
 p0C.pred_ln_wheat_rrev <- predictFelm(felm.fit = p.ln_wheat_rrev, newdata = p.ln_wheat_rrev_0C)
 p0C.pred_ln_wheat_rrev_se <- cc.pred.se(p.ln_wheat_rrev$X - p.ln_wheat_rrev_0C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
-                                       p.ln_wheat_rrev$clustervcv, p.ln_wheat_rrev$weights^2)
+                                        p.ln_wheat_rrev$clustervcv, p.ln_wheat_rrev$weights^2)
 
 p1C.pred_ln_wheat_rrev <- predictFelm(felm.fit = p.ln_wheat_rrev, newdata = p.ln_wheat_rrev_1C)
 p1C.pred_ln_wheat_rrev_se <- cc.pred.se(p.ln_wheat_rrev$X - p.ln_wheat_rrev_1C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
-                                       p.ln_wheat_rrev$clustervcv, p.ln_wheat_rrev$weights^2)
+                                        p.ln_wheat_rrev$clustervcv, p.ln_wheat_rrev$weights^2)
 p2C.pred_ln_wheat_rrev <- predictFelm(felm.fit = p.ln_wheat_rrev, newdata = p.ln_wheat_rrev_2C)
 p2C.pred_ln_wheat_rrev_se <- cc.pred.se(p.ln_wheat_rrev$X - p.ln_wheat_rrev_2C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
-                                       p.ln_wheat_rrev$clustervcv, p.ln_wheat_rrev$weights^2)
+                                        p.ln_wheat_rrev$clustervcv, p.ln_wheat_rrev$weights^2)
 p3C.pred_ln_wheat_rrev <- predictFelm(felm.fit = p.ln_wheat_rrev, newdata = p.ln_wheat_rrev_3C)
 p3C.pred_ln_wheat_rrev_se <- cc.pred.se(p.ln_wheat_rrev$X - p.ln_wheat_rrev_3C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
-                                       p.ln_wheat_rrev$clustervcv, p.ln_wheat_rrev$weights^2)
+                                        p.ln_wheat_rrev$clustervcv, p.ln_wheat_rrev$weights^2)
 p4C.pred_ln_wheat_rrev <- predictFelm(felm.fit = p.ln_wheat_rrev, newdata = p.ln_wheat_rrev_4C)
 p4C.pred_ln_wheat_rrev_se <- cc.pred.se(p.ln_wheat_rrev$X - p.ln_wheat_rrev_4C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
-                                       p.ln_wheat_rrev$clustervcv, p.ln_wheat_rrev$weights^2)
+                                        p.ln_wheat_rrev$clustervcv, p.ln_wheat_rrev$weights^2)
 p5C.pred_ln_wheat_rrev <- predictFelm(felm.fit = p.ln_wheat_rrev, newdata = p.ln_wheat_rrev_5C)
 p5C.pred_ln_wheat_rrev_se <- cc.pred.se(p.ln_wheat_rrev$X - p.ln_wheat_rrev_5C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
-                                       p.ln_wheat_rrev$clustervcv, p.ln_wheat_rrev$weights^2)
+                                        p.ln_wheat_rrev$clustervcv, p.ln_wheat_rrev$weights^2)
 
 diff0C.pred_ln_wheat_rrev <- predictFelm(felm.fit = diff.ln_wheat_rrev, newdata = diff.ln_wheat_rrev_0C)
 diff1C.pred_ln_wheat_rrev <- predictFelm(felm.fit = diff.ln_wheat_rrev, newdata = diff.ln_wheat_rrev_1C)
 diff1C.pred_ln_wheat_rrev_se <- cc.pred.se(diff.ln_wheat_rrev$X - diff.ln_wheat_rrev_1C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
-                                          diff.ln_wheat_rrev$clustervcv, diff.ln_wheat_rrev$weights^2)
+           diff.ln_wheat_rrev$clustervcv, diff.ln_wheat_rrev$weights^2)
 diff2C.pred_ln_wheat_rrev <- predictFelm(felm.fit = diff.ln_wheat_rrev, newdata = diff.ln_wheat_rrev_2C)
 diff2C.pred_ln_wheat_rrev_se <- cc.pred.se(diff.ln_wheat_rrev$X - diff.ln_wheat_rrev_2C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
-                                          diff.ln_wheat_rrev$clustervcv, diff.ln_wheat_rrev$weights^2)
+           diff.ln_wheat_rrev$clustervcv, diff.ln_wheat_rrev$weights^2)
 diff3C.pred_ln_wheat_rrev <- predictFelm(felm.fit = diff.ln_wheat_rrev, newdata = diff.ln_wheat_rrev_3C)
 diff3C.pred_ln_wheat_rrev_se <- cc.pred.se(diff.ln_wheat_rrev$X - diff.ln_wheat_rrev_3C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
-                                          diff.ln_wheat_rrev$clustervcv, diff.ln_wheat_rrev$weights^2)
+           diff.ln_wheat_rrev$clustervcv, diff.ln_wheat_rrev$weights^2)
 diff4C.pred_ln_wheat_rrev <- predictFelm(felm.fit = diff.ln_wheat_rrev, newdata = diff.ln_wheat_rrev_4C)
 diff4C.pred_ln_wheat_rrev_se <- cc.pred.se(diff.ln_wheat_rrev$X - diff.ln_wheat_rrev_4C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
-                                          diff.ln_wheat_rrev$clustervcv, diff.ln_wheat_rrev$weights^2)
+           diff.ln_wheat_rrev$clustervcv, diff.ln_wheat_rrev$weights^2)
 diff5C.pred_ln_wheat_rrev <- predictFelm(felm.fit = diff.ln_wheat_rrev, newdata = diff.ln_wheat_rrev_5C)
 diff5C.pred_ln_wheat_rrev_se <- cc.pred.se(diff.ln_wheat_rrev$X - diff.ln_wheat_rrev_5C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
-                                          diff.ln_wheat_rrev$clustervcv, diff.ln_wheat_rrev$weights^2)
+           diff.ln_wheat_rrev$clustervcv, diff.ln_wheat_rrev$weights^2)
 
-
-cs.rev1C <- exp(cs1C.pred_ln_wheat_rrev$fit)
-cs.rev2C <- exp(cs2C.pred_ln_wheat_rrev$fit + cs2C.pred_ln_wheat_rrev$res )
-cs.rev3C <- exp(cs3C.pred_ln_wheat_rrev$fit + cs3C.pred_ln_wheat_rrev$res )
-cs.rev4C <- exp(cs4C.pred_ln_wheat_rrev$fit + cs4C.pred_ln_wheat_rrev$res )
-cs.rev5C <- exp(cs5C.pred_ln_wheat_rrev$fit + cs5C.pred_ln_wheat_rrev$res )
-
-p.rev1C <- exp(p1C.pred_ln_wheat_rrev$fit + p1C.pred_ln_wheat_rrev$res + p1C.pred_ln_wheat_rrev$effect)
-p.rev2C <- exp(p2C.pred_ln_wheat_rrev$fit + p2C.pred_ln_wheat_rrev$res + p2C.pred_ln_wheat_rrev$effect)
-p.rev3C <- exp(p3C.pred_ln_wheat_rrev$fit + p3C.pred_ln_wheat_rrev$res + p3C.pred_ln_wheat_rrev$effect)
-p.rev4C <- exp(p4C.pred_ln_wheat_rrev$fit + p4C.pred_ln_wheat_rrev$res + p4C.pred_ln_wheat_rrev$effect)
-p.rev5C <- exp(p5C.pred_ln_wheat_rrev$fit + p5C.pred_ln_wheat_rrev$res + p5C.pred_ln_wheat_rrev$effect)
-
-diff.rev1C <- exp(diff1C.pred_ln_wheat_rrev$fit + diff1C.pred_ln_wheat_rrev$res + diff1C.pred_ln_wheat_rrev$effect)
-diff.rev2C <- exp(diff2C.pred_ln_wheat_rrev$fit + diff2C.pred_ln_wheat_rrev$res + diff2C.pred_ln_wheat_rrev$effect)
-diff.rev3C <- exp(diff3C.pred_ln_wheat_rrev$fit + diff3C.pred_ln_wheat_rrev$res + diff3C.pred_ln_wheat_rrev$effect)
-diff.rev4C <- exp(diff4C.pred_ln_wheat_rrev$fit + diff4C.pred_ln_wheat_rrev$res + diff4C.pred_ln_wheat_rrev$effect)
-diff.rev5C <- exp(diff5C.pred_ln_wheat_rrev$fit + diff5C.pred_ln_wheat_rrev$res + diff5C.pred_ln_wheat_rrev$effect)
-
-cs.rev <- data.frame(rev = c(exp(cs.ln_wheat_rrev), cs.rev1C, cs.rev2C, cs.rev3C, cs.rev4C, cs.rev5C),
-                     change = rep(c("Base", "1C", "2C", "3C", "4C", "5C"), each = length(cs.rev1C)))
-
-p.rev <- data.frame(rev = c(p.rev1C, p.rev2C, p.rev3C, p.rev4C, p.rev5C),
-                    change = rep(c("1C", "2C", "3C", "4C", "5C"), each = length(p.rev1C)))
-
-diff.rev <- data.frame(rev = c(diff.rev1C, diff.rev2C, diff.rev3C, diff.rev4C, diff.rev5C),
-                       change = rep(c("1C", "2C", "3C", "4C", "5C"), each = length(diff.rev1C)))
-
-
-ggplot(cs.rev, aes(rev, fill = change)) + geom_histogram() + scale_fill_brewer(palette = "OrRd")
-ggplot(filter(p.rev, rev < 50), aes(rev, fill = change)) + geom_histogram(bins = 100) + scale_fill_brewer(palette = "OrRd")
-ggplot(diff.rev, aes(rev, fill = change)) + geom_histogram() + scale_fill_brewer(palette = "OrRd")
-
-
-
-cs.wheat.rev0 <- (sum( exp(cs0C.pred_ln_wheat_rrev$fit + cs0C.pred_ln_wheat_rrev$res)))
+# Get % changes
+cs.wheat.rev0 <- (sum( exp(cs0C.pred_ln_wheat_rrev$fit + cs0C.pred_ln_wheat_rrev$res )))
 cs.wheat.rev1 <- (sum( exp(cs1C.pred_ln_wheat_rrev$fit + cs1C.pred_ln_wheat_rrev$res  ))/cs.wheat.rev0 - 1)*100
-cs.wheat.rev1.min <- (sum( exp(cs1C.pred_ln_wheat_rrev$fit - c(cs1C.pred_ln_wheat_rrev_se*1.96) + cs1C.pred_ln_wheat_rrev$res ), na.rm = TRUE)/cs.wheat.rev0 - 1)*100
-cs.wheat.rev1.max <- (sum( exp(cs1C.pred_ln_wheat_rrev$fit + c(cs1C.pred_ln_wheat_rrev_se*1.96) + cs1C.pred_ln_wheat_rrev$res  ), na.rm = TRUE)/cs.wheat.rev0 - 1)*100
+cs.wheat.rev1.min <- ((sum( exp(cs1C.pred_ln_wheat_rrev$fit + cs1C.pred_ln_wheat_rrev$res + cs1C.pred_ln_wheat_rrev$effect)) - exp(cs1C.pred_ln_wheat_rrev_se*1.96))/cs.wheat.rev0 - 1)*100
+cs.wheat.rev1.max <- ((sum( exp(cs1C.pred_ln_wheat_rrev$fit + cs1C.pred_ln_wheat_rrev$res + cs1C.pred_ln_wheat_rrev$effect)) + exp(cs1C.pred_ln_wheat_rrev_se*1.96))/cs.wheat.rev0 - 1)*100
 
-cs.wheat.rev2 <- (sum( exp(cs2C.pred_ln_wheat_rrev$fit + cs2C.pred_ln_wheat_rrev$res  ))/cs.wheat.rev0 - 1)*100
-cs.wheat.rev2.min <- (sum( exp(cs2C.pred_ln_wheat_rrev$fit - c(cs2C.pred_ln_wheat_rrev_se*1.96) + cs2C.pred_ln_wheat_rrev$res  ), na.rm = TRUE)/cs.wheat.rev0 - 1)*100
-cs.wheat.rev2.max <- (sum( exp(cs2C.pred_ln_wheat_rrev$fit + c(cs2C.pred_ln_wheat_rrev_se*1.96) + cs2C.pred_ln_wheat_rrev$res  ), na.rm = TRUE)/cs.wheat.rev0 - 1)*100
+cs.wheat.rev2 <- (sum( exp(cs2C.pred_ln_wheat_rrev$fit + cs2C.pred_ln_wheat_rrev$res ))/cs.wheat.rev0 - 1)*100
+cs.wheat.rev2.min <- ((sum( exp(cs2C.pred_ln_wheat_rrev$fit + cs2C.pred_ln_wheat_rrev$res )) - exp(cs2C.pred_ln_wheat_rrev_se*1.96))/cs.wheat.rev0 - 1)*100
+cs.wheat.rev2.max <- ((sum( exp(cs2C.pred_ln_wheat_rrev$fit + cs2C.pred_ln_wheat_rrev$res )) + exp(cs2C.pred_ln_wheat_rrev_se*1.96))/cs.wheat.rev0 - 1)*100
 
-cs.wheat.rev3 <- (sum( exp(cs3C.pred_ln_wheat_rrev$fit + cs3C.pred_ln_wheat_rrev$res  ))/cs.wheat.rev0 - 1)*100
-cs.wheat.rev3.min <- (sum( exp(cs3C.pred_ln_wheat_rrev$fit - c(cs3C.pred_ln_wheat_rrev_se*1.96) + cs3C.pred_ln_wheat_rrev$res  ), na.rm = TRUE)/cs.wheat.rev0 - 1)*100
-cs.wheat.rev3.max <- (sum( exp(cs3C.pred_ln_wheat_rrev$fit + c(cs3C.pred_ln_wheat_rrev_se*1.96) + cs3C.pred_ln_wheat_rrev$res  ), na.rm = TRUE)/cs.wheat.rev0 - 1)*100
+cs.wheat.rev3 <- (sum( exp(cs3C.pred_ln_wheat_rrev$fit + cs3C.pred_ln_wheat_rrev$res ))/cs.wheat.rev0 - 1)*100
+cs.wheat.rev3.min <- ((sum( exp(cs3C.pred_ln_wheat_rrev$fit + cs3C.pred_ln_wheat_rrev$res )) - exp(cs3C.pred_ln_wheat_rrev_se*1.96))/cs.wheat.rev0 - 1)*100
+cs.wheat.rev3.max <- ((sum( exp(cs3C.pred_ln_wheat_rrev$fit + cs3C.pred_ln_wheat_rrev$res )) + exp(cs3C.pred_ln_wheat_rrev_se*1.96))/cs.wheat.rev0 - 1)*100
 
-cs.wheat.rev4 <- (sum( exp(cs4C.pred_ln_wheat_rrev$fit + cs4C.pred_ln_wheat_rrev$res  ))/cs.wheat.rev0 - 1)*100
-cs.wheat.rev4.min <- (sum( exp(cs4C.pred_ln_wheat_rrev$fit - c(cs4C.pred_ln_wheat_rrev_se*1.96) + cs4C.pred_ln_wheat_rrev$res  ), na.rm = TRUE)/cs.wheat.rev0 - 1)*100
-cs.wheat.rev4.max <- (sum( exp(cs4C.pred_ln_wheat_rrev$fit + c(cs4C.pred_ln_wheat_rrev_se*1.96) + cs4C.pred_ln_wheat_rrev$res  ), na.rm = TRUE)/cs.wheat.rev0 - 1)*100
+cs.wheat.rev4 <- (sum( exp(cs4C.pred_ln_wheat_rrev$fit + cs4C.pred_ln_wheat_rrev$res ))/cs.wheat.rev0 - 1)*100
+cs.wheat.rev4.min <- ((sum( exp(cs4C.pred_ln_wheat_rrev$fit + cs4C.pred_ln_wheat_rrev$res )) - exp(cs4C.pred_ln_wheat_rrev_se*1.96))/cs.wheat.rev0 - 1)*100
+cs.wheat.rev4.max <- ((sum( exp(cs4C.pred_ln_wheat_rrev$fit + cs4C.pred_ln_wheat_rrev$res )) + exp(cs4C.pred_ln_wheat_rrev_se*1.96))/cs.wheat.rev0 - 1)*100
 
-cs.wheat.rev5 <- (sum( exp(cs5C.pred_ln_wheat_rrev$fit + cs5C.pred_ln_wheat_rrev$res  ))/cs.wheat.rev0 - 1)*100
-cs.wheat.rev5.min <- (sum( exp(cs5C.pred_ln_wheat_rrev$fit - c(cs5C.pred_ln_wheat_rrev_se*1.96) + cs5C.pred_ln_wheat_rrev$res  ), na.rm = TRUE)/cs.wheat.rev0 - 1)*100
-cs.wheat.rev5.max <- (sum( exp(cs5C.pred_ln_wheat_rrev$fit + c(cs5C.pred_ln_wheat_rrev_se*1.96) + cs5C.pred_ln_wheat_rrev$res  ), na.rm = TRUE)/cs.wheat.rev0 - 1)*100
-
+cs.wheat.rev5 <- (sum( exp(cs5C.pred_ln_wheat_rrev$fit + cs5C.pred_ln_wheat_rrev$res ))/cs.wheat.rev0 - 1)*100
+cs.wheat.rev5.min <- ((sum( exp(cs5C.pred_ln_wheat_rrev$fit + cs5C.pred_ln_wheat_rrev$res )) - exp(cs5C.pred_ln_wheat_rrev_se*1.96))/cs.wheat.rev0 - 1)*100
+cs.wheat.rev5.max <- ((sum( exp(cs5C.pred_ln_wheat_rrev$fit + cs5C.pred_ln_wheat_rrev$res )) + exp(cs5C.pred_ln_wheat_rrev_se*1.96))/cs.wheat.rev0 - 1)*100
 
 p.wheat.rev0 <- (sum( exp(p0C.pred_ln_wheat_rrev$fit + p0C.pred_ln_wheat_rrev$res + p0C.pred_ln_wheat_rrev$effect)))
-p.wheat.rev1 <- (sum( exp(p1C.pred_ln_wheat_rrev$fit + p1C.pred_ln_wheat_rrev$res + p1C.pred_ln_wheat_rrev$effect ), na.rm = TRUE)/p.wheat.rev0 - 1)*100
-p.wheat.rev1.min <- (sum( exp(p1C.pred_ln_wheat_rrev$fit - c(p1C.pred_ln_wheat_rrev_se*1.96) + p1C.pred_ln_wheat_rrev$res + p1C.pred_ln_wheat_rrev$effect ), na.rm = TRUE)/p.wheat.rev0 - 1)*100
-p.wheat.rev1.max <- (sum( exp(p1C.pred_ln_wheat_rrev$fit + c(p1C.pred_ln_wheat_rrev_se*1.96) + p1C.pred_ln_wheat_rrev$res + p1C.pred_ln_wheat_rrev$effect ), na.rm = TRUE)/p.wheat.rev0 - 1)*100
+p.wheat.rev1 <- (sum( exp(p1C.pred_ln_wheat_rrev$fit + p1C.pred_ln_wheat_rrev$res + p1C.pred_ln_wheat_rrev$effect  ))/p.wheat.rev0 - 1)*100
+p.wheat.rev1.min <- ((sum( exp(p1C.pred_ln_wheat_rrev$fit + p1C.pred_ln_wheat_rrev$res + p1C.pred_ln_wheat_rrev$effect )) - exp(p1C.pred_ln_wheat_rrev_se*1.96))/p.wheat.rev0 - 1)*100
+p.wheat.rev1.max <- ((sum( exp(p1C.pred_ln_wheat_rrev$fit + p1C.pred_ln_wheat_rrev$res + p1C.pred_ln_wheat_rrev$effect )) + exp(p1C.pred_ln_wheat_rrev_se*1.96))/p.wheat.rev0 - 1)*100
 
-p.wheat.rev2 <- (sum( exp(p2C.pred_ln_wheat_rrev$fit + p2C.pred_ln_wheat_rrev$res + p2C.pred_ln_wheat_rrev$effect ), na.rm = TRUE)/p.wheat.rev0 - 1)*100
-p.wheat.rev2.min <- (sum( exp(p2C.pred_ln_wheat_rrev$fit - c(p2C.pred_ln_wheat_rrev_se*1.96) + p2C.pred_ln_wheat_rrev$res + p2C.pred_ln_wheat_rrev$effect ), na.rm = TRUE)/p.wheat.rev0 - 1)*100
-p.wheat.rev2.max <- (sum( exp(p2C.pred_ln_wheat_rrev$fit + c(p2C.pred_ln_wheat_rrev_se*1.96) + p2C.pred_ln_wheat_rrev$res + p2C.pred_ln_wheat_rrev$effect ), na.rm = TRUE)/p.wheat.rev0 - 1)*100
+p.wheat.rev2 <- (sum( exp(p2C.pred_ln_wheat_rrev$fit + p2C.pred_ln_wheat_rrev$res + p2C.pred_ln_wheat_rrev$effect))/p.wheat.rev0 - 1)*100
+p.wheat.rev2.min <- ((sum( exp(p2C.pred_ln_wheat_rrev$fit + p2C.pred_ln_wheat_rrev$res + p2C.pred_ln_wheat_rrev$effect)) - exp(p2C.pred_ln_wheat_rrev_se*1.96))/p.wheat.rev0 - 1)*100
+p.wheat.rev2.max <- ((sum( exp(p2C.pred_ln_wheat_rrev$fit + p2C.pred_ln_wheat_rrev$res + p2C.pred_ln_wheat_rrev$effect)) + exp(p2C.pred_ln_wheat_rrev_se*1.96))/p.wheat.rev0 - 1)*100
 
-p.wheat.rev3 <- (sum( exp(p3C.pred_ln_wheat_rrev$fit + p3C.pred_ln_wheat_rrev$res + p3C.pred_ln_wheat_rrev$effect ), na.rm = TRUE)/p.wheat.rev0 - 1)*100
-p.wheat.rev3.min <- (sum( exp(p3C.pred_ln_wheat_rrev$fit - c(p3C.pred_ln_wheat_rrev_se*1.96) + p3C.pred_ln_wheat_rrev$res + p3C.pred_ln_wheat_rrev$effect ), na.rm = TRUE)/p.wheat.rev0 - 1)*100
-p.wheat.rev3.max <- (sum( exp(p3C.pred_ln_wheat_rrev$fit + c(p3C.pred_ln_wheat_rrev_se*1.96) + p3C.pred_ln_wheat_rrev$res + p3C.pred_ln_wheat_rrev$effect ), na.rm = TRUE)/p.wheat.rev0 - 1)*100
+p.wheat.rev3 <- (sum( exp(p3C.pred_ln_wheat_rrev$fit + p3C.pred_ln_wheat_rrev$res + p3C.pred_ln_wheat_rrev$effect ))/p.wheat.rev0 - 1)*100
+p.wheat.rev3.min <- ((sum( exp(p3C.pred_ln_wheat_rrev$fit + p3C.pred_ln_wheat_rrev$res + p3C.pred_ln_wheat_rrev$effect)) - exp(p3C.pred_ln_wheat_rrev_se*1.96))/p.wheat.rev0 - 1)*100
+p.wheat.rev3.max <- ((sum( exp(p3C.pred_ln_wheat_rrev$fit + p3C.pred_ln_wheat_rrev$res + p3C.pred_ln_wheat_rrev$effect )) + exp(p3C.pred_ln_wheat_rrev_se*1.96))/p.wheat.rev0 - 1)*100
 
-p.wheat.rev4 <- (sum( exp(p4C.pred_ln_wheat_rrev$fit + p4C.pred_ln_wheat_rrev$res + p4C.pred_ln_wheat_rrev$effect ), na.rm = TRUE)/p.wheat.rev0 - 1)*100
-p.wheat.rev4.min <- (sum( exp(p4C.pred_ln_wheat_rrev$fit - c(p4C.pred_ln_wheat_rrev_se*1.96) + p4C.pred_ln_wheat_rrev$res + p4C.pred_ln_wheat_rrev$effect ), na.rm = TRUE)/p.wheat.rev0 - 1)*100
-p.wheat.rev4.max <- (sum( exp(p4C.pred_ln_wheat_rrev$fit + c(p4C.pred_ln_wheat_rrev_se*1.96) + p4C.pred_ln_wheat_rrev$res + p4C.pred_ln_wheat_rrev$effect ), na.rm = TRUE)/p.wheat.rev0 - 1)*100
+p.wheat.rev4 <- (sum( exp(p4C.pred_ln_wheat_rrev$fit + p4C.pred_ln_wheat_rrev$res + p4C.pred_ln_wheat_rrev$effect))/p.wheat.rev0 - 1)*100
+p.wheat.rev4.min <- ((sum( exp(p4C.pred_ln_wheat_rrev$fit + p4C.pred_ln_wheat_rrev$res + p4C.pred_ln_wheat_rrev$effect)) - exp(p4C.pred_ln_wheat_rrev_se*1.96))/p.wheat.rev0 - 1)*100
+p.wheat.rev4.max <- ((sum( exp(p4C.pred_ln_wheat_rrev$fit + p4C.pred_ln_wheat_rrev$res + p4C.pred_ln_wheat_rrev$effect)) + exp(p4C.pred_ln_wheat_rrev_se*1.96))/p.wheat.rev0 - 1)*100
 
-p.wheat.rev5 <- (sum( exp(p5C.pred_ln_wheat_rrev$fit + p5C.pred_ln_wheat_rrev$res + p5C.pred_ln_wheat_rrev$effect ), na.rm = TRUE)/p.wheat.rev0 - 1)*100
-p.wheat.rev5.min <- (sum( exp(p5C.pred_ln_wheat_rrev$fit - c(p5C.pred_ln_wheat_rrev_se*1.96) + p5C.pred_ln_wheat_rrev$res + p5C.pred_ln_wheat_rrev$effect ), na.rm = TRUE)/p.wheat.rev0 - 1)*100
-p.wheat.rev5.max <- (sum( exp(p5C.pred_ln_wheat_rrev$fit + c(p5C.pred_ln_wheat_rrev_se*1.96) + p5C.pred_ln_wheat_rrev$res + p5C.pred_ln_wheat_rrev$effect ), na.rm = TRUE)/p.wheat.rev0 - 1)*100
+p.wheat.rev5 <- (sum( exp(p5C.pred_ln_wheat_rrev$fit + p5C.pred_ln_wheat_rrev$res + p5C.pred_ln_wheat_rrev$effect))/p.wheat.rev0 - 1)*100
+p.wheat.rev5.min <- ((sum( exp(p5C.pred_ln_wheat_rrev$fit + p5C.pred_ln_wheat_rrev$res + p5C.pred_ln_wheat_rrev$effect )) - exp(p5C.pred_ln_wheat_rrev_se*1.96))/p.wheat.rev0 - 1)*100
+p.wheat.rev5.max <- ((sum( exp(p5C.pred_ln_wheat_rrev$fit + p5C.pred_ln_wheat_rrev$res + p5C.pred_ln_wheat_rrev$effect)) + exp(p5C.pred_ln_wheat_rrev_se*1.96))/p.wheat.rev0 - 1)*100
 
-diff.wheat.rev0 <- (sum( exp(diff0C.pred_ln_wheat_rrev$fit + diff0C.pred_ln_wheat_rrev$res + diff1C.pred_ln_wheat_rrev$effect )))
-diff.wheat.rev1 <- (sum( exp(diff1C.pred_ln_wheat_rrev$fit + diff1C.pred_ln_wheat_rrev$res + diff1C.pred_ln_wheat_rrev$effect ), na.rm = TRUE)/diff.wheat.rev0 - 1)*100
-diff.wheat.rev1.min <- (sum( exp(diff1C.pred_ln_wheat_rrev$fit - c(diff1C.pred_ln_wheat_rrev_se*1.96) + diff1C.pred_ln_wheat_rrev$res + diff1C.pred_ln_wheat_rrev$effect ), na.rm = TRUE)/diff.wheat.rev0 - 1)*100
-diff.wheat.rev1.max <- (sum( exp(diff1C.pred_ln_wheat_rrev$fit + c(diff1C.pred_ln_wheat_rrev_se*1.96) + diff1C.pred_ln_wheat_rrev$res + diff1C.pred_ln_wheat_rrev$effect ), na.rm = TRUE)/diff.wheat.rev0 - 1)*100
+diff.wheat.rev0 <- (sum( exp(diff0C.pred_ln_wheat_rrev$fit + diff0C.pred_ln_wheat_rrev$res + diff0C.pred_ln_wheat_rrev$effect)))
+diff.wheat.rev1 <- (sum( exp(diff1C.pred_ln_wheat_rrev$fit + diff1C.pred_ln_wheat_rrev$res + diff1C.pred_ln_wheat_rrev$effect  ))/diff.wheat.rev0 - 1)*100
+diff.wheat.rev1.min <- ((sum( exp(diff1C.pred_ln_wheat_rrev$fit + diff1C.pred_ln_wheat_rrev$res + diff1C.pred_ln_wheat_rrev$effect)) - exp(diff1C.pred_ln_wheat_rrev_se*1.96))/diff.wheat.rev0 - 1)*100
+diff.wheat.rev1.max <- ((sum( exp(diff1C.pred_ln_wheat_rrev$fit + diff1C.pred_ln_wheat_rrev$res+ diff1C.pred_ln_wheat_rrev$effect )) + exp(diff1C.pred_ln_wheat_rrev_se*1.96))/diff.wheat.rev0 - 1)*100
 
-diff.wheat.rev2 <- (sum( exp(diff2C.pred_ln_wheat_rrev$fit + diff2C.pred_ln_wheat_rrev$res + diff2C.pred_ln_wheat_rrev$effect ), na.rm = TRUE)/diff.wheat.rev0 - 1)*100
-diff.wheat.rev2.min <- (sum( exp(diff2C.pred_ln_wheat_rrev$fit - c(diff2C.pred_ln_wheat_rrev_se*1.96) + diff2C.pred_ln_wheat_rrev$res + diff2C.pred_ln_wheat_rrev$effect ), na.rm = TRUE)/diff.wheat.rev0 - 1)*100
-diff.wheat.rev2.max <- (sum( exp(diff2C.pred_ln_wheat_rrev$fit + c(diff2C.pred_ln_wheat_rrev_se*1.96) + diff2C.pred_ln_wheat_rrev$res + diff2C.pred_ln_wheat_rrev$effect ), na.rm = TRUE)/diff.wheat.rev0 - 1)*100
+diff.wheat.rev2 <- (sum( exp(diff2C.pred_ln_wheat_rrev$fit + diff2C.pred_ln_wheat_rrev$res + diff2C.pred_ln_wheat_rrev$effect))/diff.wheat.rev0 - 1)*100
+diff.wheat.rev2.min <- ((sum( exp(diff2C.pred_ln_wheat_rrev$fit + diff2C.pred_ln_wheat_rrev$res + diff2C.pred_ln_wheat_rrev$effect)) - exp(diff2C.pred_ln_wheat_rrev_se*1.96))/diff.wheat.rev0 - 1)*100
+diff.wheat.rev2.max <- ((sum( exp(diff2C.pred_ln_wheat_rrev$fit + diff2C.pred_ln_wheat_rrev$res + diff2C.pred_ln_wheat_rrev$effect)) + exp(diff2C.pred_ln_wheat_rrev_se*1.96))/diff.wheat.rev0 - 1)*100
 
-diff.wheat.rev3 <- (sum( exp(diff3C.pred_ln_wheat_rrev$fit + diff3C.pred_ln_wheat_rrev$res + diff3C.pred_ln_wheat_rrev$effect ), na.rm = TRUE)/diff.wheat.rev0 - 1)*100
-diff.wheat.rev3.min <- (sum( exp(diff3C.pred_ln_wheat_rrev$fit - c(diff3C.pred_ln_wheat_rrev_se*1.96) + diff3C.pred_ln_wheat_rrev$res + diff3C.pred_ln_wheat_rrev$effect ), na.rm = TRUE)/diff.wheat.rev0 - 1)*100
-diff.wheat.rev3.max <- (sum( exp(diff3C.pred_ln_wheat_rrev$fit + c(diff3C.pred_ln_wheat_rrev_se*1.96) + diff3C.pred_ln_wheat_rrev$res + diff3C.pred_ln_wheat_rrev$effect ), na.rm = TRUE)/diff.wheat.rev0 - 1)*100
+diff.wheat.rev3 <- (sum( exp(diff3C.pred_ln_wheat_rrev$fit + diff3C.pred_ln_wheat_rrev$res + diff3C.pred_ln_wheat_rrev$effect))/diff.wheat.rev0 - 1)*100
+diff.wheat.rev3.min <- ((sum( exp(diff3C.pred_ln_wheat_rrev$fit + diff3C.pred_ln_wheat_rrev$res + diff3C.pred_ln_wheat_rrev$effect)) - exp(diff3C.pred_ln_wheat_rrev_se*1.96))/diff.wheat.rev0 - 1)*100
+diff.wheat.rev3.max <- ((sum( exp(diff3C.pred_ln_wheat_rrev$fit + diff3C.pred_ln_wheat_rrev$res + diff3C.pred_ln_wheat_rrev$effect)) + exp(diff3C.pred_ln_wheat_rrev_se*1.96))/diff.wheat.rev0 - 1)*100
 
-diff.wheat.rev4 <- (sum( exp(diff4C.pred_ln_wheat_rrev$fit + diff4C.pred_ln_wheat_rrev$res + diff4C.pred_ln_wheat_rrev$effect ), na.rm = TRUE)/diff.wheat.rev0 - 1)*100
-diff.wheat.rev4.min <- (sum( exp(diff4C.pred_ln_wheat_rrev$fit - c(diff4C.pred_ln_wheat_rrev_se*1.96) + diff4C.pred_ln_wheat_rrev$res + diff4C.pred_ln_wheat_rrev$effect ), na.rm = TRUE)/diff.wheat.rev0 - 1)*100
-diff.wheat.rev4.max <- (sum( exp(diff4C.pred_ln_wheat_rrev$fit + c(diff4C.pred_ln_wheat_rrev_se*1.96) + diff4C.pred_ln_wheat_rrev$res + diff4C.pred_ln_wheat_rrev$effect ), na.rm = TRUE)/diff.wheat.rev0 - 1)*100
+diff.wheat.rev4 <- (sum( exp(diff4C.pred_ln_wheat_rrev$fit + diff4C.pred_ln_wheat_rrev$res + diff4C.pred_ln_wheat_rrev$effect))/diff.wheat.rev0 - 1)*100
+diff.wheat.rev4.min <- ((sum( exp(diff4C.pred_ln_wheat_rrev$fit + diff4C.pred_ln_wheat_rrev$res + diff4C.pred_ln_wheat_rrev$effect)) - exp(diff4C.pred_ln_wheat_rrev_se*1.96))/diff.wheat.rev0 - 1)*100
+diff.wheat.rev4.max <- ((sum( exp(diff4C.pred_ln_wheat_rrev$fit + diff4C.pred_ln_wheat_rrev$res + diff4C.pred_ln_wheat_rrev$effect)) + exp(diff4C.pred_ln_wheat_rrev_se*1.96))/diff.wheat.rev0 - 1)*100
 
-diff.wheat.rev5 <- (sum( exp(diff5C.pred_ln_wheat_rrev$fit + diff5C.pred_ln_wheat_rrev$res + diff5C.pred_ln_wheat_rrev$effect ), na.rm = TRUE)/diff.wheat.rev0 - 1)*100
-diff.wheat.rev5.min <- (sum( exp(diff5C.pred_ln_wheat_rrev$fit - c(diff5C.pred_ln_wheat_rrev_se*1.96) + diff5C.pred_ln_wheat_rrev$res + diff5C.pred_ln_wheat_rrev$effect ), na.rm = TRUE)/diff.wheat.rev0 - 1)*100
-diff.wheat.rev5.max <- (sum( exp(diff5C.pred_ln_wheat_rrev$fit + c(diff5C.pred_ln_wheat_rrev_se*1.96) + diff5C.pred_ln_wheat_rrev$res + diff5C.pred_ln_wheat_rrev$effect ), na.rm = TRUE)/diff.wheat.rev0 - 1)*100
+diff.wheat.rev5 <- (sum( exp(diff5C.pred_ln_wheat_rrev$fit + diff5C.pred_ln_wheat_rrev$res + diff5C.pred_ln_wheat_rrev$effect))/diff.wheat.rev0 - 1)*100
+diff.wheat.rev5.min <- ((sum( exp(diff5C.pred_ln_wheat_rrev$fit + diff5C.pred_ln_wheat_rrev$res + diff5C.pred_ln_wheat_rrev$effect)) - exp(diff5C.pred_ln_wheat_rrev_se*1.96))/diff.wheat.rev0 - 1)*100
+diff.wheat.rev5.max <- ((sum( exp(diff5C.pred_ln_wheat_rrev$fit + diff5C.pred_ln_wheat_rrev$res+ diff5C.pred_ln_wheat_rrev$effect)) + exp(diff5C.pred_ln_wheat_rrev_se*1.96))/diff.wheat.rev0 - 1)*100
 
 wheat.plotdat <- data.frame(temp = rep(c(1,2,3,4,5), 3),
                            rev = c(cs.wheat.rev1, cs.wheat.rev2, cs.wheat.rev3, cs.wheat.rev4, cs.wheat.rev5,
@@ -883,155 +735,120 @@ cs0C.pred_ln_soybean_rrev_se <- cc.pred.se(cs.ln_soybean_rrev$X - cs.ln_soybean_
 
 cs1C.pred_ln_soybean_rrev <- predictFelm(felm.fit = cs.ln_soybean_rrev, newdata = cs.ln_soybean_rrev_1C)
 cs1C.pred_ln_soybean_rrev_se <- cc.pred.se(cs.ln_soybean_rrev$X - cs.ln_soybean_rrev_1C[, c("(Intercept)", "dday0_10", "dday10_30", "dday30C", "prec", "prec_sq", "lat", "long", "lat:long")], 
-                                        cs.ln_soybean_rrev$clustervcv, cs.ln_soybean_rrev$weights^2)
+           cs.ln_soybean_rrev$clustervcv, cs.ln_soybean_rrev$weights^2)
 cs2C.pred_ln_soybean_rrev <- predictFelm(felm.fit = cs.ln_soybean_rrev, newdata = cs.ln_soybean_rrev_2C)
 cs2C.pred_ln_soybean_rrev_se <- cc.pred.se(cs.ln_soybean_rrev$X - cs.ln_soybean_rrev_2C[, c("(Intercept)", "dday0_10", "dday10_30", "dday30C", "prec", "prec_sq", "lat", "long", "lat:long")], 
-                                        cs.ln_soybean_rrev$clustervcv, cs.ln_soybean_rrev$weights^2)
+           cs.ln_soybean_rrev$clustervcv, cs.ln_soybean_rrev$weights^2)
 cs3C.pred_ln_soybean_rrev <- predictFelm(felm.fit = cs.ln_soybean_rrev, newdata = cs.ln_soybean_rrev_3C)
 cs3C.pred_ln_soybean_rrev_se <- cc.pred.se(cs.ln_soybean_rrev$X - cs.ln_soybean_rrev_3C[, c("(Intercept)", "dday0_10", "dday10_30", "dday30C", "prec", "prec_sq", "lat", "long", "lat:long")], 
-                                        cs.ln_soybean_rrev$clustervcv, cs.ln_soybean_rrev$weights^2)
+           cs.ln_soybean_rrev$clustervcv, cs.ln_soybean_rrev$weights^2)
 cs4C.pred_ln_soybean_rrev <- predictFelm(felm.fit = cs.ln_soybean_rrev, newdata = cs.ln_soybean_rrev_4C)
 cs4C.pred_ln_soybean_rrev_se <- cc.pred.se(cs.ln_soybean_rrev$X - cs.ln_soybean_rrev_4C[, c("(Intercept)", "dday0_10", "dday10_30", "dday30C", "prec", "prec_sq", "lat", "long", "lat:long")], 
-                                        cs.ln_soybean_rrev$clustervcv, cs.ln_soybean_rrev$weights^2)
+           cs.ln_soybean_rrev$clustervcv, cs.ln_soybean_rrev$weights^2)
 cs5C.pred_ln_soybean_rrev <- predictFelm(felm.fit = cs.ln_soybean_rrev, newdata = cs.ln_soybean_rrev_5C)
 cs5C.pred_ln_soybean_rrev_se <- cc.pred.se(cs.ln_soybean_rrev$X - cs.ln_soybean_rrev_5C[, c("(Intercept)", "dday0_10", "dday10_30", "dday30C", "prec", "prec_sq", "lat", "long", "lat:long")], 
-                                        cs.ln_soybean_rrev$clustervcv, cs.ln_soybean_rrev$weights^2)
+           cs.ln_soybean_rrev$clustervcv, cs.ln_soybean_rrev$weights^2)
 
 p0C.pred_ln_soybean_rrev <- predictFelm(felm.fit = p.ln_soybean_rrev, newdata = p.ln_soybean_rrev_0C)
 p0C.pred_ln_soybean_rrev_se <- cc.pred.se(p.ln_soybean_rrev$X - p.ln_soybean_rrev_0C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
-                                       p.ln_soybean_rrev$clustervcv, p.ln_soybean_rrev$weights^2)
+                                        p.ln_soybean_rrev$clustervcv, p.ln_soybean_rrev$weights^2)
 
 p1C.pred_ln_soybean_rrev <- predictFelm(felm.fit = p.ln_soybean_rrev, newdata = p.ln_soybean_rrev_1C)
 p1C.pred_ln_soybean_rrev_se <- cc.pred.se(p.ln_soybean_rrev$X - p.ln_soybean_rrev_1C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
-                                       p.ln_soybean_rrev$clustervcv, p.ln_soybean_rrev$weights^2)
+                                        p.ln_soybean_rrev$clustervcv, p.ln_soybean_rrev$weights^2)
 p2C.pred_ln_soybean_rrev <- predictFelm(felm.fit = p.ln_soybean_rrev, newdata = p.ln_soybean_rrev_2C)
 p2C.pred_ln_soybean_rrev_se <- cc.pred.se(p.ln_soybean_rrev$X - p.ln_soybean_rrev_2C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
-                                       p.ln_soybean_rrev$clustervcv, p.ln_soybean_rrev$weights^2)
+                                        p.ln_soybean_rrev$clustervcv, p.ln_soybean_rrev$weights^2)
 p3C.pred_ln_soybean_rrev <- predictFelm(felm.fit = p.ln_soybean_rrev, newdata = p.ln_soybean_rrev_3C)
 p3C.pred_ln_soybean_rrev_se <- cc.pred.se(p.ln_soybean_rrev$X - p.ln_soybean_rrev_3C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
-                                       p.ln_soybean_rrev$clustervcv, p.ln_soybean_rrev$weights^2)
+                                        p.ln_soybean_rrev$clustervcv, p.ln_soybean_rrev$weights^2)
 p4C.pred_ln_soybean_rrev <- predictFelm(felm.fit = p.ln_soybean_rrev, newdata = p.ln_soybean_rrev_4C)
 p4C.pred_ln_soybean_rrev_se <- cc.pred.se(p.ln_soybean_rrev$X - p.ln_soybean_rrev_4C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
-                                       p.ln_soybean_rrev$clustervcv, p.ln_soybean_rrev$weights^2)
+                                        p.ln_soybean_rrev$clustervcv, p.ln_soybean_rrev$weights^2)
 p5C.pred_ln_soybean_rrev <- predictFelm(felm.fit = p.ln_soybean_rrev, newdata = p.ln_soybean_rrev_5C)
 p5C.pred_ln_soybean_rrev_se <- cc.pred.se(p.ln_soybean_rrev$X - p.ln_soybean_rrev_5C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
-                                       p.ln_soybean_rrev$clustervcv, p.ln_soybean_rrev$weights^2)
+                                        p.ln_soybean_rrev$clustervcv, p.ln_soybean_rrev$weights^2)
 
 diff0C.pred_ln_soybean_rrev <- predictFelm(felm.fit = diff.ln_soybean_rrev, newdata = diff.ln_soybean_rrev_0C)
 diff1C.pred_ln_soybean_rrev <- predictFelm(felm.fit = diff.ln_soybean_rrev, newdata = diff.ln_soybean_rrev_1C)
 diff1C.pred_ln_soybean_rrev_se <- cc.pred.se(diff.ln_soybean_rrev$X - diff.ln_soybean_rrev_1C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
-                                          diff.ln_soybean_rrev$clustervcv, diff.ln_soybean_rrev$weights^2)
+           diff.ln_soybean_rrev$clustervcv, diff.ln_soybean_rrev$weights^2)
 diff2C.pred_ln_soybean_rrev <- predictFelm(felm.fit = diff.ln_soybean_rrev, newdata = diff.ln_soybean_rrev_2C)
 diff2C.pred_ln_soybean_rrev_se <- cc.pred.se(diff.ln_soybean_rrev$X - diff.ln_soybean_rrev_2C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
-                                          diff.ln_soybean_rrev$clustervcv, diff.ln_soybean_rrev$weights^2)
+           diff.ln_soybean_rrev$clustervcv, diff.ln_soybean_rrev$weights^2)
 diff3C.pred_ln_soybean_rrev <- predictFelm(felm.fit = diff.ln_soybean_rrev, newdata = diff.ln_soybean_rrev_3C)
 diff3C.pred_ln_soybean_rrev_se <- cc.pred.se(diff.ln_soybean_rrev$X - diff.ln_soybean_rrev_3C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
-                                          diff.ln_soybean_rrev$clustervcv, diff.ln_soybean_rrev$weights^2)
+           diff.ln_soybean_rrev$clustervcv, diff.ln_soybean_rrev$weights^2)
 diff4C.pred_ln_soybean_rrev <- predictFelm(felm.fit = diff.ln_soybean_rrev, newdata = diff.ln_soybean_rrev_4C)
 diff4C.pred_ln_soybean_rrev_se <- cc.pred.se(diff.ln_soybean_rrev$X - diff.ln_soybean_rrev_4C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
-                                          diff.ln_soybean_rrev$clustervcv, diff.ln_soybean_rrev$weights^2)
+           diff.ln_soybean_rrev$clustervcv, diff.ln_soybean_rrev$weights^2)
 diff5C.pred_ln_soybean_rrev <- predictFelm(felm.fit = diff.ln_soybean_rrev, newdata = diff.ln_soybean_rrev_5C)
 diff5C.pred_ln_soybean_rrev_se <- cc.pred.se(diff.ln_soybean_rrev$X - diff.ln_soybean_rrev_5C[, c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")], 
-                                          diff.ln_soybean_rrev$clustervcv, diff.ln_soybean_rrev$weights^2)
+           diff.ln_soybean_rrev$clustervcv, diff.ln_soybean_rrev$weights^2)
 
-
-cs.rev1C <- exp(cs1C.pred_ln_soybean_rrev$fit)
-cs.rev2C <- exp(cs2C.pred_ln_soybean_rrev$fit + cs2C.pred_ln_soybean_rrev$res )
-cs.rev3C <- exp(cs3C.pred_ln_soybean_rrev$fit + cs3C.pred_ln_soybean_rrev$res )
-cs.rev4C <- exp(cs4C.pred_ln_soybean_rrev$fit + cs4C.pred_ln_soybean_rrev$res )
-cs.rev5C <- exp(cs5C.pred_ln_soybean_rrev$fit + cs5C.pred_ln_soybean_rrev$res )
-
-p.rev1C <- exp(p1C.pred_ln_soybean_rrev$fit + p1C.pred_ln_soybean_rrev$res + p1C.pred_ln_soybean_rrev$effect)
-p.rev2C <- exp(p2C.pred_ln_soybean_rrev$fit + p2C.pred_ln_soybean_rrev$res + p2C.pred_ln_soybean_rrev$effect)
-p.rev3C <- exp(p3C.pred_ln_soybean_rrev$fit + p3C.pred_ln_soybean_rrev$res + p3C.pred_ln_soybean_rrev$effect)
-p.rev4C <- exp(p4C.pred_ln_soybean_rrev$fit + p4C.pred_ln_soybean_rrev$res + p4C.pred_ln_soybean_rrev$effect)
-p.rev5C <- exp(p5C.pred_ln_soybean_rrev$fit + p5C.pred_ln_soybean_rrev$res + p5C.pred_ln_soybean_rrev$effect)
-
-diff.rev1C <- exp(diff1C.pred_ln_soybean_rrev$fit + diff1C.pred_ln_soybean_rrev$res + diff1C.pred_ln_soybean_rrev$effect)
-diff.rev2C <- exp(diff2C.pred_ln_soybean_rrev$fit + diff2C.pred_ln_soybean_rrev$res + diff2C.pred_ln_soybean_rrev$effect)
-diff.rev3C <- exp(diff3C.pred_ln_soybean_rrev$fit + diff3C.pred_ln_soybean_rrev$res + diff3C.pred_ln_soybean_rrev$effect)
-diff.rev4C <- exp(diff4C.pred_ln_soybean_rrev$fit + diff4C.pred_ln_soybean_rrev$res + diff4C.pred_ln_soybean_rrev$effect)
-diff.rev5C <- exp(diff5C.pred_ln_soybean_rrev$fit + diff5C.pred_ln_soybean_rrev$res + diff5C.pred_ln_soybean_rrev$effect)
-
-cs.rev <- data.frame(rev = c(exp(cs.ln_soybean_rrev), cs.rev1C, cs.rev2C, cs.rev3C, cs.rev4C, cs.rev5C),
-                     change = rep(c("Base", "1C", "2C", "3C", "4C", "5C"), each = length(cs.rev1C)))
-
-p.rev <- data.frame(rev = c(p.rev1C, p.rev2C, p.rev3C, p.rev4C, p.rev5C),
-                    change = rep(c("1C", "2C", "3C", "4C", "5C"), each = length(p.rev1C)))
-
-diff.rev <- data.frame(rev = c(diff.rev1C, diff.rev2C, diff.rev3C, diff.rev4C, diff.rev5C),
-                       change = rep(c("1C", "2C", "3C", "4C", "5C"), each = length(diff.rev1C)))
-
-
-ggplot(cs.rev, aes(rev, fill = change)) + geom_histogram() + scale_fill_brewer(palette = "OrRd")
-ggplot(filter(p.rev, rev < 50), aes(rev, fill = change)) + geom_histogram(bins = 100) + scale_fill_brewer(palette = "OrRd")
-ggplot(diff.rev, aes(rev, fill = change)) + geom_histogram() + scale_fill_brewer(palette = "OrRd")
-
-
-
-cs.soybean.rev0 <- (sum( exp(cs0C.pred_ln_soybean_rrev$fit + cs0C.pred_ln_soybean_rrev$res)))
+# Get % changes
+cs.soybean.rev0 <- (sum( exp(cs0C.pred_ln_soybean_rrev$fit + cs0C.pred_ln_soybean_rrev$res )))
 cs.soybean.rev1 <- (sum( exp(cs1C.pred_ln_soybean_rrev$fit + cs1C.pred_ln_soybean_rrev$res  ))/cs.soybean.rev0 - 1)*100
-cs.soybean.rev1.min <- (sum( exp(cs1C.pred_ln_soybean_rrev$fit - c(cs1C.pred_ln_soybean_rrev_se*1.96) + cs1C.pred_ln_soybean_rrev$res ), na.rm = TRUE)/cs.soybean.rev0 - 1)*100
-cs.soybean.rev1.max <- (sum( exp(cs1C.pred_ln_soybean_rrev$fit + c(cs1C.pred_ln_soybean_rrev_se*1.96) + cs1C.pred_ln_soybean_rrev$res  ), na.rm = TRUE)/cs.soybean.rev0 - 1)*100
+cs.soybean.rev1.min <- ((sum( exp(cs1C.pred_ln_soybean_rrev$fit + cs1C.pred_ln_soybean_rrev$res + cs1C.pred_ln_soybean_rrev$effect)) - exp(cs1C.pred_ln_soybean_rrev_se*1.96))/cs.soybean.rev0 - 1)*100
+cs.soybean.rev1.max <- ((sum( exp(cs1C.pred_ln_soybean_rrev$fit + cs1C.pred_ln_soybean_rrev$res + cs1C.pred_ln_soybean_rrev$effect)) + exp(cs1C.pred_ln_soybean_rrev_se*1.96))/cs.soybean.rev0 - 1)*100
 
-cs.soybean.rev2 <- (sum( exp(cs2C.pred_ln_soybean_rrev$fit + cs2C.pred_ln_soybean_rrev$res  ))/cs.soybean.rev0 - 1)*100
-cs.soybean.rev2.min <- (sum( exp(cs2C.pred_ln_soybean_rrev$fit - c(cs2C.pred_ln_soybean_rrev_se*1.96) + cs2C.pred_ln_soybean_rrev$res  ), na.rm = TRUE)/cs.soybean.rev0 - 1)*100
-cs.soybean.rev2.max <- (sum( exp(cs2C.pred_ln_soybean_rrev$fit + c(cs2C.pred_ln_soybean_rrev_se*1.96) + cs2C.pred_ln_soybean_rrev$res  ), na.rm = TRUE)/cs.soybean.rev0 - 1)*100
+cs.soybean.rev2 <- (sum( exp(cs2C.pred_ln_soybean_rrev$fit + cs2C.pred_ln_soybean_rrev$res ))/cs.soybean.rev0 - 1)*100
+cs.soybean.rev2.min <- ((sum( exp(cs2C.pred_ln_soybean_rrev$fit + cs2C.pred_ln_soybean_rrev$res )) - exp(cs2C.pred_ln_soybean_rrev_se*1.96))/cs.soybean.rev0 - 1)*100
+cs.soybean.rev2.max <- ((sum( exp(cs2C.pred_ln_soybean_rrev$fit + cs2C.pred_ln_soybean_rrev$res )) + exp(cs2C.pred_ln_soybean_rrev_se*1.96))/cs.soybean.rev0 - 1)*100
 
-cs.soybean.rev3 <- (sum( exp(cs3C.pred_ln_soybean_rrev$fit + cs3C.pred_ln_soybean_rrev$res  ))/cs.soybean.rev0 - 1)*100
-cs.soybean.rev3.min <- (sum( exp(cs3C.pred_ln_soybean_rrev$fit - c(cs3C.pred_ln_soybean_rrev_se*1.96) + cs3C.pred_ln_soybean_rrev$res  ), na.rm = TRUE)/cs.soybean.rev0 - 1)*100
-cs.soybean.rev3.max <- (sum( exp(cs3C.pred_ln_soybean_rrev$fit + c(cs3C.pred_ln_soybean_rrev_se*1.96) + cs3C.pred_ln_soybean_rrev$res  ), na.rm = TRUE)/cs.soybean.rev0 - 1)*100
+cs.soybean.rev3 <- (sum( exp(cs3C.pred_ln_soybean_rrev$fit + cs3C.pred_ln_soybean_rrev$res ))/cs.soybean.rev0 - 1)*100
+cs.soybean.rev3.min <- ((sum( exp(cs3C.pred_ln_soybean_rrev$fit + cs3C.pred_ln_soybean_rrev$res )) - exp(cs3C.pred_ln_soybean_rrev_se*1.96))/cs.soybean.rev0 - 1)*100
+cs.soybean.rev3.max <- ((sum( exp(cs3C.pred_ln_soybean_rrev$fit + cs3C.pred_ln_soybean_rrev$res )) + exp(cs3C.pred_ln_soybean_rrev_se*1.96))/cs.soybean.rev0 - 1)*100
 
-cs.soybean.rev4 <- (sum( exp(cs4C.pred_ln_soybean_rrev$fit + cs4C.pred_ln_soybean_rrev$res  ))/cs.soybean.rev0 - 1)*100
-cs.soybean.rev4.min <- (sum( exp(cs4C.pred_ln_soybean_rrev$fit - c(cs4C.pred_ln_soybean_rrev_se*1.96) + cs4C.pred_ln_soybean_rrev$res  ), na.rm = TRUE)/cs.soybean.rev0 - 1)*100
-cs.soybean.rev4.max <- (sum( exp(cs4C.pred_ln_soybean_rrev$fit + c(cs4C.pred_ln_soybean_rrev_se*1.96) + cs4C.pred_ln_soybean_rrev$res  ), na.rm = TRUE)/cs.soybean.rev0 - 1)*100
+cs.soybean.rev4 <- (sum( exp(cs4C.pred_ln_soybean_rrev$fit + cs4C.pred_ln_soybean_rrev$res ))/cs.soybean.rev0 - 1)*100
+cs.soybean.rev4.min <- ((sum( exp(cs4C.pred_ln_soybean_rrev$fit + cs4C.pred_ln_soybean_rrev$res )) - exp(cs4C.pred_ln_soybean_rrev_se*1.96))/cs.soybean.rev0 - 1)*100
+cs.soybean.rev4.max <- ((sum( exp(cs4C.pred_ln_soybean_rrev$fit + cs4C.pred_ln_soybean_rrev$res )) + exp(cs4C.pred_ln_soybean_rrev_se*1.96))/cs.soybean.rev0 - 1)*100
 
-cs.soybean.rev5 <- (sum( exp(cs5C.pred_ln_soybean_rrev$fit + cs5C.pred_ln_soybean_rrev$res  ))/cs.soybean.rev0 - 1)*100
-cs.soybean.rev5.min <- (sum( exp(cs5C.pred_ln_soybean_rrev$fit - c(cs5C.pred_ln_soybean_rrev_se*1.96) + cs5C.pred_ln_soybean_rrev$res  ), na.rm = TRUE)/cs.soybean.rev0 - 1)*100
-cs.soybean.rev5.max <- (sum( exp(cs5C.pred_ln_soybean_rrev$fit + c(cs5C.pred_ln_soybean_rrev_se*1.96) + cs5C.pred_ln_soybean_rrev$res  ), na.rm = TRUE)/cs.soybean.rev0 - 1)*100
-
+cs.soybean.rev5 <- (sum( exp(cs5C.pred_ln_soybean_rrev$fit + cs5C.pred_ln_soybean_rrev$res ))/cs.soybean.rev0 - 1)*100
+cs.soybean.rev5.min <- ((sum( exp(cs5C.pred_ln_soybean_rrev$fit + cs5C.pred_ln_soybean_rrev$res )) - exp(cs5C.pred_ln_soybean_rrev_se*1.96))/cs.soybean.rev0 - 1)*100
+cs.soybean.rev5.max <- ((sum( exp(cs5C.pred_ln_soybean_rrev$fit + cs5C.pred_ln_soybean_rrev$res )) + exp(cs5C.pred_ln_soybean_rrev_se*1.96))/cs.soybean.rev0 - 1)*100
 
 p.soybean.rev0 <- (sum( exp(p0C.pred_ln_soybean_rrev$fit + p0C.pred_ln_soybean_rrev$res + p0C.pred_ln_soybean_rrev$effect)))
-p.soybean.rev1 <- (sum( exp(p1C.pred_ln_soybean_rrev$fit + p1C.pred_ln_soybean_rrev$res + p1C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/p.soybean.rev0 - 1)*100
-p.soybean.rev1.min <- (sum( exp(p1C.pred_ln_soybean_rrev$fit - c(p1C.pred_ln_soybean_rrev_se*1.96) + p1C.pred_ln_soybean_rrev$res + p1C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/p.soybean.rev0 - 1)*100
-p.soybean.rev1.max <- (sum( exp(p1C.pred_ln_soybean_rrev$fit + c(p1C.pred_ln_soybean_rrev_se*1.96) + p1C.pred_ln_soybean_rrev$res + p1C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/p.soybean.rev0 - 1)*100
+p.soybean.rev1 <- (sum( exp(p1C.pred_ln_soybean_rrev$fit + p1C.pred_ln_soybean_rrev$res + p1C.pred_ln_soybean_rrev$effect  ))/p.soybean.rev0 - 1)*100
+p.soybean.rev1.min <- ((sum( exp(p1C.pred_ln_soybean_rrev$fit + p1C.pred_ln_soybean_rrev$res + p1C.pred_ln_soybean_rrev$effect )) - exp(p1C.pred_ln_soybean_rrev_se*1.96))/p.soybean.rev0 - 1)*100
+p.soybean.rev1.max <- ((sum( exp(p1C.pred_ln_soybean_rrev$fit + p1C.pred_ln_soybean_rrev$res + p1C.pred_ln_soybean_rrev$effect )) + exp(p1C.pred_ln_soybean_rrev_se*1.96))/p.soybean.rev0 - 1)*100
 
-p.soybean.rev2 <- (sum( exp(p2C.pred_ln_soybean_rrev$fit + p2C.pred_ln_soybean_rrev$res + p2C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/p.soybean.rev0 - 1)*100
-p.soybean.rev2.min <- (sum( exp(p2C.pred_ln_soybean_rrev$fit - c(p2C.pred_ln_soybean_rrev_se*1.96) + p2C.pred_ln_soybean_rrev$res + p2C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/p.soybean.rev0 - 1)*100
-p.soybean.rev2.max <- (sum( exp(p2C.pred_ln_soybean_rrev$fit + c(p2C.pred_ln_soybean_rrev_se*1.96) + p2C.pred_ln_soybean_rrev$res + p2C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/p.soybean.rev0 - 1)*100
+p.soybean.rev2 <- (sum( exp(p2C.pred_ln_soybean_rrev$fit + p2C.pred_ln_soybean_rrev$res + p2C.pred_ln_soybean_rrev$effect))/p.soybean.rev0 - 1)*100
+p.soybean.rev2.min <- ((sum( exp(p2C.pred_ln_soybean_rrev$fit + p2C.pred_ln_soybean_rrev$res + p2C.pred_ln_soybean_rrev$effect)) - exp(p2C.pred_ln_soybean_rrev_se*1.96))/p.soybean.rev0 - 1)*100
+p.soybean.rev2.max <- ((sum( exp(p2C.pred_ln_soybean_rrev$fit + p2C.pred_ln_soybean_rrev$res + p2C.pred_ln_soybean_rrev$effect)) + exp(p2C.pred_ln_soybean_rrev_se*1.96))/p.soybean.rev0 - 1)*100
 
-p.soybean.rev3 <- (sum( exp(p3C.pred_ln_soybean_rrev$fit + p3C.pred_ln_soybean_rrev$res + p3C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/p.soybean.rev0 - 1)*100
-p.soybean.rev3.min <- (sum( exp(p3C.pred_ln_soybean_rrev$fit - c(p3C.pred_ln_soybean_rrev_se*1.96) + p3C.pred_ln_soybean_rrev$res + p3C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/p.soybean.rev0 - 1)*100
-p.soybean.rev3.max <- (sum( exp(p3C.pred_ln_soybean_rrev$fit + c(p3C.pred_ln_soybean_rrev_se*1.96) + p3C.pred_ln_soybean_rrev$res + p3C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/p.soybean.rev0 - 1)*100
+p.soybean.rev3 <- (sum( exp(p3C.pred_ln_soybean_rrev$fit + p3C.pred_ln_soybean_rrev$res + p3C.pred_ln_soybean_rrev$effect ))/p.soybean.rev0 - 1)*100
+p.soybean.rev3.min <- ((sum( exp(p3C.pred_ln_soybean_rrev$fit + p3C.pred_ln_soybean_rrev$res + p3C.pred_ln_soybean_rrev$effect)) - exp(p3C.pred_ln_soybean_rrev_se*1.96))/p.soybean.rev0 - 1)*100
+p.soybean.rev3.max <- ((sum( exp(p3C.pred_ln_soybean_rrev$fit + p3C.pred_ln_soybean_rrev$res + p3C.pred_ln_soybean_rrev$effect )) + exp(p3C.pred_ln_soybean_rrev_se*1.96))/p.soybean.rev0 - 1)*100
 
-p.soybean.rev4 <- (sum( exp(p4C.pred_ln_soybean_rrev$fit + p4C.pred_ln_soybean_rrev$res + p4C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/p.soybean.rev0 - 1)*100
-p.soybean.rev4.min <- (sum( exp(p4C.pred_ln_soybean_rrev$fit - c(p4C.pred_ln_soybean_rrev_se*1.96) + p4C.pred_ln_soybean_rrev$res + p4C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/p.soybean.rev0 - 1)*100
-p.soybean.rev4.max <- (sum( exp(p4C.pred_ln_soybean_rrev$fit + c(p4C.pred_ln_soybean_rrev_se*1.96) + p4C.pred_ln_soybean_rrev$res + p4C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/p.soybean.rev0 - 1)*100
+p.soybean.rev4 <- (sum( exp(p4C.pred_ln_soybean_rrev$fit + p4C.pred_ln_soybean_rrev$res + p4C.pred_ln_soybean_rrev$effect))/p.soybean.rev0 - 1)*100
+p.soybean.rev4.min <- ((sum( exp(p4C.pred_ln_soybean_rrev$fit + p4C.pred_ln_soybean_rrev$res + p4C.pred_ln_soybean_rrev$effect)) - exp(p4C.pred_ln_soybean_rrev_se*1.96))/p.soybean.rev0 - 1)*100
+p.soybean.rev4.max <- ((sum( exp(p4C.pred_ln_soybean_rrev$fit + p4C.pred_ln_soybean_rrev$res + p4C.pred_ln_soybean_rrev$effect)) + exp(p4C.pred_ln_soybean_rrev_se*1.96))/p.soybean.rev0 - 1)*100
 
-p.soybean.rev5 <- (sum( exp(p5C.pred_ln_soybean_rrev$fit + p5C.pred_ln_soybean_rrev$res + p5C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/p.soybean.rev0 - 1)*100
-p.soybean.rev5.min <- (sum( exp(p5C.pred_ln_soybean_rrev$fit - c(p5C.pred_ln_soybean_rrev_se*1.96) + p5C.pred_ln_soybean_rrev$res + p5C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/p.soybean.rev0 - 1)*100
-p.soybean.rev5.max <- (sum( exp(p5C.pred_ln_soybean_rrev$fit + c(p5C.pred_ln_soybean_rrev_se*1.96) + p5C.pred_ln_soybean_rrev$res + p5C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/p.soybean.rev0 - 1)*100
+p.soybean.rev5 <- (sum( exp(p5C.pred_ln_soybean_rrev$fit + p5C.pred_ln_soybean_rrev$res + p5C.pred_ln_soybean_rrev$effect))/p.soybean.rev0 - 1)*100
+p.soybean.rev5.min <- ((sum( exp(p5C.pred_ln_soybean_rrev$fit + p5C.pred_ln_soybean_rrev$res + p5C.pred_ln_soybean_rrev$effect )) - exp(p5C.pred_ln_soybean_rrev_se*1.96))/p.soybean.rev0 - 1)*100
+p.soybean.rev5.max <- ((sum( exp(p5C.pred_ln_soybean_rrev$fit + p5C.pred_ln_soybean_rrev$res + p5C.pred_ln_soybean_rrev$effect)) + exp(p5C.pred_ln_soybean_rrev_se*1.96))/p.soybean.rev0 - 1)*100
 
-diff.soybean.rev0 <- (sum( exp(diff0C.pred_ln_soybean_rrev$fit + diff0C.pred_ln_soybean_rrev$res + diff1C.pred_ln_soybean_rrev$effect )))
-diff.soybean.rev1 <- (sum( exp(diff1C.pred_ln_soybean_rrev$fit + diff1C.pred_ln_soybean_rrev$res + diff1C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/diff.soybean.rev0 - 1)*100
-diff.soybean.rev1.min <- (sum( exp(diff1C.pred_ln_soybean_rrev$fit - c(diff1C.pred_ln_soybean_rrev_se*1.96) + diff1C.pred_ln_soybean_rrev$res + diff1C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/diff.soybean.rev0 - 1)*100
-diff.soybean.rev1.max <- (sum( exp(diff1C.pred_ln_soybean_rrev$fit + c(diff1C.pred_ln_soybean_rrev_se*1.96) + diff1C.pred_ln_soybean_rrev$res + diff1C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/diff.soybean.rev0 - 1)*100
+diff.soybean.rev0 <- (sum( exp(diff0C.pred_ln_soybean_rrev$fit + diff0C.pred_ln_soybean_rrev$res + diff0C.pred_ln_soybean_rrev$effect)))
+diff.soybean.rev1 <- (sum( exp(diff1C.pred_ln_soybean_rrev$fit + diff1C.pred_ln_soybean_rrev$res + diff1C.pred_ln_soybean_rrev$effect  ))/diff.soybean.rev0 - 1)*100
+diff.soybean.rev1.min <- ((sum( exp(diff1C.pred_ln_soybean_rrev$fit + diff1C.pred_ln_soybean_rrev$res + diff1C.pred_ln_soybean_rrev$effect)) - exp(diff1C.pred_ln_soybean_rrev_se*1.96))/diff.soybean.rev0 - 1)*100
+diff.soybean.rev1.max <- ((sum( exp(diff1C.pred_ln_soybean_rrev$fit + diff1C.pred_ln_soybean_rrev$res+ diff1C.pred_ln_soybean_rrev$effect )) + exp(diff1C.pred_ln_soybean_rrev_se*1.96))/diff.soybean.rev0 - 1)*100
 
-diff.soybean.rev2 <- (sum( exp(diff2C.pred_ln_soybean_rrev$fit + diff2C.pred_ln_soybean_rrev$res + diff2C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/diff.soybean.rev0 - 1)*100
-diff.soybean.rev2.min <- (sum( exp(diff2C.pred_ln_soybean_rrev$fit - c(diff2C.pred_ln_soybean_rrev_se*1.96) + diff2C.pred_ln_soybean_rrev$res + diff2C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/diff.soybean.rev0 - 1)*100
-diff.soybean.rev2.max <- (sum( exp(diff2C.pred_ln_soybean_rrev$fit + c(diff2C.pred_ln_soybean_rrev_se*1.96) + diff2C.pred_ln_soybean_rrev$res + diff2C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/diff.soybean.rev0 - 1)*100
+diff.soybean.rev2 <- (sum( exp(diff2C.pred_ln_soybean_rrev$fit + diff2C.pred_ln_soybean_rrev$res + diff2C.pred_ln_soybean_rrev$effect))/diff.soybean.rev0 - 1)*100
+diff.soybean.rev2.min <- ((sum( exp(diff2C.pred_ln_soybean_rrev$fit + diff2C.pred_ln_soybean_rrev$res + diff2C.pred_ln_soybean_rrev$effect)) - exp(diff2C.pred_ln_soybean_rrev_se*1.96))/diff.soybean.rev0 - 1)*100
+diff.soybean.rev2.max <- ((sum( exp(diff2C.pred_ln_soybean_rrev$fit + diff2C.pred_ln_soybean_rrev$res + diff2C.pred_ln_soybean_rrev$effect)) + exp(diff2C.pred_ln_soybean_rrev_se*1.96))/diff.soybean.rev0 - 1)*100
 
-diff.soybean.rev3 <- (sum( exp(diff3C.pred_ln_soybean_rrev$fit + diff3C.pred_ln_soybean_rrev$res + diff3C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/diff.soybean.rev0 - 1)*100
-diff.soybean.rev3.min <- (sum( exp(diff3C.pred_ln_soybean_rrev$fit - c(diff3C.pred_ln_soybean_rrev_se*1.96) + diff3C.pred_ln_soybean_rrev$res + diff3C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/diff.soybean.rev0 - 1)*100
-diff.soybean.rev3.max <- (sum( exp(diff3C.pred_ln_soybean_rrev$fit + c(diff3C.pred_ln_soybean_rrev_se*1.96) + diff3C.pred_ln_soybean_rrev$res + diff3C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/diff.soybean.rev0 - 1)*100
+diff.soybean.rev3 <- (sum( exp(diff3C.pred_ln_soybean_rrev$fit + diff3C.pred_ln_soybean_rrev$res + diff3C.pred_ln_soybean_rrev$effect))/diff.soybean.rev0 - 1)*100
+diff.soybean.rev3.min <- ((sum( exp(diff3C.pred_ln_soybean_rrev$fit + diff3C.pred_ln_soybean_rrev$res + diff3C.pred_ln_soybean_rrev$effect)) - exp(diff3C.pred_ln_soybean_rrev_se*1.96))/diff.soybean.rev0 - 1)*100
+diff.soybean.rev3.max <- ((sum( exp(diff3C.pred_ln_soybean_rrev$fit + diff3C.pred_ln_soybean_rrev$res + diff3C.pred_ln_soybean_rrev$effect)) + exp(diff3C.pred_ln_soybean_rrev_se*1.96))/diff.soybean.rev0 - 1)*100
 
-diff.soybean.rev4 <- (sum( exp(diff4C.pred_ln_soybean_rrev$fit + diff4C.pred_ln_soybean_rrev$res + diff4C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/diff.soybean.rev0 - 1)*100
-diff.soybean.rev4.min <- (sum( exp(diff4C.pred_ln_soybean_rrev$fit - c(diff4C.pred_ln_soybean_rrev_se*1.96) + diff4C.pred_ln_soybean_rrev$res + diff4C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/diff.soybean.rev0 - 1)*100
-diff.soybean.rev4.max <- (sum( exp(diff4C.pred_ln_soybean_rrev$fit + c(diff4C.pred_ln_soybean_rrev_se*1.96) + diff4C.pred_ln_soybean_rrev$res + diff4C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/diff.soybean.rev0 - 1)*100
+diff.soybean.rev4 <- (sum( exp(diff4C.pred_ln_soybean_rrev$fit + diff4C.pred_ln_soybean_rrev$res + diff4C.pred_ln_soybean_rrev$effect))/diff.soybean.rev0 - 1)*100
+diff.soybean.rev4.min <- ((sum( exp(diff4C.pred_ln_soybean_rrev$fit + diff4C.pred_ln_soybean_rrev$res + diff4C.pred_ln_soybean_rrev$effect)) - exp(diff4C.pred_ln_soybean_rrev_se*1.96))/diff.soybean.rev0 - 1)*100
+diff.soybean.rev4.max <- ((sum( exp(diff4C.pred_ln_soybean_rrev$fit + diff4C.pred_ln_soybean_rrev$res + diff4C.pred_ln_soybean_rrev$effect)) + exp(diff4C.pred_ln_soybean_rrev_se*1.96))/diff.soybean.rev0 - 1)*100
 
-diff.soybean.rev5 <- (sum( exp(diff5C.pred_ln_soybean_rrev$fit + diff5C.pred_ln_soybean_rrev$res + diff5C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/diff.soybean.rev0 - 1)*100
-diff.soybean.rev5.min <- (sum( exp(diff5C.pred_ln_soybean_rrev$fit - c(diff5C.pred_ln_soybean_rrev_se*1.96) + diff5C.pred_ln_soybean_rrev$res + diff5C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/diff.soybean.rev0 - 1)*100
-diff.soybean.rev5.max <- (sum( exp(diff5C.pred_ln_soybean_rrev$fit + c(diff5C.pred_ln_soybean_rrev_se*1.96) + diff5C.pred_ln_soybean_rrev$res + diff5C.pred_ln_soybean_rrev$effect ), na.rm = TRUE)/diff.soybean.rev0 - 1)*100
+diff.soybean.rev5 <- (sum( exp(diff5C.pred_ln_soybean_rrev$fit + diff5C.pred_ln_soybean_rrev$res + diff5C.pred_ln_soybean_rrev$effect))/diff.soybean.rev0 - 1)*100
+diff.soybean.rev5.min <- ((sum( exp(diff5C.pred_ln_soybean_rrev$fit + diff5C.pred_ln_soybean_rrev$res + diff5C.pred_ln_soybean_rrev$effect)) - exp(diff5C.pred_ln_soybean_rrev_se*1.96))/diff.soybean.rev0 - 1)*100
+diff.soybean.rev5.max <- ((sum( exp(diff5C.pred_ln_soybean_rrev$fit + diff5C.pred_ln_soybean_rrev$res+ diff5C.pred_ln_soybean_rrev$effect)) + exp(diff5C.pred_ln_soybean_rrev_se*1.96))/diff.soybean.rev0 - 1)*100
 
 soybean.plotdat <- data.frame(temp = rep(c(1,2,3,4,5), 3),
                            rev = c(cs.soybean.rev1, cs.soybean.rev2, cs.soybean.rev3, cs.soybean.rev4, cs.soybean.rev5,
@@ -1051,28 +868,104 @@ ggplot(soybean.plotdat, aes(temp, rev, group = reg)) +
   geom_line(aes(temp, rev, color = reg)) + geom_hline(yintercept = 0, linetype = "dashed")
 
 
+
 #  Full Plot --------------------------------------------------------------
 
 
 # Merge data
-plotdat <- rbind(wheat.plotdat[,c(1,2,5,6)], wheat.plotdat, hay.plotdat, wheat.plotdat, soybean.plotdat[, c(1,2,5,6)])
 plotdat <- rbind(corn.plotdat, cotton.plotdat, hay.plotdat, wheat.plotdat, soybean.plotdat)
-plotdat2 <- rbind(wheat.plotdat, soybean.plotdat)
+plotdat2 <- rbind(corn.plotdat, soybean.plotdat)
+plotdat$rev <- round(plotdat$rev)
 
 p1 <- ggplot(plotdat, aes(temp, rev, color = reg)) + 
-  geom_line() + ylab("Impact (% Change) ") + 
-  xlab("Change in Temperature (C)") + geom_hline(yintercept = 0, linetype = "dashed")+
-  facet_wrap(~crop)
+  geom_line() + ylab("Revenue Impact (% Change) ") + geom_point() +
+  xlab("Change in Temperature (C)") + geom_hline(yintercept = 0, linetype = "dashed", color = "grey")+
+   facet_wrap(~crop) + scale_y_continuous(breaks = plotdat$rev)
+p1
 
-ggplot(filter(plotdat2, crop %in% c("corn", "soybean")), aes(temp, rev, color = reg)) + 
-  geom_line() + ylab("Impact (% Change) ") + geom_line(aes(temp, max), linetype = "dashed") +
-  xlab("Change in Temperature (C)") + geom_hline(yintercept = 0, linetype = "dashed")+
-  facet_wrap(~crop)
+
+
+ggplot(df.labeled, aes(temp, rev, color = reg)) + 
+  geom_segment(aes(xend = 0, yend = rev), linetype = "dashed", color = "grey") +
+  geom_text(aes(label = label, x = -0.1), colour = "black", hjust = 1) +
+  geom_vline(xintercept = 0) + 
+  geom_point() + geom_line() + facet_wrap(~crop, ncol = 4) + 
+  scale_y_continuous(breaks = NULL) + 
+  scale_x_continuous(limits = c(-0.5, NA)) +
+  theme(panel.grid = element_blank()) + theme_base()
+
 
 p2 <- ggplot(filter(plotdat, crop %in% c("corn", "cotton", "hay", "soybean")), aes(temp, rev, color = reg)) + 
   geom_line() + ylab("Impact (% Change) ") + 
   xlab("Change in Temperature (C)") + geom_hline(yintercept = 0, linetype = "dashed")+
-  facet_wrap(~crop)
+  facet_wrap(~crop) 
 p2
 
 plot_grid(p1, p2, ncol = 1)
+
+c1 <- ggplot(filter(plotdat, reg == "cross-section"), aes(temp, rev, color = reg)) + 
+  geom_ribbon(aes(ymin = min, ymax = max), fill = "#C0CCD5", alpha = 0.5) +
+  geom_line() + ylab("Revenue Impact (% Change) ") + geom_point() + 
+  xlab("Change in Temperature (C)") + geom_hline(yintercept = 0, linetype = "dashed", color = "grey")+
+   facet_wrap(~crop, ncol = 5, scale = "free") + scale_y_continuous(breaks = plotdat$rev)
+c1
+
+c2 <- ggplot(filter(plotdat, reg == "panel"), aes(temp, rev, color = reg)) + 
+  geom_line() + ylab("Revenue Impact (% Change) ") + geom_point() +
+  xlab("Change in Temperature (C)") + geom_hline(yintercept = 0, linetype = "dashed", color = "grey")+
+   facet_wrap(~crop, ncol = 5) + scale_y_continuous(breaks = plotdat$rev)
+c2
+
+c3 <- ggplot(filter(plotdat, reg == "diff"), aes(temp, rev, color = reg)) + 
+  geom_line() + ylab("Revenue Impact (% Change) ") + geom_point() +
+  xlab("Change in Temperature (C)") + geom_hline(yintercept = 0, linetype = "dashed", color = "grey")+
+   facet_wrap(~crop, ncol = 5) + scale_y_continuous(breaks = plotdat$rev)
+c3
+
+plot_grid(c1, c2, c3, ncol = 1)
+
+# Prediction tables
+pred.table <- data.frame(temp = rep(c("+1C", "+2C", "+3C", "+4C", "+5C"), 15),
+                         crop = rep(c("Corn", "Cotton", "Hay", "Wheat", "Soybean"), 15),
+                         impact = c(cs.corn.rev1, cs.corn.rev2, cs.corn.rev3, cs.corn.rev4, cs.corn.rev5,
+                                    cs.cotton.rev1, cs.cotton.rev2, cs.cotton.rev3, cs.cotton.rev4, cs.cotton.rev5,
+                                    cs.hay.rev1, cs.hay.rev2, cs.hay.rev3, cs.hay.rev4, cs.hay.rev5,
+                                    cs.wheat.rev1, cs.wheat.rev2, cs.wheat.rev3, cs.wheat.rev4, cs.wheat.rev5,
+                                    cs.soybean.rev1, cs.soybean.rev2, cs.soybean.rev3, cs.soybean.rev4, cs.soybean.rev5,
+                                    p.corn.rev1, p.corn.rev2, p.corn.rev3, p.corn.rev4, p.corn.rev5,
+                                    p.cotton.rev1, p.cotton.rev2, p.cotton.rev3, p.cotton.rev4, p.cotton.rev5,
+                                    p.hay.rev1, p.hay.rev2, p.hay.rev3, p.hay.rev4, p.hay.rev5,
+                                    p.wheat.rev1, p.wheat.rev2, p.wheat.rev3, p.wheat.rev4, p.wheat.rev5,
+                                    p.soybean.rev1, p.soybean.rev2, p.soybean.rev3, p.soybean.rev4, p.soybean.rev5,
+                                    diff.corn.rev1, diff.corn.rev2, diff.corn.rev3, diff.corn.rev4, diff.corn.rev5,
+                                    diff.cotton.rev1, diff.cotton.rev2, diff.cotton.rev3, diff.cotton.rev4, diff.cotton.rev5,
+                                    diff.hay.rev1, diff.hay.rev2, diff.hay.rev3, diff.hay.rev4, diff.hay.rev5,
+                                    diff.wheat.rev1, diff.wheat.rev2, diff.wheat.rev3, diff.wheat.rev4, diff.wheat.rev5,
+                                    diff.soybean.rev1, diff.soybean.rev2, diff.soybean.rev3, diff.soybean.rev4, diff.soybean.rev5),
+                         s.e. = c(cs1C.pred_ln_corn_rrev_se, cs2C.pred_ln_corn_rrev_se, cs3C.pred_ln_corn_rrev_se, cs4C.pred_ln_corn_rrev_se, cs5C.pred_ln_corn_rrev_se,
+                                  cs1C.pred_ln_cotton_rrev_se, cs2C.pred_ln_cotton_rrev_se, cs3C.pred_ln_cotton_rrev_se, cs4C.pred_ln_cotton_rrev_se, cs5C.pred_ln_cotton_rrev_se,
+                                  cs1C.pred_ln_hay_rrev_se, cs2C.pred_ln_hay_rrev_se, cs3C.pred_ln_hay_rrev_se, cs4C.pred_ln_hay_rrev_se, cs5C.pred_ln_hay_rrev_se,
+                                  cs1C.pred_ln_wheat_rrev_se, cs2C.pred_ln_wheat_rrev_se, cs3C.pred_ln_wheat_rrev_se, cs4C.pred_ln_wheat_rrev_se, cs5C.pred_ln_wheat_rrev_se,
+                                  cs1C.pred_ln_soybean_rrev_se, cs2C.pred_ln_soybean_rrev_se, cs3C.pred_ln_soybean_rrev_se, cs4C.pred_ln_soybean_rrev_se, cs5C.pred_ln_soybean_rrev_se,
+                                  p1C.pred_ln_corn_rrev_se, p2C.pred_ln_corn_rrev_se, p3C.pred_ln_corn_rrev_se, p4C.pred_ln_corn_rrev_se, p5C.pred_ln_corn_rrev_se,
+                                  p1C.pred_ln_cotton_rrev_se, p2C.pred_ln_cotton_rrev_se, p3C.pred_ln_cotton_rrev_se, p4C.pred_ln_cotton_rrev_se, p5C.pred_ln_cotton_rrev_se,
+                                  p1C.pred_ln_hay_rrev_se, p2C.pred_ln_hay_rrev_se, p3C.pred_ln_hay_rrev_se, p4C.pred_ln_hay_rrev_se, p5C.pred_ln_hay_rrev_se,
+                                  p1C.pred_ln_wheat_rrev_se, p2C.pred_ln_wheat_rrev_se, p3C.pred_ln_wheat_rrev_se, p4C.pred_ln_wheat_rrev_se, p5C.pred_ln_wheat_rrev_se,
+                                  p1C.pred_ln_soybean_rrev_se, p2C.pred_ln_soybean_rrev_se, p3C.pred_ln_soybean_rrev_se, p4C.pred_ln_soybean_rrev_se, p5C.pred_ln_soybean_rrev_se,
+                                  diff1C.pred_ln_corn_rrev_se, diff2C.pred_ln_corn_rrev_se, diff3C.pred_ln_corn_rrev_se, diff4C.pred_ln_corn_rrev_se, diff5C.pred_ln_corn_rrev_se,
+                                  diff1C.pred_ln_cotton_rrev_se, diff2C.pred_ln_cotton_rrev_se, diff3C.pred_ln_cotton_rrev_se, diff4C.pred_ln_cotton_rrev_se, diff5C.pred_ln_cotton_rrev_se,
+                                  diff1C.pred_ln_hay_rrev_se, diff2C.pred_ln_hay_rrev_se, diff3C.pred_ln_hay_rrev_se, diff4C.pred_ln_hay_rrev_se, diff5C.pred_ln_hay_rrev_se,
+                                  diff1C.pred_ln_wheat_rrev_se, diff2C.pred_ln_wheat_rrev_se, diff3C.pred_ln_wheat_rrev_se, diff4C.pred_ln_wheat_rrev_se, diff5C.pred_ln_wheat_rrev_se,
+                                  diff1C.pred_ln_soybean_rrev_se, diff2C.pred_ln_soybean_rrev_se, diff3C.pred_ln_soybean_rrev_se, diff4C.pred_ln_soybean_rrev_se, diff5C.pred_ln_soybean_rrev_se))
+head(pred.table)                                    
+
+
+
+
+
+
+
+
+
+
+

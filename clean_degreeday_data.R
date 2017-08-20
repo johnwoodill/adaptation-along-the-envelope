@@ -141,7 +141,7 @@ diff.clean <- function(x){
     return(mergdat)
   }
   
-  decadedat <- decade_merge(cropdat, 1930, 2000, 20)
+  decadedat <- decade_merge(cropdat, 1930, 2000, 15)
   
   decadedat$dday0_10 <- decadedat$dday0C - decadedat$dday10C
   decadedat$dday10_30 <- decadedat$dday10C - decadedat$dday30C

@@ -233,10 +233,11 @@ cropdat$dday10_30 <- cropdat$dday10C - cropdat$dday30C
 # cropdat$dday10_30 <- cropdat$dday10_30 - mean(cropdat$dday10_30, na.rm = TRUE)
 # cropdat$dday30C <- cropdat$dday30C - mean(cropdat$dday30C, na.rm = TRUE)
 # cropdat$prec <- cropdat$prec - mean(cropdat$prec, na.rm = TRUE)
+
 cropdat$prec_sq <- cropdat$prec^2
 cropdat$tavg_sq <- cropdat$tavg^2
 cropdat$`lat:long` <- cropdat$lat*cropdat$long
-#cropdat$`(Intercept)` <- 1
+cropdat$`(Intercept)` <- 1
 
 # cropdat <- left_join(cropdat, soil, by = "fips")
 
