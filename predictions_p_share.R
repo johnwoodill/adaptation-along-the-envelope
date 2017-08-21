@@ -496,22 +496,40 @@ ggplot(soybean.plotdat, aes(temp, rev, color = reg)) + geom_line()
 
 # Merge data
 plotdat <- rbind(corn.plotdat, cotton.plotdat, hay.plotdat, wheat.plotdat, soybean.plotdat)
+plotdat$rev <- round(plotdat$rev)
 
-sharep1 <- ggplot(plotdat, aes(temp, rev, color = reg)) + geom_line() + ylab("Impact (% Change) ") + xlab("Change in Temperature (C)") + facet_wrap(~crop)
-sharep1
+p1 <- ggplot(filter(plotdat, crop %in% c("Corn", "Hay", "Soybean")), aes(temp, rev, color = reg)) + 
+  geom_line(alpha=0.3, size=0.7) + ylab("Crop Acreage Impact (% Change) ") + 
+  xlab(NULL) + 
+  geom_hline(yintercept = 0, linetype = "dashed", color = "grey")+
+  facet_wrap(~crop) + 
+  annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey")+
+  annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
+  scale_x_continuous(labels = c("+1", "+2", "+3", "+4", "+5")) +
+  theme_tufte(base_size = 14) +
+  theme(panel.grid = element_blank(),legend.position = "top",
+        legend.title = element_blank()) +
+  guides(colour=guide_legend(override.aes=list(alpha = 1, size=1))) +
+  theme(legend.position = "top",
+        legend.title = element_blank()) + 
+  geom_text_repel(aes(temp, rev, label = rev), show.legend  = FALSE) 
+p1
 
-# Just Corn and Soybean
-sharep1 <- ggplot(filter(plotdat, crop %in% c("Corn", "Soybean", "Hay")), aes(temp, rev, color = reg)) + 
-  geom_line() + ylab("Impact (% Change) ") + xlab("Change in Temperature (C)") + facet_wrap(~crop) +
-  theme_tufte() + geom_hline(yintercept = 0, linetype = "dashed", color = "grey") 
-sharep1
+p2 <- ggplot(filter(plotdat, crop %in% c("Wheat", "Cotton")), aes(temp, rev, color = reg)) + 
+  geom_line(alpha=0.3, size=0.7) + ylab("Crop Acreage Impact (% Change) ") + 
+  xlab(NULL) + 
+  geom_hline(yintercept = 0, linetype = "dashed", color = "grey")+
+  facet_wrap(~crop) + 
+  annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey")+
+  annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
+  scale_x_continuous(labels = c("+1", "+2", "+3", "+4", "+5")) +
+  theme_tufte(base_size = 14) +
+  theme(panel.grid = element_blank(),legend.position = "top",
+        legend.title = element_blank()) +
+  guides(colour=guide_legend(override.aes=list(alpha = 1, size=1))) +
+  theme(legend.position = "none",
+        legend.title = element_blank()) + 
+  geom_text_repel(aes(temp, rev, label = rev), show.legend  = FALSE) + xlab("Change in Temperature (C)")  
+p2
 
-sharep2 <- ggplot(filter(plotdat, crop %in% c("Wheat", "Cotton")), aes(temp, rev, color = reg)) + 
-  geom_line() + ylab("Impact (% Change) ") + xlab("Change in Temperature (C)") + facet_wrap(~crop) +
-  theme_tufte() + geom_hline(yintercept = 0, linetype = "dashed", color = "grey") 
-sharep2
-
-plot_grid(sharep1, sharep2, ncol = 1)
-
-
-
+plot_grid(p1, p2, ncol = 1)

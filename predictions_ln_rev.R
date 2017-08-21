@@ -300,8 +300,8 @@ corn.plotdat <- data.frame(temp = rep(c(1,2,3,4,5), 3),
                            max = c(cs.corn.rev1.max, cs.corn.rev2.max, cs.corn.rev3.max, cs.corn.rev4.max, cs.corn.rev5.max,
                                    p.corn.rev1.max, p.corn.rev2.max, p.corn.rev3.max, p.corn.rev4.max, p.corn.rev5.max,
                                    diff.corn.rev1.max, diff.corn.rev2.max, diff.corn.rev3.max, diff.corn.rev4.max, diff.corn.rev5.max),
-                           reg = rep(c("cross-section", "panel", "diff"), each = 5),
-                           crop = "corn")
+                           reg = rep(c("Cross-section", "Panel", "Diff"), each = 5),
+                           crop = "Corn")
 
 ggplot(corn.plotdat, aes(temp, rev, group = reg)) + 
   #geom_ribbon(aes(ymin = min, ymax = max), fill = "#C0CCD5", alpha = 0.5) + 
@@ -440,8 +440,8 @@ cotton.plotdat <- data.frame(temp = rep(c(1,2,3,4,5), 3),
                            max = c(cs.cotton.rev1.max, cs.cotton.rev2.max, cs.cotton.rev3.max, cs.cotton.rev4.max, cs.cotton.rev5.max,
                                    p.cotton.rev1.max, p.cotton.rev2.max, p.cotton.rev3.max, p.cotton.rev4.max, p.cotton.rev5.max,
                                    diff.cotton.rev1.max, diff.cotton.rev2.max, diff.cotton.rev3.max, diff.cotton.rev4.max, diff.cotton.rev5.max),
-                           reg = rep(c("cross-section", "panel", "diff"), each = 5),
-                           crop = "cotton")
+                           reg = rep(c("Cross-section", "Panel", "Diff"), each = 5),
+                           crop = "Cotton")
 
 ggplot(cotton.plotdat, aes(temp, rev, group = reg)) + 
   #geom_ribbon(aes(ymin = min, ymax = max), fill = "#C0CCD5", alpha = 0.5) + 
@@ -580,8 +580,8 @@ hay.plotdat <- data.frame(temp = rep(c(1,2,3,4,5), 3),
                            max = c(cs.hay.rev1.max, cs.hay.rev2.max, cs.hay.rev3.max, cs.hay.rev4.max, cs.hay.rev5.max,
                                    p.hay.rev1.max, p.hay.rev2.max, p.hay.rev3.max, p.hay.rev4.max, p.hay.rev5.max,
                                    diff.hay.rev1.max, diff.hay.rev2.max, diff.hay.rev3.max, diff.hay.rev4.max, diff.hay.rev5.max),
-                           reg = rep(c("cross-section", "panel", "diff"), each = 5),
-                           crop = "hay")
+                           reg = rep(c("Cross-section", "Panel", "Diff"), each = 5),
+                           crop = "Hay")
 
 ggplot(hay.plotdat, aes(temp, rev, group = reg)) + 
   #geom_ribbon(aes(ymin = min, ymax = max), fill = "#C0CCD5", alpha = 0.5) + 
@@ -720,8 +720,8 @@ wheat.plotdat <- data.frame(temp = rep(c(1,2,3,4,5), 3),
                            max = c(cs.wheat.rev1.max, cs.wheat.rev2.max, cs.wheat.rev3.max, cs.wheat.rev4.max, cs.wheat.rev5.max,
                                    p.wheat.rev1.max, p.wheat.rev2.max, p.wheat.rev3.max, p.wheat.rev4.max, p.wheat.rev5.max,
                                    diff.wheat.rev1.max, diff.wheat.rev2.max, diff.wheat.rev3.max, diff.wheat.rev4.max, diff.wheat.rev5.max),
-                           reg = rep(c("cross-section", "panel", "diff"), each = 5),
-                           crop = "wheat")
+                           reg = rep(c("Cross-section", "Panel", "Diff"), each = 5),
+                           crop = "Wheat")
 
 ggplot(wheat.plotdat, aes(temp, rev, group = reg)) + 
   #geom_ribbon(aes(ymin = min, ymax = max), fill = "#C0CCD5", alpha = 0.5) + 
@@ -860,8 +860,8 @@ soybean.plotdat <- data.frame(temp = rep(c(1,2,3,4,5), 3),
                            max = c(cs.soybean.rev1.max, cs.soybean.rev2.max, cs.soybean.rev3.max, cs.soybean.rev4.max, cs.soybean.rev5.max,
                                    p.soybean.rev1.max, p.soybean.rev2.max, p.soybean.rev3.max, p.soybean.rev4.max, p.soybean.rev5.max,
                                    diff.soybean.rev1.max, diff.soybean.rev2.max, diff.soybean.rev3.max, diff.soybean.rev4.max, diff.soybean.rev5.max),
-                           reg = rep(c("cross-section", "panel", "diff"), each = 5),
-                           crop = "soybean")
+                           reg = rep(c("Cross-section", "Panel", "Diff"), each = 5),
+                           crop = "Soybean")
 
 ggplot(soybean.plotdat, aes(temp, rev, group = reg)) + 
   #geom_ribbon(aes(ymin = min, ymax = max), fill = "#C0CCD5", alpha = 0.5) + 
@@ -870,7 +870,7 @@ ggplot(soybean.plotdat, aes(temp, rev, group = reg)) +
 
 
 #  Full Plot --------------------------------------------------------------
-
+library(ggrepel)
 
 # Merge data
 plotdat <- rbind(corn.plotdat, cotton.plotdat, hay.plotdat, wheat.plotdat, soybean.plotdat)
@@ -878,45 +878,77 @@ plotdat2 <- rbind(corn.plotdat, soybean.plotdat)
 plotdat$rev <- round(plotdat$rev)
 
 p1 <- ggplot(plotdat, aes(temp, rev, color = reg)) + 
-  geom_line() + ylab("Revenue Impact (% Change) ") + geom_point() +
-  xlab("Change in Temperature (C)") + geom_hline(yintercept = 0, linetype = "dashed", color = "grey")+
-   facet_wrap(~crop) + scale_y_continuous(breaks = plotdat$rev)
+  geom_line() + ylab("Revenue Impact (% Change) ") + 
+  geom_point(size = 0.5) +
+  xlab("Change in Temperature (C)") + 
+  geom_hline(yintercept = 0, linetype = "dashed", color = "grey")+
+  facet_wrap(~crop) + 
+  annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey")+
+  annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
+  scale_x_continuous(labels = c("+1", "+2", "+3", "+4", "+5")) +
+  theme_tufte(base_size = 14) +
+  theme(legend.position = "top",
+        legend.title = element_blank()) + 
+  geom_text_repel(aes(temp, rev, label = rev), show.legend  = FALSE) 
 p1
 
+df.labeled <- plotdat %>%
+  ungroup() %>% group_by(crop, rev) %>%
+  mutate(label = c(rev[1], rep(NA, length(rev) - 1)))
+
+df.labeled = df.labeled %>% 
+  group_by(crop, is.na(label)) %>% 
+  arrange(rev) %>%
+  mutate(xval = rep(c(-0.1,-0.35), ceiling(n()/2))[1:n()])
 
 
-ggplot(df.labeled, aes(temp, rev, color = reg)) + 
+ggplot(plotdat, aes(temp, rev, color = reg)) + 
+  ylab("Revenue Impact (% Change) ") + xlab("Change in Temperature (C)") + 
+  geom_text(aes(label = rev), size=3, show.legend=FALSE) + theme_tufte(base_size = 12) +
+  annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey")+
+  annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
+  geom_line(alpha=0.3, size=0.7) + 
+  facet_wrap(~crop) + geom_hline(yintercept = 0, linetype = "dashed", color = "grey") +
+  scale_x_continuous( labels = c("+1", "+2", "+3", "+4", "+5")) +
+  #theme_bw() + 
+  theme(panel.grid = element_blank(),legend.position = "top",
+        legend.title = element_blank()) +
+  guides(colour=guide_legend(override.aes=list(alpha = 1, size=1)))
+
+
+
+ggplot(df.labeled, aes(temp, rev, color = reg)) +
   geom_segment(aes(xend = 0, yend = rev), linetype = "dashed", color = "grey") +
   geom_text(aes(label = label, x = -0.1), colour = "black", hjust = 1) +
-  geom_vline(xintercept = 0) + 
-  geom_point() + geom_line() + facet_wrap(~crop, ncol = 4) + 
-  scale_y_continuous(breaks = NULL) + 
+  geom_vline(xintercept = 0) +
+  geom_point() + geom_line() + facet_wrap(~crop, ncol = 3) +
+  scale_y_continuous(breaks = NULL) +
   scale_x_continuous(limits = c(-0.5, NA)) +
   theme(panel.grid = element_blank()) + theme_base()
 
 
-p2 <- ggplot(filter(plotdat, crop %in% c("corn", "cotton", "hay", "soybean")), aes(temp, rev, color = reg)) + 
-  geom_line() + ylab("Impact (% Change) ") + 
+p2 <- ggplot(filter(plotdat, crop %in% c("corn", "cotton", "hay", "soybean")), aes(temp, rev, color = reg)) +
+  geom_line() + ylab("Impact (% Change) ") +
   xlab("Change in Temperature (C)") + geom_hline(yintercept = 0, linetype = "dashed")+
-  facet_wrap(~crop) 
+  facet_wrap(~crop)
 p2
 
 plot_grid(p1, p2, ncol = 1)
 
-c1 <- ggplot(filter(plotdat, reg == "cross-section"), aes(temp, rev, color = reg)) + 
+c1 <- ggplot(filter(plotdat, reg == "cross-section"), aes(temp, rev, color = reg)) +
   geom_ribbon(aes(ymin = min, ymax = max), fill = "#C0CCD5", alpha = 0.5) +
-  geom_line() + ylab("Revenue Impact (% Change) ") + geom_point() + 
+  geom_line() + ylab("Revenue Impact (% Change) ") + geom_point() +
   xlab("Change in Temperature (C)") + geom_hline(yintercept = 0, linetype = "dashed", color = "grey")+
    facet_wrap(~crop, ncol = 5, scale = "free") + scale_y_continuous(breaks = plotdat$rev)
 c1
 
-c2 <- ggplot(filter(plotdat, reg == "panel"), aes(temp, rev, color = reg)) + 
+c2 <- ggplot(filter(plotdat, reg == "panel"), aes(temp, rev, color = reg)) +
   geom_line() + ylab("Revenue Impact (% Change) ") + geom_point() +
   xlab("Change in Temperature (C)") + geom_hline(yintercept = 0, linetype = "dashed", color = "grey")+
    facet_wrap(~crop, ncol = 5) + scale_y_continuous(breaks = plotdat$rev)
 c2
 
-c3 <- ggplot(filter(plotdat, reg == "diff"), aes(temp, rev, color = reg)) + 
+c3 <- ggplot(filter(plotdat, reg == "diff"), aes(temp, rev, color = reg)) +
   geom_line() + ylab("Revenue Impact (% Change) ") + geom_point() +
   xlab("Change in Temperature (C)") + geom_hline(yintercept = 0, linetype = "dashed", color = "grey")+
    facet_wrap(~crop, ncol = 5) + scale_y_continuous(breaks = plotdat$rev)
@@ -926,7 +958,8 @@ plot_grid(c1, c2, c3, ncol = 1)
 
 # Prediction tables
 pred.table <- data.frame(temp = rep(c("+1C", "+2C", "+3C", "+4C", "+5C"), 15),
-                         crop = rep(c("Corn", "Cotton", "Hay", "Wheat", "Soybean"), 15),
+                         crop = rep(c("Corn", "Cotton", "Hay", "Wheat", "Soybean"),3, each = 5),
+                         reg = rep(c("Cross-Section", "Panel", "Difference"), each = 25),
                          impact = c(cs.corn.rev1, cs.corn.rev2, cs.corn.rev3, cs.corn.rev4, cs.corn.rev5,
                                     cs.cotton.rev1, cs.cotton.rev2, cs.cotton.rev3, cs.cotton.rev4, cs.cotton.rev5,
                                     cs.hay.rev1, cs.hay.rev2, cs.hay.rev3, cs.hay.rev4, cs.hay.rev5,
@@ -942,7 +975,7 @@ pred.table <- data.frame(temp = rep(c("+1C", "+2C", "+3C", "+4C", "+5C"), 15),
                                     diff.hay.rev1, diff.hay.rev2, diff.hay.rev3, diff.hay.rev4, diff.hay.rev5,
                                     diff.wheat.rev1, diff.wheat.rev2, diff.wheat.rev3, diff.wheat.rev4, diff.wheat.rev5,
                                     diff.soybean.rev1, diff.soybean.rev2, diff.soybean.rev3, diff.soybean.rev4, diff.soybean.rev5),
-                         s.e. = c(cs1C.pred_ln_corn_rrev_se, cs2C.pred_ln_corn_rrev_se, cs3C.pred_ln_corn_rrev_se, cs4C.pred_ln_corn_rrev_se, cs5C.pred_ln_corn_rrev_se,
+                         se = c(cs1C.pred_ln_corn_rrev_se, cs2C.pred_ln_corn_rrev_se, cs3C.pred_ln_corn_rrev_se, cs4C.pred_ln_corn_rrev_se, cs5C.pred_ln_corn_rrev_se,
                                   cs1C.pred_ln_cotton_rrev_se, cs2C.pred_ln_cotton_rrev_se, cs3C.pred_ln_cotton_rrev_se, cs4C.pred_ln_cotton_rrev_se, cs5C.pred_ln_cotton_rrev_se,
                                   cs1C.pred_ln_hay_rrev_se, cs2C.pred_ln_hay_rrev_se, cs3C.pred_ln_hay_rrev_se, cs4C.pred_ln_hay_rrev_se, cs5C.pred_ln_hay_rrev_se,
                                   cs1C.pred_ln_wheat_rrev_se, cs2C.pred_ln_wheat_rrev_se, cs3C.pred_ln_wheat_rrev_se, cs4C.pred_ln_wheat_rrev_se, cs5C.pred_ln_wheat_rrev_se,
@@ -957,10 +990,14 @@ pred.table <- data.frame(temp = rep(c("+1C", "+2C", "+3C", "+4C", "+5C"), 15),
                                   diff1C.pred_ln_hay_rrev_se, diff2C.pred_ln_hay_rrev_se, diff3C.pred_ln_hay_rrev_se, diff4C.pred_ln_hay_rrev_se, diff5C.pred_ln_hay_rrev_se,
                                   diff1C.pred_ln_wheat_rrev_se, diff2C.pred_ln_wheat_rrev_se, diff3C.pred_ln_wheat_rrev_se, diff4C.pred_ln_wheat_rrev_se, diff5C.pred_ln_wheat_rrev_se,
                                   diff1C.pred_ln_soybean_rrev_se, diff2C.pred_ln_soybean_rrev_se, diff3C.pred_ln_soybean_rrev_se, diff4C.pred_ln_soybean_rrev_se, diff5C.pred_ln_soybean_rrev_se))
-head(pred.table)                                    
+head(pred.table)
+pred.table
+setwd("/run/media/john/1TB/SpiderOak/Projects/adaptation-along-the-envelope/")
+saveRDS(pred.table, "tables/predictions.rds")
 
-
-
+head(pred.table)
+library()
+tab <- tabular
 
 
 
