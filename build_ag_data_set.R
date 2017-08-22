@@ -9,6 +9,7 @@ library(haven)
 
 setwd("/run/media/john/1TB/SpiderOak/Projects/adaptation-along-the-envelope/")
 
+
 # Function to extract data
 data(county.fips) 
 county.fips$state <- sapply(str_split(county.fips$polyname, ","),'[',1)

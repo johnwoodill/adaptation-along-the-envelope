@@ -1,4 +1,9 @@
+library(dplyr)
+library(ggplot2)
+
+
 cropdat <- readRDS("data/full_ag_data.rds")
+cropdat <- filter(cropdat, year >= 1930 & year <= 2010)
 
 # P bar
 
@@ -12,13 +17,33 @@ dat$soybean_mprice <- mean(dat$soybean_rprice, na.rm = TRUE)
 
 dat <- dat %>% 
   group_by(fips) %>% 
-  mutate(corn_crev = corn_rrev + cov(corn_mprice, corn_yield , use = "pairwise.complete.obs"),
-         cotton_crev = cotton_rrev + cov(cotton_yield, cotton_mprice, use = "pairwise.complete.obs"),
-         hay_crev = hay_rrev + cov(hay_yield, hay_mprice, use = "pairwise.complete.obs"),
-         wheat_crev = wheat_rrev + cov(wheat_yield, wheat_mprice, use = "pairwise.complete.obs"),
-         soybean_crev = soybean_rrev + cov(soybean_yield, soybean_mprice, use = "pairwise.complete.obs"))
+  mutate(corn_crev = (corn_yield*corn_mprice + cov(corn_yield, corn_rprice , use = "pairwise.complete.obs")),
+         cotton_crev = (cotton_yield*corn_mprice + cov(cotton_yield, cotton_rprice, use = "pairwise.complete.obs")),
+         hay_crev = (hay_yield*corn_mprice + cov(hay_yield, hay_rprice, use = "pairwise.complete.obs")),
+         wheat_crev = (wheat_yield*corn_mprice + cov(wheat_yield, wheat_rprice, use = "pairwise.complete.obs")),
+         soybean_crev = (soybean_yield*corn_mprice + cov(soybean_yield, soybean_rprice, use = "pairwise.complete.obs")))
 
-cov(dat$corn_mprice, dat$corn_yield, use = "na.or.complete")
+# Convert inf to NA
+dat <- do.call(data.frame,lapply(dat, function(x) replace(x, is.infinite(x),NA)))
+length(which(is.infinite(dat$corn_crev )))
+
+mean(dat$corn_rrev, na.rm = TRUE)
+mean(dat$corn_crev, na.rm = TRUE)
+
+mean(dat$cotton_rrev, na.rm = TRUE)
+mean(dat$cotton_crev, na.rm = TRUE)
+
+mean(dat$hay_rrev, na.rm = TRUE)
+mean(dat$hay_crev, na.rm = TRUE)
+
+mean(dat$wheat_rrev, na.rm = TRUE)
+mean(dat$wheat_crev, na.rm = TRUE)
+
+mean(dat$soybean_rrev, na.rm = TRUE)
+mean(dat$soybean_crev, na.rm = TRUE)
+
+
+
 
 ggplot(data = dat) + geom_smooth(aes(year, corn_rrev), color = "blue") + geom_smooth(aes(year, corn_crev), color = "red")
 
