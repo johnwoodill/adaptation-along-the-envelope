@@ -290,17 +290,17 @@ diff.corn.rev5 <- (sum( exp(diff5C.pred_ln_corn_rrev$fit + diff5C.pred_ln_corn_r
 diff.corn.rev5.min <- ((sum( exp(diff5C.pred_ln_corn_rrev$fit + diff5C.pred_ln_corn_rrev$res + diff5C.pred_ln_corn_rrev$effect)) - exp(diff5C.pred_ln_corn_rrev_se*1.96))/diff.corn.rev0 - 1)*100
 diff.corn.rev5.max <- ((sum( exp(diff5C.pred_ln_corn_rrev$fit + diff5C.pred_ln_corn_rrev$res+ diff5C.pred_ln_corn_rrev$effect)) + exp(diff5C.pred_ln_corn_rrev_se*1.96))/diff.corn.rev0 - 1)*100
 
-corn.plotdat <- data.frame(temp = rep(c(1,2,3,4,5), 3),
-                           rev = c(cs.corn.rev1, cs.corn.rev2, cs.corn.rev3, cs.corn.rev4, cs.corn.rev5,
-                                   p.corn.rev1, p.corn.rev2, p.corn.rev3, p.corn.rev4, p.corn.rev5,
-                                   diff.corn.rev1, diff.corn.rev2, diff.corn.rev3, diff.corn.rev4, diff.corn.rev5),
-                           min = c(cs.corn.rev1.min, cs.corn.rev2.min, cs.corn.rev3.min, cs.corn.rev4.min, cs.corn.rev5.min,
-                                   p.corn.rev1.min, p.corn.rev2.min, p.corn.rev3.min, p.corn.rev4.min, p.corn.rev5.min,
-                                   diff.corn.rev1.min, diff.corn.rev2.min, diff.corn.rev3.min, diff.corn.rev4.min, diff.corn.rev5.min),
-                           max = c(cs.corn.rev1.max, cs.corn.rev2.max, cs.corn.rev3.max, cs.corn.rev4.max, cs.corn.rev5.max,
-                                   p.corn.rev1.max, p.corn.rev2.max, p.corn.rev3.max, p.corn.rev4.max, p.corn.rev5.max,
-                                   diff.corn.rev1.max, diff.corn.rev2.max, diff.corn.rev3.max, diff.corn.rev4.max, diff.corn.rev5.max),
-                           reg = rep(c("Cross-section", "Panel", "Diff"), each = 5),
+corn.plotdat <- data.frame(temp = rep(c(0,1,2,3,4,5), 3),
+                           rev = c(0,cs.corn.rev1, cs.corn.rev2, cs.corn.rev3, cs.corn.rev4, cs.corn.rev5,
+                                   0,p.corn.rev1, p.corn.rev2, p.corn.rev3, p.corn.rev4, p.corn.rev5,
+                                   0,diff.corn.rev1, diff.corn.rev2, diff.corn.rev3, diff.corn.rev4, diff.corn.rev5),
+                           min = c(0,cs.corn.rev1.min, cs.corn.rev2.min, cs.corn.rev3.min, cs.corn.rev4.min, cs.corn.rev5.min,
+                                   0,p.corn.rev1.min, p.corn.rev2.min, p.corn.rev3.min, p.corn.rev4.min, p.corn.rev5.min,
+                                   0,diff.corn.rev1.min, diff.corn.rev2.min, diff.corn.rev3.min, diff.corn.rev4.min, diff.corn.rev5.min),
+                           max = c(0,cs.corn.rev1.max, cs.corn.rev2.max, cs.corn.rev3.max, cs.corn.rev4.max, cs.corn.rev5.max,
+                                   0,p.corn.rev1.max, p.corn.rev2.max, p.corn.rev3.max, p.corn.rev4.max, p.corn.rev5.max,
+                                   0,diff.corn.rev1.max, diff.corn.rev2.max, diff.corn.rev3.max, diff.corn.rev4.max, diff.corn.rev5.max),
+                           reg = rep(c("Cross-section", "Panel", "Diff"), each = 6),
                            crop = "Corn")
 
 ggplot(corn.plotdat, aes(temp, rev, group = reg)) + 
@@ -430,17 +430,17 @@ diff.cotton.rev5 <- (sum( exp(diff5C.pred_ln_cotton_rrev$fit + diff5C.pred_ln_co
 diff.cotton.rev5.min <- ((sum( exp(diff5C.pred_ln_cotton_rrev$fit + diff5C.pred_ln_cotton_rrev$res + diff5C.pred_ln_cotton_rrev$effect)) - exp(diff5C.pred_ln_cotton_rrev_se*1.96))/diff.cotton.rev0 - 1)*100
 diff.cotton.rev5.max <- ((sum( exp(diff5C.pred_ln_cotton_rrev$fit + diff5C.pred_ln_cotton_rrev$res+ diff5C.pred_ln_cotton_rrev$effect)) + exp(diff5C.pred_ln_cotton_rrev_se*1.96))/diff.cotton.rev0 - 1)*100
 
-cotton.plotdat <- data.frame(temp = rep(c(1,2,3,4,5), 3),
-                           rev = c(cs.cotton.rev1, cs.cotton.rev2, cs.cotton.rev3, cs.cotton.rev4, cs.cotton.rev5,
-                                   p.cotton.rev1, p.cotton.rev2, p.cotton.rev3, p.cotton.rev4, p.cotton.rev5,
-                                   diff.cotton.rev1, diff.cotton.rev2, diff.cotton.rev3, diff.cotton.rev4, diff.cotton.rev5),
-                           min = c(cs.cotton.rev1.min, cs.cotton.rev2.min, cs.cotton.rev3.min, cs.cotton.rev4.min, cs.cotton.rev5.min,
-                                   p.cotton.rev1.min, p.cotton.rev2.min, p.cotton.rev3.min, p.cotton.rev4.min, p.cotton.rev5.min,
-                                   diff.cotton.rev1.min, diff.cotton.rev2.min, diff.cotton.rev3.min, diff.cotton.rev4.min, diff.cotton.rev5.min),
-                           max = c(cs.cotton.rev1.max, cs.cotton.rev2.max, cs.cotton.rev3.max, cs.cotton.rev4.max, cs.cotton.rev5.max,
-                                   p.cotton.rev1.max, p.cotton.rev2.max, p.cotton.rev3.max, p.cotton.rev4.max, p.cotton.rev5.max,
-                                   diff.cotton.rev1.max, diff.cotton.rev2.max, diff.cotton.rev3.max, diff.cotton.rev4.max, diff.cotton.rev5.max),
-                           reg = rep(c("Cross-section", "Panel", "Diff"), each = 5),
+cotton.plotdat <- data.frame(temp = rep(c(0,1,2,3,4,5), 3),
+                           rev = c(0,cs.cotton.rev1, cs.cotton.rev2, cs.cotton.rev3, cs.cotton.rev4, cs.cotton.rev5,
+                                   0,p.cotton.rev1, p.cotton.rev2, p.cotton.rev3, p.cotton.rev4, p.cotton.rev5,
+                                   0,diff.cotton.rev1, diff.cotton.rev2, diff.cotton.rev3, diff.cotton.rev4, diff.cotton.rev5),
+                           min = c(0,cs.cotton.rev1.min, cs.cotton.rev2.min, cs.cotton.rev3.min, cs.cotton.rev4.min, cs.cotton.rev5.min,
+                                   0,p.cotton.rev1.min, p.cotton.rev2.min, p.cotton.rev3.min, p.cotton.rev4.min, p.cotton.rev5.min,
+                                   0,diff.cotton.rev1.min, diff.cotton.rev2.min, diff.cotton.rev3.min, diff.cotton.rev4.min, diff.cotton.rev5.min),
+                           max = c(0,cs.cotton.rev1.max, cs.cotton.rev2.max, cs.cotton.rev3.max, cs.cotton.rev4.max, cs.cotton.rev5.max,
+                                   0,p.cotton.rev1.max, p.cotton.rev2.max, p.cotton.rev3.max, p.cotton.rev4.max, p.cotton.rev5.max,
+                                   0,diff.cotton.rev1.max, diff.cotton.rev2.max, diff.cotton.rev3.max, diff.cotton.rev4.max, diff.cotton.rev5.max),
+                           reg = rep(c("Cross-section", "Panel", "Diff"), each = 6),
                            crop = "Cotton")
 
 ggplot(cotton.plotdat, aes(temp, rev, group = reg)) + 
@@ -570,17 +570,17 @@ diff.hay.rev5 <- (sum( exp(diff5C.pred_ln_hay_rrev$fit + diff5C.pred_ln_hay_rrev
 diff.hay.rev5.min <- ((sum( exp(diff5C.pred_ln_hay_rrev$fit + diff5C.pred_ln_hay_rrev$res + diff5C.pred_ln_hay_rrev$effect)) - exp(diff5C.pred_ln_hay_rrev_se*1.96))/diff.hay.rev0 - 1)*100
 diff.hay.rev5.max <- ((sum( exp(diff5C.pred_ln_hay_rrev$fit + diff5C.pred_ln_hay_rrev$res+ diff5C.pred_ln_hay_rrev$effect)) + exp(diff5C.pred_ln_hay_rrev_se*1.96))/diff.hay.rev0 - 1)*100
 
-hay.plotdat <- data.frame(temp = rep(c(1,2,3,4,5), 3),
-                           rev = c(cs.hay.rev1, cs.hay.rev2, cs.hay.rev3, cs.hay.rev4, cs.hay.rev5,
-                                   p.hay.rev1, p.hay.rev2, p.hay.rev3, p.hay.rev4, p.hay.rev5,
-                                   diff.hay.rev1, diff.hay.rev2, diff.hay.rev3, diff.hay.rev4, diff.hay.rev5),
-                           min = c(cs.hay.rev1.min, cs.hay.rev2.min, cs.hay.rev3.min, cs.hay.rev4.min, cs.hay.rev5.min,
-                                   p.hay.rev1.min, p.hay.rev2.min, p.hay.rev3.min, p.hay.rev4.min, p.hay.rev5.min,
-                                   diff.hay.rev1.min, diff.hay.rev2.min, diff.hay.rev3.min, diff.hay.rev4.min, diff.hay.rev5.min),
-                           max = c(cs.hay.rev1.max, cs.hay.rev2.max, cs.hay.rev3.max, cs.hay.rev4.max, cs.hay.rev5.max,
-                                   p.hay.rev1.max, p.hay.rev2.max, p.hay.rev3.max, p.hay.rev4.max, p.hay.rev5.max,
-                                   diff.hay.rev1.max, diff.hay.rev2.max, diff.hay.rev3.max, diff.hay.rev4.max, diff.hay.rev5.max),
-                           reg = rep(c("Cross-section", "Panel", "Diff"), each = 5),
+hay.plotdat <- data.frame(temp = rep(c(0,1,2,3,4,5), 3),
+                           rev = c(0,cs.hay.rev1, cs.hay.rev2, cs.hay.rev3, cs.hay.rev4, cs.hay.rev5,
+                                   0,p.hay.rev1, p.hay.rev2, p.hay.rev3, p.hay.rev4, p.hay.rev5,
+                                   0,diff.hay.rev1, diff.hay.rev2, diff.hay.rev3, diff.hay.rev4, diff.hay.rev5),
+                           min = c(0,cs.hay.rev1.min, cs.hay.rev2.min, cs.hay.rev3.min, cs.hay.rev4.min, cs.hay.rev5.min,
+                                   0,p.hay.rev1.min, p.hay.rev2.min, p.hay.rev3.min, p.hay.rev4.min, p.hay.rev5.min,
+                                   0,diff.hay.rev1.min, diff.hay.rev2.min, diff.hay.rev3.min, diff.hay.rev4.min, diff.hay.rev5.min),
+                           max = c(0,cs.hay.rev1.max, cs.hay.rev2.max, cs.hay.rev3.max, cs.hay.rev4.max, cs.hay.rev5.max,
+                                   0,p.hay.rev1.max, p.hay.rev2.max, p.hay.rev3.max, p.hay.rev4.max, p.hay.rev5.max,
+                                   0,diff.hay.rev1.max, diff.hay.rev2.max, diff.hay.rev3.max, diff.hay.rev4.max, diff.hay.rev5.max),
+                           reg = rep(c("Cross-section", "Panel", "Diff"), each = 6),
                            crop = "Hay")
 
 ggplot(hay.plotdat, aes(temp, rev, group = reg)) + 
@@ -710,17 +710,17 @@ diff.wheat.rev5 <- (sum( exp(diff5C.pred_ln_wheat_rrev$fit + diff5C.pred_ln_whea
 diff.wheat.rev5.min <- ((sum( exp(diff5C.pred_ln_wheat_rrev$fit + diff5C.pred_ln_wheat_rrev$res + diff5C.pred_ln_wheat_rrev$effect)) - exp(diff5C.pred_ln_wheat_rrev_se*1.96))/diff.wheat.rev0 - 1)*100
 diff.wheat.rev5.max <- ((sum( exp(diff5C.pred_ln_wheat_rrev$fit + diff5C.pred_ln_wheat_rrev$res+ diff5C.pred_ln_wheat_rrev$effect)) + exp(diff5C.pred_ln_wheat_rrev_se*1.96))/diff.wheat.rev0 - 1)*100
 
-wheat.plotdat <- data.frame(temp = rep(c(1,2,3,4,5), 3),
-                           rev = c(cs.wheat.rev1, cs.wheat.rev2, cs.wheat.rev3, cs.wheat.rev4, cs.wheat.rev5,
-                                   p.wheat.rev1, p.wheat.rev2, p.wheat.rev3, p.wheat.rev4, p.wheat.rev5,
-                                   diff.wheat.rev1, diff.wheat.rev2, diff.wheat.rev3, diff.wheat.rev4, diff.wheat.rev5),
-                           min = c(cs.wheat.rev1.min, cs.wheat.rev2.min, cs.wheat.rev3.min, cs.wheat.rev4.min, cs.wheat.rev5.min,
-                                   p.wheat.rev1.min, p.wheat.rev2.min, p.wheat.rev3.min, p.wheat.rev4.min, p.wheat.rev5.min,
-                                   diff.wheat.rev1.min, diff.wheat.rev2.min, diff.wheat.rev3.min, diff.wheat.rev4.min, diff.wheat.rev5.min),
-                           max = c(cs.wheat.rev1.max, cs.wheat.rev2.max, cs.wheat.rev3.max, cs.wheat.rev4.max, cs.wheat.rev5.max,
-                                   p.wheat.rev1.max, p.wheat.rev2.max, p.wheat.rev3.max, p.wheat.rev4.max, p.wheat.rev5.max,
-                                   diff.wheat.rev1.max, diff.wheat.rev2.max, diff.wheat.rev3.max, diff.wheat.rev4.max, diff.wheat.rev5.max),
-                           reg = rep(c("Cross-section", "Panel", "Diff"), each = 5),
+wheat.plotdat <- data.frame(temp = rep(c(0,1,2,3,4,5), 3),
+                           rev = c(0,cs.wheat.rev1, cs.wheat.rev2, cs.wheat.rev3, cs.wheat.rev4, cs.wheat.rev5,
+                                   0,p.wheat.rev1, p.wheat.rev2, p.wheat.rev3, p.wheat.rev4, p.wheat.rev5,
+                                   0,diff.wheat.rev1, diff.wheat.rev2, diff.wheat.rev3, diff.wheat.rev4, diff.wheat.rev5),
+                           min = c(0,cs.wheat.rev1.min, cs.wheat.rev2.min, cs.wheat.rev3.min, cs.wheat.rev4.min, cs.wheat.rev5.min,
+                                   0,p.wheat.rev1.min, p.wheat.rev2.min, p.wheat.rev3.min, p.wheat.rev4.min, p.wheat.rev5.min,
+                                   0,diff.wheat.rev1.min, diff.wheat.rev2.min, diff.wheat.rev3.min, diff.wheat.rev4.min, diff.wheat.rev5.min),
+                           max = c(0,cs.wheat.rev1.max, cs.wheat.rev2.max, cs.wheat.rev3.max, cs.wheat.rev4.max, cs.wheat.rev5.max,
+                                   0,p.wheat.rev1.max, p.wheat.rev2.max, p.wheat.rev3.max, p.wheat.rev4.max, p.wheat.rev5.max,
+                                   0,diff.wheat.rev1.max, diff.wheat.rev2.max, diff.wheat.rev3.max, diff.wheat.rev4.max, diff.wheat.rev5.max),
+                           reg = rep(c("Cross-section", "Panel", "Diff"), each = 6),
                            crop = "Wheat")
 
 ggplot(wheat.plotdat, aes(temp, rev, group = reg)) + 
@@ -850,17 +850,17 @@ diff.soybean.rev5 <- (sum( exp(diff5C.pred_ln_soybean_rrev$fit + diff5C.pred_ln_
 diff.soybean.rev5.min <- ((sum( exp(diff5C.pred_ln_soybean_rrev$fit + diff5C.pred_ln_soybean_rrev$res + diff5C.pred_ln_soybean_rrev$effect)) - exp(diff5C.pred_ln_soybean_rrev_se*1.96))/diff.soybean.rev0 - 1)*100
 diff.soybean.rev5.max <- ((sum( exp(diff5C.pred_ln_soybean_rrev$fit + diff5C.pred_ln_soybean_rrev$res+ diff5C.pred_ln_soybean_rrev$effect)) + exp(diff5C.pred_ln_soybean_rrev_se*1.96))/diff.soybean.rev0 - 1)*100
 
-soybean.plotdat <- data.frame(temp = rep(c(1,2,3,4,5), 3),
-                           rev = c(cs.soybean.rev1, cs.soybean.rev2, cs.soybean.rev3, cs.soybean.rev4, cs.soybean.rev5,
-                                   p.soybean.rev1, p.soybean.rev2, p.soybean.rev3, p.soybean.rev4, p.soybean.rev5,
-                                   diff.soybean.rev1, diff.soybean.rev2, diff.soybean.rev3, diff.soybean.rev4, diff.soybean.rev5),
-                           min = c(cs.soybean.rev1.min, cs.soybean.rev2.min, cs.soybean.rev3.min, cs.soybean.rev4.min, cs.soybean.rev5.min,
-                                   p.soybean.rev1.min, p.soybean.rev2.min, p.soybean.rev3.min, p.soybean.rev4.min, p.soybean.rev5.min,
-                                   diff.soybean.rev1.min, diff.soybean.rev2.min, diff.soybean.rev3.min, diff.soybean.rev4.min, diff.soybean.rev5.min),
-                           max = c(cs.soybean.rev1.max, cs.soybean.rev2.max, cs.soybean.rev3.max, cs.soybean.rev4.max, cs.soybean.rev5.max,
-                                   p.soybean.rev1.max, p.soybean.rev2.max, p.soybean.rev3.max, p.soybean.rev4.max, p.soybean.rev5.max,
-                                   diff.soybean.rev1.max, diff.soybean.rev2.max, diff.soybean.rev3.max, diff.soybean.rev4.max, diff.soybean.rev5.max),
-                           reg = rep(c("Cross-section", "Panel", "Diff"), each = 5),
+soybean.plotdat <- data.frame(temp = rep(c(0,1,2,3,4,5), 3),
+                           rev = c(0,cs.soybean.rev1, cs.soybean.rev2, cs.soybean.rev3, cs.soybean.rev4, cs.soybean.rev5,
+                                   0,p.soybean.rev1, p.soybean.rev2, p.soybean.rev3, p.soybean.rev4, p.soybean.rev5,
+                                   0,diff.soybean.rev1, diff.soybean.rev2, diff.soybean.rev3, diff.soybean.rev4, diff.soybean.rev5),
+                           min = c(0,cs.soybean.rev1.min, cs.soybean.rev2.min, cs.soybean.rev3.min, cs.soybean.rev4.min, cs.soybean.rev5.min,
+                                   0,p.soybean.rev1.min, p.soybean.rev2.min, p.soybean.rev3.min, p.soybean.rev4.min, p.soybean.rev5.min,
+                                   0,diff.soybean.rev1.min, diff.soybean.rev2.min, diff.soybean.rev3.min, diff.soybean.rev4.min, diff.soybean.rev5.min),
+                           max = c(0,cs.soybean.rev1.max, cs.soybean.rev2.max, cs.soybean.rev3.max, cs.soybean.rev4.max, cs.soybean.rev5.max,
+                                   0,p.soybean.rev1.max, p.soybean.rev2.max, p.soybean.rev3.max, p.soybean.rev4.max, p.soybean.rev5.max,
+                                   0,diff.soybean.rev1.max, diff.soybean.rev2.max, diff.soybean.rev3.max, diff.soybean.rev4.max, diff.soybean.rev5.max),
+                           reg = rep(c("Cross-section", "Panel", "Diff"), each = 6),
                            crop = "Soybean")
 
 ggplot(soybean.plotdat, aes(temp, rev, group = reg)) + 
@@ -871,7 +871,7 @@ ggplot(soybean.plotdat, aes(temp, rev, group = reg)) +
 
 #  Full Plot --------------------------------------------------------------
 library(ggrepel)
-
+library(ggthemes)
 # Merge data
 plotdat <- rbind(corn.plotdat, cotton.plotdat, hay.plotdat, wheat.plotdat, soybean.plotdat)
 plotdat2 <- rbind(corn.plotdat, soybean.plotdat)
@@ -885,11 +885,11 @@ p1 <- ggplot(plotdat, aes(temp, rev, color = reg)) +
   facet_wrap(~crop) + 
   annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey")+
   annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
-  scale_x_continuous(labels = c("+1", "+2", "+3", "+4", "+5")) +
+  scale_x_continuous(labels = c("0", "+1", "+2", "+3", "+4", "+5")) +
   theme_tufte(base_size = 14) +
   theme(legend.position = "top",
         legend.title = element_blank()) + 
-  geom_text_repel(aes(temp, rev, label = rev), show.legend  = FALSE) 
+  geom_text_repel(aes(temp, rev, label = rev), show.legend  = FALSE, alpha = 0.5) 
 p1
 
 df.labeled <- plotdat %>%

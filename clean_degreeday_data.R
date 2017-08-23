@@ -11,7 +11,8 @@ xsectiondat <- dplyr::select(xsectiondat, state, fips, ln_corn_rrev, ln_cotton_r
 paneldat <- readRDS("data/panel_regression_data.rds")
 paneldat <- dplyr::select(paneldat, year, state, fips, ln_corn_rrev, ln_cotton_rrev, ln_hay_rrev, 
                       ln_wheat_rrev, ln_soybean_rrev, p_corn_share, p_cotton_share, p_hay_share,
-                      p_wheat_share, p_soybean_share, corn_w, cotton_w, hay_w, wheat_w, soybean_w, total_w, lat, long)
+                      p_wheat_share, p_soybean_share, corn_w, cotton_w, hay_w, wheat_w, soybean_w, total_w, lat, long,
+                      corn_grain_a, corn_grain_p, corn_rprice)
 
 diffdat <- readRDS("data/diff_regression_data.rds")
 diffdat <- dplyr::select(diffdat, year, state, fips, ln_corn_rrev, ln_cotton_rrev, ln_hay_rrev, 
