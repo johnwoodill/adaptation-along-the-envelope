@@ -127,7 +127,7 @@ p.ln_soybean_rrev_3C <- filter(p.3C, !is.na(ln_soybean_rrev))
 p.ln_soybean_rrev_4C <- filter(p.4C, !is.na(ln_soybean_rrev))
 p.ln_soybean_rrev_5C <- filter(p.5C, !is.na(ln_soybean_rrev))
 
-# Diff data
+# Difference data
 diff.ln_corn_rrev_0C <- filter(diff.dat, !is.na(ln_corn_rrev))
 diff.ln_corn_rrev_1C <- filter(diff.1C, !is.na(ln_corn_rrev))
 diff.ln_corn_rrev_2C <- filter(diff.2C, !is.na(ln_corn_rrev))
@@ -290,6 +290,35 @@ diff.corn.rev5 <- (sum( exp(diff5C.pred_ln_corn_rrev$fit + diff5C.pred_ln_corn_r
 diff.corn.rev5.min <- ((sum( exp(diff5C.pred_ln_corn_rrev$fit + diff5C.pred_ln_corn_rrev$res + diff5C.pred_ln_corn_rrev$effect)) - exp(diff5C.pred_ln_corn_rrev_se*1.96))/diff.corn.rev0 - 1)*100
 diff.corn.rev5.max <- ((sum( exp(diff5C.pred_ln_corn_rrev$fit + diff5C.pred_ln_corn_rrev$res+ diff5C.pred_ln_corn_rrev$effect)) + exp(diff5C.pred_ln_corn_rrev_se*1.96))/diff.corn.rev0 - 1)*100
 
+# Predicted revenue
+cs.corn.pred_rev0 <- sum(exp(cs0C.pred_ln_corn_rrev$fit + cs0C.pred_ln_corn_rrev$res  ))
+cs.corn.pred_rev1 <- sum(exp(cs1C.pred_ln_corn_rrev$fit + cs1C.pred_ln_corn_rrev$res  ))
+cs.corn.pred_rev2 <- sum(exp(cs2C.pred_ln_corn_rrev$fit + cs2C.pred_ln_corn_rrev$res  ))
+cs.corn.pred_rev3 <- sum(exp(cs3C.pred_ln_corn_rrev$fit + cs3C.pred_ln_corn_rrev$res  ))
+cs.corn.pred_rev4 <- sum(exp(cs4C.pred_ln_corn_rrev$fit + cs4C.pred_ln_corn_rrev$res  ))
+cs.corn.pred_rev5 <- sum(exp(cs5C.pred_ln_corn_rrev$fit + cs5C.pred_ln_corn_rrev$res  ))
+
+p.corn.pred_rev0 <- sum(exp(p0C.pred_ln_corn_rrev$fit + p0C.pred_ln_corn_rrev$res  + p0C.pred_ln_corn_rrev$effect))
+p.corn.pred_rev1 <- sum(exp(p1C.pred_ln_corn_rrev$fit + p1C.pred_ln_corn_rrev$res + p1C.pred_ln_corn_rrev$effect ))
+p.corn.pred_rev2 <- sum(exp(p2C.pred_ln_corn_rrev$fit + p2C.pred_ln_corn_rrev$res + p2C.pred_ln_corn_rrev$effect ))
+p.corn.pred_rev3 <- sum(exp(p3C.pred_ln_corn_rrev$fit + p3C.pred_ln_corn_rrev$res + p3C.pred_ln_corn_rrev$effect ))
+p.corn.pred_rev4 <- sum(exp(p4C.pred_ln_corn_rrev$fit + p4C.pred_ln_corn_rrev$res + p4C.pred_ln_corn_rrev$effect ))
+p.corn.pred_rev5 <- sum(exp(p5C.pred_ln_corn_rrev$fit + p5C.pred_ln_corn_rrev$res  + p5C.pred_ln_corn_rrev$effect))
+
+diff.corn.pred_rev0 <- sum(exp(diff0C.pred_ln_corn_rrev$fit + diff0C.pred_ln_corn_rrev$res + diff0C.pred_ln_corn_rrev$effect ))
+diff.corn.pred_rev1 <- sum(exp(diff1C.pred_ln_corn_rrev$fit + diff1C.pred_ln_corn_rrev$res + diff1C.pred_ln_corn_rrev$effect ))
+diff.corn.pred_rev2 <- sum(exp(diff2C.pred_ln_corn_rrev$fit + diff2C.pred_ln_corn_rrev$res + diff2C.pred_ln_corn_rrev$effect ))
+diff.corn.pred_rev3 <- sum(exp(diff3C.pred_ln_corn_rrev$fit + diff3C.pred_ln_corn_rrev$res + diff3C.pred_ln_corn_rrev$effect ))
+diff.corn.pred_rev4 <- sum(exp(diff4C.pred_ln_corn_rrev$fit + diff4C.pred_ln_corn_rrev$res + diff4C.pred_ln_corn_rrev$effect ))
+diff.corn.pred_rev5 <- sum(exp(diff5C.pred_ln_corn_rrev$fit + diff5C.pred_ln_corn_rrev$res + diff5C.pred_ln_corn_rrev$effect))
+
+corn.pred_rev <- data.frame(temp = rep(c(0,1,2,3,4,5), 3),
+                           rev = c(cs.corn.pred_rev0, cs.corn.pred_rev1, cs.corn.pred_rev2, cs.corn.pred_rev3, cs.corn.pred_rev4, cs.corn.pred_rev5,
+                                   p.corn.pred_rev0, p.corn.pred_rev1, p.corn.pred_rev2, p.corn.pred_rev3, p.corn.pred_rev4, p.corn.pred_rev5,
+                                   diff.corn.pred_rev0, diff.corn.pred_rev1, diff.corn.pred_rev2, diff.corn.pred_rev3, diff.corn.pred_rev4, diff.corn.pred_rev5),
+                           reg = rep(c("Cross-section", "Panel", "Difference"), each = 6),
+                           crop = "corn")
+
 corn.plotdat <- data.frame(temp = rep(c(0,1,2,3,4,5), 3),
                            rev = c(0,cs.corn.rev1, cs.corn.rev2, cs.corn.rev3, cs.corn.rev4, cs.corn.rev5,
                                    0,p.corn.rev1, p.corn.rev2, p.corn.rev3, p.corn.rev4, p.corn.rev5,
@@ -300,7 +329,7 @@ corn.plotdat <- data.frame(temp = rep(c(0,1,2,3,4,5), 3),
                            max = c(0,cs.corn.rev1.max, cs.corn.rev2.max, cs.corn.rev3.max, cs.corn.rev4.max, cs.corn.rev5.max,
                                    0,p.corn.rev1.max, p.corn.rev2.max, p.corn.rev3.max, p.corn.rev4.max, p.corn.rev5.max,
                                    0,diff.corn.rev1.max, diff.corn.rev2.max, diff.corn.rev3.max, diff.corn.rev4.max, diff.corn.rev5.max),
-                           reg = rep(c("Cross-section", "Panel", "Diff"), each = 6),
+                           reg = rep(c("Cross-section", "Panel", "Difference"), each = 6),
                            crop = "Corn")
 
 ggplot(corn.plotdat, aes(temp, rev, group = reg)) + 
@@ -430,6 +459,36 @@ diff.cotton.rev5 <- (sum( exp(diff5C.pred_ln_cotton_rrev$fit + diff5C.pred_ln_co
 diff.cotton.rev5.min <- ((sum( exp(diff5C.pred_ln_cotton_rrev$fit + diff5C.pred_ln_cotton_rrev$res + diff5C.pred_ln_cotton_rrev$effect)) - exp(diff5C.pred_ln_cotton_rrev_se*1.96))/diff.cotton.rev0 - 1)*100
 diff.cotton.rev5.max <- ((sum( exp(diff5C.pred_ln_cotton_rrev$fit + diff5C.pred_ln_cotton_rrev$res+ diff5C.pred_ln_cotton_rrev$effect)) + exp(diff5C.pred_ln_cotton_rrev_se*1.96))/diff.cotton.rev0 - 1)*100
 
+# Predicted revenue
+cs.cotton.pred_rev0 <- sum(exp(cs0C.pred_ln_cotton_rrev$fit + cs0C.pred_ln_cotton_rrev$res  ))
+cs.cotton.pred_rev1 <- sum(exp(cs1C.pred_ln_cotton_rrev$fit + cs1C.pred_ln_cotton_rrev$res  ))
+cs.cotton.pred_rev2 <- sum(exp(cs2C.pred_ln_cotton_rrev$fit + cs2C.pred_ln_cotton_rrev$res  ))
+cs.cotton.pred_rev3 <- sum(exp(cs3C.pred_ln_cotton_rrev$fit + cs3C.pred_ln_cotton_rrev$res  ))
+cs.cotton.pred_rev4 <- sum(exp(cs4C.pred_ln_cotton_rrev$fit + cs4C.pred_ln_cotton_rrev$res  ))
+cs.cotton.pred_rev5 <- sum(exp(cs5C.pred_ln_cotton_rrev$fit + cs5C.pred_ln_cotton_rrev$res  ))
+
+p.cotton.pred_rev0 <- sum(exp(p0C.pred_ln_cotton_rrev$fit + p0C.pred_ln_cotton_rrev$res  + p0C.pred_ln_cotton_rrev$effect))
+p.cotton.pred_rev1 <- sum(exp(p1C.pred_ln_cotton_rrev$fit + p1C.pred_ln_cotton_rrev$res + p1C.pred_ln_cotton_rrev$effect ))
+p.cotton.pred_rev2 <- sum(exp(p2C.pred_ln_cotton_rrev$fit + p2C.pred_ln_cotton_rrev$res + p2C.pred_ln_cotton_rrev$effect ))
+p.cotton.pred_rev3 <- sum(exp(p3C.pred_ln_cotton_rrev$fit + p3C.pred_ln_cotton_rrev$res + p3C.pred_ln_cotton_rrev$effect ))
+p.cotton.pred_rev4 <- sum(exp(p4C.pred_ln_cotton_rrev$fit + p4C.pred_ln_cotton_rrev$res + p4C.pred_ln_cotton_rrev$effect ))
+p.cotton.pred_rev5 <- sum(exp(p5C.pred_ln_cotton_rrev$fit + p5C.pred_ln_cotton_rrev$res  + p5C.pred_ln_cotton_rrev$effect))
+
+diff.cotton.pred_rev0 <- sum(exp(diff0C.pred_ln_cotton_rrev$fit + diff0C.pred_ln_cotton_rrev$res + diff0C.pred_ln_cotton_rrev$effect ))
+diff.cotton.pred_rev1 <- sum(exp(diff1C.pred_ln_cotton_rrev$fit + diff1C.pred_ln_cotton_rrev$res + diff1C.pred_ln_cotton_rrev$effect ))
+diff.cotton.pred_rev2 <- sum(exp(diff2C.pred_ln_cotton_rrev$fit + diff2C.pred_ln_cotton_rrev$res + diff2C.pred_ln_cotton_rrev$effect ))
+diff.cotton.pred_rev3 <- sum(exp(diff3C.pred_ln_cotton_rrev$fit + diff3C.pred_ln_cotton_rrev$res + diff3C.pred_ln_cotton_rrev$effect ))
+diff.cotton.pred_rev4 <- sum(exp(diff4C.pred_ln_cotton_rrev$fit + diff4C.pred_ln_cotton_rrev$res + diff4C.pred_ln_cotton_rrev$effect ))
+diff.cotton.pred_rev5 <- sum(exp(diff5C.pred_ln_cotton_rrev$fit + diff5C.pred_ln_cotton_rrev$res + diff5C.pred_ln_cotton_rrev$effect))
+
+cotton.pred_rev <- data.frame(temp = rep(c(0,1,2,3,4,5), 3),
+                           rev = c(cs.cotton.pred_rev0, cs.cotton.pred_rev1, cs.cotton.pred_rev2, cs.cotton.pred_rev3, cs.cotton.pred_rev4, cs.cotton.pred_rev5,
+                                   p.cotton.pred_rev0, p.cotton.pred_rev1, p.cotton.pred_rev2, p.cotton.pred_rev3, p.cotton.pred_rev4, p.cotton.pred_rev5,
+                                   diff.cotton.pred_rev0, diff.cotton.pred_rev1, diff.cotton.pred_rev2, diff.cotton.pred_rev3, diff.cotton.pred_rev4, diff.cotton.pred_rev5),
+                           reg = rep(c("Cross-section", "Panel", "Difference"), each = 6),
+                           crop = "cotton")
+
+
 cotton.plotdat <- data.frame(temp = rep(c(0,1,2,3,4,5), 3),
                            rev = c(0,cs.cotton.rev1, cs.cotton.rev2, cs.cotton.rev3, cs.cotton.rev4, cs.cotton.rev5,
                                    0,p.cotton.rev1, p.cotton.rev2, p.cotton.rev3, p.cotton.rev4, p.cotton.rev5,
@@ -440,7 +499,7 @@ cotton.plotdat <- data.frame(temp = rep(c(0,1,2,3,4,5), 3),
                            max = c(0,cs.cotton.rev1.max, cs.cotton.rev2.max, cs.cotton.rev3.max, cs.cotton.rev4.max, cs.cotton.rev5.max,
                                    0,p.cotton.rev1.max, p.cotton.rev2.max, p.cotton.rev3.max, p.cotton.rev4.max, p.cotton.rev5.max,
                                    0,diff.cotton.rev1.max, diff.cotton.rev2.max, diff.cotton.rev3.max, diff.cotton.rev4.max, diff.cotton.rev5.max),
-                           reg = rep(c("Cross-section", "Panel", "Diff"), each = 6),
+                           reg = rep(c("Cross-section", "Panel", "Difference"), each = 6),
                            crop = "Cotton")
 
 ggplot(cotton.plotdat, aes(temp, rev, group = reg)) + 
@@ -570,6 +629,37 @@ diff.hay.rev5 <- (sum( exp(diff5C.pred_ln_hay_rrev$fit + diff5C.pred_ln_hay_rrev
 diff.hay.rev5.min <- ((sum( exp(diff5C.pred_ln_hay_rrev$fit + diff5C.pred_ln_hay_rrev$res + diff5C.pred_ln_hay_rrev$effect)) - exp(diff5C.pred_ln_hay_rrev_se*1.96))/diff.hay.rev0 - 1)*100
 diff.hay.rev5.max <- ((sum( exp(diff5C.pred_ln_hay_rrev$fit + diff5C.pred_ln_hay_rrev$res+ diff5C.pred_ln_hay_rrev$effect)) + exp(diff5C.pred_ln_hay_rrev_se*1.96))/diff.hay.rev0 - 1)*100
 
+
+# Predicted revenue
+cs.hay.pred_rev0 <- sum(exp(cs0C.pred_ln_hay_rrev$fit + cs0C.pred_ln_hay_rrev$res  ))
+cs.hay.pred_rev1 <- sum(exp(cs1C.pred_ln_hay_rrev$fit + cs1C.pred_ln_hay_rrev$res  ))
+cs.hay.pred_rev2 <- sum(exp(cs2C.pred_ln_hay_rrev$fit + cs2C.pred_ln_hay_rrev$res  ))
+cs.hay.pred_rev3 <- sum(exp(cs3C.pred_ln_hay_rrev$fit + cs3C.pred_ln_hay_rrev$res  ))
+cs.hay.pred_rev4 <- sum(exp(cs4C.pred_ln_hay_rrev$fit + cs4C.pred_ln_hay_rrev$res  ))
+cs.hay.pred_rev5 <- sum(exp(cs5C.pred_ln_hay_rrev$fit + cs5C.pred_ln_hay_rrev$res  ))
+
+p.hay.pred_rev0 <- sum(exp(p0C.pred_ln_hay_rrev$fit + p0C.pred_ln_hay_rrev$res  + p0C.pred_ln_hay_rrev$effect))
+p.hay.pred_rev1 <- sum(exp(p1C.pred_ln_hay_rrev$fit + p1C.pred_ln_hay_rrev$res + p1C.pred_ln_hay_rrev$effect ))
+p.hay.pred_rev2 <- sum(exp(p2C.pred_ln_hay_rrev$fit + p2C.pred_ln_hay_rrev$res + p2C.pred_ln_hay_rrev$effect ))
+p.hay.pred_rev3 <- sum(exp(p3C.pred_ln_hay_rrev$fit + p3C.pred_ln_hay_rrev$res + p3C.pred_ln_hay_rrev$effect ))
+p.hay.pred_rev4 <- sum(exp(p4C.pred_ln_hay_rrev$fit + p4C.pred_ln_hay_rrev$res + p4C.pred_ln_hay_rrev$effect ))
+p.hay.pred_rev5 <- sum(exp(p5C.pred_ln_hay_rrev$fit + p5C.pred_ln_hay_rrev$res  + p5C.pred_ln_hay_rrev$effect))
+
+diff.hay.pred_rev0 <- sum(exp(diff0C.pred_ln_hay_rrev$fit + diff0C.pred_ln_hay_rrev$res + diff0C.pred_ln_hay_rrev$effect ))
+diff.hay.pred_rev1 <- sum(exp(diff1C.pred_ln_hay_rrev$fit + diff1C.pred_ln_hay_rrev$res + diff1C.pred_ln_hay_rrev$effect ))
+diff.hay.pred_rev2 <- sum(exp(diff2C.pred_ln_hay_rrev$fit + diff2C.pred_ln_hay_rrev$res + diff2C.pred_ln_hay_rrev$effect ))
+diff.hay.pred_rev3 <- sum(exp(diff3C.pred_ln_hay_rrev$fit + diff3C.pred_ln_hay_rrev$res + diff3C.pred_ln_hay_rrev$effect ))
+diff.hay.pred_rev4 <- sum(exp(diff4C.pred_ln_hay_rrev$fit + diff4C.pred_ln_hay_rrev$res + diff4C.pred_ln_hay_rrev$effect ))
+diff.hay.pred_rev5 <- sum(exp(diff5C.pred_ln_hay_rrev$fit + diff5C.pred_ln_hay_rrev$res + diff5C.pred_ln_hay_rrev$effect))
+
+hay.pred_rev <- data.frame(temp = rep(c(0,1,2,3,4,5), 3),
+                           rev = c(cs.hay.pred_rev0, cs.hay.pred_rev1, cs.hay.pred_rev2, cs.hay.pred_rev3, cs.hay.pred_rev4, cs.hay.pred_rev5,
+                                   p.hay.pred_rev0, p.hay.pred_rev1, p.hay.pred_rev2, p.hay.pred_rev3, p.hay.pred_rev4, p.hay.pred_rev5,
+                                   diff.hay.pred_rev0, diff.hay.pred_rev1, diff.hay.pred_rev2, diff.hay.pred_rev3, diff.hay.pred_rev4, diff.hay.pred_rev5),
+                           reg = rep(c("Cross-section", "Panel", "Difference"), each = 6),
+                           crop = "hay")
+
+
 hay.plotdat <- data.frame(temp = rep(c(0,1,2,3,4,5), 3),
                            rev = c(0,cs.hay.rev1, cs.hay.rev2, cs.hay.rev3, cs.hay.rev4, cs.hay.rev5,
                                    0,p.hay.rev1, p.hay.rev2, p.hay.rev3, p.hay.rev4, p.hay.rev5,
@@ -580,7 +670,7 @@ hay.plotdat <- data.frame(temp = rep(c(0,1,2,3,4,5), 3),
                            max = c(0,cs.hay.rev1.max, cs.hay.rev2.max, cs.hay.rev3.max, cs.hay.rev4.max, cs.hay.rev5.max,
                                    0,p.hay.rev1.max, p.hay.rev2.max, p.hay.rev3.max, p.hay.rev4.max, p.hay.rev5.max,
                                    0,diff.hay.rev1.max, diff.hay.rev2.max, diff.hay.rev3.max, diff.hay.rev4.max, diff.hay.rev5.max),
-                           reg = rep(c("Cross-section", "Panel", "Diff"), each = 6),
+                           reg = rep(c("Cross-section", "Panel", "Difference"), each = 6),
                            crop = "Hay")
 
 ggplot(hay.plotdat, aes(temp, rev, group = reg)) + 
@@ -710,6 +800,38 @@ diff.wheat.rev5 <- (sum( exp(diff5C.pred_ln_wheat_rrev$fit + diff5C.pred_ln_whea
 diff.wheat.rev5.min <- ((sum( exp(diff5C.pred_ln_wheat_rrev$fit + diff5C.pred_ln_wheat_rrev$res + diff5C.pred_ln_wheat_rrev$effect)) - exp(diff5C.pred_ln_wheat_rrev_se*1.96))/diff.wheat.rev0 - 1)*100
 diff.wheat.rev5.max <- ((sum( exp(diff5C.pred_ln_wheat_rrev$fit + diff5C.pred_ln_wheat_rrev$res+ diff5C.pred_ln_wheat_rrev$effect)) + exp(diff5C.pred_ln_wheat_rrev_se*1.96))/diff.wheat.rev0 - 1)*100
 
+
+# Predicted revenue
+cs.wheat.pred_rev0 <- sum(exp(cs0C.pred_ln_wheat_rrev$fit + cs0C.pred_ln_wheat_rrev$res  ))
+cs.wheat.pred_rev1 <- sum(exp(cs1C.pred_ln_wheat_rrev$fit + cs1C.pred_ln_wheat_rrev$res  ))
+cs.wheat.pred_rev2 <- sum(exp(cs2C.pred_ln_wheat_rrev$fit + cs2C.pred_ln_wheat_rrev$res  ))
+cs.wheat.pred_rev3 <- sum(exp(cs3C.pred_ln_wheat_rrev$fit + cs3C.pred_ln_wheat_rrev$res  ))
+cs.wheat.pred_rev4 <- sum(exp(cs4C.pred_ln_wheat_rrev$fit + cs4C.pred_ln_wheat_rrev$res  ))
+cs.wheat.pred_rev5 <- sum(exp(cs5C.pred_ln_wheat_rrev$fit + cs5C.pred_ln_wheat_rrev$res  ))
+
+p.wheat.pred_rev0 <- sum(exp(p0C.pred_ln_wheat_rrev$fit + p0C.pred_ln_wheat_rrev$res  + p0C.pred_ln_wheat_rrev$effect))
+p.wheat.pred_rev1 <- sum(exp(p1C.pred_ln_wheat_rrev$fit + p1C.pred_ln_wheat_rrev$res + p1C.pred_ln_wheat_rrev$effect ))
+p.wheat.pred_rev2 <- sum(exp(p2C.pred_ln_wheat_rrev$fit + p2C.pred_ln_wheat_rrev$res + p2C.pred_ln_wheat_rrev$effect ))
+p.wheat.pred_rev3 <- sum(exp(p3C.pred_ln_wheat_rrev$fit + p3C.pred_ln_wheat_rrev$res + p3C.pred_ln_wheat_rrev$effect ))
+p.wheat.pred_rev4 <- sum(exp(p4C.pred_ln_wheat_rrev$fit + p4C.pred_ln_wheat_rrev$res + p4C.pred_ln_wheat_rrev$effect ))
+p.wheat.pred_rev5 <- sum(exp(p5C.pred_ln_wheat_rrev$fit + p5C.pred_ln_wheat_rrev$res  + p5C.pred_ln_wheat_rrev$effect))
+
+diff.wheat.pred_rev0 <- sum(exp(diff0C.pred_ln_wheat_rrev$fit + diff0C.pred_ln_wheat_rrev$res + diff0C.pred_ln_wheat_rrev$effect ))
+diff.wheat.pred_rev1 <- sum(exp(diff1C.pred_ln_wheat_rrev$fit + diff1C.pred_ln_wheat_rrev$res + diff1C.pred_ln_wheat_rrev$effect ))
+diff.wheat.pred_rev2 <- sum(exp(diff2C.pred_ln_wheat_rrev$fit + diff2C.pred_ln_wheat_rrev$res + diff2C.pred_ln_wheat_rrev$effect ))
+diff.wheat.pred_rev3 <- sum(exp(diff3C.pred_ln_wheat_rrev$fit + diff3C.pred_ln_wheat_rrev$res + diff3C.pred_ln_wheat_rrev$effect ))
+diff.wheat.pred_rev4 <- sum(exp(diff4C.pred_ln_wheat_rrev$fit + diff4C.pred_ln_wheat_rrev$res + diff4C.pred_ln_wheat_rrev$effect ))
+diff.wheat.pred_rev5 <- sum(exp(diff5C.pred_ln_wheat_rrev$fit + diff5C.pred_ln_wheat_rrev$res + diff5C.pred_ln_wheat_rrev$effect))
+
+wheat.pred_rev <- data.frame(temp = rep(c(0,1,2,3,4,5), 3),
+                           rev = c(cs.wheat.pred_rev0, cs.wheat.pred_rev1, cs.wheat.pred_rev2, cs.wheat.pred_rev3, cs.wheat.pred_rev4, cs.wheat.pred_rev5,
+                                   p.wheat.pred_rev0, p.wheat.pred_rev1, p.wheat.pred_rev2, p.wheat.pred_rev3, p.wheat.pred_rev4, p.wheat.pred_rev5,
+                                   diff.wheat.pred_rev0, diff.wheat.pred_rev1, diff.wheat.pred_rev2, diff.wheat.pred_rev3, diff.wheat.pred_rev4, diff.wheat.pred_rev5),
+                           reg = rep(c("Cross-section", "Panel", "Difference"), each = 6),
+                           crop = "wheat")
+
+
+
 wheat.plotdat <- data.frame(temp = rep(c(0,1,2,3,4,5), 3),
                            rev = c(0,cs.wheat.rev1, cs.wheat.rev2, cs.wheat.rev3, cs.wheat.rev4, cs.wheat.rev5,
                                    0,p.wheat.rev1, p.wheat.rev2, p.wheat.rev3, p.wheat.rev4, p.wheat.rev5,
@@ -720,7 +842,7 @@ wheat.plotdat <- data.frame(temp = rep(c(0,1,2,3,4,5), 3),
                            max = c(0,cs.wheat.rev1.max, cs.wheat.rev2.max, cs.wheat.rev3.max, cs.wheat.rev4.max, cs.wheat.rev5.max,
                                    0,p.wheat.rev1.max, p.wheat.rev2.max, p.wheat.rev3.max, p.wheat.rev4.max, p.wheat.rev5.max,
                                    0,diff.wheat.rev1.max, diff.wheat.rev2.max, diff.wheat.rev3.max, diff.wheat.rev4.max, diff.wheat.rev5.max),
-                           reg = rep(c("Cross-section", "Panel", "Diff"), each = 6),
+                           reg = rep(c("Cross-section", "Panel", "Difference"), each = 6),
                            crop = "Wheat")
 
 ggplot(wheat.plotdat, aes(temp, rev, group = reg)) + 
@@ -850,6 +972,37 @@ diff.soybean.rev5 <- (sum( exp(diff5C.pred_ln_soybean_rrev$fit + diff5C.pred_ln_
 diff.soybean.rev5.min <- ((sum( exp(diff5C.pred_ln_soybean_rrev$fit + diff5C.pred_ln_soybean_rrev$res + diff5C.pred_ln_soybean_rrev$effect)) - exp(diff5C.pred_ln_soybean_rrev_se*1.96))/diff.soybean.rev0 - 1)*100
 diff.soybean.rev5.max <- ((sum( exp(diff5C.pred_ln_soybean_rrev$fit + diff5C.pred_ln_soybean_rrev$res+ diff5C.pred_ln_soybean_rrev$effect)) + exp(diff5C.pred_ln_soybean_rrev_se*1.96))/diff.soybean.rev0 - 1)*100
 
+
+# Predicted revenue
+cs.soybean.pred_rev0 <- sum(exp(cs0C.pred_ln_soybean_rrev$fit + cs0C.pred_ln_soybean_rrev$res  ))
+cs.soybean.pred_rev1 <- sum(exp(cs1C.pred_ln_soybean_rrev$fit + cs1C.pred_ln_soybean_rrev$res  ))
+cs.soybean.pred_rev2 <- sum(exp(cs2C.pred_ln_soybean_rrev$fit + cs2C.pred_ln_soybean_rrev$res  ))
+cs.soybean.pred_rev3 <- sum(exp(cs3C.pred_ln_soybean_rrev$fit + cs3C.pred_ln_soybean_rrev$res  ))
+cs.soybean.pred_rev4 <- sum(exp(cs4C.pred_ln_soybean_rrev$fit + cs4C.pred_ln_soybean_rrev$res  ))
+cs.soybean.pred_rev5 <- sum(exp(cs5C.pred_ln_soybean_rrev$fit + cs5C.pred_ln_soybean_rrev$res  ))
+
+p.soybean.pred_rev0 <- sum(exp(p0C.pred_ln_soybean_rrev$fit + p0C.pred_ln_soybean_rrev$res  + p0C.pred_ln_soybean_rrev$effect))
+p.soybean.pred_rev1 <- sum(exp(p1C.pred_ln_soybean_rrev$fit + p1C.pred_ln_soybean_rrev$res + p1C.pred_ln_soybean_rrev$effect ))
+p.soybean.pred_rev2 <- sum(exp(p2C.pred_ln_soybean_rrev$fit + p2C.pred_ln_soybean_rrev$res + p2C.pred_ln_soybean_rrev$effect ))
+p.soybean.pred_rev3 <- sum(exp(p3C.pred_ln_soybean_rrev$fit + p3C.pred_ln_soybean_rrev$res + p3C.pred_ln_soybean_rrev$effect ))
+p.soybean.pred_rev4 <- sum(exp(p4C.pred_ln_soybean_rrev$fit + p4C.pred_ln_soybean_rrev$res + p4C.pred_ln_soybean_rrev$effect ))
+p.soybean.pred_rev5 <- sum(exp(p5C.pred_ln_soybean_rrev$fit + p5C.pred_ln_soybean_rrev$res  + p5C.pred_ln_soybean_rrev$effect))
+
+diff.soybean.pred_rev0 <- sum(exp(diff0C.pred_ln_soybean_rrev$fit + diff0C.pred_ln_soybean_rrev$res + diff0C.pred_ln_soybean_rrev$effect ))
+diff.soybean.pred_rev1 <- sum(exp(diff1C.pred_ln_soybean_rrev$fit + diff1C.pred_ln_soybean_rrev$res + diff1C.pred_ln_soybean_rrev$effect ))
+diff.soybean.pred_rev2 <- sum(exp(diff2C.pred_ln_soybean_rrev$fit + diff2C.pred_ln_soybean_rrev$res + diff2C.pred_ln_soybean_rrev$effect ))
+diff.soybean.pred_rev3 <- sum(exp(diff3C.pred_ln_soybean_rrev$fit + diff3C.pred_ln_soybean_rrev$res + diff3C.pred_ln_soybean_rrev$effect ))
+diff.soybean.pred_rev4 <- sum(exp(diff4C.pred_ln_soybean_rrev$fit + diff4C.pred_ln_soybean_rrev$res + diff4C.pred_ln_soybean_rrev$effect ))
+diff.soybean.pred_rev5 <- sum(exp(diff5C.pred_ln_soybean_rrev$fit + diff5C.pred_ln_soybean_rrev$res + diff5C.pred_ln_soybean_rrev$effect))
+
+soybean.pred_rev <- data.frame(temp = rep(c(0,1,2,3,4,5), 3),
+                           rev = c(cs.soybean.pred_rev0, cs.soybean.pred_rev1, cs.soybean.pred_rev2, cs.soybean.pred_rev3, cs.soybean.pred_rev4, cs.soybean.pred_rev5,
+                                   p.soybean.pred_rev0, p.soybean.pred_rev1, p.soybean.pred_rev2, p.soybean.pred_rev3, p.soybean.pred_rev4, p.soybean.pred_rev5,
+                                   diff.soybean.pred_rev0, diff.soybean.pred_rev1, diff.soybean.pred_rev2, diff.soybean.pred_rev3, diff.soybean.pred_rev4, diff.soybean.pred_rev5),
+                           reg = rep(c("Cross-section", "Panel", "Difference"), each = 6),
+                           crop = "soybean")
+
+
 soybean.plotdat <- data.frame(temp = rep(c(0,1,2,3,4,5), 3),
                            rev = c(0,cs.soybean.rev1, cs.soybean.rev2, cs.soybean.rev3, cs.soybean.rev4, cs.soybean.rev5,
                                    0,p.soybean.rev1, p.soybean.rev2, p.soybean.rev3, p.soybean.rev4, p.soybean.rev5,
@@ -860,7 +1013,7 @@ soybean.plotdat <- data.frame(temp = rep(c(0,1,2,3,4,5), 3),
                            max = c(0,cs.soybean.rev1.max, cs.soybean.rev2.max, cs.soybean.rev3.max, cs.soybean.rev4.max, cs.soybean.rev5.max,
                                    0,p.soybean.rev1.max, p.soybean.rev2.max, p.soybean.rev3.max, p.soybean.rev4.max, p.soybean.rev5.max,
                                    0,diff.soybean.rev1.max, diff.soybean.rev2.max, diff.soybean.rev3.max, diff.soybean.rev4.max, diff.soybean.rev5.max),
-                           reg = rep(c("Cross-section", "Panel", "Diff"), each = 6),
+                           reg = rep(c("Cross-section", "Panel", "Difference"), each = 6),
                            crop = "Soybean")
 
 ggplot(soybean.plotdat, aes(temp, rev, group = reg)) + 
@@ -872,13 +1025,17 @@ ggplot(soybean.plotdat, aes(temp, rev, group = reg)) +
 #  Full Plot --------------------------------------------------------------
 library(ggrepel)
 library(ggthemes)
+
+pred_rev_dat <- rbind(corn.pred_rev, cotton.pred_rev, hay.pred_rev, wheat.pred_rev, soybean.pred_rev)
+saveRDS(pred_rev_dat, "data/pred_rev_dat.rds")
+
 # Merge data
 plotdat <- rbind(corn.plotdat, cotton.plotdat, hay.plotdat, wheat.plotdat, soybean.plotdat)
 plotdat2 <- rbind(corn.plotdat, soybean.plotdat)
 plotdat$rev <- round(plotdat$rev)
 
 p1 <- ggplot(plotdat, aes(temp, rev, color = reg)) + 
-  geom_line() + ylab("Revenue Impact (% Change) ") + 
+  geom_line() + ylab("Revenue/Acre Impact (% Change) ") + 
   geom_point(size = 0.5) +
   xlab("Change in Temperature (C)") + 
   geom_hline(yintercept = 0, linetype = "dashed", color = "grey")+
