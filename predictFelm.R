@@ -37,7 +37,8 @@ predictFelm <- function(felm.fit, newdata){
     }   
   
     pred <- predict(lm.fit, newdata = newdata, se.fit = TRUE) 
-  
+    pred$res <- felm.fit$residuals
+    
     # Return pred if no fixed-effects
   	if( is.null(getfe( felm.fit )) ) {
       return(pred)
@@ -71,6 +72,7 @@ predictFelm <- function(felm.fit, newdata){
         pred$effect <- as.numeric(rowSums(eff.dat[, grep("_effect", colnames(eff.dat))]))
       }
       pred$res <- felm.fit$residuals
+      pred$pred_data <- eff.dat
       return(pred)  
       
 
@@ -85,3 +87,20 @@ cc.pred.se = function( xmat, vcovMat, w, block.size=300 ) {
   w    = matrix( w, ncol = 1, nrow=n )
   sqrt( t(w)%*%xmat%*%vcovMat%*%t(xmat)%*%w / ( sum(w)^2 ) )
 }
+
+boot.strap <- function(x, rep = 1000, sample = length(x), cluster = NULL){
+  if (is.null(cluster)){
+    newdat.sum <- c()
+    newdat.mean <- c()
+    for (r in 1:rep){
+      sampdat <- sample(x, size = sample, replace = TRUE)
+      newdat.sum[r] <- sqrt(length(sampdat))*var(sampdat)
+      newdat.mean[r] <- var(sampdat)/sqrt(length(sampdat))
+    }
+    retdat <- list(se.sum = mean(newdat.sum),
+                se.mean = mean(newdat.mean))
+    return(retdat)
+  }}
+  
+
+
