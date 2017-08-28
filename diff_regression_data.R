@@ -95,7 +95,7 @@ decade_merge <- function(dat, begd, endd, int){
 }
 
 
-decadedat <- decade_merge(cropdat, 1930, 2000, 15)
+decadedat <- decade_merge(cropdat, 1930, 2000, 10)
 
 decadedat <- decadedat %>% 
   group_by(fips) %>% 
@@ -229,7 +229,7 @@ decade_merge <- function(dat, begd, endd, int){
 }
 
 
-decadedat <- decade_merge(cropdat, 1930, 2000, 15)
+decadedat <- decade_merge(cropdat, 1930, 2000, 10)
 
 decadedat <- decadedat %>% 
   group_by(fips) %>% 
@@ -283,20 +283,23 @@ cropdat$hay_w <- cropdat$hay_a
 cropdat$wheat_w <- cropdat$wheat_a
 cropdat$soybean_w <- cropdat$soybean_a
 
-# NA = 0 for tobit
-cropdat$corn_grain_a <- ifelse(is.na(cropdat$corn_grain_a), 0, cropdat$corn_grain_a)
-cropdat$cotton_a <- ifelse(is.na(cropdat$cotton_a), 0, cropdat$cotton_a)
-cropdat$cotton_a <- ifelse(is.na(cropdat$hay_a), 0, cropdat$hay_a)
-cropdat$wheat_a <- ifelse(is.na(cropdat$wheat_a), 0, cropdat$wheat_a)
-cropdat$soybean_a <- ifelse(is.na(cropdat$soybean_a), 0, cropdat$soybean_a)
-
 # Get proportion of crop share
-cropdat$total_a <- rowSums(cropdat[,c("corn_grain_a", "cotton_a", "hay_a", "wheat_a", "soybean_a")], na.rm = TRUE)
+cropdat$total_a <- rowSums(cropdat[, c("corn_grain_a", "cotton_a", "hay_a", "wheat_a", "soybean_a")], na.rm = TRUE)
 cropdat$p_corn_share <- cropdat$corn_grain_a/cropdat$total_a
 cropdat$p_cotton_share <- cropdat$cotton_a/cropdat$total_a
 cropdat$p_hay_share <- cropdat$hay_a/cropdat$total_a
 cropdat$p_wheat_share <- cropdat$wheat_a/cropdat$total_a
 cropdat$p_soybean_share <- cropdat$soybean_a/cropdat$total_a
+
+# NA = 0 for tobit
+cropdat$p_corn_share <- ifelse(is.na(cropdat$corn_grain_a), 0, cropdat$p_corn_share)
+cropdat$p_cotton_share <- ifelse(is.na(cropdat$cotton_a), 0, cropdat$p_cotton_share)
+cropdat$p_hay_share <- ifelse(is.na(cropdat$hay_a), 0, cropdat$p_hay_share)
+cropdat$p_wheat_share <- ifelse(is.na(cropdat$wheat_a), 0, cropdat$p_wheat_share)
+cropdat$p_soybean_share <- ifelse(is.na(cropdat$soybean_a), 0, cropdat$p_soybean_share)
+
+# Set weights
+cropdat$total_w <- rowSums(cropdat[, c("corn_grain_a", "cotton_a", "hay_a", "wheat_a", "soybean_a")], na.rm = TRUE)
 
 
 decade_merge <- function(dat, begd, endd, int){
@@ -365,7 +368,7 @@ decade_merge <- function(dat, begd, endd, int){
 }
 
 
-decadedat <- decade_merge(cropdat, 1930, 2000, 15)
+decadedat <- decade_merge(cropdat, 1930, 2000, 10)
 
 decadedat <- decadedat %>% 
   group_by(fips) %>% 

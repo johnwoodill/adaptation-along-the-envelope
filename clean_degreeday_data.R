@@ -142,17 +142,11 @@ diff.clean <- function(x){
     return(mergdat)
   }
   
-  decadedat <- decade_merge(cropdat, 1930, 2000, 15)
+  decadedat <- decade_merge(cropdat, 1930, 2000, 10)
   
   decadedat$dday0_10 <- decadedat$dday0C - decadedat$dday10C
   decadedat$dday10_30 <- decadedat$dday10C - decadedat$dday30C
   
-  # Exposure weighted values equal zero
-  # decadedat$tavg <- decadedat$tavg - mean(decadedat$tavg, na.rm = TRUE)
-  # decadedat$dday0_10 <- decadedat$dday0_10 - mean(decadedat$dday0_10, na.rm = TRUE)
-  # decadedat$dday10_30 <- decadedat$dday10_30 - mean(decadedat$dday10_30, na.rm = TRUE)
-  # decadedat$dday30C <- decadedat$dday30C - mean(decadedat$dday30C, na.rm = TRUE)
-  # decadedat$prec <- decadedat$prec - mean(decadedat$prec, na.rm = TRUE)
   decadedat$tavg_sq <- decadedat$tavg^2
   decadedat$prec_sq <- decadedat$prec^2
 

@@ -88,6 +88,8 @@ cc.pred.se = function( xmat, vcovMat, w, block.size=300 ) {
   sqrt( t(w)%*%xmat%*%vcovMat%*%t(xmat)%*%w / ( sum(w)^2 ) )
 }
 
+
+
 boot.strap <- function(x, rep = 1000, sample = length(x), cluster = NULL){
   if (is.null(cluster)){
     newdat.sum <- c()
@@ -100,7 +102,32 @@ boot.strap <- function(x, rep = 1000, sample = length(x), cluster = NULL){
     retdat <- list(se.sum = mean(newdat.sum),
                 se.mean = mean(newdat.mean))
     return(retdat)
-  }}
+  }
+  
+  if(!is.null(cluster)){
+    #dat <- cbind(as.numeric(x), cluster)
+    dat <- data.frame(x = x, cluster = cluster)
+    cl.unique <- unique(cluster)
+    newdat.sum <- c()
+    newdat.mean <- c()
+    for (i in cl.unique){
+      cl.dat.sum <- c()
+      cl.dat.mean <- c()
+      cl.dat <- filter(dat, cluster == i)
+      for (r in 1:rep){
+        sampdat <-sample(cl.dat[1], length(cl.dat[1]),  replace = TRUE)
+        cl.dat.sum[r] <- sqrt(nrow(sampdat))*var(sampdat)
+        cl.dat.mean[r] <- var(sampdat)/sqrt(length(sampdat))
+      }
+      newdat.sum[i] <- mean(cl.dat.sum)
+      newdat.mean[i] <- mean(cl.dat.mean)
+    }
+      retdat <- list(se.sum = mean(newdat.sum),
+                se.mean = mean(newdat.mean))
+    return(retdat)
+    }
+  #eff.dat[, grep("_effect", colnames(eff.dat)
+  }
   
 
 

@@ -57,39 +57,38 @@ saveRDS(p.soybean.mod2, "models/p.dd.ln_soybean_rrev")
 
 cropdat <- readRDS("data/tobit_panel_regression_data.rds")
 
-corndat <- filter(cropdat, !is.na(ln_corn_rrev))
-cottondat <- filter(cropdat, !is.na(ln_cotton_rrev))
-haydat <- filter(cropdat, !is.na(ln_hay_rrev))
-wheatdat <- filter(cropdat, !is.na(ln_wheat_rrev))
-soybeandat <- filter(cropdat, !is.na(ln_soybean_rrev))
+corndat <- filter(cropdat, !is.na(p_corn_share))
+cottondat <- filter(cropdat, !is.na(p_cotton_share))
+haydat <- filter(cropdat, !is.na(p_hay_share))
+wheatdat <- filter(cropdat, !is.na(p_wheat_share))
+soybeandat <- filter(cropdat, !is.na(p_soybean_share))
 
 # Corn
 p.corn.mod2 <- tobit(p_corn_share ~  dday0_10 + dday10_30  + dday30C + prec + prec_sq + lat + long + lat:long + cluster(state),
-                  data = corndat, weights = corndat$total_w, model = TRUE)
+                  data = corndat, weights = (corndat$total_w + 1))
 summary(p.corn.mod2)
 
 
 # Cotton
 p.cotton.mod2 <- tobit(p_cotton_share ~ dday0_10 + dday10_30  + dday30C +  prec + prec_sq + lat + long + lat:long + cluster(state),
-                  data = cottondat, weights = cottondat$total_w)
+                  data = cottondat, weights = (cottondat$total_w + 1))
 summary(p.cotton.mod2)
 
 
 # Hay
 p.hay.mod2 <- tobit(p_hay_share ~ dday0_10 +  dday10_30  + dday30C +  prec + prec_sq + lat + long + lat:long + cluster(state),
-                  data = haydat, weights = haydat$total_w)
+                  data = haydat, weights = (haydat$total_w + 1))
 summary(p.hay.mod2)
 
 # Wheat
 p.wheat.mod2 <- tobit(p_wheat_share ~ dday0_10 + dday10_30  + dday30C +  prec + prec_sq + lat + long + lat:long + cluster(state),
-                  data = wheatdat, weights = wheatdat$total_w)
+                  data = wheatdat, weights = (wheatdat$total_w + 1))
 summary(p.wheat.mod2)
 
 # Soybean
 p.soybean.mod2 <- tobit(p_soybean_share ~ dday0_10 + dday10_30  + dday30C +  prec + prec_sq + lat + long + lat:long + cluster(state),
-                  data = soybeandat, weights = soybeandat$total_w)
+                  data = soybeandat, weights = (soybeandat$total_w + 1))
 summary(p.soybean.mod2)
-
 
 saveRDS(p.corn.mod2, "models/p.dd.p_corn_share")
 saveRDS(p.cotton.mod2, "models/p.dd.p_cotton_share")
