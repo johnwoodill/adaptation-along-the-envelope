@@ -1312,7 +1312,7 @@ p1 <- ggplot(plotdat, aes(temp, rev, color = reg)) +
   theme_tufte(base_size = 14) +
   theme(legend.position = "top",
         legend.title = element_blank()) + 
-  geom_text_repel(aes(temp, rev, label = rev), show.legend  = FALSE, alpha = 0.5) 
+  geom_text_repel(aes(temp, rev, label = round(rev)), show.legend  = FALSE, alpha = 0.5) 
 p1
 
 p1 <- ggplot(filter(plotdat, crop %in% c("Corn", "cotton", "hay", "wheat")), aes(temp, rev, color = reg)) + 
