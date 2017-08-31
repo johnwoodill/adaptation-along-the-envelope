@@ -49,7 +49,7 @@ saveRDS(diff.soybean.mod2, "models/diff.dd.ln_soybean_rrev")
 
 # Proportion of acreage regressions
 
-decadedat <- readRDS("data/tobit_diff_regression_data.rds")
+decadedat <- readRDS("data/diff_regression_data.rds")
 
 corndat <- filter(decadedat, !is.na(p_corn_share))
 cottondat <- filter(decadedat, !is.na(p_cotton_share))

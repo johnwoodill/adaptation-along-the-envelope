@@ -50,7 +50,7 @@ saveRDS(cs.soybean.mod2, "models/cs.dd.ln_soybean_rrev")
 
 # Cross-section (Crop Choice): Corn Acres -----------------------------------------------
 
-cropdat <- readRDS("data/tobit_cross_section_regression_data.rds")
+cropdat <- readRDS("data/cross_section_regression_data.rds")
 
 corndat <- filter(cropdat, !is.na(p_corn_share))
 cottondat <- filter(cropdat, !is.na(p_cotton_share))
@@ -62,7 +62,7 @@ soybeandat <- filter(cropdat, !is.na(p_soybean_share))
 
 # Corn
 cc.corn.mod2 <- tobit(p_corn_share ~ dday0_10 + dday10_30  + dday30C + prec + prec_sq + lat + long + lat:long + cluster(state),
-                  data = corndat, weights = (corndat$total_w + 1))
+                  data = corndat, weights = (corndat$total_w))
 summary(cc.corn.mod2)
 
 # Cotton

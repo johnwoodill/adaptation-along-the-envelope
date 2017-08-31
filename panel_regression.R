@@ -55,7 +55,7 @@ saveRDS(p.soybean.mod2, "models/p.dd.ln_soybean_rrev")
 
 # Panel Acres --------------------------------------------------------
 
-cropdat <- readRDS("data/tobit_panel_regression_data.rds")
+cropdat <- readRDS("data/panel_regression_data.rds")
 
 corndat <- filter(cropdat, !is.na(p_corn_share))
 cottondat <- filter(cropdat, !is.na(p_cotton_share))

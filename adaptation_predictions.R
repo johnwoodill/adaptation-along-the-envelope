@@ -79,7 +79,7 @@ p1 <- ggplot(pdat1, aes(temp, change_adapt, color = reg)) +
   geom_text_repel(aes(temp, change_adapt, label = change_adapt), show.legend  = FALSE, alpha = 0.5, nudge_y = 15) 
 p1
 # Without adaptation
-p11 <- ggplot(pdat1, aes(temp, change_wo_adapt, color = reg)) + 
+p11 <- ggplot(filter(pdat1, reg %in% c("Cross-section", "Difference")), aes(temp, change_wo_adapt, color = reg)) + 
   geom_ribbon(aes(ymin = change_wo_adapt_min, ymax = change_wo_adapt_max), fill = "#C0CCD5", size = 0) +
   geom_line() + 
   geom_hline(yintercept = 0, linetype = "dashed", color = "grey") +
@@ -93,7 +93,7 @@ p11 <- ggplot(pdat1, aes(temp, change_wo_adapt, color = reg)) +
   theme(legend.position = "top",
         legend.title = element_blank()) + 
   geom_text_repel(aes(temp, change_wo_adapt, label = change_wo_adapt), show.legend  = FALSE, alpha = 0.5) 
-
+p11
 
 # Proportion of acreage change
 ggplot(pred_acreage, aes(x = temp, y = acreage, fill = crop)) + 
