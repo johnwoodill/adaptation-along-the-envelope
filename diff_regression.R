@@ -6,6 +6,13 @@ setwd("/run/media/john/1TB/SpiderOak/Projects/adaptation-along-the-envelope/")
 
 decadedat <- readRDS("data/diff_regression_data.rds")
 
+# Exposure weighted values equal zero
+decadedat$tavg <- decadedat$tavg - mean(decadedat$tavg, na.rm = TRUE)
+decadedat$dday0_10 <- decadedat$dday0_10 - mean(decadedat$dday0_10, na.rm = TRUE)
+decadedat$dday10_30 <- decadedat$dday10_30 - mean(decadedat$dday10_30, na.rm = TRUE)
+decadedat$dday30C <- decadedat$dday30C - mean(decadedat$dday30C, na.rm = TRUE)
+decadedat$prec <- decadedat$prec - mean(decadedat$prec, na.rm = TRUE)
+
 # Setup data sets for regression
 corndat <- filter(decadedat, !is.na(ln_corn_rrev))
 cottondat <- filter(decadedat, !is.na(ln_cotton_rrev))
@@ -49,41 +56,41 @@ saveRDS(diff.soybean.mod2, "models/diff.dd.ln_soybean_rrev")
 
 # Proportion of acreage regressions
 
-decadedat <- readRDS("data/diff_regression_data.rds")
-
-corndat <- filter(decadedat, !is.na(p_corn_share))
-cottondat <- filter(decadedat, !is.na(p_cotton_share))
-haydat <- filter(decadedat, !is.na(p_hay_share))
-wheatdat <- filter(decadedat, !is.na(p_wheat_share))
-soybeandat <- filter(decadedat, !is.na(p_soybean_share))
+# decadedat <- readRDS("data/diff_regression_data.rds")
+# 
+# corndat <- filter(decadedat, !is.na(ln_corn_rrev))
+# cottondat <- filter(decadedat, !is.na(ln_cotton_rrev))
+# haydat <- filter(decadedat, !is.na(ln_hay_rrev))
+# wheatdat <- filter(decadedat, !is.na(ln_wheat_rrev))
+# soybeandat <- filter(decadedat, !is.na(ln_soybean_rrev))
 
 
 # Corn
 diff.corn.mod2 <- tobit(p_corn_share ~  dday0_10 + dday10_30  + dday30C + prec + prec_sq + lat + long + lat:long + 
                           cluster(state),
-                  data = corndat, weights = (corndat$total_w + 1))
+                  data = corndat, weights = (corndat$total_w ))
 summary(diff.corn.mod2)
 
 
 # Cotton
-diff.cotton.mod2 <- tobit(p_cotton_share ~ dday0_10 + dday10_30  + dday30C +  prec + prec_sq + lat + long + lat:long + factor(year) + cluster(state),
-                  data = cottondat, weights = (cottondat$total_w + 1))
+diff.cotton.mod2 <- tobit(p_cotton_share ~ dday0_10 + dday10_30  + dday30C +  prec + prec_sq + lat + long + lat:long +  cluster(state),
+                  data = cottondat, weights = (cottondat$total_w ))
 summary(diff.cotton.mod2)
 
 
 # Hay
-diff.hay.mod2 <- tobit(p_hay_share ~ dday0_10 +  dday10_30  + dday30C +  prec + prec_sq + lat + long + lat:long + factor(year)  + cluster(state),
-                  data = haydat, weights = (haydat$total_w + 1))
+diff.hay.mod2 <- tobit(p_hay_share ~ dday0_10 +  dday10_30  + dday30C +  prec + prec_sq + lat + long + lat:long +  cluster(state),
+                  data = haydat, weights = (haydat$total_w ))
 summary(diff.hay.mod2)
 
 # Wheat
-diff.wheat.mod2 <- tobit(p_wheat_share ~ dday0_10 + dday10_30  + dday30C +  prec + prec_sq + lat + long + lat:long + factor(year) + cluster(state),
-                  data = wheatdat, weights = ( wheatdat$total_w + 1))
+diff.wheat.mod2 <- tobit(p_wheat_share ~ dday0_10 + dday10_30  + dday30C +  prec + prec_sq + lat + long + lat:long + cluster(state),
+                  data = wheatdat, weights = ( wheatdat$total_w ))
 summary(diff.wheat.mod2)
 
 # Soybean
-diff.soybean.mod2 <- tobit(p_soybean_share ~ dday0_10 + dday10_30  + dday30C +  prec + prec_sq + lat + long + lat:long + factor(year) + cluster(state),
-                  data = soybeandat, weights = (soybeandat$total_w + 1))
+diff.soybean.mod2 <- tobit(p_soybean_share ~ dday0_10 + dday10_30  + dday30C +  prec + prec_sq + lat + long + lat:long +  cluster(state),
+                  data = soybeandat, weights = (soybeandat$total_w ))
 summary(diff.soybean.mod2)
 
 

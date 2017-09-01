@@ -373,10 +373,27 @@ fulldat <- do.call(data.frame,lapply(fulldat, function(x) replace(x, is.infinite
 
 #write.csv(fulldat, "data/full_ag_data.csv", row.names = FALSE)
 
+# Filter only counties with acres in at least all five crops
+dat <- fulldat %>% 
+  group_by(fips) %>% 
+  summarise(corn_a_c = length(which(!is.na(corn_grain_a))),
+            cotton_a_c = length(which(!is.na(cotton_a))),
+            hay_a_c = length(which(!is.na(hay_a))),
+            wheat_a_c = length(which(!is.na(wheat_a))),
+            soybean_a_c = length(which(!is.na(soybean_a))))
+
+dat <- filter(dat, corn_a_c >= 1 & 
+                cotton_a_c >= 1 &
+                hay_a_c >= 1 &
+                wheat_a_c >= 1 &
+                soybean_a_c >= 1)
+
+fips.dat <- unique(dat$fips)
+
+fulldat <- filter(fulldat, fips %in% fips.dat)
+  
 saveRDS(fulldat, "data/full_ag_data.rds")
 fulldat <- readRDS("data/full_ag_data.rds")
 
 
-#fulldat <- readRDS("data/full_ag_data.rds")
-#fulldat <- read_csv("data/full_ag_data.csv")
 

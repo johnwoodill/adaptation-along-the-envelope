@@ -18,9 +18,9 @@ tobit.ey <- function(mu, sigma){
 
 ###################
 # # Baseline Degree Day Data
-cs.dat <- readRDS("data/tobit_cross_section_regression_data.rds")
-p.dat <- readRDS("data/tobit_panel_regression_data.rds")
-diff.dat <- readRDS("data/tobit_diff_regression_data.rds")
+cs.dat <- readRDS("data/cross_section_regression_data.rds")
+p.dat <- readRDS("data/panel_regression_data.rds")
+diff.dat <- readRDS("data/diff_regression_data.rds")
 
 # New Degree Day Data
 cs.1C <- readRDS("data/degree_day_changes/cross_section_regression_data_1C")
@@ -185,13 +185,14 @@ cs3C.pred_p_corn_share <- predict(cs.p_corn_share, newdata = cs.p_corn_share_3C)
 cs4C.pred_p_corn_share <- predict(cs.p_corn_share, newdata = cs.p_corn_share_4C)
 cs5C.pred_p_corn_share <- predict(cs.p_corn_share, newdata = cs.p_corn_share_5C)
 
-
+p0C.pred_p_corn_share <- predict(p.p_corn_share, newdata = p.p_corn_share_0C)
 p1C.pred_p_corn_share <- predict(p.p_corn_share, newdata = p.p_corn_share_1C)
 p2C.pred_p_corn_share <- predict(p.p_corn_share, newdata = p.p_corn_share_2C)
 p3C.pred_p_corn_share <- predict(p.p_corn_share, newdata = p.p_corn_share_3C)
 p4C.pred_p_corn_share <- predict(p.p_corn_share, newdata = p.p_corn_share_4C)
 p5C.pred_p_corn_share <- predict(p.p_corn_share, newdata = p.p_corn_share_5C)
 
+diff0C.pred_p_corn_share <- predict(diff.p_corn_share, newdata = diff.p_corn_share_0C)
 diff1C.pred_p_corn_share <- predict(diff.p_corn_share, newdata = diff.p_corn_share_1C)
 diff2C.pred_p_corn_share <- predict(diff.p_corn_share, newdata = diff.p_corn_share_2C)
 diff3C.pred_p_corn_share <- predict(diff.p_corn_share, newdata = diff.p_corn_share_3C)
@@ -215,21 +216,21 @@ diff5C.pred_p_corn_share <- predict(diff.p_corn_share, newdata = diff.p_corn_sha
 
 #cs.corn.rev0 <- sum((predict(cs.p_corn_share, newdata = cs.p_corn_share_0C)))
 
-cs.corn.share0 <- sum( tobit.ey(predict(cs.p_corn_share), cs.p_corn_share$scale)*cs.p_corn_share_0C$total_a, na.rm = TRUE)
+cs.corn.share0 <- sum( tobit.ey(cs0C.pred_p_corn_share, cs.p_corn_share$scale)*cs.p_corn_share_0C$total_a, na.rm = TRUE)
 cs.corn.share1 <- (sum( tobit.ey(cs1C.pred_p_corn_share, cs.p_corn_share$scale)*cs.p_corn_share_0C$total_a, na.rm = TRUE)/cs.corn.share0 - 1)*100
 cs.corn.share2 <- (sum( tobit.ey(cs2C.pred_p_corn_share, cs.p_corn_share$scale)*cs.p_corn_share_0C$total_a, na.rm = TRUE)/cs.corn.share0 - 1)*100
 cs.corn.share3 <- (sum( tobit.ey(cs3C.pred_p_corn_share, cs.p_corn_share$scale)*cs.p_corn_share_0C$total_a, na.rm = TRUE)/cs.corn.share0 - 1)*100
 cs.corn.share4 <- (sum( tobit.ey(cs4C.pred_p_corn_share, cs.p_corn_share$scale)*cs.p_corn_share_0C$total_a, na.rm = TRUE)/cs.corn.share0 - 1)*100
 cs.corn.share5 <- (sum( tobit.ey(cs5C.pred_p_corn_share, cs.p_corn_share$scale)*cs.p_corn_share_0C$total_a, na.rm = TRUE)/cs.corn.share0 - 1)*100
 
-p.corn.share0 <- sum( tobit.ey(predict(p.p_corn_share), p.p_corn_share$scale)*p.p_corn_share_0C$total_a)
+p.corn.share0 <- sum( tobit.ey(p0C.pred_p_corn_share, p.p_corn_share$scale)*p.p_corn_share_0C$total_a)
 p.corn.share1 <- (sum( tobit.ey(p1C.pred_p_corn_share, p.p_corn_share$scale)*p.p_corn_share_0C$total_a)/p.corn.share0 - 1)*100
 p.corn.share2 <- (sum( tobit.ey(p2C.pred_p_corn_share, p.p_corn_share$scale)*p.p_corn_share_0C$total_a)/p.corn.share0 - 1)*100
 p.corn.share3 <- (sum( tobit.ey(p3C.pred_p_corn_share, p.p_corn_share$scale)*p.p_corn_share_0C$total_a)/p.corn.share0 - 1)*100
 p.corn.share4 <- (sum( tobit.ey(p4C.pred_p_corn_share, p.p_corn_share$scale)*p.p_corn_share_0C$total_a)/p.corn.share0 - 1)*100
 p.corn.share5 <- (sum( tobit.ey(p5C.pred_p_corn_share, p.p_corn_share$scale)*p.p_corn_share_0C$total_a)/p.corn.share0 - 1)*100
 
-diff.corn.share0 <- sum( tobit.ey(predict(diff.p_corn_share), diff.p_corn_share$scale)*diff.p_corn_share_0C$total_a)
+diff.corn.share0 <- sum( tobit.ey(diff0C.pred_p_corn_share, diff.p_corn_share$scale)*diff.p_corn_share_0C$total_a)
 diff.corn.share1 <- (sum( tobit.ey(diff1C.pred_p_corn_share, diff.p_corn_share$scale)*diff.p_corn_share_0C$total_a)/diff.corn.share0 - 1)*100
 diff.corn.share2 <- (sum( tobit.ey(diff2C.pred_p_corn_share, diff.p_corn_share$scale)*diff.p_corn_share_0C$total_a)/diff.corn.share0 - 1)*100
 diff.corn.share3 <- (sum( tobit.ey(diff3C.pred_p_corn_share, diff.p_corn_share$scale)*diff.p_corn_share_0C$total_a)/diff.corn.share0 - 1)*100

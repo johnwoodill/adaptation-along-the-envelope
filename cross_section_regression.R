@@ -7,6 +7,14 @@ cropdat <- readRDS("data/cross_section_regression_data.rds")
 
 # Cross Section: Revenue per acre -----------------------------------------
 
+# Exposure weighted values equal zero
+cropdat$tavg <- cropdat$tavg - mean(cropdat$tavg, na.rm = TRUE)
+cropdat$dday0_10 <- cropdat$dday0_10 - mean(cropdat$dday0_10, na.rm = TRUE)
+cropdat$dday10_30 <- cropdat$dday10_30 - mean(cropdat$dday10_30, na.rm = TRUE)
+cropdat$dday30C <- cropdat$dday30C - mean(cropdat$dday30C, na.rm = TRUE)
+cropdat$prec <- cropdat$prec - mean(cropdat$prec, na.rm = TRUE)
+cropdat$prec_sq <- cropdat$prec^2
+
 corndat <- filter(cropdat, !is.na(ln_corn_rrev))
 cottondat <- filter(cropdat, !is.na(ln_cotton_rrev))
 haydat <- filter(cropdat, !is.na(ln_hay_rrev))
@@ -50,13 +58,13 @@ saveRDS(cs.soybean.mod2, "models/cs.dd.ln_soybean_rrev")
 
 # Cross-section (Crop Choice): Corn Acres -----------------------------------------------
 
-cropdat <- readRDS("data/cross_section_regression_data.rds")
+#cropdat <- readRDS("data/cross_section_regression_data.rds")
 
-corndat <- filter(cropdat, !is.na(p_corn_share))
-cottondat <- filter(cropdat, !is.na(p_cotton_share))
-haydat <- filter(cropdat, !is.na(p_hay_share))
-wheatdat <- filter(cropdat, !is.na(p_wheat_share))
-soybeandat <- filter(cropdat, !is.na(p_soybean_share))
+# corndat <- filter(cropdat, !is.na(ln_corn_rrev))
+# cottondat <- filter(cropdat, !is.na(ln_cotton_rrev))
+# haydat <- filter(cropdat, !is.na(ln_hay_rrev))
+# wheatdat <- filter(cropdat, !is.na(ln_wheat_rrev))
+# soybeandat <- filter(cropdat, !is.na(ln_soybean_rrev))
 
 
 
@@ -66,24 +74,24 @@ cc.corn.mod2 <- tobit(p_corn_share ~ dday0_10 + dday10_30  + dday30C + prec + pr
 summary(cc.corn.mod2)
 
 # Cotton
-cc.cotton.mod2 <- tobit(p_cotton_share ~ dday0_10 + dday10_30 + dday30C +  prec + prec_sq + lat + long + lat:long  +cluster(state),
-                  data = cottondat, weights = (cottondat$total_w + 1))
+cc.cotton.mod2 <- tobit(p_cotton_share ~ dday0_10 + dday10_30 + dday30C +  prec + prec_sq + lat + long + lat:long  + cluster(state),
+                  data = cottondat, weights = (cottondat$total_w))
 summary(cc.cotton.mod2)
 
 
 # Hay
-cc.hay.mod2 <- tobit(p_hay_share ~ dday0_10 +  dday10_30  + dday30C +  prec + prec_sq + lat + long + lat:long  +cluster(state),
-                  data = haydat, weights = (haydat$total_w + 1))
+cc.hay.mod2 <- tobit(p_hay_share ~ dday0_10 +  dday10_30  + dday30C +  prec + prec_sq + lat + long + lat:long + cluster(state),
+                  data = haydat, weights = (haydat$total_w))
 summary(cc.hay.mod2)
 
 # Wheat
-cc.wheat.mod2 <- tobit(p_wheat_share ~ dday0_10 + dday10_30  + dday30C +  prec + prec_sq + lat + long + lat:long  + cluster(state),
-                  data = wheatdat, weights = (wheatdat$total_w + 1))
+cc.wheat.mod2 <- tobit(p_wheat_share ~ dday0_10 + dday10_30  + dday30C +  prec + prec_sq + lat + long + lat:long + cluster(state),
+                  data = wheatdat, weights = (wheatdat$total_w))
 summary(cc.wheat.mod2)
 
 # Soybean
 cc.soybean.mod2 <- tobit(p_soybean_share ~ dday0_10 + dday10_30  + dday30C +  prec + prec_sq + lat + long + lat:long + cluster(state),
-                  data = soybeandat, weights = (soybeandat$total_w + 1))
+                  data = soybeandat, weights = (soybeandat$total_w))
 summary(cc.soybean.mod2)
 
 

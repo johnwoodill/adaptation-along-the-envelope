@@ -1,15 +1,16 @@
 library(tidyverse)
 library(lfe)
 
+setwd("/run/media/john/1TB/SpiderOak/Projects/adaptation-along-the-envelope/")
 source("predictFelm.R")
 
-setwd("/run/media/john/1TB/SpiderOak/Projects/adaptation-along-the-envelope/")
+
 
 ###################
 # Baseline data
-cs.dat <- readRDS("data/baseline_cross_section_regression_data.rds")
-p.dat <- readRDS("data/baseline_panel_regression_data.rds")
-diff.dat <- readRDS("data/baseline_diff_regression_data.rds")
+cs.dat <- readRDS("data/cross_section_regression_data.rds")
+p.dat <- readRDS("data/panel_regression_data.rds")
+diff.dat <- readRDS("data/diff_regression_data.rds")
 
 # New Degree Day Data
 cs.1C <- readRDS("data/degree_day_changes/cross_section_regression_data_1C")
@@ -192,7 +193,6 @@ diff4C.pred_ln_corn_rrev <- predictFelm(felm.fit = diff.ln_corn_rrev, newdata = 
 diff5C.pred_ln_corn_rrev <- predictFelm(felm.fit = diff.ln_corn_rrev, newdata = diff.ln_corn_rrev_5C)
 
 # Bootstrapped Standard errors
-
 cs0C.pred_ln_corn_rrev_se <- boot.strap(exp(cs0C.pred_ln_corn_rrev$fit + cs0C.pred_ln_corn_rrev$res  ))
 cs1C.pred_ln_corn_rrev_se <- boot.strap(exp(cs1C.pred_ln_corn_rrev$fit + cs1C.pred_ln_corn_rrev$res  ))
 cs2C.pred_ln_corn_rrev_se <- boot.strap(exp(cs2C.pred_ln_corn_rrev$fit + cs2C.pred_ln_corn_rrev$res  ))
@@ -200,12 +200,12 @@ cs3C.pred_ln_corn_rrev_se <- boot.strap(exp(cs3C.pred_ln_corn_rrev$fit + cs3C.pr
 cs4C.pred_ln_corn_rrev_se <- boot.strap(exp(cs4C.pred_ln_corn_rrev$fit + cs4C.pred_ln_corn_rrev$res  ))
 cs5C.pred_ln_corn_rrev_se <- boot.strap(exp(cs5C.pred_ln_corn_rrev$fit + cs5C.pred_ln_corn_rrev$res  ))
 
-p0C.pred_ln_corn_rrev_se <- boot.strap(exp(p0C.pred_ln_corn_rrev$fit + p0C.pred_ln_corn_rrev$res + p0C.pred_ln_corn_rrev$effect), cluster = p0C.pred_ln_corn_rrev$pred_data$year )
-p1C.pred_ln_corn_rrev_se <- boot.strap(exp(p1C.pred_ln_corn_rrev$fit + p1C.pred_ln_corn_rrev$res + p1C.pred_ln_corn_rrev$effect), cluster = p1C.pred_ln_corn_rrev$pred_data$year )
-p2C.pred_ln_corn_rrev_se <- boot.strap(exp(p2C.pred_ln_corn_rrev$fit + p2C.pred_ln_corn_rrev$res + p2C.pred_ln_corn_rrev$effect), cluster = p2C.pred_ln_corn_rrev$pred_data$year )
-p3C.pred_ln_corn_rrev_se <- boot.strap(exp(p3C.pred_ln_corn_rrev$fit + p3C.pred_ln_corn_rrev$res + p3C.pred_ln_corn_rrev$effect), cluster = p3C.pred_ln_corn_rrev$pred_data$year )
-p4C.pred_ln_corn_rrev_se <- boot.strap(exp(p4C.pred_ln_corn_rrev$fit + p4C.pred_ln_corn_rrev$res + p4C.pred_ln_corn_rrev$effect), cluster = p4C.pred_ln_corn_rrev$pred_data$year )
-p5C.pred_ln_corn_rrev_se <- boot.strap(exp(p5C.pred_ln_corn_rrev$fit + p5C.pred_ln_corn_rrev$res + p5C.pred_ln_corn_rrev$effect), cluster = p5C.pred_ln_corn_rrev$pred_data$year )
+p0C.pred_ln_corn_rrev_se <- boot.strap(exp(p0C.pred_ln_corn_rrev$fit + p0C.pred_ln_corn_rrev$res + p0C.pred_ln_corn_rrev$effect), cluster = p0C.pred_ln_corn_rrev$pred_data$year, rep = 100 )
+p1C.pred_ln_corn_rrev_se <- boot.strap(exp(p1C.pred_ln_corn_rrev$fit + p1C.pred_ln_corn_rrev$res + p1C.pred_ln_corn_rrev$effect), cluster = p1C.pred_ln_corn_rrev$pred_data$year, rep = 100 )
+p2C.pred_ln_corn_rrev_se <- boot.strap(exp(p2C.pred_ln_corn_rrev$fit + p2C.pred_ln_corn_rrev$res + p2C.pred_ln_corn_rrev$effect), cluster = p2C.pred_ln_corn_rrev$pred_data$year, rep = 100 )
+p3C.pred_ln_corn_rrev_se <- boot.strap(exp(p3C.pred_ln_corn_rrev$fit + p3C.pred_ln_corn_rrev$res + p3C.pred_ln_corn_rrev$effect), cluster = p3C.pred_ln_corn_rrev$pred_data$year, rep = 100 )
+p4C.pred_ln_corn_rrev_se <- boot.strap(exp(p4C.pred_ln_corn_rrev$fit + p4C.pred_ln_corn_rrev$res + p4C.pred_ln_corn_rrev$effect), cluster = p4C.pred_ln_corn_rrev$pred_data$year, rep = 100 )
+p5C.pred_ln_corn_rrev_se <- boot.strap(exp(p5C.pred_ln_corn_rrev$fit + p5C.pred_ln_corn_rrev$res + p5C.pred_ln_corn_rrev$effect), cluster = p5C.pred_ln_corn_rrev$pred_data$year, rep = 100 )
 
 diff0C.pred_ln_corn_rrev_se <- boot.strap(exp(diff0C.pred_ln_corn_rrev$fit + diff0C.pred_ln_corn_rrev$res + diff0C.pred_ln_corn_rrev$effect), cluster = diff0C.pred_ln_corn_rrev$pred_data$year )
 diff1C.pred_ln_corn_rrev_se <- boot.strap(exp(diff1C.pred_ln_corn_rrev$fit + diff1C.pred_ln_corn_rrev$res + diff1C.pred_ln_corn_rrev$effect), cluster = diff1C.pred_ln_corn_rrev$pred_data$year )
@@ -237,7 +237,7 @@ diff.corn.pred_rev4 <- sum(exp(diff4C.pred_ln_corn_rrev$fit + diff4C.pred_ln_cor
 diff.corn.pred_rev5 <- sum(exp(diff5C.pred_ln_corn_rrev$fit + diff5C.pred_ln_corn_rrev$res + diff5C.pred_ln_corn_rrev$effect ))
 
 cs.corn.pred_rev0_min <- cs.corn.pred_rev0 - cs0C.pred_ln_corn_rrev_se$se.sum*2.58
-cs.corn.pred_rev0_max <- cs.corn.pred_rev0 - cs0C.pred_ln_corn_rrev_se$se.sum*2.58
+cs.corn.pred_rev0_max <- cs.corn.pred_rev0 + cs0C.pred_ln_corn_rrev_se$se.sum*2.58
 cs.corn.pred_rev1_min <- cs.corn.pred_rev1 - cs1C.pred_ln_corn_rrev_se$se.sum*2.58
 cs.corn.pred_rev1_max <- cs.corn.pred_rev1 + cs1C.pred_ln_corn_rrev_se$se.sum*2.58
 cs.corn.pred_rev2_min <- cs.corn.pred_rev2 - cs2C.pred_ln_corn_rrev_se$se.sum*2.58
@@ -423,12 +423,12 @@ cs3C.pred_ln_cotton_rrev_se <- boot.strap(exp(cs3C.pred_ln_cotton_rrev$fit + cs3
 cs4C.pred_ln_cotton_rrev_se <- boot.strap(exp(cs4C.pred_ln_cotton_rrev$fit + cs4C.pred_ln_cotton_rrev$res  ))
 cs5C.pred_ln_cotton_rrev_se <- boot.strap(exp(cs5C.pred_ln_cotton_rrev$fit + cs5C.pred_ln_cotton_rrev$res  ))
 
-p0C.pred_ln_cotton_rrev_se <- boot.strap(exp(p0C.pred_ln_cotton_rrev$fit + p0C.pred_ln_cotton_rrev$res + p0C.pred_ln_cotton_rrev$effect), cluster = p0C.pred_ln_cotton_rrev$pred_data$year )
-p1C.pred_ln_cotton_rrev_se <- boot.strap(exp(p1C.pred_ln_cotton_rrev$fit + p1C.pred_ln_cotton_rrev$res + p1C.pred_ln_cotton_rrev$effect), cluster = p1C.pred_ln_cotton_rrev$pred_data$year )
-p2C.pred_ln_cotton_rrev_se <- boot.strap(exp(p2C.pred_ln_cotton_rrev$fit + p2C.pred_ln_cotton_rrev$res + p2C.pred_ln_cotton_rrev$effect), cluster = p2C.pred_ln_cotton_rrev$pred_data$year )
-p3C.pred_ln_cotton_rrev_se <- boot.strap(exp(p3C.pred_ln_cotton_rrev$fit + p3C.pred_ln_cotton_rrev$res + p3C.pred_ln_cotton_rrev$effect), cluster = p3C.pred_ln_cotton_rrev$pred_data$year )
-p4C.pred_ln_cotton_rrev_se <- boot.strap(exp(p4C.pred_ln_cotton_rrev$fit + p4C.pred_ln_cotton_rrev$res + p4C.pred_ln_cotton_rrev$effect), cluster = p4C.pred_ln_cotton_rrev$pred_data$year )
-p5C.pred_ln_cotton_rrev_se <- boot.strap(exp(p5C.pred_ln_cotton_rrev$fit + p5C.pred_ln_cotton_rrev$res + p5C.pred_ln_cotton_rrev$effect), cluster = p5C.pred_ln_cotton_rrev$pred_data$year )
+p0C.pred_ln_cotton_rrev_se <- boot.strap(exp(p0C.pred_ln_cotton_rrev$fit + p0C.pred_ln_cotton_rrev$res + p0C.pred_ln_cotton_rrev$effect), cluster = p0C.pred_ln_cotton_rrev$pred_data$year, rep = 100  )
+p1C.pred_ln_cotton_rrev_se <- boot.strap(exp(p1C.pred_ln_cotton_rrev$fit + p1C.pred_ln_cotton_rrev$res + p1C.pred_ln_cotton_rrev$effect), cluster = p1C.pred_ln_cotton_rrev$pred_data$year, rep = 100  )
+p2C.pred_ln_cotton_rrev_se <- boot.strap(exp(p2C.pred_ln_cotton_rrev$fit + p2C.pred_ln_cotton_rrev$res + p2C.pred_ln_cotton_rrev$effect), cluster = p2C.pred_ln_cotton_rrev$pred_data$year, rep = 100  )
+p3C.pred_ln_cotton_rrev_se <- boot.strap(exp(p3C.pred_ln_cotton_rrev$fit + p3C.pred_ln_cotton_rrev$res + p3C.pred_ln_cotton_rrev$effect), cluster = p3C.pred_ln_cotton_rrev$pred_data$year, rep = 100  )
+p4C.pred_ln_cotton_rrev_se <- boot.strap(exp(p4C.pred_ln_cotton_rrev$fit + p4C.pred_ln_cotton_rrev$res + p4C.pred_ln_cotton_rrev$effect), cluster = p4C.pred_ln_cotton_rrev$pred_data$year, rep = 100  )
+p5C.pred_ln_cotton_rrev_se <- boot.strap(exp(p5C.pred_ln_cotton_rrev$fit + p5C.pred_ln_cotton_rrev$res + p5C.pred_ln_cotton_rrev$effect), cluster = p5C.pred_ln_cotton_rrev$pred_data$year, rep = 100  )
 
 diff0C.pred_ln_cotton_rrev_se <- boot.strap(exp(diff0C.pred_ln_cotton_rrev$fit + diff0C.pred_ln_cotton_rrev$res + diff0C.pred_ln_cotton_rrev$effect), cluster = diff0C.pred_ln_cotton_rrev$pred_data$year )
 diff1C.pred_ln_cotton_rrev_se <- boot.strap(exp(diff1C.pred_ln_cotton_rrev$fit + diff1C.pred_ln_cotton_rrev$res + diff1C.pred_ln_cotton_rrev$effect), cluster = diff1C.pred_ln_cotton_rrev$pred_data$year )
@@ -608,7 +608,7 @@ cotton.plotdat <- data.frame(temp = rep(c(0,1,2,3,4,5), 3),
                            crop = "cotton")
 
 ggplot(cotton.plotdat, aes(temp, rev, group = reg)) + 
-  geom_ribbon(aes(ymin = min, ymax = max), fill = "#C0CCD5") + 
+  #geom_ribbon(aes(ymin = min, ymax = max), fill = "#C0CCD5") + 
   geom_line(aes(temp, rev, color = reg)) + geom_hline(yintercept = 0, linetype = "dashed")
 
 
@@ -646,12 +646,12 @@ cs3C.pred_ln_hay_rrev_se <- boot.strap(exp(cs3C.pred_ln_hay_rrev$fit + cs3C.pred
 cs4C.pred_ln_hay_rrev_se <- boot.strap(exp(cs4C.pred_ln_hay_rrev$fit + cs4C.pred_ln_hay_rrev$res  ))
 cs5C.pred_ln_hay_rrev_se <- boot.strap(exp(cs5C.pred_ln_hay_rrev$fit + cs5C.pred_ln_hay_rrev$res  ))
 
-p0C.pred_ln_hay_rrev_se <- boot.strap(exp(p0C.pred_ln_hay_rrev$fit + p0C.pred_ln_hay_rrev$res + p0C.pred_ln_hay_rrev$effect), cluster = p0C.pred_ln_hay_rrev$pred_data$year )
-p1C.pred_ln_hay_rrev_se <- boot.strap(exp(p1C.pred_ln_hay_rrev$fit + p1C.pred_ln_hay_rrev$res + p1C.pred_ln_hay_rrev$effect), cluster = p1C.pred_ln_hay_rrev$pred_data$year )
-p2C.pred_ln_hay_rrev_se <- boot.strap(exp(p2C.pred_ln_hay_rrev$fit + p2C.pred_ln_hay_rrev$res + p2C.pred_ln_hay_rrev$effect), cluster = p2C.pred_ln_hay_rrev$pred_data$year )
-p3C.pred_ln_hay_rrev_se <- boot.strap(exp(p3C.pred_ln_hay_rrev$fit + p3C.pred_ln_hay_rrev$res + p3C.pred_ln_hay_rrev$effect), cluster = p3C.pred_ln_hay_rrev$pred_data$year )
-p4C.pred_ln_hay_rrev_se <- boot.strap(exp(p4C.pred_ln_hay_rrev$fit + p4C.pred_ln_hay_rrev$res + p4C.pred_ln_hay_rrev$effect), cluster = p4C.pred_ln_hay_rrev$pred_data$year )
-p5C.pred_ln_hay_rrev_se <- boot.strap(exp(p5C.pred_ln_hay_rrev$fit + p5C.pred_ln_hay_rrev$res + p5C.pred_ln_hay_rrev$effect), cluster = p5C.pred_ln_hay_rrev$pred_data$year )
+p0C.pred_ln_hay_rrev_se <- boot.strap(exp(p0C.pred_ln_hay_rrev$fit + p0C.pred_ln_hay_rrev$res + p0C.pred_ln_hay_rrev$effect), cluster = p0C.pred_ln_hay_rrev$pred_data$year, rep = 100  )
+p1C.pred_ln_hay_rrev_se <- boot.strap(exp(p1C.pred_ln_hay_rrev$fit + p1C.pred_ln_hay_rrev$res + p1C.pred_ln_hay_rrev$effect), cluster = p1C.pred_ln_hay_rrev$pred_data$year, rep = 100  )
+p2C.pred_ln_hay_rrev_se <- boot.strap(exp(p2C.pred_ln_hay_rrev$fit + p2C.pred_ln_hay_rrev$res + p2C.pred_ln_hay_rrev$effect), cluster = p2C.pred_ln_hay_rrev$pred_data$year, rep = 100  )
+p3C.pred_ln_hay_rrev_se <- boot.strap(exp(p3C.pred_ln_hay_rrev$fit + p3C.pred_ln_hay_rrev$res + p3C.pred_ln_hay_rrev$effect), cluster = p3C.pred_ln_hay_rrev$pred_data$year, rep = 100  )
+p4C.pred_ln_hay_rrev_se <- boot.strap(exp(p4C.pred_ln_hay_rrev$fit + p4C.pred_ln_hay_rrev$res + p4C.pred_ln_hay_rrev$effect), cluster = p4C.pred_ln_hay_rrev$pred_data$year, rep = 100  )
+p5C.pred_ln_hay_rrev_se <- boot.strap(exp(p5C.pred_ln_hay_rrev$fit + p5C.pred_ln_hay_rrev$res + p5C.pred_ln_hay_rrev$effect), cluster = p5C.pred_ln_hay_rrev$pred_data$year, rep = 100  )
 
 diff0C.pred_ln_hay_rrev_se <- boot.strap(exp(diff0C.pred_ln_hay_rrev$fit + diff0C.pred_ln_hay_rrev$res + diff0C.pred_ln_hay_rrev$effect), cluster = diff0C.pred_ln_hay_rrev$pred_data$year )
 diff1C.pred_ln_hay_rrev_se <- boot.strap(exp(diff1C.pred_ln_hay_rrev$fit + diff1C.pred_ln_hay_rrev$res + diff1C.pred_ln_hay_rrev$effect), cluster = diff1C.pred_ln_hay_rrev$pred_data$year )
@@ -831,7 +831,7 @@ hay.plotdat <- data.frame(temp = rep(c(0,1,2,3,4,5), 3),
                            crop = "hay")
 
 ggplot(hay.plotdat, aes(temp, rev, group = reg)) + 
-  geom_ribbon(aes(ymin = min, ymax = max), fill = "#C0CCD5") + 
+#  geom_ribbon(aes(ymin = min, ymax = max), fill = "#C0CCD5") + 
   geom_line(aes(temp, rev, color = reg)) + geom_hline(yintercept = 0, linetype = "dashed")
 
 
@@ -869,12 +869,12 @@ cs3C.pred_ln_wheat_rrev_se <- boot.strap(exp(cs3C.pred_ln_wheat_rrev$fit + cs3C.
 cs4C.pred_ln_wheat_rrev_se <- boot.strap(exp(cs4C.pred_ln_wheat_rrev$fit + cs4C.pred_ln_wheat_rrev$res  ))
 cs5C.pred_ln_wheat_rrev_se <- boot.strap(exp(cs5C.pred_ln_wheat_rrev$fit + cs5C.pred_ln_wheat_rrev$res  ))
 
-p0C.pred_ln_wheat_rrev_se <- boot.strap(exp(p0C.pred_ln_wheat_rrev$fit + p0C.pred_ln_wheat_rrev$res + p0C.pred_ln_wheat_rrev$effect), cluster = p0C.pred_ln_wheat_rrev$pred_data$year )
-p1C.pred_ln_wheat_rrev_se <- boot.strap(exp(p1C.pred_ln_wheat_rrev$fit + p1C.pred_ln_wheat_rrev$res + p1C.pred_ln_wheat_rrev$effect), cluster = p1C.pred_ln_wheat_rrev$pred_data$year )
-p2C.pred_ln_wheat_rrev_se <- boot.strap(exp(p2C.pred_ln_wheat_rrev$fit + p2C.pred_ln_wheat_rrev$res + p2C.pred_ln_wheat_rrev$effect), cluster = p2C.pred_ln_wheat_rrev$pred_data$year )
-p3C.pred_ln_wheat_rrev_se <- boot.strap(exp(p3C.pred_ln_wheat_rrev$fit + p3C.pred_ln_wheat_rrev$res + p3C.pred_ln_wheat_rrev$effect), cluster = p3C.pred_ln_wheat_rrev$pred_data$year )
-p4C.pred_ln_wheat_rrev_se <- boot.strap(exp(p4C.pred_ln_wheat_rrev$fit + p4C.pred_ln_wheat_rrev$res + p4C.pred_ln_wheat_rrev$effect), cluster = p4C.pred_ln_wheat_rrev$pred_data$year )
-p5C.pred_ln_wheat_rrev_se <- boot.strap(exp(p5C.pred_ln_wheat_rrev$fit + p5C.pred_ln_wheat_rrev$res + p5C.pred_ln_wheat_rrev$effect), cluster = p5C.pred_ln_wheat_rrev$pred_data$year )
+p0C.pred_ln_wheat_rrev_se <- boot.strap(exp(p0C.pred_ln_wheat_rrev$fit + p0C.pred_ln_wheat_rrev$res + p0C.pred_ln_wheat_rrev$effect), cluster = p0C.pred_ln_wheat_rrev$pred_data$year, rep = 100  )
+p1C.pred_ln_wheat_rrev_se <- boot.strap(exp(p1C.pred_ln_wheat_rrev$fit + p1C.pred_ln_wheat_rrev$res + p1C.pred_ln_wheat_rrev$effect), cluster = p1C.pred_ln_wheat_rrev$pred_data$year, rep = 100  )
+p2C.pred_ln_wheat_rrev_se <- boot.strap(exp(p2C.pred_ln_wheat_rrev$fit + p2C.pred_ln_wheat_rrev$res + p2C.pred_ln_wheat_rrev$effect), cluster = p2C.pred_ln_wheat_rrev$pred_data$year, rep = 100  )
+p3C.pred_ln_wheat_rrev_se <- boot.strap(exp(p3C.pred_ln_wheat_rrev$fit + p3C.pred_ln_wheat_rrev$res + p3C.pred_ln_wheat_rrev$effect), cluster = p3C.pred_ln_wheat_rrev$pred_data$year, rep = 100  )
+p4C.pred_ln_wheat_rrev_se <- boot.strap(exp(p4C.pred_ln_wheat_rrev$fit + p4C.pred_ln_wheat_rrev$res + p4C.pred_ln_wheat_rrev$effect), cluster = p4C.pred_ln_wheat_rrev$pred_data$year, rep = 100  )
+p5C.pred_ln_wheat_rrev_se <- boot.strap(exp(p5C.pred_ln_wheat_rrev$fit + p5C.pred_ln_wheat_rrev$res + p5C.pred_ln_wheat_rrev$effect), cluster = p5C.pred_ln_wheat_rrev$pred_data$year, rep = 100  )
 
 diff0C.pred_ln_wheat_rrev_se <- boot.strap(exp(diff0C.pred_ln_wheat_rrev$fit + diff0C.pred_ln_wheat_rrev$res + diff0C.pred_ln_wheat_rrev$effect), cluster = diff0C.pred_ln_wheat_rrev$pred_data$year )
 diff1C.pred_ln_wheat_rrev_se <- boot.strap(exp(diff1C.pred_ln_wheat_rrev$fit + diff1C.pred_ln_wheat_rrev$res + diff1C.pred_ln_wheat_rrev$effect), cluster = diff1C.pred_ln_wheat_rrev$pred_data$year )
@@ -1054,7 +1054,7 @@ wheat.plotdat <- data.frame(temp = rep(c(0,1,2,3,4,5), 3),
                            crop = "wheat")
 
 ggplot(wheat.plotdat, aes(temp, rev, group = reg)) + 
-  geom_ribbon(aes(ymin = min, ymax = max), fill = "#C0CCD5") + 
+  #geom_ribbon(aes(ymin = min, ymax = max), fill = "#C0CCD5") + 
   geom_line(aes(temp, rev, color = reg)) + geom_hline(yintercept = 0, linetype = "dashed")
 
 
@@ -1093,12 +1093,12 @@ cs3C.pred_ln_soybean_rrev_se <- boot.strap(exp(cs3C.pred_ln_soybean_rrev$fit + c
 cs4C.pred_ln_soybean_rrev_se <- boot.strap(exp(cs4C.pred_ln_soybean_rrev$fit + cs4C.pred_ln_soybean_rrev$res  ))
 cs5C.pred_ln_soybean_rrev_se <- boot.strap(exp(cs5C.pred_ln_soybean_rrev$fit + cs5C.pred_ln_soybean_rrev$res  ))
 
-p0C.pred_ln_soybean_rrev_se <- boot.strap(exp(p0C.pred_ln_soybean_rrev$fit + p0C.pred_ln_soybean_rrev$res + p0C.pred_ln_soybean_rrev$effect), cluster = p0C.pred_ln_soybean_rrev$pred_data$year )
-p1C.pred_ln_soybean_rrev_se <- boot.strap(exp(p1C.pred_ln_soybean_rrev$fit + p1C.pred_ln_soybean_rrev$res + p1C.pred_ln_soybean_rrev$effect), cluster = p1C.pred_ln_soybean_rrev$pred_data$year )
-p2C.pred_ln_soybean_rrev_se <- boot.strap(exp(p2C.pred_ln_soybean_rrev$fit + p2C.pred_ln_soybean_rrev$res + p2C.pred_ln_soybean_rrev$effect), cluster = p2C.pred_ln_soybean_rrev$pred_data$year )
-p3C.pred_ln_soybean_rrev_se <- boot.strap(exp(p3C.pred_ln_soybean_rrev$fit + p3C.pred_ln_soybean_rrev$res + p3C.pred_ln_soybean_rrev$effect), cluster = p3C.pred_ln_soybean_rrev$pred_data$year )
-p4C.pred_ln_soybean_rrev_se <- boot.strap(exp(p4C.pred_ln_soybean_rrev$fit + p4C.pred_ln_soybean_rrev$res + p4C.pred_ln_soybean_rrev$effect), cluster = p4C.pred_ln_soybean_rrev$pred_data$year )
-p5C.pred_ln_soybean_rrev_se <- boot.strap(exp(p5C.pred_ln_soybean_rrev$fit + p5C.pred_ln_soybean_rrev$res + p5C.pred_ln_soybean_rrev$effect), cluster = p5C.pred_ln_soybean_rrev$pred_data$year )
+p0C.pred_ln_soybean_rrev_se <- boot.strap(exp(p0C.pred_ln_soybean_rrev$fit + p0C.pred_ln_soybean_rrev$res + p0C.pred_ln_soybean_rrev$effect), cluster = p0C.pred_ln_soybean_rrev$pred_data$year, rep = 100  )
+p1C.pred_ln_soybean_rrev_se <- boot.strap(exp(p1C.pred_ln_soybean_rrev$fit + p1C.pred_ln_soybean_rrev$res + p1C.pred_ln_soybean_rrev$effect), cluster = p1C.pred_ln_soybean_rrev$pred_data$year, rep = 100  )
+p2C.pred_ln_soybean_rrev_se <- boot.strap(exp(p2C.pred_ln_soybean_rrev$fit + p2C.pred_ln_soybean_rrev$res + p2C.pred_ln_soybean_rrev$effect), cluster = p2C.pred_ln_soybean_rrev$pred_data$year, rep = 100  )
+p3C.pred_ln_soybean_rrev_se <- boot.strap(exp(p3C.pred_ln_soybean_rrev$fit + p3C.pred_ln_soybean_rrev$res + p3C.pred_ln_soybean_rrev$effect), cluster = p3C.pred_ln_soybean_rrev$pred_data$year, rep = 100  )
+p4C.pred_ln_soybean_rrev_se <- boot.strap(exp(p4C.pred_ln_soybean_rrev$fit + p4C.pred_ln_soybean_rrev$res + p4C.pred_ln_soybean_rrev$effect), cluster = p4C.pred_ln_soybean_rrev$pred_data$year, rep = 100  )
+p5C.pred_ln_soybean_rrev_se <- boot.strap(exp(p5C.pred_ln_soybean_rrev$fit + p5C.pred_ln_soybean_rrev$res + p5C.pred_ln_soybean_rrev$effect), cluster = p5C.pred_ln_soybean_rrev$pred_data$year, rep = 100  )
 
 diff0C.pred_ln_soybean_rrev_se <- boot.strap(exp(diff0C.pred_ln_soybean_rrev$fit + diff0C.pred_ln_soybean_rrev$res + diff0C.pred_ln_soybean_rrev$effect), cluster = diff0C.pred_ln_soybean_rrev$pred_data$year )
 diff1C.pred_ln_soybean_rrev_se <- boot.strap(exp(diff1C.pred_ln_soybean_rrev$fit + diff1C.pred_ln_soybean_rrev$res + diff1C.pred_ln_soybean_rrev$effect), cluster = diff1C.pred_ln_soybean_rrev$pred_data$year )
@@ -1278,7 +1278,7 @@ soybean.plotdat <- data.frame(temp = rep(c(0,1,2,3,4,5), 3),
                            crop = "soybean")
 
 ggplot(soybean.plotdat, aes(temp, rev, group = reg)) + 
-  geom_ribbon(aes(ymin = min, ymax = max), fill = "#C0CCD5") + 
+#  geom_ribbon(aes(ymin = min, ymax = max), fill = "#C0CCD5") + 
   geom_line(aes(temp, rev, color = reg)) + geom_hline(yintercept = 0, linetype = "dashed")
 
 
@@ -1300,7 +1300,7 @@ plotdat$min <- round(plotdat$min, 2)
 plotdat$max <- round(plotdat$max, 2)
 
 p1 <- ggplot(plotdat, aes(temp, rev, color = reg)) + 
-  geom_ribbon(aes(ymin = min, ymax = max), fill = "#C0CCD5", size = 0) + 
+  #geom_ribbon(aes(ymin = min, ymax = max), fill = "#C0CCD5", size = 0) + 
   geom_line() + ylab("Revenue/Acre Impact (% Change) ") + 
   geom_point(size = 0.5) +
   xlab("Change in Temperature (C)") + 
