@@ -17,37 +17,33 @@ cropdat$dday30C <- cropdat$dday30C - mean(cropdat$dday30C, na.rm = TRUE)
 cropdat$prec <- cropdat$prec - mean(cropdat$prec, na.rm = TRUE)
 cropdat$prec_sq <- cropdat$prec^2
 
-corndat <- filter(cropdat, !is.na(ln_corn_rrev))
-cottondat <- filter(cropdat, !is.na(ln_cotton_rrev))
-haydat <- filter(cropdat, !is.na(ln_hay_rrev))
-wheatdat <- filter(cropdat, !is.na(ln_wheat_rrev))
-soybeandat <- filter(cropdat, !is.na(ln_soybean_rrev))
+
 
 # Corn
 p.corn.mod2 <- felm(ln_corn_rrev ~  dday0_10 + dday10_30 + dday30C + prec + prec_sq | fips + year | 0 | state,
-                  data = corndat, weights = corndat$corn_w)
+                  data = cropdat, weights = cropdat$corn_w)
 summary(p.corn.mod2)
 
 # Cotton
 p.cotton.mod2 <- felm(ln_cotton_rrev ~ dday0_10 + dday10_30  + dday30C + prec + prec_sq | fips + year | 0 | state,
-                  data = cottondat, weights = cottondat$cotton_w)
+                  data = cropdat, weights = cropdat$cotton_w)
 summary(p.cotton.mod2)
 
 # Hay
 p.hay.mod2 <- felm(ln_hay_rrev ~ dday0_10 +  dday10_30  + dday30C + prec + prec_sq | fips + year | 0 | state,
-                  data = haydat, weights = haydat$hay_w)
+                  data = cropdat, weights = cropdat$hay_w)
 
 summary(p.hay.mod2)
 
 # Wheat
 p.wheat.mod2 <- felm(ln_wheat_rrev ~ dday0_10 +  dday10_30 + dday30C + prec + prec_sq | fips + year | 0 | state,
-                  data = wheatdat, weights = wheatdat$wheat_w)
+                  data = cropdat, weights = cropdat$wheat_w)
 summary(p.wheat.mod2)
 
 
 # Soybean
 p.soybean.mod2 <- felm(ln_soybean_rrev ~ dday0_10 +  dday10_30  + dday30C + prec + prec_sq | fips + year | 0 | state,
-                  data = soybeandat, weights = soybeandat$soybean_w)
+                  data = cropdat, weights = cropdat$soybean_w)
 summary(p.soybean.mod2)
 
 

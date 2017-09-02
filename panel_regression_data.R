@@ -6,7 +6,7 @@ library(tidyverse)
 
 cropdat <- readRDS("data/full_ag_data.rds")
 cropdat <- filter(cropdat, abs(long) <= 100)
-cropdat <- filter(cropdat, year >= 1930 & year <= 2010)
+cropdat <- filter(cropdat, year >= 1970 & year <= 2010)
 
 
 cropdat$prec_sq <- cropdat$prec^2
@@ -27,13 +27,6 @@ cropdat$ln_hay_rrev <- log(1 + cropdat$hay_rrev)
 cropdat$ln_wheat_rrev <- log(1 + cropdat$wheat_rrev)
 cropdat$ln_soybean_rrev <- log(1 + cropdat$soybean_rrev)
 
-# NA = 0 for tobit
-cropdat$corn_grain_a <- ifelse(is.na(cropdat$corn_grain_a), 0, cropdat$corn_grain_a)
-cropdat$cotton_a <- ifelse(is.na(cropdat$cotton_a), 0, cropdat$cotton_a)
-cropdat$hay_a <- ifelse(is.na(cropdat$hay_a), 0, cropdat$hay_a)
-cropdat$wheat_a <- ifelse(is.na(cropdat$wheat_a), 0, cropdat$wheat_a)
-cropdat$soybean_a <- ifelse(is.na(cropdat$soybean_a), 0, cropdat$soybean_a)
-
 # Crop weights
 cropdat$corn_w <- cropdat$corn_grain_a
 cropdat$cotton_w <- cropdat$cotton_a
@@ -50,6 +43,13 @@ cropdat$p_cotton_share <- cropdat$cotton_a/cropdat$total_a
 cropdat$p_hay_share <- cropdat$hay_a/cropdat$total_a
 cropdat$p_wheat_share <- cropdat$wheat_a/cropdat$total_a
 cropdat$p_soybean_share <- cropdat$soybean_a/cropdat$total_a
+
+# Zero shares
+cropdat$p_corn_share <- ifelse(is.na(cropdat$p_corn_share), 0, cropdat$p_corn_share)
+cropdat$p_cotton_share <- ifelse(is.na(cropdat$p_cotton_share), 0, cropdat$p_cotton_share)
+cropdat$p_hay_share <- ifelse(is.na(cropdat$p_hay_share), 0, cropdat$p_hay_share)
+cropdat$p_wheat_share <- ifelse(is.na(cropdat$p_wheat_share), 0, cropdat$p_wheat_share)
+cropdat$p_soybean_share <- ifelse(is.na(cropdat$p_soybean_share), 0, cropdat$p_soybean_share)
 
 # Set weights
 cropdat <- cropdat %>% 

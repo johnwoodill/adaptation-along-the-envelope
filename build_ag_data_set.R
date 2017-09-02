@@ -373,6 +373,9 @@ fulldat <- do.call(data.frame,lapply(fulldat, function(x) replace(x, is.infinite
 
 #write.csv(fulldat, "data/full_ag_data.csv", row.names = FALSE)
 
+fulldat <- filter(fulldat, year >= 1970 & year <= 2010)
+fulldat <- filter(fulldat, abs(long) <= 100)
+
 # Filter only counties with acres in at least all five crops
 dat <- fulldat %>% 
   group_by(fips) %>% 
@@ -382,13 +385,16 @@ dat <- fulldat %>%
             wheat_a_c = length(which(!is.na(wheat_a))),
             soybean_a_c = length(which(!is.na(soybean_a))))
 
-dat <- filter(dat, corn_a_c >= 1 & 
+dat <- filter(dat, corn_a_c >= 1 &
                 cotton_a_c >= 1 &
                 hay_a_c >= 1 &
                 wheat_a_c >= 1 &
                 soybean_a_c >= 1)
 
 fips.dat <- unique(dat$fips)
+
+# Remove counties with all NA
+
 
 fulldat <- filter(fulldat, fips %in% fips.dat)
   

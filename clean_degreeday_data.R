@@ -3,21 +3,24 @@ library(tidyverse)
 setwd("/run/media/john/1TB/SpiderOak/Projects/adaptation-along-the-envelope/")
 prec <- read_csv("data/fips_precipitation_1900-2013.csv")
 
-xsectiondat <- readRDS("data/cross_section_regression_data.rds")
-xsectiondat <- dplyr::select(xsectiondat, state, fips, ln_corn_rrev, ln_cotton_rrev, ln_hay_rrev, 
+cs.dat <- readRDS("data/cross_section_regression_data.rds")
+xsectiondat <- dplyr::select(cs.sectiondat, state, fips, ln_corn_rrev, ln_cotton_rrev, ln_hay_rrev, 
                       ln_wheat_rrev, ln_soybean_rrev, p_corn_share, p_cotton_share, p_hay_share,
-                      p_wheat_share, p_soybean_share, corn_w, cotton_w, hay_w, wheat_w, soybean_w, total_w, lat, long)
+                      p_wheat_share, p_soybean_share, corn_w, cotton_w, hay_w, wheat_w, soybean_w, total_a, total_w, lat, long)
+xsectiondat.dm <- dplyr::select(cs.dat, dday0_10, dday10_30, dday30C, prec)
 
-paneldat <- readRDS("data/panel_regression_data.rds")
-paneldat <- dplyr::select(paneldat, year, state, fips, ln_corn_rrev, ln_cotton_rrev, ln_hay_rrev, 
+p.dat <- readRDS("data/panel_regression_data.rds")
+paneldat <- dplyr::select(p.dat, year, state, fips, ln_corn_rrev, ln_cotton_rrev, ln_hay_rrev, 
                       ln_wheat_rrev, ln_soybean_rrev, p_corn_share, p_cotton_share, p_hay_share,
-                      p_wheat_share, p_soybean_share, corn_w, cotton_w, hay_w, wheat_w, soybean_w, total_w, lat, long,
+                      p_wheat_share, p_soybean_share, corn_w, cotton_w, hay_w, wheat_w, soybean_w, total_a, total_w, lat, long,
                       corn_grain_a, corn_grain_p, corn_rprice)
+pdat.dm <- dplyr::select(p.dat, dday0_10, dday10_30, dday30C, prec)
 
-diffdat <- readRDS("data/diff_regression_data.rds")
-diffdat <- dplyr::select(diffdat, year, state, fips, ln_corn_rrev, ln_cotton_rrev, ln_hay_rrev, 
+diff.dat <- readRDS("data/diff_regression_data.rds")
+diffdat <- dplyr::select(diff.dat, year, state, fips, ln_corn_rrev, ln_cotton_rrev, ln_hay_rrev, 
                       ln_wheat_rrev, ln_soybean_rrev, p_corn_share, p_cotton_share, p_hay_share,
-                      p_wheat_share, p_soybean_share, corn_w, cotton_w, hay_w, wheat_w, soybean_w, total_w, lat, long)
+                      p_wheat_share, p_soybean_share, corn_w, cotton_w, hay_w, wheat_w, soybean_w, total_a, total_w, lat, long)
+diffdat.dm <- dplyr::select(diff.dat, dday0_10, dday10_30, dday30C, prec)
 
 ################################
 ################################
@@ -29,6 +32,8 @@ dd.clean <- function(x){
  dd$fips <- as.integer(dd$fips)
  dd_dat <- left_join(dd, prec, by = c("fips", "year", "month"))
  dd_dat <- filter(dd_dat, month >= 3 & month <= 9)
+ dd_dat <- filter(dd_dat, year >= 1970 & year <= 2010)
+
  dd_dat$X1 <- NULL
  
  dd_dat <- dd_dat %>%
@@ -51,9 +56,8 @@ dd.clean <- function(x){
 ################################
 # Cross-section function
 
-xsection.clean <- function(x){
+xsection.clean <- function(x, olddata = xsectiondat.dm){
   cropdat <- x
-  cropdat <- filter(cropdat, year >= 1930 & year <= 2010)
   cropdat <- cropdat %>%
       group_by(fips) %>%
       summarise(tavg = mean(tavg, na.rm = TRUE),
@@ -75,7 +79,14 @@ xsection.clean <- function(x){
   cropdat <- as.data.frame(cropdat)
   cropdat <- left_join(xsectiondat, cropdat, by = "fips")
   cropdat$`lat:long` <- cropdat$lat*cropdat$long
-  cropdat$`(Intercept)` <- 1
+  #cropdat$`(Intercept)` <- 1
+  
+  cropdat$dday0_10 <- cropdat$dday0_10 - mean(olddata$dday0_10, na.rm = TRUE)
+  cropdat$dday10_30 <- cropdat$dday10_30 - mean(olddata$dday10_30, na.rm = TRUE)
+  cropdat$dday30C <- cropdat$dday30C - mean(olddata$dday30C, na.rm = TRUE)
+  cropdat$prec <- cropdat$prec - mean(olddata$prec, na.rm = TRUE)
+  cropdat$prec_sq <- cropdat$prec^2
+  
   return(cropdat)
   }
 
@@ -84,13 +95,15 @@ xsection.clean <- function(x){
 ################################
 # Panel function
 
-panel.clean <- function(x){
+panel.clean <- function(x, olddata = pdat.dm){
   cropdat <- x
-  cropdat <- filter(cropdat, year >= 1930 & year <= 2010)
   cropdat$prec_sq <- cropdat$prec^2
   cropdat$tavg_sq <- cropdat$tavg^2
   cropdat$dday0_10 <- cropdat$dday0C - cropdat$dday10C
   cropdat$dday10_30 <- cropdat$dday10C - cropdat$dday30C
+  cropdat$lat <- NULL
+  cropdat$long <- NULL
+  cropdat$state <- NULL
   
   cropdat$tavg_sq <- cropdat$tavg^2
   cropdat$prec_sq <- cropdat$prec^2
@@ -99,6 +112,14 @@ panel.clean <- function(x){
   cropdat <- ungroup(cropdat)
   cropdat <- as.data.frame(cropdat)
   cropdat <- left_join(paneldat, cropdat, by = c("year", "fips"))
+  
+  cropdat$dday0_10 <- cropdat$dday0_10 - mean(olddata$dday0_10, na.rm = TRUE)
+  cropdat$dday10_30 <- cropdat$dday10_30 - mean(olddata$dday10_30, na.rm = TRUE)
+  cropdat$dday30C <- cropdat$dday30C - mean(olddata$dday30C, na.rm = TRUE)
+  cropdat$prec <- cropdat$prec - mean(olddata$prec, na.rm = TRUE)
+  cropdat$prec_sq <- cropdat$prec^2
+  cropdat$`lat:long` <- cropdat$lat*cropdat$long
+  cropdat$`(Intercept)` <- 1
   return(cropdat)
 }
 
@@ -107,7 +128,7 @@ panel.clean <- function(x){
 ################################
 # Difference function
 
-diff.clean <- function(x){
+diff.clean <- function(x, olddata = diffdat.dm){
   cropdat <- x
 
   decade_merge <- function(dat, begd, endd, int){
@@ -129,26 +150,43 @@ diff.clean <- function(x){
     return(mergdat)
   }
   
-  decadedat <- decade_merge(cropdat, 1930, 2000, 10)
+  decadedat <- decade_merge(cropdat, 1970, 2000, 10)
   
   decadedat$dday0_10 <- decadedat$dday0C - decadedat$dday10C
   decadedat$dday10_30 <- decadedat$dday10C - decadedat$dday30C
   
   decadedat$tavg_sq <- decadedat$tavg^2
   decadedat$prec_sq <- decadedat$prec^2
-
-  
   decadedat <- ungroup(decadedat)
   decadedat <- as.data.frame(decadedat)
   decadedat <- left_join(diffdat, decadedat, by = c("year", "fips"))
+  
+  decadedat$dday0_10 <- decadedat$dday0_10 - mean(diffdat.dm$dday0_10, na.rm = TRUE)
+  decadedat$dday10_30 <- decadedat$dday10_30 - mean(diffdat.dm$dday10_30, na.rm = TRUE)
+  decadedat$dday30C <- decadedat$dday30C - mean(diffdat.dm$dday30C, na.rm = TRUE)
+  decadedat$prec <- decadedat$prec - mean(diffdat.dm$prec, na.rm = TRUE)
+  decadedat$prec_sq <- decadedat$prec^2
+  decadedat$`lat:long` <- decadedat$lat*decadedat$long
+  #decadedat$`(Intercept)` <- 1
   return(decadedat)
 }
+
+
+# Degree day changes 0C
+dd0 <- readRDS("data/full_ag_data.rds")
+dd0.xsection <- xsection.clean(dd0, xsectiondat.dm)
+dd0.panel <- panel.clean(dd0)
+dd0.diff <- diff.clean(dd0)
+
+saveRDS(dd0.xsection, "data/degree_day_changes/cross_section_regression_data_0C")
+saveRDS(dd0.panel, "data/degree_day_changes/panel_regression_data_0C")
+saveRDS(dd0.diff, "data/degree_day_changes/diff_regression_data_0C")
 
 
 # Degree day changes 1C
 dd1 <- readRDS("data/degree_day_changes/fips_degree_days_1C_1900-2013.rds")
 dd1 <- dd.clean(dd1)
-dd1.xsection <- xsection.clean(dd1)
+dd1.xsection <- xsection.clean(dd1, xsectiondat.dm)
 dd1.panel <- panel.clean(dd1)
 dd1.diff <- diff.clean(dd1)
 

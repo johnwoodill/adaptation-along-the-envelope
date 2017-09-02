@@ -7,7 +7,7 @@ setwd("/run/media/john/1TB/SpiderOak/Projects/adaptation-along-the-envelope/")
 
 # Crop data
 cropdat <- readRDS("data/full_ag_data.rds")
-cropdat <- filter(cropdat, year >= 1930 & year <= 2010)
+cropdat <- filter(cropdat, year >= 1970 & year <= 2010)
 
 # East of 100th meridian
 cropdat <- filter(cropdat, abs(long) <= 100)
@@ -23,25 +23,18 @@ cropdat$tavg_sq <- cropdat$tavg^2
 cropdat$dday0_10 <- cropdat$dday0C - cropdat$dday10C
 cropdat$dday10_30 <- cropdat$dday10C - cropdat$dday30C
 
-cropdat$corn_rrev <- ifelse(is.na(cropdat$corn_rrev), 0, cropdat$corn_rrev)
-cropdat$cotton_rrev <- ifelse(is.na(cropdat$cotton_rrev), 0, cropdat$cotton_rrev)
-cropdat$hay_rrev <- ifelse(is.na(cropdat$hay_rrev), 0, cropdat$hay_rrev)
-cropdat$wheat_rrev <- ifelse(is.na(cropdat$wheat_rrev), 0, cropdat$wheat_rrev)
-cropdat$soybean_rrev <- ifelse(is.na(cropdat$soybean_rrev), 0, cropdat$soybean_rrev)
+# cropdat$corn_rrev <- ifelse(is.na(cropdat$corn_rrev), 0, cropdat$corn_rrev)
+# cropdat$cotton_rrev <- ifelse(is.na(cropdat$cotton_rrev), 0, cropdat$cotton_rrev)
+# cropdat$hay_rrev <- ifelse(is.na(cropdat$hay_rrev), 0, cropdat$hay_rrev)
+# cropdat$wheat_rrev <- ifelse(is.na(cropdat$wheat_rrev), 0, cropdat$wheat_rrev)
+# cropdat$soybean_rrev <- ifelse(is.na(cropdat$soybean_rrev), 0, cropdat$soybean_rrev)
 
 # Log revenue
-cropdat$ln_corn_rrev <- log(1 + cropdat$corn_rrev)
-cropdat$ln_cotton_rrev <- log(1 + cropdat$cotton_rrev)
-cropdat$ln_hay_rrev <- log(1 + cropdat$hay_rrev)
-cropdat$ln_wheat_rrev <- log(1 + cropdat$wheat_rrev)
-cropdat$ln_soybean_rrev <- log(1 + cropdat$soybean_rrev)
-
-# NA = 0 for tobit
-cropdat$corn_grain_a <- ifelse(is.na(cropdat$corn_grain_a), 0, cropdat$corn_grain_a)
-cropdat$cotton_a <- ifelse(is.na(cropdat$cotton_a), 0, cropdat$cotton_a)
-cropdat$hay_a <- ifelse(is.na(cropdat$hay_a), 0, cropdat$hay_a)
-cropdat$wheat_a <- ifelse(is.na(cropdat$wheat_a), 0, cropdat$wheat_a)
-cropdat$soybean_a <- ifelse(is.na(cropdat$soybean_a), 0, cropdat$soybean_a)
+cropdat$ln_corn_rrev <- log(cropdat$corn_rrev)
+cropdat$ln_cotton_rrev <- log(cropdat$cotton_rrev)
+cropdat$ln_hay_rrev <- log(cropdat$hay_rrev)
+cropdat$ln_wheat_rrev <- log(cropdat$wheat_rrev)
+cropdat$ln_soybean_rrev <- log(cropdat$soybean_rrev)
 
 # Crop weights
 cropdat$corn_w <- cropdat$corn_grain_a
@@ -112,12 +105,6 @@ cropdat <- cropdat %>%
             long = mean(long, na.rm = TRUE)) %>% 
   ungroup()
 
-# NA = 0 for tobit
-# cropdat$p_corn_share <- ifelse(is.na(cropdat$p_corn_share), 0, cropdat$p_corn_share)
-# cropdat$p_cotton_share <- ifelse(is.na(cropdat$p_cotton_share), 0, cropdat$p_cotton_share)
-# cropdat$p_hay_share <- ifelse(is.na(cropdat$p_hay_share), 0, cropdat$p_hay_share)
-# cropdat$p_wheat_share <- ifelse(is.na(cropdat$p_wheat_share), 0, cropdat$p_wheat_share)
-# cropdat$p_soybean_share <- ifelse(is.na(cropdat$p_soybean_share), 0, cropdat$p_soybean_share)
 
 cropdat$dday0_10 <- cropdat$dday0C - cropdat$dday10C
 cropdat$dday10_30 <- cropdat$dday10C - cropdat$dday30C

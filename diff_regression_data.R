@@ -3,6 +3,7 @@ library(tidyverse)
 # Baseline for predictions
 # 10-year interval 1960's and 2000's --------------------------------------
 setwd("/run/media/john/1TB/SpiderOak/Projects/adaptation-along-the-envelope/")
+
 cropdat <- readRDS("data/full_ag_data.rds")
 
 # East of 100th meridian
@@ -103,6 +104,7 @@ decade_merge <- function(dat, begd, endd, int){
                 ndday0C = mean(ndday0C, na.rm = TRUE),
                 prec = mean(prec, na.rm = TRUE),
                 total_w = mean(total_a, na.rm = TRUE),
+                total_a = mean(total_a, na.rm = TRUE),
                 corn_w = mean(corn_w, na.rm = TRUE),
                 cotton_w = mean(cotton_w, na.rm = TRUE),
                 hay_w = mean(hay_w, na.rm = TRUE),
@@ -119,7 +121,7 @@ decade_merge <- function(dat, begd, endd, int){
 }
 
 
-decadedat <- decade_merge(cropdat, 1930, 2000, 10)
+decadedat <- decade_merge(cropdat, 1970, 2000, 10)
 
 decadedat <- decadedat %>% 
   group_by(fips) %>% 
@@ -136,7 +138,7 @@ decadedat$dday10_30 <- decadedat$dday10C - decadedat$dday30C
 
 decadedat$tavg_sq <- decadedat$tavg^2
 decadedat$prec_sq <- decadedat$prec^2
-#decadedat$`lat:long` <- cropdat$lat*cropdat$long
+decadedat$`lat:long` <- decadedat$lat*decadedat$long
 #decadedat$`(Intercept)` <- 1
 
 saveRDS(decadedat, "data/diff_regression_data.rds")
