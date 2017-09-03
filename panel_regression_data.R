@@ -5,8 +5,6 @@ library(tidyverse)
 
 
 cropdat <- readRDS("data/full_ag_data.rds")
-cropdat <- filter(cropdat, abs(long) <= 100)
-cropdat <- filter(cropdat, year >= 1970 & year <= 2010)
 
 
 cropdat$prec_sq <- cropdat$prec^2
@@ -27,12 +25,11 @@ cropdat$ln_hay_rrev <- log(1 + cropdat$hay_rrev)
 cropdat$ln_wheat_rrev <- log(1 + cropdat$wheat_rrev)
 cropdat$ln_soybean_rrev <- log(1 + cropdat$soybean_rrev)
 
-# Crop weights
-cropdat$corn_w <- cropdat$corn_grain_a
-cropdat$cotton_w <- cropdat$cotton_a
-cropdat$hay_w <- cropdat$hay_a
-cropdat$wheat_w <- cropdat$wheat_a
-cropdat$soybean_w <- cropdat$soybean_a
+cropdat$corn_grain_w <- ifelse(is.na(cropdat$corn_grain_a), 0, cropdat$corn_grain_a)
+cropdat$cotton_w <- ifelse(is.na(cropdat$cotton_a), 0, cropdat$cotton_a)
+cropdat$hay_w <- ifelse(is.na(cropdat$hay_a), 0, cropdat$hay_a)
+cropdat$wheat_w <- ifelse(is.na(cropdat$wheat_a), 0, cropdat$wheat_a)
+cropdat$soybean_w <- ifelse(is.na(cropdat$soybean_a), 0, cropdat$soybean_a)
 
 # Total acres
 cropdat$total_a <- rowSums(cropdat[,c("corn_grain_a", "cotton_a", "hay_a", "wheat_a", "soybean_a")], na.rm = TRUE)

@@ -373,11 +373,11 @@ fulldat <- do.call(data.frame,lapply(fulldat, function(x) replace(x, is.infinite
 
 #write.csv(fulldat, "data/full_ag_data.csv", row.names = FALSE)
 
-fulldat <- filter(fulldat, year >= 1970 & year <= 2010)
-fulldat <- filter(fulldat, abs(long) <= 100)
-
 # Filter only counties with acres in at least all five crops
-dat <- fulldat %>% 
+data <- filter(fulldat, year >= 1970 & year <= 2010)
+data <- filter(data, abs(long) <= 100)
+
+dat <- data %>% 
   group_by(fips) %>% 
   summarise(corn_a_c = length(which(!is.na(corn_grain_a))),
             cotton_a_c = length(which(!is.na(cotton_a))),
@@ -392,12 +392,38 @@ dat <- filter(dat, corn_a_c >= 1 &
                 soybean_a_c >= 1)
 
 fips.dat <- unique(dat$fips)
-
-# Remove counties with all NA
-
-
+length(fips.dat)
 fulldat <- filter(fulldat, fips %in% fips.dat)
-  
+
+# corn <- filter(fulldat, corn_grain_a >= 0)
+# corn.y <- data.frame(table(corn$year))
+# 
+# cotton <- filter(fulldat, cotton_a >= 0)
+# cotton.y <- data.frame(table(cotton$year))
+# 
+# 
+# hay <- filter(fulldat, hay_a >= 0)
+# hay.y <- data.frame(table(hay$year))
+# 
+# wheat <- filter(fulldat, wheat_a >= 0)
+# wheat.y <- data.frame(table(wheat$year))
+# 
+# soybean <- filter(fulldat, soybean_a >= 0)
+# soybean.y <- data.frame(table(soybean$year))
+# 
+# d <- left_join(corn.y, cotton.y, by = "Var1") %>% 
+#   left_join(., hay.y, by = "Var1") %>% 
+#   left_join(., wheat.y, by = "Var1") %>% 
+#   left_join(., soybean.y, by = "Var1")
+# 
+# names(d) <- c("year", "corn", "cotton", "hay", "wheat", "soybean")
+# d$c.diff <- d$corn - d$cotton
+
+
+
+
+
+
 saveRDS(fulldat, "data/full_ag_data.rds")
 fulldat <- readRDS("data/full_ag_data.rds")
 

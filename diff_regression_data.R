@@ -6,9 +6,6 @@ setwd("/run/media/john/1TB/SpiderOak/Projects/adaptation-along-the-envelope/")
 
 cropdat <- readRDS("data/full_ag_data.rds")
 
-# East of 100th meridian
-cropdat <- filter(cropdat, abs(long) <= 100)
-
 # Soil data
 #soil <- read_dta("data/soilData.dta")
 #soil <- readRDS("data/soilData.rds")
@@ -121,7 +118,7 @@ decade_merge <- function(dat, begd, endd, int){
 }
 
 
-decadedat <- decade_merge(cropdat, 1970, 2000, 10)
+decadedat <- decade_merge(cropdat, 1950, 2000, 10)
 
 decadedat <- decadedat %>% 
   group_by(fips) %>% 

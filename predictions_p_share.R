@@ -113,7 +113,7 @@ corn.pred <- predictShare(models = corn.models, data = model.dat, crop = "Corn")
 
 predacres <- as.data.frame(corn.pred$pred.acres$diff.acres) %>% 
   group_by(temp) %>% 
-  summarise(acres = mean(acres))
+  summarise(acres = sum(acres))
 predacres
 
 ggplot(corn.pred$pred.change, aes(temp, share, group = reg)) + 
@@ -150,11 +150,35 @@ ggplot(soybean.pred$pred.change, aes(temp, share, group = reg)) +
 
 pa <- rbind(corn.pred$pred.change, cotton.pred$pred.change, hay.pred$pred.change, wheat.pred$pred.change, soybean.pred$pred.change)
 saveRDS(pa, "data/avg_predicted_acreage.rds")
+
+pacres <- rbind(corn.pred$pred.acres$p.acres, cotton.pred$pred.acres$p.acres, hay.pred$pred.acres$p.acres, wheat.pred$pred.acres$p.acres, soybean.pred$pred.acres$p.acres)
+
+predacres <- pacres %>% 
+  group_by(temp) %>% 
+  summarise(acres = sum(acres))
+predacres
+
+
+predacres <- pacres %>% 
+  group_by(temp, crop) %>% 
+  summarise(acres = sum(acres))
+predacres
+
+ggplot(predacres, aes(temp, acres, color = crop )) + geom_line() + ggtitle("Sum of Predicted Acres by Crop") + ylab("Total Predicted Acres")+
+  annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey")+
+  annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
+  scale_x_continuous(labels = c("0", "+1", "+2", "+3", "+4", "+5")) +
+  theme_tufte(base_size = 14) +  xlab("Change in Temperature (C)") +
+  theme(panel.grid = element_blank(),legend.position = "top",
+        legend.title = element_blank()) 
+
+
+
 pa$share <- round(pa$share)
 
 p1 <- ggplot(pa, aes(temp, share, color = reg)) + 
   geom_line(alpha=0.3, size=0.7) + ylab("Crop Acreage Impact (% Change) ") + 
-  xlab(NULL) + 
+  xlab("Change in Temperature (C)") +
   geom_hline(yintercept = 0, linetype = "dashed", color = "grey")+
   facet_wrap(~crop) + 
   annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey")+
