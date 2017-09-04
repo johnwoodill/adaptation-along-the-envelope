@@ -131,6 +131,7 @@ ggplot(soybean.pred$pred.change, aes(temp, rev, group = reg)) +
 
 
 plot.dat <- rbind(corn.pred$pred.change, cotton.pred$pred.change, hay.pred$pred.change, wheat.pred$pred.change, soybean.pred$pred.change)
+rev.dat <- rbind(corn.pred$pred.rev$cs.acres)
 saveRDS(plot.dat, "data/pred_rev_dat.rds")
 
 p1 <- ggplot(plot.dat, aes(temp, rev, color = reg)) + 
