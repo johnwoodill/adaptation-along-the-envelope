@@ -4,7 +4,7 @@ setwd("/run/media/john/1TB/SpiderOak/Projects/adaptation-along-the-envelope/")
 prec <- read_csv("data/fips_precipitation_1900-2013.csv")
 
 cs.dat <- readRDS("data/cross_section_regression_data.rds")
-xsectiondat <- dplyr::select(cs.sectiondat, state, fips, ln_corn_rrev, ln_cotton_rrev, ln_hay_rrev, 
+xsectiondat <- dplyr::select(cs.dat, state, fips, ln_corn_rrev, ln_cotton_rrev, ln_hay_rrev, 
                       ln_wheat_rrev, ln_soybean_rrev, p_corn_share, p_cotton_share, p_hay_share,
                       p_wheat_share, p_soybean_share, corn_w, cotton_w, hay_w, wheat_w, soybean_w, total_a, total_w, lat, long)
 xsectiondat.dm <- dplyr::select(cs.dat, dday0_10, dday10_30, dday30C, prec)
@@ -32,7 +32,7 @@ dd.clean <- function(x){
  dd$fips <- as.integer(dd$fips)
  dd_dat <- left_join(dd, prec, by = c("fips", "year", "month"))
  dd_dat <- filter(dd_dat, month >= 3 & month <= 9)
- dd_dat <- filter(dd_dat, year >= 1950 & year <= 2010)
+ dd_dat <- filter(dd_dat, year >= 1970 & year <= 2010)
 
  dd_dat$X1 <- NULL
  
@@ -150,7 +150,7 @@ diff.clean <- function(x, olddata = diffdat.dm){
     return(mergdat)
   }
   
-  decadedat <- decade_merge(cropdat, 1950, 2000, 10)
+  decadedat <- decade_merge(cropdat, 1970, 2000, 10)
   
   decadedat$dday0_10 <- decadedat$dday0C - decadedat$dday10C
   decadedat$dday10_30 <- decadedat$dday10C - decadedat$dday30C

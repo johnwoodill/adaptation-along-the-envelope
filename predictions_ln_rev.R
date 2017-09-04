@@ -3,8 +3,8 @@ library(lfe)
 
 setwd("/run/media/john/1TB/SpiderOak/Projects/adaptation-along-the-envelope/")
 
-source("predictFelm.R")
-source("predictRev.R")
+source("R/predictFelm.R")
+source("R/predictRev.R")
 
 # New Degree Day Data
 
@@ -107,13 +107,13 @@ ggplot(corn.pred$pred.change, aes(temp, rev, group = reg)) +
 # Cotton predictions
 cotton.pred <- predictRev(models = cotton.models, data = model.dat, crop = "Cotton")
 ggplot(cotton.pred$pred.change, aes(temp, rev, group = reg)) + 
-  geom_ribbon(aes(ymin = min, ymax = max), fill = "#C0CCD5") + 
+  #geom_ribbon(aes(ymin = min, ymax = max), fill = "#C0CCD5") + 
   geom_line(aes(temp, rev, color = reg)) + geom_hline(yintercept = 0, linetype = "dashed")
 
 # Hay predictions
 hay.pred <- predictRev(models = hay.models, data = model.dat, crop = "hay")
 ggplot(hay.pred$pred.change, aes(temp, rev, group = reg)) + 
-  geom_ribbon(aes(ymin = min, ymax = max), fill = "#C0CCD5") + 
+  #geom_ribbon(aes(ymin = min, ymax = max), fill = "#C0CCD5") + 
   geom_line(aes(temp, rev, color = reg)) + geom_hline(yintercept = 0, linetype = "dashed")
 
 # Wheat predictions

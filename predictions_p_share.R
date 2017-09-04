@@ -5,8 +5,9 @@ library(cowplot)
 library(ggthemes)
 
 setwd("/run/media/john/1TB/SpiderOak/Projects/adaptation-along-the-envelope/")
-source("predictFelm.R")
-source("predictShare.R")
+source("R/predictFelm.R")
+source("R/predictShare.R")
+source("R/fitWeight.R")
 
 tobit.ey <- function(mu, sigma){
   p0 <- pnorm(mu/sigma)
@@ -108,131 +109,198 @@ model.dat <- list(cs.0C = cs.0C,
 # data = model.dat
 # crop = "Corn"
 
-# Corn predictions
-corn.pred <- predictShare(models = corn.models, data = model.dat, crop = "Corn")
-
-predacres <- as.data.frame(corn.pred$pred.acres$diff.acres) %>% 
-  group_by(temp) %>% 
-  summarise(acres = sum(acres))
-predacres
-
-ggplot(corn.pred$pred.change, aes(temp, share, group = reg)) + 
-  #geom_ribbon(aes(ymin = min, ymax = max), fill = "#C0CCD5") + 
-  geom_line(aes(temp, share, color = reg)) + geom_hline(yintercept = 0, linetype = "dashed")
-
-# Cotton predictions
-cotton.pred <- predictShare(models = cotton.models, data = model.dat, crop = "Cotton")
-ggplot(cotton.pred$pred.change, aes(temp, share, group = reg)) + 
-  #geom_ribbon(aes(ymin = min, ymax = max), fill = "#C0CCD5") + 
-  geom_line(aes(temp, share, color = reg)) + geom_hline(yintercept = 0, linetype = "dashed")
-
-# Hay predictions
+# Cross-section Predictions
+corn.pred <- predictShare(models = corn.models, data = model.dat, crop = "corn")
+cotton.pred <- predictShare(models = cotton.models, data = model.dat, crop = "cotton")
 hay.pred <- predictShare(models = hay.models, data = model.dat, crop = "hay")
-ggplot(hay.pred$pred.change, aes(temp, share, group = reg)) + 
-  #geom_ribbon(aes(ymin = min, ymax = max), fill = "#C0CCD5") + 
-  geom_line(aes(temp, share, color = reg)) + geom_hline(yintercept = 0, linetype = "dashed")
-
-# Wheat predictions
 wheat.pred <- predictShare(models = wheat.models, data = model.dat, crop = "wheat")
-ggplot(wheat.pred$pred.change, aes(temp, share, group = reg)) + 
-  #geom_ribbon(aes(ymin = min, ymax = max), fill = "#C0CCD5") + 
-  geom_line(aes(temp, share, color = reg)) + geom_hline(yintercept = 0, linetype = "dashed")
-
-# Soybean predictions
 soybean.pred <- predictShare(models = soybean.models, data = model.dat, crop = "soybean")
-ggplot(soybean.pred$pred.change, aes(temp, share, group = reg)) + 
-  #geom_ribbon(aes(ymin = min, ymax = max), fill = "#C0CCD5") + 
-  geom_line(aes(temp, share, color = reg)) + geom_hline(yintercept = 0, linetype = "dashed")
+
+# Cross-section weighted proportions
+corn.pred_prop <- corn.pred$pred.prop$cs.prop
+cotton.pred_prop <- cotton.pred$pred.prop$cs.prop
+hay.pred_prop <- hay.pred$pred.prop$cs.prop
+wheat.pred_prop <- wheat.pred$pred.prop$cs.prop
+soybean.pred_prop <- soybean.pred$pred.prop$cs.prop
+
+# Bind and weight
+pred.prop <- rbind(corn.pred_prop, cotton.pred_prop, hay.pred_prop, wheat.pred_prop, soybean.pred_prop)
+cs.prop_w <- fitWeight(pred.prop)
+
+cs.prop_w$corn <- cs.prop_w$corn*cs.0C$total_a
+cs.prop_w$cotton <- cs.prop_w$cotton*cs.0C$total_a
+cs.prop_w$hay <- cs.prop_w$hay*cs.0C$total_a
+cs.prop_w$wheat <- cs.prop_w$wheat*cs.0C$total_a
+cs.prop_w$soybean <- cs.prop_w$soybean*cs.0C$total_a
 
 
-
-# Merge data
-
-pa <- rbind(corn.pred$pred.change, cotton.pred$pred.change, hay.pred$pred.change, wheat.pred$pred.change, soybean.pred$pred.change)
-saveRDS(pa, "data/avg_predicted_acreage.rds")
-
-pacres <- rbind(corn.pred$pred.acres$p.acres, cotton.pred$pred.acres$p.acres, hay.pred$pred.acres$p.acres, wheat.pred$pred.acres$p.acres, soybean.pred$pred.acres$p.acres)
-
-predacres <- pacres %>% 
-  group_by(temp) %>% 
-  summarise(acres = sum(acres))
-predacres
-
-
-predacres <- pacres %>% 
+cs.prop_w <- gather(cs.prop_w, key = crop, value = acres, -temp)
+saveRDS(cs.prop_w, "data/cs.prop_w.rds")
+plot.cs_prop <- cs.prop_w %>% 
   group_by(temp, crop) %>% 
-  summarise(acres = sum(acres))
-predacres
+  summarise(sum_a = sum(acres))
 
-ggplot(predacres, aes(temp, acres, color = crop )) + geom_line() + ggtitle("Sum of Predicted Acres by Crop") + ylab("Total Predicted Acres")+
-  annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey")+
-  annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
-  scale_x_continuous(labels = c("0", "+1", "+2", "+3", "+4", "+5")) +
-  theme_tufte(base_size = 14) +  xlab("Change in Temperature (C)") +
-  theme(panel.grid = element_blank(),legend.position = "top",
-        legend.title = element_blank()) 
+sum_a <- cs.prop_w %>% 
+  group_by(temp) %>% 
+  summarise(sum_a = sum(acres))
+
+ggplot(plot.cs_prop, aes(temp, sum_a, color = crop)) + geom_line() + geom_line(data = sum_a, aes(temp, sum_a), linetype = "dashed", color = "grey") + 
+  annotate("text", x = 0.5, y = 21764450, label = "Total Acres")
 
 
+# Panel weighted proportions
+corn.pred_prop <- corn.pred$pred.prop$p.prop
+cotton.pred_prop <- cotton.pred$pred.prop$p.prop
+hay.pred_prop <- hay.pred$pred.prop$p.prop
+wheat.pred_prop <- wheat.pred$pred.prop$p.prop
+soybean.pred_prop <- soybean.pred$pred.prop$p.prop
 
-pa$share <- round(pa$share)
+# Bind and weight
+pred.prop <- rbind(corn.pred_prop, cotton.pred_prop, hay.pred_prop, wheat.pred_prop, soybean.pred_prop)
+p.prop_w <- fitWeight(pred.prop)
 
-p1 <- ggplot(pa, aes(temp, share, color = reg)) + 
-  geom_line(alpha=0.3, size=0.7) + ylab("Crop Acreage Impact (% Change) ") + 
-  xlab("Change in Temperature (C)") +
-  geom_hline(yintercept = 0, linetype = "dashed", color = "grey")+
-  facet_wrap(~crop) + 
-  annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey")+
-  annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
-  scale_x_continuous(labels = c("0", "+1", "+2", "+3", "+4", "+5")) +
-  theme_tufte(base_size = 14) +
-  theme(panel.grid = element_blank(),legend.position = "top",
-        legend.title = element_blank()) +
-  guides(colour=guide_legend(override.aes=list(alpha = 1, size=1))) +
-  theme(legend.position = "top",
-        legend.title = element_blank()) + 
-  geom_text_repel(aes(temp, share, label = share), show.legend  = FALSE) 
-p1
+p.prop_w$corn <- p.prop_w$corn*p.0C$total_a
+p.prop_w$cotton <- p.prop_w$cotton*p.0C$total_a
+p.prop_w$hay <- p.prop_w$hay*p.0C$total_a
+p.prop_w$wheat <- p.prop_w$wheat*p.0C$total_a
+p.prop_w$soybean <- p.prop_w$soybean*p.0C$total_a
 
 
-pa$acreage <- round(pa$acreage, 2)
+p.prop_w <- gather(p.prop_w, key = crop, value = acres, -temp)
+saveRDS(p.prop_w, "data/p.prop_w.rds")
+plot.cs_prop <- p.prop_w %>% 
+  group_by(temp, crop) %>% 
+  summarise(sum_a = sum(acres))
 
-pa.plot <- ggplot(pa, aes(temp, acreage, color = reg)) + 
-  geom_line(alpha=0.3, size=0.7) + ylab("Crop Acreage Impact (% Change) ") + 
-  xlab(NULL) + 
-  geom_hline(yintercept = 0, linetype = "dashed", color = "grey")+
-  facet_wrap(~crop) + 
-  annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey")+
-  annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
-  scale_x_continuous(labels = c("0", "+1", "+2", "+3", "+4", "+5")) +
-  theme_tufte(base_size = 14) +
-  theme(panel.grid = element_blank(),legend.position = "top",
-        legend.title = element_blank()) +
-  guides(colour=guide_legend(override.aes=list(alpha = 1, size=1))) +
-  theme(legend.position = "top",
-        legend.title = element_blank()) 
-  #geom_text_repel(aes(temp, acreage, label = acreage), show.legend  = FALSE) 
-pa.plot
+sum_a <- p.prop_w %>% 
+  group_by(temp) %>% 
+  summarise(sum_a = sum(acres))
+
+ggplot(plot.cs_prop, aes(temp, sum_a, color = crop)) + geom_line() + geom_line(data = sum_a, aes(temp, sum_a), linetype = "dashed", color = "grey") + 
+  annotate("text", x = 0.5, y = 21764450, label = "Total Acres")
 
 
+# Difference weighted proportions
+corn.pred_prop <- corn.pred$pred.prop$diff.prop
+cotton.pred_prop <- cotton.pred$pred.prop$diff.prop
+hay.pred_prop <- hay.pred$pred.prop$diff.prop
+wheat.pred_prop <- wheat.pred$pred.prop$diff.prop
+soybean.pred_prop <- soybean.pred$pred.prop$diff.prop
+
+# Bind and weight
+pred.prop <- rbind(corn.pred_prop, cotton.pred_prop, hay.pred_prop, wheat.pred_prop, soybean.pred_prop)
+diff.prop_w <- fitWeight(pred.prop)
+
+diff.prop_w$corn <- diff.prop_w$corn*diff.0C$total_a
+diff.prop_w$cotton <- diff.prop_w$cotton*diff.0C$total_a
+diff.prop_w$hay <- diff.prop_w$hay*diff.0C$total_a
+diff.prop_w$wheat <- diff.prop_w$wheat*diff.0C$total_a
+diff.prop_w$soybean <- diff.prop_w$soybean*diff.0C$total_a
+
+
+diff.prop_w <- gather(diff.prop_w, key = crop, value = acres, -temp)
+saveRDS(diff.prop_w, "data/diff.prop_w.rds")
+plot.cs_prop <- diff.prop_w %>% 
+  group_by(temp, crop) %>% 
+  summarise(sum_a = sum(acres))
+
+sum_a <- p.prop_w %>% 
+  group_by(temp) %>% 
+  summarise(sum_a = sum(acres))
+
+ggplot(plot.cs_prop, aes(temp, sum_a, color = crop)) + geom_line() + geom_line(data = sum_a, aes(temp, sum_a), linetype = "dashed", color = "grey") + 
+  annotate("text", x = 0.5, y = 21764450, label = "Total Acres")
 
 
 
 
-p2 <- ggplot(filter(plotdat, crop %in% c("Wheat", "Cotton")), aes(temp, share, color = reg)) + 
-  geom_line(alpha=0.3, size=0.7) + ylab("Crop Acreage Impact (% Change) ") + 
-  xlab(NULL) + 
-  geom_hline(yintercept = 0, linetype = "dashed", color = "grey")+
-  facet_wrap(~crop) + 
-  annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey")+
-  annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
-  scale_x_continuous(labels = c("+1", "+2", "+3", "+4", "+5")) +
-  theme_tufte(base_size = 14) +
-  theme(panel.grid = element_blank(),legend.position = "top",
-        legend.title = element_blank()) +
-  guides(colour=guide_legend(override.aes=list(alpha = 1, size=1))) +
-  theme(legend.position = "none",
-        legend.title = element_blank()) + 
-  geom_text_repel(aes(temp, share, label = rev), show.legend  = FALSE) + xlab("Change in Temperature (C)")  
-p2
-
-plot_grid(p1, p2, ncol = 1)
+# # Merge data
+# 
+# pred_change <- rbind(corn.pred$pred.change, cotton.pred$pred.change, hay.pred$pred.change, wheat.pred$pred.change, soybean.pred$pred.change)
+# saveRDS(pred_change, "data/avg_predicted_acreage.rds")
+# 
+# pacres <- rbind(corn.pred$pred.acres$p.acres, cotton.pred$pred.acres$p.acres, hay.pred$pred.acres$p.acres, wheat.pred$pred.acres$p.acres, soybean.pred$pred.acres$p.acres)
+# 
+# predacres <- pacres %>% 
+#   group_by(temp) %>% 
+#   summarise(acres = sum(acres))
+# predacres
+# 
+# 
+# predacres <- pacres %>% 
+#   group_by(temp, crop) %>% 
+#   summarise(acres = sum(acres))
+# predacres
+# 
+# ggplot(predacres, aes(temp, acres, color = crop )) + geom_line() + ggtitle("Sum of Predicted Acres by Crop") + ylab("Total Predicted Acres")+
+#   annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey")+
+#   annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
+#   scale_x_continuous(labels = c("0", "+1", "+2", "+3", "+4", "+5")) +
+#   theme_tufte(base_size = 14) +  xlab("Change in Temperature (C)") +
+#   theme(panel.grid = element_blank(),legend.position = "top",
+#         legend.title = element_blank()) 
+# 
+# 
+# 
+# pa$share <- round(pa$share)
+# 
+# p1 <- ggplot(pa, aes(temp, share, color = reg)) + 
+#   geom_line(alpha=0.3, size=0.7) + ylab("Crop Acreage Impact (% Change) ") + 
+#   xlab("Change in Temperature (C)") +
+#   geom_hline(yintercept = 0, linetype = "dashed", color = "grey")+
+#   facet_wrap(~crop) + 
+#   annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey")+
+#   annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
+#   scale_x_continuous(labels = c("0", "+1", "+2", "+3", "+4", "+5")) +
+#   theme_tufte(base_size = 14) +
+#   theme(panel.grid = element_blank(),legend.position = "top",
+#         legend.title = element_blank()) +
+#   guides(colour=guide_legend(override.aes=list(alpha = 1, size=1))) +
+#   theme(legend.position = "top",
+#         legend.title = element_blank()) + 
+#   geom_text_repel(aes(temp, share, label = share), show.legend  = FALSE) 
+# p1
+# 
+# 
+# pa$acreage <- round(pa$acreage, 2)
+# 
+# pa.plot <- ggplot(pa, aes(temp, acreage, color = reg)) + 
+#   geom_line(alpha=0.3, size=0.7) + ylab("Crop Acreage Impact (% Change) ") + 
+#   xlab(NULL) + 
+#   geom_hline(yintercept = 0, linetype = "dashed", color = "grey")+
+#   facet_wrap(~crop) + 
+#   annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey")+
+#   annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
+#   scale_x_continuous(labels = c("0", "+1", "+2", "+3", "+4", "+5")) +
+#   theme_tufte(base_size = 14) +
+#   theme(panel.grid = element_blank(),legend.position = "top",
+#         legend.title = element_blank()) +
+#   guides(colour=guide_legend(override.aes=list(alpha = 1, size=1))) +
+#   theme(legend.position = "top",
+#         legend.title = element_blank()) 
+#   #geom_text_repel(aes(temp, acreage, label = acreage), show.legend  = FALSE) 
+# pa.plot
+# 
+# 
+# 
+# 
+# 
+# 
+# p2 <- ggplot(filter(plotdat, crop %in% c("Wheat", "Cotton")), aes(temp, share, color = reg)) + 
+#   geom_line(alpha=0.3, size=0.7) + ylab("Crop Acreage Impact (% Change) ") + 
+#   xlab(NULL) + 
+#   geom_hline(yintercept = 0, linetype = "dashed", color = "grey")+
+#   facet_wrap(~crop) + 
+#   annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey")+
+#   annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
+#   scale_x_continuous(labels = c("+1", "+2", "+3", "+4", "+5")) +
+#   theme_tufte(base_size = 14) +
+#   theme(panel.grid = element_blank(),legend.position = "top",
+#         legend.title = element_blank()) +
+#   guides(colour=guide_legend(override.aes=list(alpha = 1, size=1))) +
+#   theme(legend.position = "none",
+#         legend.title = element_blank()) + 
+#   geom_text_repel(aes(temp, share, label = rev), show.legend  = FALSE) + xlab("Change in Temperature (C)")  
+# p2
+# 
+# plot_grid(p1, p2, ncol = 1)

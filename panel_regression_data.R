@@ -3,7 +3,7 @@ library(tidyverse)
 
 # Baseline for predictions ------------------------------------------------
 
-
+setwd("/run/media/john/1TB/SpiderOak/Projects/adaptation-along-the-envelope/")
 cropdat <- readRDS("data/full_ag_data.rds")
 
 
@@ -25,7 +25,7 @@ cropdat$ln_hay_rrev <- log(1 + cropdat$hay_rrev)
 cropdat$ln_wheat_rrev <- log(1 + cropdat$wheat_rrev)
 cropdat$ln_soybean_rrev <- log(1 + cropdat$soybean_rrev)
 
-cropdat$corn_grain_w <- ifelse(is.na(cropdat$corn_grain_a), 0, cropdat$corn_grain_a)
+cropdat$corn_w <- ifelse(is.na(cropdat$corn_grain_a), 0, cropdat$corn_grain_a)
 cropdat$cotton_w <- ifelse(is.na(cropdat$cotton_a), 0, cropdat$cotton_a)
 cropdat$hay_w <- ifelse(is.na(cropdat$hay_a), 0, cropdat$hay_a)
 cropdat$wheat_w <- ifelse(is.na(cropdat$wheat_a), 0, cropdat$wheat_a)
