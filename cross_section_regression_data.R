@@ -31,11 +31,11 @@ cropdat$ln_hay_rrev <- log(1 + cropdat$hay_rrev)
 cropdat$ln_wheat_rrev <- log(1 + cropdat$wheat_rrev)
 cropdat$ln_soybean_rrev <- log(1 + cropdat$soybean_rrev)
 
-# cropdat$corn_grain_a <- ifelse(is.na(cropdat$corn_grain_a), 0, cropdat$corn_grain_a)
-# cropdat$cotton_a <- ifelse(is.na(cropdat$cotton_a), 0, cropdat$cotton_a)
-# cropdat$hay_a <- ifelse(is.na(cropdat$hay_a), 0, cropdat$hay_a)
-# cropdat$wheat_a <- ifelse(is.na(cropdat$wheat_a), 0, cropdat$wheat_a)
-# cropdat$soybean_a <- ifelse(is.na(cropdat$soybean_a), 0, cropdat$soybean_a)
+cropdat$corn_grain_a <- ifelse(is.na(cropdat$corn_grain_a), 0, cropdat$corn_grain_a)
+cropdat$cotton_a <- ifelse(is.na(cropdat$cotton_a), 0, cropdat$cotton_a)
+cropdat$hay_a <- ifelse(is.na(cropdat$hay_a), 0, cropdat$hay_a)
+cropdat$wheat_a <- ifelse(is.na(cropdat$wheat_a), 0, cropdat$wheat_a)
+cropdat$soybean_a <- ifelse(is.na(cropdat$soybean_a), 0, cropdat$soybean_a)
 
 # Crop weights
 cropdat$corn_w <- cropdat$corn_grain_a
@@ -104,7 +104,7 @@ cropdat <- cropdat %>%
             total_a = mean(total_a, na.rm = TRUE),
             lat = mean(lat, na.rm = TRUE),
             long = mean(long, na.rm = TRUE)) %>% 
-  ungroup()
+  ungroup() 
 
 
 cropdat$dday0_10 <- cropdat$dday0C - cropdat$dday10C
@@ -114,6 +114,12 @@ cropdat$prec_sq <- cropdat$prec^2
 cropdat$tavg_sq <- cropdat$tavg^2
 cropdat$`lat:long` <- cropdat$lat*cropdat$long
 cropdat$`(Intercept)` <- 1
+
+cropdat$ln_corn_rrev <- ifelse(is.na(cropdat$ln_corn_rrev), 0, cropdat$ln_corn_rrev)
+cropdat$ln_cotton_rrev <- ifelse(is.na(cropdat$ln_cotton_rrev), 0, cropdat$ln_cotton_rrev)
+cropdat$ln_hay_rrev <- ifelse(is.na(cropdat$ln_hay_rrev), 0, cropdat$ln_hay_rrev)
+cropdat$ln_wheat_rrev <- ifelse(is.na(cropdat$ln_wheat_rrev), 0, cropdat$ln_wheat_rrev)
+cropdat$ln_soybean_rrev <- ifelse(is.na(cropdat$ln_soybean_rrev), 0, cropdat$ln_soybean_rrev)
 
 # cropdat <- left_join(cropdat, soil, by = "fips")
 

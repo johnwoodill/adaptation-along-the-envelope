@@ -129,13 +129,35 @@ ggplot(soybean.pred$pred.change, aes(temp, rev, group = reg)) +
   geom_line(aes(temp, rev, color = reg)) + geom_hline(yintercept = 0, linetype = "dashed")
 
 
-
+library(ggthemes)
+library(ggrepel)
 plot.dat <- rbind(corn.pred$pred.change, cotton.pred$pred.change, hay.pred$pred.change, wheat.pred$pred.change, soybean.pred$pred.change)
-rev.dat <- rbind(corn.pred$pred.rev$cs.acres)
-saveRDS(plot.dat, "data/pred_rev_dat.rds")
+
+cs.pred_dat <- rbind(corn.pred$pred.rev$cs.acres, 
+                     cotton.pred$pred.rev$cs.acres, 
+                     hay.pred$pred.rev$cs.acres, 
+                     wheat.pred$pred.rev$cs.acres, 
+                     soybean.pred$pred.rev$cs.acres)
+
+p.pred_dat <- rbind(corn.pred$pred.rev$p.acres, 
+                     cotton.pred$pred.rev$p.acres, 
+                     hay.pred$pred.rev$p.acres, 
+                     wheat.pred$pred.rev$p.acres, 
+                     soybean.pred$pred.rev$p.acres)
+
+diff.pred_dat <- rbind(corn.pred$pred.rev$diff.acres, 
+                     cotton.pred$pred.rev$diff.acres, 
+                     hay.pred$pred.rev$diff.acres, 
+                     wheat.pred$pred.rev$diff.acres, 
+                     soybean.pred$pred.rev$diff.acres)
+
+saveRDS(cs.pred_dat, "data/cs.pred_revenue.rds")
+saveRDS(p.pred_dat, "data/p.pred_revenue.rds")
+saveRDS(diff.pred_dat, "data/diff.pred_revenue.rds")
+
 
 p1 <- ggplot(plot.dat, aes(temp, rev, color = reg)) + 
-  geom_ribbon(aes(ymin = min, ymax = max), fill = "#C0CCD5", size = 0) + 
+  #geom_ribbon(aes(ymin = min, ymax = max), fill = "#C0CCD5", size = 0) + 
   geom_line() + ylab("Revenue/Acre Impact (% Change) ") + 
   geom_point(size = 0.5) +
   xlab("Change in Temperature (C)") + 

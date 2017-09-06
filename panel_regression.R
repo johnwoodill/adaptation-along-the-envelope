@@ -60,29 +60,28 @@ saveRDS(p.soybean.mod2, "models/p.dd.ln_soybean_rrev")
 
 # Corn
 p.corn.mod2 <- tobit(p_corn_share ~  dday0_10 + dday10_30  + dday30C + prec + prec_sq + lat + long + lat:long + cluster(state),
-                  data = cropdat, weights = (cropdat$total_w))
+                  data = cropdat)
 summary(p.corn.mod2)
-
 
 # Cotton
 p.cotton.mod2 <- tobit(p_cotton_share ~ dday0_10 + dday10_30  + dday30C +  prec + prec_sq + lat + long + lat:long + cluster(state),
-                  data = cropdat, weights = (cropdat$total_w))
+                  data = cropdat)
 summary(p.cotton.mod2)
 
 
 # Hay
 p.hay.mod2 <- tobit(p_hay_share ~ dday0_10 +  dday10_30  + dday30C +  prec + prec_sq + lat + long + lat:long + cluster(state),
-                  data = cropdat, weights = (cropdat$total_w))
+                  data = cropdat)
 summary(p.hay.mod2)
 
 # Wheat
 p.wheat.mod2 <- tobit(p_wheat_share ~ dday0_10 + dday10_30  + dday30C +  prec + prec_sq + lat + long + lat:long + cluster(state),
-                  data = cropdat, weights = (cropdat$total_w ))
+                  data = cropdat)
 summary(p.wheat.mod2)
 
 # Soybean
 p.soybean.mod2 <- tobit(p_soybean_share ~ dday0_10 + dday10_30  + dday30C +  prec + prec_sq + lat + long + lat:long + cluster(state),
-                  data = cropdat, weights = (cropdat$total_w ))
+                  data = cropdat)
 summary(p.soybean.mod2)
 
 saveRDS(p.corn.mod2, "models/p.dd.p_corn_share")

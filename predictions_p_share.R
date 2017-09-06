@@ -139,45 +139,22 @@ saveRDS(cs.prop_w, "data/cs.prop_w.rds")
 plot.cs_prop <- cs.prop_w %>% 
   group_by(temp, crop) %>% 
   summarise(sum_a = sum(acres))
+plot.cs_prop$reg <- "Cross-section"
 
 sum_a <- cs.prop_w %>% 
   group_by(temp) %>% 
   summarise(sum_a = sum(acres))
 
-ggplot(plot.cs_prop, aes(temp, sum_a, color = crop)) + geom_line() + geom_line(data = sum_a, aes(temp, sum_a), linetype = "dashed", color = "grey") + 
-  annotate("text", x = 0.5, y = 21764450, label = "Total Acres")
 
-
-# Panel weighted proportions
-corn.pred_prop <- corn.pred$pred.prop$p.prop
-cotton.pred_prop <- cotton.pred$pred.prop$p.prop
-hay.pred_prop <- hay.pred$pred.prop$p.prop
-wheat.pred_prop <- wheat.pred$pred.prop$p.prop
-soybean.pred_prop <- soybean.pred$pred.prop$p.prop
-
-# Bind and weight
-pred.prop <- rbind(corn.pred_prop, cotton.pred_prop, hay.pred_prop, wheat.pred_prop, soybean.pred_prop)
-p.prop_w <- fitWeight(pred.prop)
-
-p.prop_w$corn <- p.prop_w$corn*p.0C$total_a
-p.prop_w$cotton <- p.prop_w$cotton*p.0C$total_a
-p.prop_w$hay <- p.prop_w$hay*p.0C$total_a
-p.prop_w$wheat <- p.prop_w$wheat*p.0C$total_a
-p.prop_w$soybean <- p.prop_w$soybean*p.0C$total_a
-
-
-p.prop_w <- gather(p.prop_w, key = crop, value = acres, -temp)
-saveRDS(p.prop_w, "data/p.prop_w.rds")
-plot.cs_prop <- p.prop_w %>% 
-  group_by(temp, crop) %>% 
-  summarise(sum_a = sum(acres))
-
-sum_a <- p.prop_w %>% 
-  group_by(temp) %>% 
-  summarise(sum_a = sum(acres))
-
-ggplot(plot.cs_prop, aes(temp, sum_a, color = crop)) + geom_line() + geom_line(data = sum_a, aes(temp, sum_a), linetype = "dashed", color = "grey") + 
-  annotate("text", x = 0.5, y = 21764450, label = "Total Acres")
+ggplot(plot.cs_prop, aes(temp, sum_a/1000000, color = crop)) + geom_line() + geom_line(data = sum_a, aes(temp, sum_a/1000000), linetype = "dashed", color = "grey") + 
+  annotate("text", x = 0.5, y = sum_a$sum_a[1]/1000000 - (sum_a$sum_a[1]*.05)/1000000, label = "Total Crop Acres") + 
+  theme_tufte(base_size = 14) + ylab("Total Acres \n (Million)") + xlab("Change in Temperature (C)") +
+  theme(legend.position = "top",  legend.title = element_blank()) +
+   annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey")+
+   annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
+   scale_x_continuous(labels = c("0", "+1", "+2", "+3", "+4", "+5")) + 
+  ggtitle("Predicted Crop Acres with Increase in Temperature \n (Cross-section estimates)")
+   
 
 
 # Difference weighted proportions
@@ -200,19 +177,31 @@ diff.prop_w$soybean <- diff.prop_w$soybean*diff.0C$total_a
 
 diff.prop_w <- gather(diff.prop_w, key = crop, value = acres, -temp)
 saveRDS(diff.prop_w, "data/diff.prop_w.rds")
-plot.cs_prop <- diff.prop_w %>% 
+plot.diff_prop <- diff.prop_w %>% 
   group_by(temp, crop) %>% 
   summarise(sum_a = sum(acres))
+plot.diff_prop$reg <- "Difference"
 
-sum_a <- p.prop_w %>% 
+sum_a <- diff.prop_w %>% 
   group_by(temp) %>% 
   summarise(sum_a = sum(acres))
+tacres <- paste0("Total Crop Acres = ",round(sum_a$sum_a[1]/1000000), " Million")
 
-ggplot(plot.cs_prop, aes(temp, sum_a, color = crop)) + geom_line() + geom_line(data = sum_a, aes(temp, sum_a), linetype = "dashed", color = "grey") + 
-  annotate("text", x = 0.5, y = 21764450, label = "Total Acres")
+ggplot(plot.diff_prop, aes(temp, sum_a/1000000, color = crop)) +  geom_line() + #geom_line(data = sum_a, aes(temp, sum_a/1000000), linetype = "dashed", color = "grey") + 
+  annotate("text", x = 1, y = 100, label = tacres) + 
+  theme_tufte(base_size = 14) + ylab("Total Acres \n (Million)") + xlab("Change in Temperature (C)") +
+  theme(legend.position = "top",  legend.title = element_blank()) +
+   annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey")+
+   annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
+   scale_x_continuous(labels = c("0", "+1", "+2", "+3", "+4", "+5")) + 
+  ggtitle("Predicted Crop Acres with Increase in Temperature \n (Difference estimates)")
 
 
+plotdat <- rbind(plot.cs_prop, plot.diff_prop)
+ggplot(plotdat, aes(temp, sum_a, color = crop)) + geom_line() + facet_wrap(~reg)
 
+saveRDS(cs.prop_w, "data/cs.predicted_acres.rds")
+saveRDS(diff.prop_w, "data/diff.predicted_acres.rds")
 
 # # Merge data
 # 

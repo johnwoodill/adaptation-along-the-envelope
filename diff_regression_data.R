@@ -16,11 +16,11 @@ cropdat$tavg_sq <- cropdat$tavg^2
 cropdat$dday0_10 <- cropdat$dday0C - cropdat$dday10C
 cropdat$dday10_30 <- cropdat$dday10C - cropdat$dday30C
 
-cropdat$corn_rrev <- ifelse(is.na(cropdat$corn_rrev), 0, cropdat$corn_rrev)
-cropdat$cotton_rrev <- ifelse(is.na(cropdat$cotton_rrev), 0, cropdat$cotton_rrev)
-cropdat$hay_rrev <- ifelse(is.na(cropdat$hay_rrev), 0, cropdat$hay_rrev)
-cropdat$wheat_rrev <- ifelse(is.na(cropdat$wheat_rrev), 0, cropdat$wheat_rrev)
-cropdat$soybean_rrev <- ifelse(is.na(cropdat$soybean_rrev), 0, cropdat$soybean_rrev)
+# cropdat$corn_rrev <- ifelse(is.na(cropdat$corn_rrev), 0, cropdat$corn_rrev)
+# cropdat$cotton_rrev <- ifelse(is.na(cropdat$cotton_rrev), 0, cropdat$cotton_rrev)
+# cropdat$hay_rrev <- ifelse(is.na(cropdat$hay_rrev), 0, cropdat$hay_rrev)
+# cropdat$wheat_rrev <- ifelse(is.na(cropdat$wheat_rrev), 0, cropdat$wheat_rrev)
+# cropdat$soybean_rrev <- ifelse(is.na(cropdat$soybean_rrev), 0, cropdat$soybean_rrev)
 
 # Log revenue
 cropdat$ln_corn_rrev <- log(1 + cropdat$corn_rrev)
@@ -35,16 +35,33 @@ cropdat$cotton_a <- ifelse(is.na(cropdat$cotton_a), 0, cropdat$cotton_a)
 cropdat$hay_a <- ifelse(is.na(cropdat$hay_a), 0, cropdat$hay_a)
 cropdat$wheat_a <- ifelse(is.na(cropdat$wheat_a), 0, cropdat$wheat_a)
 cropdat$soybean_a <- ifelse(is.na(cropdat$soybean_a), 0, cropdat$soybean_a)
+cropdat$total_a <- rowSums(cropdat[,c("corn_grain_a", "cotton_a", "hay_a", "wheat_a", "soybean_a")], na.rm = TRUE)
+
+weightdat <- cropdat %>% 
+  select(year, fips, total_a, corn_grain_a, cotton_a, hay_a, wheat_a, soybean_a) %>% 
+  #filter(year >= 1930 & year <= 1950) %>% 
+  group_by(fips) %>% 
+  summarise(total_w = mean(total_a, na.rm = TRUE),
+          corn_w = mean(corn_grain_a, na.rm = TRUE),
+          cotton_w = mean(cotton_a, na.rm = TRUE),
+          hay_w = mean(hay_a, na.rm = TRUE),
+          wheat_w = mean(wheat_a, na.rm = TRUE),
+          soybean_w = mean(soybean_a, na.rm = TRUE))
+
+cropdat <- left_join(cropdat, weightdat, by = "fips")
+
+
 
 # Crop weights
-cropdat$corn_w <- cropdat$corn_grain_a
-cropdat$cotton_w <- cropdat$cotton_a
-cropdat$hay_w <- cropdat$hay_a
-cropdat$wheat_w <- cropdat$wheat_a
-cropdat$soybean_w <- cropdat$soybean_a
+# cropdat$corn_w <- cropdat$corn_grain_a
+# cropdat$cotton_w <- cropdat$cotton_a
+# cropdat$hay_w <- cropdat$hay_a
+# cropdat$wheat_w <- cropdat$wheat_a
+# cropdat$soybean_w <- cropdat$soybean_a
 
 # Total acres
 cropdat$total_a <- rowSums(cropdat[,c("corn_grain_a", "cotton_a", "hay_a", "wheat_a", "soybean_a")], na.rm = TRUE)
+
 
 # Get proportion of crop share
 cropdat$p_corn_share <- cropdat$corn_grain_a/cropdat$total_a
@@ -100,7 +117,7 @@ decade_merge <- function(dat, begd, endd, int){
                 dday34C = mean(dday34C, na.rm = TRUE),
                 ndday0C = mean(ndday0C, na.rm = TRUE),
                 prec = mean(prec, na.rm = TRUE),
-                total_w = mean(total_a, na.rm = TRUE),
+                total_w = mean(total_w, na.rm = TRUE),
                 total_a = mean(total_a, na.rm = TRUE),
                 corn_w = mean(corn_w, na.rm = TRUE),
                 cotton_w = mean(cotton_w, na.rm = TRUE),
@@ -118,17 +135,28 @@ decade_merge <- function(dat, begd, endd, int){
 }
 
 
-decadedat <- decade_merge(cropdat, 1970, 2000, 10)
+decadedat <- decade_merge(cropdat, 1950, 2000, 10)
 
-decadedat <- decadedat %>% 
-  group_by(fips) %>% 
-  mutate(total_w = mean(total_w, na.rm = TRUE),
-         corn_w = mean(corn_w, na.rm = TRUE),
-         cotton_w = mean(cotton_w, na.rm = TRUE),
-         hay_w = mean(hay_w, na.rm = TRUE),
-         wheat_w = mean(wheat_w, na.rm = TRUE),
-         soybean_w = mean(soybean_w, na.rm = TRUE))
+# decadedat <- decadedat %>% 
+#   group_by(fips) %>% 
+#   mutate(total_w = mean(total_w, na.rm = TRUE),
+#          corn_w = mean(corn_w, na.rm = TRUE),
+#          cotton_w = mean(cotton_w, na.rm = TRUE),
+#          hay_w = mean(hay_w, na.rm = TRUE),
+#          wheat_w = mean(wheat_w, na.rm = TRUE),
+#          soybean_w = mean(soybean_w, na.rm = TRUE))
 
+# weightdat <- cropdat %>% 
+#   select(year, fips, total_w, corn_w, cotton_w, hay_w, wheat_w, soybean_w) %>% 
+#   filter(year >= 1930 & year <= 1950) %>% 
+#   group_by(fips) %>% 
+#   summarise(total_w = mean(total_w, na.rm = TRUE),
+#           corn_w = mean(corn_w, na.rm = TRUE),
+#           cotton_w = mean(cotton_w, na.rm = TRUE),
+#           hay_w = mean(hay_w, na.rm = TRUE),
+#           wheat_w = mean(wheat_w, na.rm = TRUE),
+#           soybean_w = mean(soybean_w, na.rm = TRUE))
+# decadedat <- anti_join(decadedat, weightdat, by = "fips")
 
 decadedat$dday0_10 <- decadedat$dday0C - decadedat$dday10C
 decadedat$dday10_30 <- decadedat$dday10C - decadedat$dday30C
@@ -136,7 +164,12 @@ decadedat$dday10_30 <- decadedat$dday10C - decadedat$dday30C
 decadedat$tavg_sq <- decadedat$tavg^2
 decadedat$prec_sq <- decadedat$prec^2
 decadedat$`lat:long` <- decadedat$lat*decadedat$long
-#decadedat$`(Intercept)` <- 1
+
+decadedat$ln_corn_rrev <- ifelse(is.na(decadedat$ln_corn_rrev), 0, decadedat$ln_corn_rrev)
+decadedat$ln_cotton_rrev <- ifelse(is.na(decadedat$ln_cotton_rrev), 0, decadedat$ln_cotton_rrev)
+decadedat$ln_hay_rrev <- ifelse(is.na(decadedat$ln_hay_rrev), 0, decadedat$ln_hay_rrev)
+decadedat$ln_wheat_rrev <- ifelse(is.na(decadedat$ln_wheat_rrev), 0, decadedat$ln_wheat_rrev)
+decadedat$ln_soybean_rrev <- ifelse(is.na(decadedat$ln_soybean_rrev), 0, decadedat$ln_soybean_rrev)
 
 saveRDS(decadedat, "data/diff_regression_data.rds")
 

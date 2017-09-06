@@ -51,30 +51,29 @@ saveRDS(diff.soybean.mod1, "models/diff.dd.ln_soybean_rrev")
 # Proportion of acreage regressions
 
 # Corn
-diff.corn.mod2 <- tobit(p_corn_share ~  dday0_10 + dday10_30  + dday30C + prec + prec_sq + lat + long + lat:long + 
-                          cluster(state),
+diff.corn.mod2 <- tobit(p_corn_share ~  dday0_10 + dday10_30  + dday30C + prec + prec_sq + lat + long + lat:long,
                   data = decadedat, weights = (decadedat$total_w ))
 summary(diff.corn.mod2)
 
 
 # Cotton
-diff.cotton.mod2 <- tobit(p_cotton_share ~ dday0_10 + dday10_30  + dday30C +  prec + prec_sq + lat + long + lat:long +  cluster(state),
+diff.cotton.mod2 <- tobit(p_cotton_share ~ dday0_10 + dday10_30  + dday30C +  prec + prec_sq+ lat + long + lat:long,
                   data = decadedat, weights = (decadedat$total_w ))
 summary(diff.cotton.mod2)
 
 
 # Hay
-diff.hay.mod2 <- tobit(p_hay_share ~ dday0_10 +  dday10_30  + dday30C +  prec + prec_sq + lat + long + lat:long +  cluster(state),
+diff.hay.mod2 <- tobit(p_hay_share ~ dday0_10 +  dday10_30  + dday30C +  prec + prec_sq+ lat + long + lat:long,
                   data = decadedat, weights = (decadedat$total_w ))
 summary(diff.hay.mod2)
 
 # Wheat
-diff.wheat.mod2 <- tobit(p_wheat_share ~ dday0_10 + dday10_30  + dday30C +  prec + prec_sq + lat + long + lat:long + cluster(state),
+diff.wheat.mod2 <- tobit(p_wheat_share ~ dday0_10 + dday10_30  + dday30C +  prec + prec_sq+ lat + long + lat:long,
                   data = decadedat, weights = (decadedat$total_w ))
 summary(diff.wheat.mod2)
 
 # Soybean
-diff.soybean.mod2 <- tobit(p_soybean_share ~ dday0_10 + dday10_30  + dday30C +  prec + prec_sq + lat + long + lat:long +  cluster(state),
+diff.soybean.mod2 <- tobit(p_soybean_share ~ dday0_10 + dday10_30  + dday30C +  prec + prec_sq+ lat + long + lat:long,
                   data = decadedat, weights = (decadedat$total_w ))
 summary(diff.soybean.mod2)
 
