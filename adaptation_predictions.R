@@ -127,6 +127,21 @@ ggplot(change, aes(temp, diff/1000000, color = crop)) + geom_line() +
   geom_hline(yintercept = 0, linetype = "dashed", color = "grey") 
 
 
+t_change <- cs.rev %>% 
+  group_by(temp ) %>% 
+  summarise(diff = sum(diff))
+change
+
+ggplot(t_change, aes(temp, diff/1000000)) + geom_line() + 
+  ggtitle("Difference in Total Revenue with and without Adaptation \n [Revenue (w/ Adaptation) - Revenue (w/o Adaptation)]") + theme_tufte() + ylab("Difference in Total Revenue \n (Million $)") +
+  annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey") +
+  annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
+  scale_x_continuous(labels = c("0", "+1", "+2", "+3", "+4", "+5")) +
+      theme(legend.position = c(0,1), legend.justification = c("left", "top"), legend.box.background = element_rect(colour = "grey"), 
+        legend.title = element_blank(), legend.key = element_blank())  +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "grey") 
+
+
 # # Predictions under model predictions -------------------------------------
 # 
 # adapt <- adapt %>% 

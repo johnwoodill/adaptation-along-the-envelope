@@ -88,6 +88,7 @@ cropdat <- cropdat %>%
             dday15C = mean(dday15C, na.rm = TRUE),
             dday17C = mean(dday17C, na.rm = TRUE),
             dday18C = mean(dday18C, na.rm = TRUE),
+            dday20C = mean(dday20C, na.rm = TRUE),
             dday29C = mean(dday29C, na.rm = TRUE),
             dday30C = mean(dday30C, na.rm = TRUE),
             dday10C = mean(dday10C, na.rm = TRUE),
@@ -127,3 +128,4 @@ cropdat <- ungroup(cropdat)
 cropdat <- as.data.frame(cropdat)
 
 saveRDS(cropdat, "data/cross_section_regression_data.rds")
+

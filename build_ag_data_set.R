@@ -214,7 +214,9 @@ cropdat <- cropdat %>%
          hay_a = na.approx(hay_a, na.rm = FALSE),
          hay_p = na.approx(hay_p, na.rm = FALSE),
          wheat_a = na.approx(wheat_a, na.rm = FALSE),
-         wheat_p = na.approx(wheat_p, na.rm = FALSE)) %>% 
+         wheat_p = na.approx(wheat_p, na.rm = FALSE),
+         soybean_a = na.approx(soybean_a, na.rm = FALSE),
+         soybean_p = na.approx(soybean_p, na.rm = FALSE)) %>% 
    ungroup()
 #head(testdat)
 
@@ -487,6 +489,11 @@ fulldat <- do.call(data.frame,lapply(fulldat, function(x) replace(x, is.infinite
 
 
 data <- filter(fulldat, abs(long) <= 100)
+data <- filter(data, year >= 1930 & year <= 2010)
+saveRDS(data, "data/full_ag_data.rds")
+source("map_of_counties.R")
+data <- filter(data, fips %in% fipss)
+
 
 # dat <- data %>% 
 #   group_by(fips) %>% 
@@ -518,7 +525,7 @@ data <- filter(fulldat, abs(long) <= 100)
 #             soybean = year[mw(soybean_a)])
 # 
 # head(bdd)
-data <- filter(data, year >= 1930 & year <= 2010)
+
 
 # corn <- filter(fulldat, corn_grain_a >= 0)
 # corn.y <- data.frame(table(corn$year))

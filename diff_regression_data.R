@@ -35,11 +35,11 @@ cropdat$cotton_a <- ifelse(is.na(cropdat$cotton_a), 0, cropdat$cotton_a)
 cropdat$hay_a <- ifelse(is.na(cropdat$hay_a), 0, cropdat$hay_a)
 cropdat$wheat_a <- ifelse(is.na(cropdat$wheat_a), 0, cropdat$wheat_a)
 cropdat$soybean_a <- ifelse(is.na(cropdat$soybean_a), 0, cropdat$soybean_a)
-cropdat$total_a <- rowSums(cropdat[,c("corn_grain_a", "cotton_a", "hay_a", "wheat_a", "soybean_a")], na.rm = TRUE)
+ cropdat$total_a <- rowSums(cropdat[,c("corn_grain_a", "cotton_a", "hay_a", "wheat_a", "soybean_a")], na.rm = TRUE)
 
 weightdat <- cropdat %>% 
   select(year, fips, total_a, corn_grain_a, cotton_a, hay_a, wheat_a, soybean_a) %>% 
-  #filter(year >= 1930 & year <= 1950) %>% 
+  #filter(year >= 1950 & year < 1960) %>% 
   group_by(fips) %>% 
   summarise(total_w = mean(total_a, na.rm = TRUE),
           corn_w = mean(corn_grain_a, na.rm = TRUE),
@@ -126,7 +126,8 @@ decade_merge <- function(dat, begd, endd, int){
                 soybean_w = mean(soybean_w, na.rm = TRUE),
                 lat = mean(lat, na.rm = TRUE),
                 long = mean(long, na.rm = TRUE)) %>% 
-      ungroup()
+      ungroup() #%>% 
+      #complete(fips)
     
     int.dat$year <- i
     mergdat <- rbind(mergdat, int.dat)
@@ -164,6 +165,13 @@ decadedat$dday10_30 <- decadedat$dday10C - decadedat$dday30C
 decadedat$tavg_sq <- decadedat$tavg^2
 decadedat$prec_sq <- decadedat$prec^2
 decadedat$`lat:long` <- decadedat$lat*decadedat$long
+
+# Get proportion of crop share
+decadedat$p_corn_share <- ifelse(is.na(decadedat$p_corn_share), 0, decadedat$p_corn_share)
+decadedat$p_cotton_share <- ifelse(is.na(decadedat$p_cotton_share), 0, decadedat$p_cotton_share)
+decadedat$p_hay_share <- ifelse(is.na(decadedat$p_hay_share), 0, decadedat$p_hay_share)
+decadedat$p_wheat_share <- ifelse(is.na(decadedat$p_wheat_share), 0, decadedat$p_wheat_share)
+decadedat$p_soybean_share <- ifelse(is.na(decadedat$p_soybean_share), 0, decadedat$p_soybean_share)
 
 decadedat$ln_corn_rrev <- ifelse(is.na(decadedat$ln_corn_rrev), 0, decadedat$ln_corn_rrev)
 decadedat$ln_cotton_rrev <- ifelse(is.na(decadedat$ln_cotton_rrev), 0, decadedat$ln_cotton_rrev)

@@ -68,7 +68,7 @@ diff.hay.mod2 <- tobit(p_hay_share ~ dday0_10 +  dday10_30  + dday30C +  prec + 
 summary(diff.hay.mod2)
 
 # Wheat
-diff.wheat.mod2 <- tobit(p_wheat_share ~ dday0_10 + dday10_30  + dday30C +  prec + prec_sq+ lat + long + lat:long,
+diff.wheat.mod2 <- tobit(p_wheat_share ~ dday0_10 + dday10_30  + dday30C +  prec + prec_sq,
                   data = decadedat, weights = (decadedat$total_w ))
 summary(diff.wheat.mod2)
 

@@ -31,8 +31,9 @@ cs.hay.mod1 <- felm(ln_hay_rrev ~ dday0_10 + dday10_30  + dday30C + prec + prec_
 summary(cs.hay.mod1)
 
 # Wheat
-cs.wheat.mod1 <- felm(ln_wheat_rrev ~ dday0_10  + dday10_30 + dday30C + prec + prec_sq  | state | 0 | state,
+cs.wheat.mod1 <- felm(ln_wheat_rrev ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq  | state | 0 | state,
                   data = cropdat, weights = cropdat$wheat_w)
+
 summary(cs.wheat.mod1)
 
 # Soybean
