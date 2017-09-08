@@ -36,7 +36,7 @@ p.hay.mod2 <- felm(ln_hay_rrev ~ dday0_10 +  dday10_30  + dday30C + prec + prec_
 summary(p.hay.mod2)
 
 # Wheat
-p.wheat.mod2 <- felm(ln_wheat_rrev ~ dday0_10 +  dday10_30 + dday30C + prec + prec_sq | fips + year | 0 | state,
+p.wheat.mod2 <- felm(ln_wheat_rrev ~ dday0_10 +  dday10_30 + prec + prec_sq | fips + year | 0 | state,
                   data = cropdat, weights = cropdat$wheat_w)
 summary(p.wheat.mod2)
 
@@ -75,7 +75,7 @@ p.hay.mod2 <- tobit(p_hay_share ~ dday0_10 +  dday10_30  + dday30C +  prec + pre
 summary(p.hay.mod2)
 
 # Wheat
-p.wheat.mod2 <- tobit(p_wheat_share ~ dday0_10 +  dday10_30  + dday30C +  prec + prec_sq + lat + long + lat:long + cluster(state),
+p.wheat.mod2 <- tobit(p_wheat_share ~ dday0_10 +  dday10_30 + dday30C  +  prec + prec_sq + lat + long + lat:long + cluster(state),
                   data = cropdat, weights = cropdat$total_w + 1)
 summary(p.wheat.mod2)
 

@@ -173,54 +173,54 @@ p1 <- ggplot(plot.dat, aes(temp, rev, color = reg)) +
 p1
 
 #  Full Plot --------------------------------------------------------------
-library(ggrepel)
-library(ggthemes)
-library(ggplot2)
-
-pred_rev_dat <- rbind(corn.pred_rev, cotton.pred_rev, hay.pred_rev, wheat.pred_rev, soybean.pred_rev)
-
-
-# Merge data
-plotdat <- rbind(corn.plotdat, cotton.plotdat, hay.plotdat, wheat.plotdat, soybean.plotdat)
-saveRDS(plotdat, "data/pred_plot_dat.rds")
-plotdat <- readRDS("data/pred_plot_dat.rds")
-plotdat$rev <- round(plotdat$rev, 2)
-plotdat$min <- round(plotdat$min, 2)
-plotdat$max <- round(plotdat$max, 2)
-
-p1 <- ggplot(plotdat, aes(temp, rev, color = reg)) + 
-  #geom_ribbon(aes(ymin = min, ymax = max), fill = "#C0CCD5", size = 0) + 
-  geom_line() + ylab("Revenue/Acre Impact (% Change) ") + 
-  geom_point(size = 0.5) +
-  xlab("Change in Temperature (C)") + 
-  geom_hline(yintercept = 0, linetype = "dashed", color = "grey")+
-  facet_wrap(~crop) + 
-  annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey")+
-  annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
-  scale_x_continuous(labels = c("0", "+1", "+2", "+3", "+4", "+5")) +
-  theme_tufte(base_size = 14) +
-  theme(legend.position = "top",
-        legend.title = element_blank()) + 
-  geom_text_repel(aes(temp, rev, label = round(rev)), show.legend  = FALSE, alpha = 0.5) 
-p1
-
-p1 <- ggplot(filter(plotdat, crop %in% c("Corn", "cotton", "hay", "wheat")), aes(temp, rev, color = reg)) + 
-  ylab("Revenue/Acre Impact (% Change) ") + 
-  geom_ribbon(aes(ymin = min, ymax = max), size = 0, fill = "#C0CCD5") + 
-  geom_line() +
-  ylim(-100, 50) +
-  geom_point(size = 0.5) +
-  xlab("Change in Temperature (C)") + 
-  geom_hline(yintercept = 0, linetype = "dashed", color = "grey")+
-  facet_wrap(~crop) + 
-  annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey")+
-  annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
-  scale_x_continuous(labels = c("0", "+1", "+2", "+3", "+4", "+5")) +
-  theme_tufte(base_size = 14) +
-  theme(legend.position = "top",
-        legend.title = element_blank()) + 
-  geom_text_repel(aes(temp, rev, label = rev), show.legend  = FALSE, alpha = 0.5) 
-p1
+# library(ggrepel)
+# library(ggthemes)
+# library(ggplot2)
+# 
+# pred_rev_dat <- rbind(corn.pred_rev, cotton.pred_rev, hay.pred_rev, wheat.pred_rev, soybean.pred_rev)
+# 
+# 
+# # Merge data
+# plotdat <- rbind(corn.plotdat, cotton.plotdat, hay.plotdat, wheat.plotdat, soybean.plotdat)
+# saveRDS(plotdat, "data/pred_plot_dat.rds")
+# plotdat <- readRDS("data/pred_plot_dat.rds")
+# plotdat$rev <- round(plotdat$rev, 2)
+# plotdat$min <- round(plotdat$min, 2)
+# plotdat$max <- round(plotdat$max, 2)
+# 
+# p1 <- ggplot(plotdat, aes(temp, rev, color = reg)) + 
+#   #geom_ribbon(aes(ymin = min, ymax = max), fill = "#C0CCD5", size = 0) + 
+#   geom_line() + ylab("Revenue/Acre Impact (% Change) ") + 
+#   geom_point(size = 0.5) +
+#   xlab("Change in Temperature (C)") + 
+#   geom_hline(yintercept = 0, linetype = "dashed", color = "grey")+
+#   facet_wrap(~crop) + 
+#   annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey")+
+#   annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
+#   scale_x_continuous(labels = c("0", "+1", "+2", "+3", "+4", "+5")) +
+#   theme_tufte(base_size = 14) +
+#   theme(legend.position = "top",
+#         legend.title = element_blank()) + 
+#   geom_text_repel(aes(temp, rev, label = round(rev)), show.legend  = FALSE, alpha = 0.5) 
+# p1
+# 
+# p1 <- ggplot(filter(plotdat, crop %in% c("Corn", "cotton", "hay", "wheat")), aes(temp, rev, color = reg)) + 
+#   ylab("Revenue/Acre Impact (% Change) ") + 
+#   geom_ribbon(aes(ymin = min, ymax = max), size = 0, fill = "#C0CCD5") + 
+#   geom_line() +
+#   ylim(-100, 50) +
+#   geom_point(size = 0.5) +
+#   xlab("Change in Temperature (C)") + 
+#   geom_hline(yintercept = 0, linetype = "dashed", color = "grey")+
+#   facet_wrap(~crop) + 
+#   annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey")+
+#   annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
+#   scale_x_continuous(labels = c("0", "+1", "+2", "+3", "+4", "+5")) +
+#   theme_tufte(base_size = 14) +
+#   theme(legend.position = "top",
+#         legend.title = element_blank()) + 
+#   geom_text_repel(aes(temp, rev, label = rev), show.legend  = FALSE, alpha = 0.5) 
+# p1
 # 
 # df.labeled <- plotdat %>%
 #   ungroup() %>% group_by(crop, rev) %>%
