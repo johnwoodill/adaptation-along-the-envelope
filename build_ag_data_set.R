@@ -334,8 +334,8 @@ fulldat <- left_join(fulldat, dd_dat, by = c("year", "fips"))
 #soildat <- readRDS("data/soilData.rds")
 
 # Merge population and land data
-popland <- readRDS("data/pop_ipc.rds")
-fulldat <- left_join(fulldat, popland, by = c("year", "fips"))
+# popland <- readRDS("data/pop_ipc.rds")
+# fulldat <- left_join(fulldat, popland, by = c("year", "fips"))
 
 # Convert inf to NA
 fulldat <- do.call(data.frame,lapply(fulldat, function(x) replace(x, is.infinite(x),NA)))
@@ -489,7 +489,7 @@ fulldat <- do.call(data.frame,lapply(fulldat, function(x) replace(x, is.infinite
 
 
 data <- filter(fulldat, abs(long) <= 100)
-data <- filter(data, year >= 1930 & year <= 2010)
+data <- filter(data, year >= 1970 & year <= 2010)
 saveRDS(data, "data/full_ag_data.rds")
 source("map_of_counties.R")
 data <- filter(data, fips %in% fipss)

@@ -32,7 +32,7 @@ dd.clean <- function(x){
  dd$fips <- as.integer(dd$fips)
  dd_dat <- left_join(dd, prec, by = c("fips", "year", "month"))
  dd_dat <- filter(dd_dat, month >= 3 & month <= 9)
- dd_dat <- filter(dd_dat, year >= 1930 & year <= 2010)
+ dd_dat <- filter(dd_dat, year >= 1970 & year <= 2010)
 
  dd_dat$X1 <- NULL
  
@@ -150,7 +150,7 @@ diff.clean <- function(x, olddata = diffdat.dm){
     return(mergdat)
   }
   
-  decadedat <- decade_merge(cropdat, 1930, 2000, 10)
+  decadedat <- decade_merge(cropdat, 1970, 2000, 10)
   
   decadedat$dday0_10 <- decadedat$dday0C - decadedat$dday10C
   decadedat$dday10_30 <- decadedat$dday10C - decadedat$dday30C

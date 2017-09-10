@@ -136,7 +136,7 @@ decade_merge <- function(dat, begd, endd, int){
 }
 
 
-decadedat <- decade_merge(cropdat, 1950, 2000, 10)
+decadedat <- decade_merge(cropdat, 1970, 2000, 10)
 
 # decadedat <- decadedat %>% 
 #   group_by(fips) %>% 

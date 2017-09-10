@@ -16,7 +16,7 @@ cropdat$prec <- cropdat$prec - mean(cropdat$prec, na.rm = TRUE)
 cropdat$prec_sq <- cropdat$prec^2
 
 # Corn 
-cs.corn.mod1 <- felm(ln_corn_rrev ~ dday0_10 + dday10_30  + dday30C + prec + prec_sq  |state | 0 | state,
+cs.corn.mod1 <- felm(ln_corn_rrev ~ dday0_10 + dday10_30  + dday30C + prec + prec_sq  | state | 0 | state,
                   data = cropdat, weights = cropdat$corn_w)
 summary(cs.corn.mod1)
 
@@ -68,7 +68,7 @@ cs.hay.mod2 <- tobit(p_hay_share ~ dday0_10 +  dday10_30  + dday30C +  prec + pr
 summary(cs.hay.mod2)
 
 # Wheat
-cs.wheat.mod2 <- tobit(p_wheat_share ~ dday0_10 + dday10_30  + dday30C +  prec + prec_sq + lat + long + lat:long,
+cs.wheat.mod2 <- tobit(p_wheat_share ~ dday0_10 + dday10_30  + dday30C +  prec + prec_sq + lat + long + lat:long + cluster(state), 
                   data = cropdat, weights = (cropdat$total_w))
 summary(cs.wheat.mod2)
 

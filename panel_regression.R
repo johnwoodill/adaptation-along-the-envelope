@@ -36,7 +36,7 @@ p.hay.mod2 <- felm(ln_hay_rrev ~ dday0_10 +  dday10_30  + dday30C + prec + prec_
 summary(p.hay.mod2)
 
 # Wheat
-p.wheat.mod2 <- felm(ln_wheat_rrev ~ dday0_10 +  dday10_30 + prec + prec_sq | fips + year | 0 | state,
+p.wheat.mod2 <- felm(ln_wheat_rrev ~ dday0_10 +  dday10_30 + dday30C + prec + prec_sq | fips + year | 0 | state,
                   data = cropdat, weights = cropdat$wheat_w)
 summary(p.wheat.mod2)
 
@@ -60,12 +60,12 @@ saveRDS(p.soybean.mod2, "models/p.dd.ln_soybean_rrev")
 
 # Corn
 p.corn.mod2 <- tobit(p_corn_share ~  dday0_10 + dday10_30  + dday30C + prec + prec_sq + lat + long + lat:long + cluster(state),
-                  data = cropdat, weights = cropdat$total_w + 1)
+                  data = cropdat, weights = cropdat$total_w )
 summary(p.corn.mod2)
 
 # Cotton
 p.cotton.mod2 <- tobit(p_cotton_share ~ dday0_10 + dday10_30  + dday30C +  prec + prec_sq + lat + long + lat:long + cluster(state),
-                  data = cropdat, weights = cropdat$total_w + 1)
+                  data = cropdat, weights = cropdat$total_w )
 summary(p.cotton.mod2)
 
 

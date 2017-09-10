@@ -40,10 +40,12 @@ cs.rev <- data.frame(temp = cs.pred_rev$temp,
                      rev_a = cs.pred_rev$rev, 
                      acres = cs.pred_acres$acres
                      )
-                     
+head(cs.rev)                     
+
 base_acres <- filter(cs.rev, temp == 0)
 base_acres <- base_acres$acres
-cs.rev$b_acres <- base_acres
+#cs.rev$b_acres <- base_acres
+cs.rev$b_acres <-cs.0C$corn_w
 names(cs.rev)
 cs.rev$b_rev_acre <- cs.rev$rev_a*cs.rev$b_acres
 cs.rev$c_rev_acre <- cs.rev$rev_a*cs.rev$acres
@@ -112,13 +114,17 @@ plot_grid(p00, p11, p22, p33, p44, p55, ncol = 3, labels = c("+0C", "+1C", "+2C"
 
 # Differences in revenue with and without adaptation
 cs.rev$diff <- cs.rev$c_rev_acre - cs.rev$b_rev_acre
+#ggplot(cs.rev, aes(c_rev_acre, color = crop)) + geom_bar()
+
+ggplot(cs.rev, aes(crop)) + geom_bar()
+
 change <- cs.rev %>% 
   group_by(temp, crop ) %>% 
   summarise(diff = sum(diff))
 change
 
-ggplot(change, aes(temp, diff/1000000, color = crop)) + geom_line() + 
-  ggtitle("Difference in Total Revenue with and without Adaptation \n [Revenue (w/ Adaptation) - Revenue (w/o Adaptation)]") + theme_tufte() + ylab("Difference in Total Revenue \n (Million $)") +
+ggplot(change, aes(temp, diff/1000, color = crop)) + geom_line() + 
+  ggtitle("Difference in Total Revenue with and without Adaptation \n [Revenue (w/ Adaptation) - Revenue (w/o Adaptation)]") + theme_tufte() + ylab("Difference in Total Revenue \n (Thousand $)") +
   annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey") +
   annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
   scale_x_continuous(labels = c("0", "+1", "+2", "+3", "+4", "+5")) +
@@ -128,7 +134,7 @@ ggplot(change, aes(temp, diff/1000000, color = crop)) + geom_line() +
 
 
 t_change <- cs.rev %>% 
-  group_by(temp ) %>% 
+  group_by(temp) %>% 
   summarise(diff = sum(diff))
 change
 
