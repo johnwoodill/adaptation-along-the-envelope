@@ -34,6 +34,22 @@ diff.pred_rev <- readRDS("data/diff.pred_revenue.rds")
 cs.pred_acres <- readRDS("data/cs.predicted_acres.rds")
 diff.pred_acres <- readRDS("data/diff.predicted_acres.rds")
 
+# Load panel to get average fips
+p.dat <- readRDS("data/panel_regression_data.rds")
+base.acres <- p.dat %>% 
+  #filter(year >= 1950) %>% 
+  group_by(fips) %>% 
+  summarise(corn_w = mean(corn_w, na.rm = TRUE),
+            cotton_w = mean(cotton_w, na.rm = TRUE),
+            hay_w = mean(hay_w, na.rm = TRUE),
+            wheat_w = mean(wheat_w, na.rm = TRUE),
+            soybean_w = mean(soybean_w, na.rm = TRUE))
+
+head(base.acres)
+which(is.na(base.acres$corn_w))
+length(base.acres$fips)
+base.acres_g <- gather(base.acres, key = crop, value = acres, -fips)
+
 # Cross-section with and without adaptation
 cs.rev <- data.frame(temp = cs.pred_rev$temp, 
                      crop = cs.pred_rev$crop,
@@ -42,12 +58,14 @@ cs.rev <- data.frame(temp = cs.pred_rev$temp,
                      )
 head(cs.rev)                     
 
-base_acres <- filter(cs.rev, temp == 0)
-base_acres <- base_acres$acres
+
+#base_acres <- filter(cs.rev, temp == 0)
+#base_acres <- base_acres$acres
 #cs.rev$b_acres <- base_acres
-cs.rev$b_acres <-cs.0C$corn_w
-names(cs.rev)
+cs.rev$b_acres <-rep(base.acres_g$acres, 6)
+# names(cs.rev)
 cs.rev$b_rev_acre <- cs.rev$rev_a*cs.rev$b_acres
+
 cs.rev$c_rev_acre <- cs.rev$rev_a*cs.rev$acres
 cs.rev$tavg <- cs.0C$tavg
 
@@ -116,12 +134,32 @@ plot_grid(p00, p11, p22, p33, p44, p55, ncol = 3, labels = c("+0C", "+1C", "+2C"
 cs.rev$diff <- cs.rev$c_rev_acre - cs.rev$b_rev_acre
 #ggplot(cs.rev, aes(c_rev_acre, color = crop)) + geom_bar()
 
-ggplot(cs.rev, aes(crop)) + geom_bar()
+
 
 change <- cs.rev %>% 
-  group_by(temp, crop ) %>% 
-  summarise(diff = sum(diff))
-change
+  group_by(temp) %>% 
+  summarise(c_rev_acre = mean(c_rev_acre),
+            b_rev_acre = mean(b_rev_acre),
+            diff = mean(c_rev_acre) - mean(b_rev_acre)) %>% 
+  select(temp, b_rev_acre, c_rev_acre, diff)
+
+#change$nr <- 1:nrow(change)
+#gather(change, key = crop, value = b_rev_acre)
+#gather(change, key = crop, value = b_rev_acre)
+names(change) <- c("temp", "Rev w/o Adaptation", "Rev w/ Adaptation", "Difference")
+change <- gather(change, key = var, value = value, -temp)
+change$var <- factor(change$var, levels = c("Rev w/ Adaptation", "Rev w/o Adaptation", "Difference")) 
+# test
+# unique(test$var)
+# unique(test$crop)
+# change
+
+ggplot(change, aes(x = temp, y = value/1000000, fill = factor(var))) + 
+  geom_bar(stat = "identity", position = "dodge") + ylab("Total Revenue \n (Million)") +
+  annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey") +
+  annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
+  scale_x_continuous(breaks = 0:5, labels = c("0", "+1", "+2", "+3", "+4", "+5")) 
+
 
 ggplot(change, aes(temp, diff/1000, color = crop)) + geom_line() + 
   ggtitle("Difference in Total Revenue with and without Adaptation \n [Revenue (w/ Adaptation) - Revenue (w/o Adaptation)]") + theme_tufte() + ylab("Difference in Total Revenue \n (Thousand $)") +

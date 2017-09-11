@@ -12,13 +12,13 @@ y <- select(cropdat, p_corn_share, p_cotton_share, p_hay_share, p_wheat_share, p
 
 X <- select(cropdat, dday0_10, dday10_30, dday30C, prec, prec_sq, lat, long, latlong)
 
-fm <- fmlogit(y, X)
-fm
+fm <- fmlogit(y, X, maxit = 500)
+fm$coefficient
 eff <- effects(fm, effect = "marginal")
 eff
-saveRDS(fm, "models/cs.fmlogit.rds")
-saveRDS(eff, "models/cs.fmlogit_effects.rds")
-
+p.fm <- predict(fm)
+saveRDS(fm, "models/cs.fmlogit_test.rds")
+saveRDS(eff, "models/cs.fmlogit_effects_test.rds")
 
 
 # 
