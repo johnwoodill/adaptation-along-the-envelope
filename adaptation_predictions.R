@@ -37,7 +37,7 @@ diff.pred_acres <- readRDS("data/diff.predicted_acres.rds")
 # Load panel to get average fips
 p.dat <- readRDS("data/panel_regression_data.rds")
 base.acres <- p.dat %>% 
-  #filter(year >= 1950) %>% 
+  filter(year >= 1990) %>% 
   group_by(fips) %>% 
   summarise(corn_w = mean(corn_w, na.rm = TRUE),
             cotton_w = mean(cotton_w, na.rm = TRUE),
@@ -67,12 +67,14 @@ cs.rev$b_acres <-rep(base.acres_g$acres, 6)
 cs.rev$b_rev_acre <- cs.rev$rev_a*cs.rev$b_acres
 
 cs.rev$c_rev_acre <- cs.rev$rev_a*cs.rev$acres
-cs.rev$tavg <- cs.0C$tavg
+cs.rev$tavg <- rep(cs.0C$tavg, 6)
+cs.rev$ctavg <- c(cs.0C$tavg, cs.1C$tavg, cs.2C$tavg, cs.3C$tavg, cs.4C$tavg, cs.5C$tavg)
 
 p0 <- densityShare(filter(cs.rev, temp == 0), "tavg", "b_rev_acre") + theme(legend.position = "none") + ylab("Value of Activity \n Total Revenue") +
     theme(legend.position = c(0,1), legend.justification = c("left", "top"), legend.box.background = element_rect(colour = "grey"), 
         legend.title = element_blank(), legend.key = element_blank())  
-p1 <- densityShare(filter(cs.rev, temp == 1), "tavg", "b_rev_acre") + theme(legend.position = "none") + ggtitle("Change in Value of Activity without Adaptation \n (Cross-section estimates)") 
+p1 <- densityShare(filter(cs.rev, temp == 1), "tavg", "b_rev_acre") + theme(legend.position = "none")
+  #ggtitle("Change in Value of Activity without Adaptation \n (Cross-section estimates)") 
 p2 <- densityShare(filter(cs.rev, temp == 2), "tavg", "b_rev_acre") + theme(legend.position = "none") 
 p3 <- densityShare(filter(cs.rev, temp == 3), "tavg", "b_rev_acre") + theme(legend.position = "none")+ xlab("Average Temperature (C)")+ ylab("Value of Activity \n Total Revenue")
 p4 <- densityShare(filter(cs.rev, temp == 4), "tavg", "b_rev_acre") + theme(legend.position = "none") + xlab("Average Temperature (C)")
@@ -80,14 +82,15 @@ p5 <- densityShare(filter(cs.rev, temp == 5), "tavg", "b_rev_acre") + theme(lege
 
 plot_grid(p0, p1, p2, p3, p4, p5, ncol = 3, labels = c("+0C", "+1C", "+2C", "+3C", "+4C", "+5C"),label_x = .75, label_y = .75) 
 
-p00 <- densityShare(filter(cs.rev, temp == 0), "tavg", "c_rev_acre") + theme(legend.position = "none") + ylab("Value of Activity \n Total Revenue") +
+p00 <- densityShare(filter(cs.rev, temp == 0), "ctavg", "c_rev_acre") + theme(legend.position = "none") + ylab("Value of Activity \n Total Revenue") +
     theme(legend.position = c(0,1), legend.justification = c("left", "top"), legend.box.background = element_rect(colour = "grey"), 
         legend.title = element_blank(), legend.key = element_blank())  
-p11 <- densityShare(filter(cs.rev, temp == 1), "tavg", "c_rev_acre") + theme(legend.position = "none") + ggtitle("Change in Value of Activity with Adaptation \n (Cross-section estimates)") 
-p22 <- densityShare(filter(cs.rev, temp == 2), "tavg", "c_rev_acre") + theme(legend.position = "none") 
-p33 <- densityShare(filter(cs.rev, temp == 3), "tavg", "c_rev_acre") + theme(legend.position = "none")+ xlab("Average Temperature (C)")+ ylab("Value of Activity \n Total Revenue")
-p44 <- densityShare(filter(cs.rev, temp == 4), "tavg", "c_rev_acre") + theme(legend.position = "none") + xlab("Average Temperature (C)")
-p55 <- densityShare(filter(cs.rev, temp == 5), "tavg", "c_rev_acre") + theme(legend.position = "none")+ xlab("Average Temperature (C)")
+p11 <- densityShare(filter(cs.rev, temp == 1), "ctavg", "c_rev_acre") + theme(legend.position = "none")
+  #ggtitle("Change in Value of Activity with Adaptation \n (Cross-section estimates)") 
+p22 <- densityShare(filter(cs.rev, temp == 2), "ctavg", "c_rev_acre") + theme(legend.position = "none") 
+p33 <- densityShare(filter(cs.rev, temp == 3), "ctavg", "c_rev_acre") + theme(legend.position = "none")+ xlab("Average Temperature (C)")+ ylab("Value of Activity \n Total Revenue")
+p44 <- densityShare(filter(cs.rev, temp == 4), "ctavg", "c_rev_acre") + theme(legend.position = "none") + xlab("Average Temperature (C)")
+p55 <- densityShare(filter(cs.rev, temp == 5), "ctavg", "c_rev_acre") + theme(legend.position = "none")+ xlab("Average Temperature (C)")
 
 plot_grid(p00, p11, p22, p33, p44, p55, ncol = 3, labels = c("+0C", "+1C", "+2C", "+3C", "+4C", "+5C"),label_x = .75, label_y = .75) 
 
@@ -134,14 +137,20 @@ plot_grid(p00, p11, p22, p33, p44, p55, ncol = 3, labels = c("+0C", "+1C", "+2C"
 cs.rev$diff <- cs.rev$c_rev_acre - cs.rev$b_rev_acre
 #ggplot(cs.rev, aes(c_rev_acre, color = crop)) + geom_bar()
 
-
-
 change <- cs.rev %>% 
   group_by(temp) %>% 
-  summarise(c_rev_acre = mean(c_rev_acre),
-            b_rev_acre = mean(b_rev_acre),
-            diff = mean(c_rev_acre) - mean(b_rev_acre)) %>% 
+  summarise(c_rev_acre = sum(c_rev_acre),
+            b_rev_acre = sum(b_rev_acre),
+            diff = sum(c_rev_acre) - sum(b_rev_acre)) %>% 
   select(temp, b_rev_acre, c_rev_acre, diff)
+
+# change
+#  change <- cs.rev %>% 
+#    group_by(temp) %>% 
+#    summarise(c_rev_acre = mean(c_rev_acre),
+#              b_rev_acre = mean(b_rev_acre),
+#              diff = mean(c_rev_acre) - mean(b_rev_acre)) %>% 
+#    select(temp, b_rev_acre, c_rev_acre, diff)
 
 #change$nr <- 1:nrow(change)
 #gather(change, key = crop, value = b_rev_acre)
@@ -155,14 +164,15 @@ change$var <- factor(change$var, levels = c("Rev w/ Adaptation", "Rev w/o Adapta
 # change
 
 ggplot(change, aes(x = temp, y = value/1000000, fill = factor(var))) + 
-  geom_bar(stat = "identity", position = "dodge") + ylab("Total Revenue \n (Million)") +
+  geom_bar(stat = "identity", position = "dodge") + ylab("Total Revenue \n (Million $)") +
   annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey") +
   annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
   scale_x_continuous(breaks = 0:5, labels = c("0", "+1", "+2", "+3", "+4", "+5")) 
 
 
 ggplot(change, aes(temp, diff/1000, color = crop)) + geom_line() + 
-  ggtitle("Difference in Total Revenue with and without Adaptation \n [Revenue (w/ Adaptation) - Revenue (w/o Adaptation)]") + theme_tufte() + ylab("Difference in Total Revenue \n (Thousand $)") +
+  ggtitle("Difference in Total Revenue with and without Adaptation \n [Revenue (w/ Adaptation) - Revenue (w/o Adaptation)]") + 
+  theme_tufte() + ylab("Difference in Total Revenue \n (Thousand $)") +
   annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey") +
   annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
   scale_x_continuous(labels = c("0", "+1", "+2", "+3", "+4", "+5")) +
@@ -183,7 +193,7 @@ ggplot(t_change, aes(temp, diff/1000000)) + geom_line() +
   scale_x_continuous(labels = c("0", "+1", "+2", "+3", "+4", "+5")) +
       theme(legend.position = c(0,1), legend.justification = c("left", "top"), legend.box.background = element_rect(colour = "grey"), 
         legend.title = element_blank(), legend.key = element_blank())  +
-  geom_hline(yintercept = 0, linetype = "dashed", color = "grey") 
+  geom_hline(yintercept = 0, linetype = "dashed", color = "grey") + ylim(-20, 20)
 
 
 # # Predictions under model predictions -------------------------------------

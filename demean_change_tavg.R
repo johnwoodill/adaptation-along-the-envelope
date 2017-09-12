@@ -2,7 +2,7 @@ library(cowplot)
 library(ggthemes)
 
 cropdat <- readRDS("data/full_ag_data.rds")
-cropdat <- filter(cropdat, year >= 1940 & year <= 2010)
+#cropdat <- filter(cropdat, year >= 1940 & year <= 2010)
 cropdat <- filter(cropdat, abs(long) <= 100)
 
 cdat <- cropdat %>% 
@@ -24,9 +24,9 @@ p1 <- ggplot(cdat, aes(year, tmin_dm)) + geom_line()  +
 p1
 
 p2 <- ggplot(cdat, aes(year, tavg_dm)) + geom_line()  + 
-  scale_x_continuous(breaks = c(1930, 1940, 1950, 1960, 1970, 1980, 1990, 2000, 2010)) + theme_tufte() + 
+  scale_x_continuous(breaks = c(1930, 1940, 1950, 1960, 1970, 1980, 1990, 2000, 2010)) + theme_tufte(base_size = 14) + 
   geom_hline(aes(yintercept = 0), linetype = "dotted") + geom_smooth(fill = "#C0CCD5", color = "coral1") + 
-  ylim(-1.5, 1.5) + xlab(NULL) + ylab("Avg Temp")
+  ylim(-1.5, 1.5) + xlab(NULL) + ylab("Average Temperature Deviation from Mean")
 p2
 
 p3 <- ggplot(cdat, aes(year, tmax_dm)) + geom_line()  + 

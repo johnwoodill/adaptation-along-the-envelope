@@ -489,7 +489,7 @@ fulldat <- do.call(data.frame,lapply(fulldat, function(x) replace(x, is.infinite
 
 
 data <- filter(fulldat, abs(long) <= 100)
-data <- filter(data, year >= 1970 & year <= 2010)
+data <- filter(data, year >= 1965 & year <= 2010)
 saveRDS(data, "data/full_ag_data.rds")
 source("map_of_counties.R")
 data <- filter(data, fips %in% fipss)

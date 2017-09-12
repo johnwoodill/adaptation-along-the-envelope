@@ -6,12 +6,16 @@ library(tidyverse)
 NASSQS_TOKEN = "2BD928ED-10EB-3FB3-9B42-F3F237A067AE"
 
 # State-level Prices ------------------------------------------------------
-
 states <- state.abb
 dat <- data.frame()
 
 # Loop through all states, query database, and bind together
 for (i in unique(states)){
+  cdat <- data.frame()
+  ctdat <- data.frame()
+  hdat <- data.frame()
+  wdat <- data.frame()
+  sdat <- data.frame()
   params = list("state_alpha"=i, "agg_level_desc"="STATE","commodity_desc"="CORN", "source_desc"="SURVEY", "statisticcat_desc" = "PRICE RECEIVED", "short_desc"="CORN, GRAIN - PRICE RECEIVED, MEASURED IN $ / BU")
     a <- tryCatch({
       req = nassqs_GET(params=params, key=NASSQS_TOKEN)
@@ -58,7 +62,9 @@ for (i in unique(states)){
 }
 
 # If only monthly observations exist, then use average
+retdat <- dat
 dat$data.Value <- as.numeric(dat$data.Value)
+
 newdat <- dat %>%
   group_by(data.year, data.state_alpha, data.short_desc) %>%
   summarise(data.Value = ifelse("MARKETING YEAR"%in%data.reference_period_desc, 
@@ -73,6 +79,7 @@ newdat <- spread(newdat, type, value)
 names(newdat) <- c("year", "state", "corn_nprice", "cotton_nprice", "hay_nprice", "soybean_nprice", "wheat_nprice")
 newdat$year <- as.integer(newdat$year)
 newdat$state <- tolower(newdat$state)
+newdat <- do.call(data.frame, lapply(newdat, function(x) replace(x, is.na(x), 0)))
 
 # Save to 'data/'
 saveRDS(newdat, "/run/media/john/1TB/SpiderOak/Projects/adaptation-along-the-envelope/data/crop_statelevel_prices.RDS")

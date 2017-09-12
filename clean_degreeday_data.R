@@ -32,7 +32,7 @@ dd.clean <- function(x){
  dd$fips <- as.integer(dd$fips)
  dd_dat <- left_join(dd, prec, by = c("fips", "year", "month"))
  dd_dat <- filter(dd_dat, month >= 3 & month <= 9)
- dd_dat <- filter(dd_dat, year >= 1970 & year <= 2010)
+ dd_dat <- filter(dd_dat, year >= 1965 & year <= 2010)
 
  dd_dat$X1 <- NULL
  
@@ -78,7 +78,7 @@ xsection.clean <- function(x, olddata = xsectiondat.dm){
   cropdat <- ungroup(cropdat)
   cropdat <- as.data.frame(cropdat)
   cropdat <- left_join(xsectiondat, cropdat, by = "fips")
-  cropdat$`lat:long` <- cropdat$lat*cropdat$long
+  cropdat$latlong <- cropdat$lat*cropdat$long
   #cropdat$`(Intercept)` <- 1
   
   cropdat$dday0_10 <- cropdat$dday0_10 - mean(olddata$dday0_10, na.rm = TRUE)
@@ -150,7 +150,7 @@ diff.clean <- function(x, olddata = diffdat.dm){
     return(mergdat)
   }
   
-  decadedat <- decade_merge(cropdat, 1970, 2000, 10)
+  decadedat <- decade_merge(cropdat, 1965, 1995, 15)
   
   decadedat$dday0_10 <- decadedat$dday0C - decadedat$dday10C
   decadedat$dday10_30 <- decadedat$dday10C - decadedat$dday30C
@@ -166,7 +166,7 @@ diff.clean <- function(x, olddata = diffdat.dm){
   decadedat$dday30C <- decadedat$dday30C - mean(diffdat.dm$dday30C, na.rm = TRUE)
   decadedat$prec <- decadedat$prec - mean(diffdat.dm$prec, na.rm = TRUE)
   decadedat$prec_sq <- decadedat$prec^2
-  decadedat$`lat:long` <- decadedat$lat*decadedat$long
+  decadedat$latlong <- decadedat$lat*decadedat$long
   #decadedat$`(Intercept)` <- 1
   return(decadedat)
 }
