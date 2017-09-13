@@ -48,12 +48,12 @@ predictRev <- function(models, data, crop, se = FALSE){
   diff5C.pred_se <- boot.strap(exp(diff5C.pred$fit + diff5C.pred$res + diff5C.pred$effect), cluster = diff5C.pred$pred_data$year )
 
   # Predicted revenue per acre
-  cs.pred_rev0_a <- exp(cs0C.pred$fit + cs0C.pred$res + cs0C.pred$effect  )
-  cs.pred_rev1_a <- exp(cs1C.pred$fit + cs1C.pred$res + cs1C.pred$effect)
-  cs.pred_rev2_a <- exp(cs2C.pred$fit + cs2C.pred$res + cs2C.pred$effect)
-  cs.pred_rev3_a <- exp(cs3C.pred$fit + cs3C.pred$res + cs3C.pred$effect)
-  cs.pred_rev4_a <- exp(cs4C.pred$fit + cs4C.pred$res + cs4C.pred$effect)
-  cs.pred_rev5_a <- exp(cs5C.pred$fit + cs5C.pred$res + cs5C.pred$effect)
+  cs.pred_rev0_a <- exp(cs0C.pred$fit + cs0C.pred$res + ifelse(is.null(cs0C.pred$effect), 0,  cs0C.pred$effect))
+  cs.pred_rev1_a <- exp(cs1C.pred$fit + cs1C.pred$res + ifelse(is.null(cs1C.pred$effect), 0,  cs1C.pred$effect))
+  cs.pred_rev2_a <- exp(cs2C.pred$fit + cs2C.pred$res + ifelse(is.null(cs2C.pred$effect), 0,  cs2C.pred$effect))
+  cs.pred_rev3_a <- exp(cs3C.pred$fit + cs3C.pred$res + ifelse(is.null(cs3C.pred$effect), 0,  cs3C.pred$effect))
+  cs.pred_rev4_a <- exp(cs4C.pred$fit + cs4C.pred$res + ifelse(is.null(cs4C.pred$effect), 0,  cs4C.pred$effect))
+  cs.pred_rev5_a <- exp(cs5C.pred$fit + cs5C.pred$res + ifelse(is.null(cs5C.pred$effect), 0,  cs5C.pred$effect))
 
   p.pred_rev0_a <- exp(p0C.pred$fit + p0C.pred$res + p0C.pred$effect)
   p.pred_rev1_a <- exp(p1C.pred$fit + p1C.pred$res + p1C.pred$effect)
@@ -70,12 +70,12 @@ predictRev <- function(models, data, crop, se = FALSE){
   diff.pred_rev5_a <- exp(diff5C.pred$fit + diff5C.pred$res + diff5C.pred$effect)
   
   # # Sum of predicted revenue
-  cs.pred_rev0 <- sum(exp(cs0C.pred$fit + cs0C.pred$res + cs0C.pred$effect))
-  cs.pred_rev1 <- sum(exp(cs1C.pred$fit + cs1C.pred$res + cs1C.pred$effect))
-  cs.pred_rev2 <- sum(exp(cs2C.pred$fit + cs2C.pred$res + cs2C.pred$effect))
-  cs.pred_rev3 <- sum(exp(cs3C.pred$fit + cs3C.pred$res + cs3C.pred$effect))
-  cs.pred_rev4 <- sum(exp(cs4C.pred$fit + cs4C.pred$res + cs4C.pred$effect))
-  cs.pred_rev5 <- sum(exp(cs5C.pred$fit + cs5C.pred$res + cs5C.pred$effect))
+  cs.pred_rev0 <- sum(exp(cs0C.pred$fit + cs0C.pred$res + ifelse(is.null(cs0C.pred$effect), 0,  cs0C.pred$effect)))
+  cs.pred_rev1 <- sum(exp(cs1C.pred$fit + cs1C.pred$res + ifelse(is.null(cs1C.pred$effect), 0,  cs1C.pred$effect)))
+  cs.pred_rev2 <- sum(exp(cs2C.pred$fit + cs2C.pred$res + ifelse(is.null(cs2C.pred$effect), 0,  cs2C.pred$effect)))
+  cs.pred_rev3 <- sum(exp(cs3C.pred$fit + cs3C.pred$res + ifelse(is.null(cs3C.pred$effect), 0,  cs3C.pred$effect)))
+  cs.pred_rev4 <- sum(exp(cs4C.pred$fit + cs4C.pred$res + ifelse(is.null(cs4C.pred$effect), 0,  cs4C.pred$effect)))
+  cs.pred_rev5 <- sum(exp(cs5C.pred$fit + cs5C.pred$res + ifelse(is.null(cs5C.pred$effect), 0,  cs5C.pred$effect)))
 
   p.pred_rev0 <- sum(exp(p0C.pred$fit + p0C.pred$res + p0C.pred$effect))
   p.pred_rev1 <- sum(exp(p1C.pred$fit + p1C.pred$res + p1C.pred$effect))

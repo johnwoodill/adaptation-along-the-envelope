@@ -58,12 +58,6 @@ cropdat <- cropdat %>%
          dm_ln_hay_rrev = ln_hay_rrev - mean(ln_hay_rrev, na.rm = TRUE),
          dm_ln_wheat_rrev = ln_wheat_rrev - mean(ln_wheat_rrev, na.rm = TRUE),
          dm_ln_soybean_rrev = ln_soybean_rrev - mean(ln_soybean_rrev, na.rm = TRUE)) %>% 
-         # p_corn_share = p_corn_share - mean(p_corn_share, na.rm = TRUE),
-         # p_cotton_share = p_cotton_share - mean(p_cotton_share, na.rm = TRUE),
-         # p_hay_share = p_hay_share - mean(p_hay_share, na.rm = TRUE),
-         # p_wheat_share = p_wheat_share - mean(p_wheat_share, na.rm = TRUE),
-         # p_soybean_share = p_soybean_share - mean(p_soybean_share, na.rm = TRUE)) 
-         
   group_by(state, fips) %>%
   summarise(ln_corn_rrev = mean(dm_ln_corn_rrev, na.rm = TRUE),
             ln_cotton_rrev = mean(dm_ln_cotton_rrev, na.rm = TRUE),

@@ -68,6 +68,19 @@ stateabb$name <- tolower(stateabb$name)
 # Import crop prices from get_NASS_data.R
 crop_prices <- readRDS("data/crop_statelevel_prices.RDS")
 
+# Remove cotton prices from USDA and us national prices
+# No upland cotton prices east of 100th before 1964
+cotton_prices_lower <- select(crop_prices, year, state) %>% select(year, state) %>% filter(year < 1964) 
+cotton_prices_upper <- select(crop_prices, year, state, cotton_nprice) %>% filter(year >= 1964) 
+crop_prices$cotton_nprice <- NULL
+
+# USDA national cotton prices
+cotton_prices <- read_csv("data/US_cotton_prices.csv")
+cotton_prices_lower <- left_join(cotton_prices_lower, cotton_prices, by = "year") 
+cotton_prices_merge <- rbind(cotton_prices_lower, cotton_prices_upper)
+
+crop_prices <- left_join(crop_prices, cotton_prices_merge, by = c("year", "state"))
+
 # Full grid
 newgrid <- expand.grid(tolower(states$state), 1900:2016, stringsAsFactors = FALSE)
 names(newgrid) <- c("state", "year")
@@ -489,7 +502,7 @@ fulldat <- do.call(data.frame,lapply(fulldat, function(x) replace(x, is.infinite
 
 
 data <- filter(fulldat, abs(long) <= 100)
-data <- filter(data, year >= 1965 & year <= 2010)
+data <- filter(data, year >= 1950 & year <= 2010)
 saveRDS(data, "data/full_ag_data.rds")
 source("map_of_counties.R")
 data <- filter(data, fips %in% fipss)

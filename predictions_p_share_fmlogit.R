@@ -42,53 +42,107 @@ diff.3C <- readRDS("data/degree_day_changes/diff_regression_data_3C")
 diff.4C <- readRDS("data/degree_day_changes/diff_regression_data_4C")
 diff.5C <- readRDS("data/degree_day_changes/diff_regression_data_5C")
 
+diff.0Ct <- select(diff.0C, dday0_10, dday10_30, dday30C, prec, prec_sq, lat, long, latlong)
+diff.1Ct <- select(diff.1C, dday0_10, dday10_30, dday30C, prec, prec_sq, lat, long, latlong)
+diff.2Ct <- select(diff.2C, dday0_10, dday10_30, dday30C, prec, prec_sq, lat, long, latlong)
+diff.3Ct <- select(diff.3C, dday0_10, dday10_30, dday30C, prec, prec_sq, lat, long, latlong)
+diff.4Ct <- select(diff.4C, dday0_10, dday10_30, dday30C, prec, prec_sq, lat, long, latlong)
+diff.5Ct <- select(diff.5C, dday0_10, dday10_30, dday30C, prec, prec_sq, lat, long, latlong)
+
 #############################
 # Get models
 cs.fmlogit <- readRDS("models/cs.fmlogit_test.rds")
 cs.fmlogit_effect <- readRDS("models/cs.fmlogit_effects_test.rds")
 
+diff.fmlogit <- readRDS("models/diff.fmlogit_test.rds")
+diff.fmlogit_effect <- readRDS("models/diff.fmlogit_effects_test.rds")
 
 # Predictions
-pred0.fm <- predict(cs.fmlogit, cs.0Ct)
-pred1.fm <- predict(cs.fmlogit, cs.1Ct)
-pred2.fm <- predict(cs.fmlogit, cs.2Ct)
-pred3.fm <- predict(cs.fmlogit, cs.3Ct)
-pred4.fm <- predict(cs.fmlogit, cs.4Ct)
-pred5.fm <- predict(cs.fmlogit, cs.5Ct)
+cs.pred0.fm <- predict(cs.fmlogit, cs.0Ct)
+cs.pred1.fm <- predict(cs.fmlogit, cs.1Ct)
+cs.pred2.fm <- predict(cs.fmlogit, cs.2Ct)
+cs.pred3.fm <- predict(cs.fmlogit, cs.3Ct)
+cs.pred4.fm <- predict(cs.fmlogit, cs.4Ct)
+cs.pred5.fm <- predict(cs.fmlogit, cs.5Ct)
 
-pred0.fm_acres <- stack(as.data.frame(apply(pred0.fm, 2, function(x) x*cs.0C$total_a)[,1:5]))
-pred1.fm_acres <- stack(as.data.frame(apply(pred1.fm, 2, function(x) x*cs.0C$total_a)[,1:5]))
-pred2.fm_acres <- stack(as.data.frame(apply(pred2.fm, 2, function(x) x*cs.0C$total_a)[,1:5]))
-pred3.fm_acres <- stack(as.data.frame(apply(pred3.fm, 2, function(x) x*cs.0C$total_a)[,1:5]))
-pred4.fm_acres <- stack(as.data.frame(apply(pred4.fm, 2, function(x) x*cs.0C$total_a)[,1:5]))
-pred5.fm_acres <- stack(as.data.frame(apply(pred5.fm, 2, function(x) x*cs.0C$total_a)[,1:5]))
+cs.pred0.fm_acres <- stack(as.data.frame(apply(cs.pred0.fm, 2, function(x) x*cs.0C$total_a)[,1:5]))
+cs.pred1.fm_acres <- stack(as.data.frame(apply(cs.pred1.fm, 2, function(x) x*cs.0C$total_a)[,1:5]))
+cs.pred2.fm_acres <- stack(as.data.frame(apply(cs.pred2.fm, 2, function(x) x*cs.0C$total_a)[,1:5]))
+cs.pred3.fm_acres <- stack(as.data.frame(apply(cs.pred3.fm, 2, function(x) x*cs.0C$total_a)[,1:5]))
+cs.pred4.fm_acres <- stack(as.data.frame(apply(cs.pred4.fm, 2, function(x) x*cs.0C$total_a)[,1:5]))
+cs.pred5.fm_acres <- stack(as.data.frame(apply(cs.pred5.fm, 2, function(x) x*cs.0C$total_a)[,1:5]))
+
+diff.pred0.fm <- predict(diff.fmlogit, diff.0Ct)
+diff.pred1.fm <- predict(diff.fmlogit, diff.1Ct)
+diff.pred2.fm <- predict(diff.fmlogit, diff.2Ct)
+diff.pred3.fm <- predict(diff.fmlogit, diff.3Ct)
+diff.pred4.fm <- predict(diff.fmlogit, diff.4Ct)
+diff.pred5.fm <- predict(diff.fmlogit, diff.5Ct)
+
+diff.pred0.fm_acres <- stack(as.data.frame(apply(diff.pred0.fm, 2, function(x) x*diff.0C$total_a)[,1:5]))
+diff.pred1.fm_acres <- stack(as.data.frame(apply(diff.pred1.fm, 2, function(x) x*diff.0C$total_a)[,1:5]))
+diff.pred2.fm_acres <- stack(as.data.frame(apply(diff.pred2.fm, 2, function(x) x*diff.0C$total_a)[,1:5]))
+diff.pred3.fm_acres <- stack(as.data.frame(apply(diff.pred3.fm, 2, function(x) x*diff.0C$total_a)[,1:5]))
+diff.pred4.fm_acres <- stack(as.data.frame(apply(diff.pred4.fm, 2, function(x) x*diff.0C$total_a)[,1:5]))
+diff.pred5.fm_acres <- stack(as.data.frame(apply(diff.pred5.fm, 2, function(x) x*diff.0C$total_a)[,1:5]))
 
 
-cs.pred_acres <- data.frame(temp = rep(c(0, 1, 2, 3, 4, 5), each = length(pred0.fm_acres$values)),
-                         crop = rep(c("corn", "cotton", "hay", "wheat", "soybean"), 6, each = length(pred0.fm_acres$ind)/5),
-                        acres = c(pred0.fm_acres$values, 
-                                   pred1.fm_acres$values,
-                                   pred2.fm_acres$values,
-                                   pred3.fm_acres$values,
-                                   pred4.fm_acres$values,
-                                   pred5.fm_acres$values))
+cs.pred_acres <- data.frame(temp = rep(c(0, 1, 2, 3, 4, 5), each = length(cs.pred0.fm_acres$values)),
+                         crop = rep(c("corn", "cotton", "hay", "wheat", "soybean"), 6, each = length(cs.pred0.fm_acres$ind)/5),
+                        acres = c(cs.pred0.fm_acres$values, 
+                                   cs.pred1.fm_acres$values,
+                                   cs.pred2.fm_acres$values,
+                                   cs.pred3.fm_acres$values,
+                                   cs.pred4.fm_acres$values,
+                                   cs.pred5.fm_acres$values))
+
+diff.pred_acres <- data.frame(temp = rep(c(0, 1, 2, 3, 4, 5), each = length(diff.pred0.fm_acres$values)),
+                         crop = rep(c("corn", "cotton", "hay", "wheat", "soybean"), 6, each = length(diff.pred0.fm_acres$ind)/5),
+                        acres = c(diff.pred0.fm_acres$values, 
+                                   diff.pred1.fm_acres$values,
+                                   diff.pred2.fm_acres$values,
+                                   diff.pred3.fm_acres$values,
+                                   diff.pred4.fm_acres$values,
+                                   diff.pred5.fm_acres$values))
+
 head(cs.pred_acres)           
            
 saveRDS(cs.pred_acres, "data/cs.prop_w.rds")
+saveRDS(diff.pred_acres, "data/diff.prop_w.rds")
 
 plot.cs_prop <- cs.pred_acres %>% 
   group_by(temp, crop) %>% 
   summarise(sum_a = sum(acres))
 
-plot.cs_prop$reg <- "Cross-section"
+plot.diff_prop <- diff.pred_acres %>% 
+  group_by(temp, crop) %>% 
+  summarise(sum_a = sum(acres))
 
-sum_a <- cs.pred_acres %>% 
+plot.cs_prop$reg <- "Cross-section"
+plot.diff_prop$reg <- "Difference"
+
+cs.sum_a <- cs.pred_acres %>% 
+  group_by(temp) %>% 
+  summarise(sum_a = sum(acres))
+
+diff.sum_a <- diff.pred_acres %>% 
   group_by(temp) %>% 
   summarise(sum_a = sum(acres))
 
 
-ggplot(plot.cs_prop, aes(temp, sum_a/1000000, color = crop)) + geom_line() + geom_line(data = sum_a, aes(temp, sum_a/1000000), linetype = "dashed", color = "grey") + 
-  annotate("text", x = 0.5, y = sum_a$sum_a[1]/1000000 - (sum_a$sum_a[1]*.05)/1000000, label = "Total Crop Acres") + 
+ggplot(plot.cs_prop, aes(temp, sum_a/1000000, color = crop)) + geom_line() + 
+  geom_line(data = cs.sum_a, aes(temp, sum_a/1000000), linetype = "dashed", color = "grey") + 
+  annotate("text", x = 0.5, y = cs.sum_a$sum_a[1]/1000000 - (cs.sum_a$sum_a[1]*.05)/1000000, label = "Total Crop Acres") + 
+  theme_tufte(base_size = 14) + ylab("Total Acres \n (Million)") + xlab("Change in Temperature (C)") +
+  theme(legend.position = "top",  legend.title = element_blank()) +
+   annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey")+
+   annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
+   scale_x_continuous(labels = c("0", "+1", "+2", "+3", "+4", "+5")) 
+#+ ggtitle("Predicted Crop Acres with Increase in Temperature \n (Cross-section estimates)")
+
+ggplot(plot.diff_prop, aes(temp, sum_a/1000000, color = crop)) + geom_line() + 
+  geom_line(data = diff.sum_a, aes(temp, sum_a/1000000), linetype = "dashed", color = "grey") + 
+  annotate("text", x = 0.5, y = diff.sum_a$sum_a[1]/1000000 - (diff.sum_a$sum_a[1]*.05)/1000000, label = "Total Crop Acres") + 
   theme_tufte(base_size = 14) + ylab("Total Acres \n (Million)") + xlab("Change in Temperature (C)") +
   theme(legend.position = "top",  legend.title = element_blank()) +
    annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey")+
@@ -97,3 +151,4 @@ ggplot(plot.cs_prop, aes(temp, sum_a/1000000, color = crop)) + geom_line() + geo
 #+ ggtitle("Predicted Crop Acres with Increase in Temperature \n (Cross-section estimates)")
 
 saveRDS(cs.pred_acres, "data/cs.predicted_acres.rds")
+saveRDS(diff.pred_acres, "data/diff.predicted_acres.rds")

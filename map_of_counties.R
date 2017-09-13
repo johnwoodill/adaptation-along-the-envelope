@@ -16,7 +16,7 @@ library(cowplot)
 # 
 
 grr <- readRDS("data/full_ag_data.rds")
-gr <- filter(grr, year == 1965)
+gr <- filter(grr, year == 1950)
 #gr <- grr
 mapdat <- data.frame(region = unique(gr$fips))
 

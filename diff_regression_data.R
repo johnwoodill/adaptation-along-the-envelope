@@ -16,11 +16,11 @@ cropdat$tavg_sq <- cropdat$tavg^2
 cropdat$dday0_10 <- cropdat$dday0C - cropdat$dday10C
 cropdat$dday10_30 <- cropdat$dday10C - cropdat$dday30C
 
-# cropdat$corn_rrev <- ifelse(is.na(cropdat$corn_rrev), 0, cropdat$corn_rrev)
-# cropdat$cotton_rrev <- ifelse(is.na(cropdat$cotton_rrev), 0, cropdat$cotton_rrev)
-# cropdat$hay_rrev <- ifelse(is.na(cropdat$hay_rrev), 0, cropdat$hay_rrev)
-# cropdat$wheat_rrev <- ifelse(is.na(cropdat$wheat_rrev), 0, cropdat$wheat_rrev)
-# cropdat$soybean_rrev <- ifelse(is.na(cropdat$soybean_rrev), 0, cropdat$soybean_rrev)
+cropdat$corn_rrev <- ifelse(is.na(cropdat$corn_rrev), 0, cropdat$corn_rrev)
+cropdat$cotton_rrev <- ifelse(is.na(cropdat$cotton_rrev), 0, cropdat$cotton_rrev)
+cropdat$hay_rrev <- ifelse(is.na(cropdat$hay_rrev), 0, cropdat$hay_rrev)
+cropdat$wheat_rrev <- ifelse(is.na(cropdat$wheat_rrev), 0, cropdat$wheat_rrev)
+cropdat$soybean_rrev <- ifelse(is.na(cropdat$soybean_rrev), 0, cropdat$soybean_rrev)
 
 # Log revenue
 cropdat$ln_corn_rrev <- log(1 + cropdat$corn_rrev)
@@ -39,7 +39,7 @@ cropdat$soybean_a <- ifelse(is.na(cropdat$soybean_a), 0, cropdat$soybean_a)
 
 weightdat <- cropdat %>% 
   select(year, fips, total_a, corn_grain_a, cotton_a, hay_a, wheat_a, soybean_a) %>% 
-  #filter(year >= 1950 & year < 1960) %>% 
+  filter(year >= 1950 & year < 1960) %>% 
   group_by(fips) %>% 
   summarise(total_w = mean(total_a, na.rm = TRUE),
           corn_w = mean(corn_grain_a, na.rm = TRUE),
@@ -84,11 +84,6 @@ decade_merge <- function(dat, begd, endd, int){
              ln_hay_rrev = ln_hay_rrev - mean(ln_hay_rrev, na.rm = TRUE),
              ln_wheat_rrev = ln_wheat_rrev - mean(ln_wheat_rrev, na.rm = TRUE),
              ln_soybean_rrev = ln_soybean_rrev - mean(ln_soybean_rrev, na.rm = TRUE)) %>% 
-             # p_corn_share = p_corn_share - mean(p_corn_share, na.rm = TRUE),
-             # p_cotton_share = p_cotton_share - mean(p_cotton_share, na.rm = TRUE),
-             # p_hay_share = p_hay_share - mean(p_hay_share, na.rm = TRUE),
-             # p_wheat_share = p_wheat_share - mean(p_wheat_share, na.rm = TRUE),
-             # p_soybean_share = p_soybean_share - mean(p_soybean_share, na.rm = TRUE)) 
       ungroup() %>% 
       group_by(state, fips) %>% 
       summarise(p_corn_share = mean(p_corn_share, na.rm = TRUE),
@@ -136,7 +131,7 @@ decade_merge <- function(dat, begd, endd, int){
 }
 
 
-decadedat <- decade_merge(cropdat, 1965, 1995, 15)
+decadedat <- decade_merge(cropdat, 1950, 2000, 10)
 
 # decadedat <- decadedat %>% 
 #   group_by(fips) %>% 

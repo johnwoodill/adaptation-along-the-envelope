@@ -2,7 +2,7 @@ library(tidyverse)
 library(devtools)
 #library(fmlogit)
 #source("/run/media/john/1TB/SpiderOak/Projects/fmlogit/R/fmlogit_main.R")
-source("cross_section_regression.R")
+source("/run/media/john/1TB/SpiderOak/Projects/adaptation-along-the-envelope/cross_section_regression.R")
 load_all("/run/media/john/1TB/SpiderOak/Projects/fmlogit/")
 #cropdat <- readRDS("data/cross_section_regression_data.rds")
 #library(fmlogit)
@@ -14,12 +14,11 @@ cropdat$latlong <- cropdat$lat*cropdat$long
 y <- select(cropdat, p_corn_share, p_cotton_share, p_hay_share, p_wheat_share, p_soybean_share )
 
 X <- select(cropdat, dday0_10, dday10_30, dday30C, prec, prec_sq, lat, long, latlong)
-#X <- select(cropdat, dday0_10, dday10_30, dday30C, prec, prec_sq)
-#X <- cbind(X, dummyCreator(cropdat$state))
 
-fm <- fmlogit(y, X, maxit = 1000)
+
+fm <- fmlogit(y, X, maxit = 5000)
 fm$coefficient
-eff <- effects(fm, effect = "marginal", se = TRUE)
+eff <- effects(fm, effect = "marginal")
 eff
 
 p.fm <- predict.fmlogit(fm)
@@ -28,13 +27,38 @@ saveRDS(fm, "models/cs.fmlogit_test.rds")
 saveRDS(eff, "models/cs.fmlogit_effects_test.rds")
 
 
+# Difference
+source("/run/media/john/1TB/SpiderOak/Projects/adaptation-along-the-envelope/diff_regression.R")
+load_all("/run/media/john/1TB/SpiderOak/Projects/fmlogit/")
+#cropdat <- readRDS("data/cross_section_regression_data.rds")
+#library(fmlogit)
+#library("fmlogit", lib.loc = "/run/media/john/1TB/SpiderOak/Projects/fmlogit/")
+#cropdat <- filter(cropdat, year >= 1950)
+cropdat$latlong <- cropdat$lat*cropdat$long
+
+# Fractional dep variables
+y <- select(cropdat, p_corn_share, p_cotton_share, p_hay_share, p_wheat_share, p_soybean_share )
+
+X <- select(cropdat, dday0_10, dday10_30, dday30C, prec, prec_sq, lat, long, latlong)
+
+
+fm <- fmlogit(y, X, maxit = 100, MLEmethod = "BHHH")
+fm$coefficient
+eff <- effects(fm, effect = "marginal")
+eff
+
+p.fm <- predict.fmlogit(fm)
+p.fm
+saveRDS(fm, "models/diff.fmlogit_test.rds")
+saveRDS(eff, "models/diff.fmlogit_effects_test.rds")
+
 # 
-data = spending
-X = data[,2:5]
-y = data[,6:11]
-results1 = fmlogit(y,X)
-results1$coefficient
-effects.fmlogit(results1, effect = "marginal")
+# data = spending
+# X = data[,2:5]
+# y = data[,6:11]
+# results1 = fmlogit(y,X)
+# results1$coefficient
+# effects.fmlogit(results1, effect = "marginal")
 
 # # 
 # # effects.fmlogit(results1, effect = "marginal")
