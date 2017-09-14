@@ -52,8 +52,7 @@ densityShare <- function(x, variable, weight){
       xlab(NULL) + ylab(NULL)+ ylim(0, ceiling(ymax/0.15)*.15) + theme_tufte(base_size = 14) +
       scale_fill_discrete(breaks = c("corn", "soybean", "hay", "wheat", "cotton")) + 
       theme(legend.position="top") + 
-      theme(legend.title=element_blank(),
-            panel.border = element_rect(fill = NA))
+      theme(legend.title=element_blank())
       
     plot1    
     return(plot1)

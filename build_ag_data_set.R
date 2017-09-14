@@ -139,7 +139,8 @@ hay <- read_csv("data/hay_1918-2008.csv")
 hay$state <- tolower(hay$state)
 hay$fips <- as.integer(hay$fips)
 
-wheat <- read_csv("data/wheat_1909-2007.csv")
+#wheat <- read_csv("data/wheat_1909-2007.csv")
+wheat <- read_csv("data/wheat_1909-2007_spring.csv")
 wheat$state <- tolower(wheat$state)
 wheat$fips <- as.integer(wheat$fips)
 
@@ -171,67 +172,67 @@ cropdat <- left_join(cropdat, wheat, by = c("state", "fips", "year"))
 cropdat <- left_join(cropdat, soybean, by = c("state", "fips", "year"))
 
 
-# Merge historical Haines data
-dat <- read_dta("data/DustBowl_All_base1910.dta")
-
-newdat <- select(dat, year, state, fips, corn_grain_a, corn_grain_y, 
-                 cotton_a, cotton_y,
-                 hay_a, hay_y,
-                 wheat_a, wheat_y)
-names(newdat)[4:11] <- c("corn_grain_a", "corn_grain_p", "cotton_a", "cotton_p", "hay_a", "hay_p", "wheat_a", "wheat_p")
-
-newdat <- newdat[rowSums(is.na(newdat[,c(4,6,8,10)]))!=4, ]
-fips <- unique(newdat$fips)
-years <- 1910:1997
-
-mdat <- expand.grid(years, fips)
-names(mdat) <- c("year", "fips")
-mdat <- left_join(mdat, newdat, by = c("year", "fips"))
-
-mdatt <- mdat %>%   
-  group_by(fips) %>% 
-  arrange(year) %>% 
-  mutate(corn_grain_a = na.approx(corn_grain_a, na.rm = FALSE),
-         corn_grain_p = na.approx(corn_grain_p, na.rm = FALSE),
-         cotton_a = na.approx(cotton_a, na.rm = FALSE),
-         cotton_p= na.approx(cotton_p, na.rm = FALSE),
-         hay_a = na.approx(hay_a, na.rm = FALSE),
-         hay_p = na.approx(hay_p, na.rm = FALSE),
-         wheat_a = na.approx(wheat_a, na.rm = FALSE),
-         wheat_p = na.approx(wheat_p, na.rm = FALSE)) %>% 
-   ungroup()
-mdatt$state <- NULL
-
-cropdat <- left_join(cropdat, mdatt, by = c("fips", "year")) %>% 
-  mutate(corn_grain_a = ifelse(is.na(corn_grain_a.x), corn_grain_a.y, corn_grain_a.x),
-         corn_grain_p = ifelse(is.na(corn_grain_p.x), corn_grain_p.y, corn_grain_p.x),
-         cotton_a = ifelse(is.na(cotton_a.x), cotton_a.y, cotton_a.x),
-         cotton_p = ifelse(is.na(cotton_p.x), cotton_p.y, cotton_p.x),
-         hay_a = ifelse(is.na(hay_a.x), hay_a.y, hay_a.x),
-         hay_p = ifelse(is.na(hay_p.x), hay_p.y, hay_p.x),
-         wheat_a = ifelse(is.na(wheat_a.x), wheat_a.y, wheat_a.x),
-         wheat_p = ifelse(is.na(wheat_p.x), wheat_p.y, wheat_p.x)) %>% 
-  select(-corn_grain_a.x, -corn_grain_a.y, -corn_grain_p.x, -corn_grain_p.y,
-         -cotton_a.x, -cotton_a.y, -cotton_p.x, -cotton_p.y,
-         -hay_a.x, -hay_a.y, -hay_p.x, -hay_p.y,
-         -wheat_a.x, -wheat_a.y, -wheat_p.x, -wheat_p.y)
-
-# Interpolated historical data and new data
-cropdat <- cropdat %>%   
-  group_by(fips) %>% 
-  arrange(year) %>% 
-  mutate(corn_grain_a = na.approx(corn_grain_a, na.rm = FALSE),
-         corn_grain_p = na.approx(corn_grain_p, na.rm = FALSE),
-         cotton_a = na.approx(cotton_a, na.rm = FALSE),
-         cotton_p= na.approx(cotton_p, na.rm = FALSE),
-         hay_a = na.approx(hay_a, na.rm = FALSE),
-         hay_p = na.approx(hay_p, na.rm = FALSE),
-         wheat_a = na.approx(wheat_a, na.rm = FALSE),
-         wheat_p = na.approx(wheat_p, na.rm = FALSE),
-         soybean_a = na.approx(soybean_a, na.rm = FALSE),
-         soybean_p = na.approx(soybean_p, na.rm = FALSE)) %>% 
-   ungroup()
-#head(testdat)
+# # Merge historical Haines data
+# dat <- read_dta("data/DustBowl_All_base1910.dta")
+# 
+# newdat <- select(dat, year, state, fips, corn_grain_a, corn_grain_y, 
+#                  cotton_a, cotton_y,
+#                  hay_a, hay_y,
+#                  wheat_a, wheat_y)
+# names(newdat)[4:11] <- c("corn_grain_a", "corn_grain_p", "cotton_a", "cotton_p", "hay_a", "hay_p", "wheat_a", "wheat_p")
+# 
+# newdat <- newdat[rowSums(is.na(newdat[,c(4,6,8,10)]))!=4, ]
+# fips <- unique(newdat$fips)
+# years <- 1910:1997
+# 
+# mdat <- expand.grid(years, fips)
+# names(mdat) <- c("year", "fips")
+# mdat <- left_join(mdat, newdat, by = c("year", "fips"))
+# 
+# mdatt <- mdat %>%   
+#   group_by(fips) %>% 
+#   arrange(year) %>% 
+#   mutate(corn_grain_a = na.approx(corn_grain_a, na.rm = FALSE),
+#          corn_grain_p = na.approx(corn_grain_p, na.rm = FALSE),
+#          cotton_a = na.approx(cotton_a, na.rm = FALSE),
+#          cotton_p= na.approx(cotton_p, na.rm = FALSE),
+#          hay_a = na.approx(hay_a, na.rm = FALSE),
+#          hay_p = na.approx(hay_p, na.rm = FALSE),
+#          wheat_a = na.approx(wheat_a, na.rm = FALSE),
+#          wheat_p = na.approx(wheat_p, na.rm = FALSE)) %>% 
+#    ungroup()
+# mdatt$state <- NULL
+# 
+# cropdat <- left_join(cropdat, mdatt, by = c("fips", "year")) %>% 
+#   mutate(corn_grain_a = ifelse(is.na(corn_grain_a.x), corn_grain_a.y, corn_grain_a.x),
+#          corn_grain_p = ifelse(is.na(corn_grain_p.x), corn_grain_p.y, corn_grain_p.x),
+#          cotton_a = ifelse(is.na(cotton_a.x), cotton_a.y, cotton_a.x),
+#          cotton_p = ifelse(is.na(cotton_p.x), cotton_p.y, cotton_p.x),
+#          hay_a = ifelse(is.na(hay_a.x), hay_a.y, hay_a.x),
+#          hay_p = ifelse(is.na(hay_p.x), hay_p.y, hay_p.x),
+#          wheat_a = ifelse(is.na(wheat_a.x), wheat_a.y, wheat_a.x),
+#          wheat_p = ifelse(is.na(wheat_p.x), wheat_p.y, wheat_p.x)) %>% 
+#   select(-corn_grain_a.x, -corn_grain_a.y, -corn_grain_p.x, -corn_grain_p.y,
+#          -cotton_a.x, -cotton_a.y, -cotton_p.x, -cotton_p.y,
+#          -hay_a.x, -hay_a.y, -hay_p.x, -hay_p.y,
+#          -wheat_a.x, -wheat_a.y, -wheat_p.x, -wheat_p.y)
+# 
+# # Interpolated historical data and new data
+# cropdat <- cropdat %>%   
+#   group_by(fips) %>% 
+#   arrange(year) %>% 
+#   mutate(corn_grain_a = na.approx(corn_grain_a, na.rm = FALSE),
+#          corn_grain_p = na.approx(corn_grain_p, na.rm = FALSE),
+#          cotton_a = na.approx(cotton_a, na.rm = FALSE),
+#          cotton_p= na.approx(cotton_p, na.rm = FALSE),
+#          hay_a = na.approx(hay_a, na.rm = FALSE),
+#          hay_p = na.approx(hay_p, na.rm = FALSE),
+#          wheat_a = na.approx(wheat_a, na.rm = FALSE),
+#          wheat_p = na.approx(wheat_p, na.rm = FALSE),
+#          soybean_a = na.approx(soybean_a, na.rm = FALSE),
+#          soybean_p = na.approx(soybean_p, na.rm = FALSE)) %>% 
+#    ungroup()
+# #head(testdat)
 
 # Aggregate county-level degree days -----------------------------------------------
 
@@ -292,19 +293,20 @@ cropdat <- cropdat %>%
 
 
 # Schlenker and Roberts data
-# dd_dat <- read_dta("data/ddayOverAgAreaByMonth.dta")
-#  dd_dat$year <- as.integer(dd_dat$year)
-#  dd_dat$fips <- as.integer(dd_dat$fips)
-#  dd_dat <- dd_dat %>% 
-#    group_by(year, fips) %>% 
-#    summarise(dday8C = sum(dday8C),
-#              dday10C = sum(dday10C),
-#              dday30C = sum(dday30C),
-#              dday32C = sum(dday32C),
-#              dday34C = sum(dday34C),
-#              prec = sum(prec),
-#              tavg = mean(tAvg))
-# 
+ # dd_dat <- read_dta("data/ddayOverAgAreaByMonth.dta")
+ #  dd_dat$year <- as.integer(dd_dat$year)
+ #  dd_dat$fips <- as.integer(dd_dat$fips)
+ #  dd_dat <- dd_dat %>% 
+ #    group_by(year, fips) %>% 
+ #    summarise(dday0C = sum(dday0C),
+ #               dday8C = sum(dday8C),
+ #              dday10C = sum(dday10C),
+ #              dday30C = sum(dday30C),
+ #              dday32C = sum(dday32C),
+ #              dday34C = sum(dday34C),
+ #              prec = sum(prec),
+ #              tavg = mean(tAvg))
+ # 
 
 
 # Merge ag prices, ag crop data, and degree day data ----------------------
@@ -501,7 +503,8 @@ fulldat <- do.call(data.frame,lapply(fulldat, function(x) replace(x, is.infinite
 
 
 
-data <- filter(fulldat, abs(long) <= 100)
+data <- filter(fulldat, state %in% c("mt", "nd", "sd") | abs(long) <= 100)
+unique(data$state)
 data <- filter(data, year >= 1950 & year <= 2010)
 saveRDS(data, "data/full_ag_data.rds")
 source("map_of_counties.R")

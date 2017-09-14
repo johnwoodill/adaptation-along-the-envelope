@@ -156,14 +156,14 @@ cropdat$soybean_rrev <- cropdat$soybean_rrev*cropdat$soybean_a
 ddat <- select(cropdat, fips, year, tavg, corn_rrev, cotton_rrev, hay_rrev, wheat_rrev, soybean_rrev)
 head(ddat)
 names(ddat) <- c("fips", "year", "tavg", "corn", "cotton", "hay", "wheat", "soybean")
-ddat65 <- filter(ddat, year >= 1965 & year <= 1970)
+ddat65 <- filter(ddat, year >= 1950 & year <= 1960)
 ddat65 <- ddat65 %>% 
   group_by(fips) %>% 
-  summarise(corn = mean(corn, na.rm = TRUE),
-            cotton = mean(cotton, na.rm = TRUE),
-            hay = mean(hay, na.rm = TRUE),
-            wheat = mean(wheat, na.rm = TRUE),
-            soybean = mean(soybean, na.rm = TRUE),
+  summarise(Corn = mean(corn, na.rm = TRUE),
+            Cotton = mean(cotton, na.rm = TRUE),
+            Hay = mean(hay, na.rm = TRUE),
+            Wheat = mean(wheat, na.rm = TRUE),
+            Soybean = mean(soybean, na.rm = TRUE),
             tavg = mean(tavg, na.rm = TRUE))
 head(ddat65)
 
@@ -171,14 +171,14 @@ head(ddat65)
 ddat65 <- gather(ddat65, key = crop, value = value, -tavg, -fips)
 ddat65 <- filter(ddat65, !is.na(value) & !is.na(tavg))
 
-ddat10 <- filter(ddat, year >= 2005 & year <= 2010)
+ddat10 <- filter(ddat, year >= 2000 & year <= 2010)
 ddat10 <- ddat10 %>% 
   group_by(fips) %>% 
-  summarise(corn = mean(corn, na.rm = TRUE),
-            cotton = mean(cotton, na.rm = TRUE),
-            hay = mean(hay, na.rm = TRUE),
-            wheat = mean(wheat, na.rm = TRUE),
-            soybean = mean(soybean, na.rm = TRUE),
+  summarise(Corn = mean(corn, na.rm = TRUE),
+            Cotton = mean(cotton, na.rm = TRUE),
+            Hay = mean(hay, na.rm = TRUE),
+            Wheat = mean(wheat, na.rm = TRUE),
+            Soybean = mean(soybean, na.rm = TRUE),
             tavg = mean(tavg, na.rm = TRUE))
 
 ddat10 <- gather(ddat10, key = crop, value = value, -tavg, -fips)
@@ -191,15 +191,26 @@ x = ddat65
 variable = "tavg"
 weight = "value"
 
-p1 <- densityShare(ddat65, "tavg", "value")
-p1 <- p1 + annotate("text", x = 28, y = 0.18, label = "1965-1970", size = 10, alpha = 0.8) + 
-  scale_x_continuous(breaks = c(seq(5,30, by = 5))) + 
-  ylab("Value of Activity \n (Total Revenue)")
+p1 <- densityShare(ddat65, "tavg", "value") +
+  annotate("text", x = 24,  y = 0.20, label = "1965-1970", size = 8, alpha = 0.8) + theme_tufte(base_size = 14)+
+  #scale_x_continuous(breaks = c(seq(5,30, by = 5))) 
+  theme(legend.position = c(0,1), legend.justification = c("left", "top"), legend.box.background = element_rect(colour = "grey"), 
+        legend.title = element_blank(), legend.key = element_blank()
+        )  +
+  ylab("Value of Activity \n (Total Revenue)") + xlim(10, 25) + ylim(0, 0.2)+
+    annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "black") +
+    annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "black")
+  
 p1 
 
 p2 <- densityShare(ddat10, "tavg", "value")
-p2 <- p2 + ylab("Value of Activity \n (Total Revenue)") +
-  annotate("text", x = 28, y = 0.18, label = "2005-2010", size = 10, alpha = 0.8) + 
-  scale_x_continuous(breaks = c(seq(5,30, by = 5))) + 
-  theme(legend.position = "none")+ xlab("Average Temperature (C)")
+p2 <- p2 + ylab("Value of Activity \n (Total Revenue)") + theme_tufte(base_size = 14)+
+  annotate("text", x = 24, y = 0.2, label = "2000-2010", size = 8, alpha = 0.8) + 
+  #scale_x_continuous(breaks = c(seq(5,30, by = 5))) + 
+  theme(legend.position = "none")+ xlab("Average Temperature (C)")+ xlim(10, 25) + ylim(0, 0.2) +
+  annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "black") +
+  annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "black")
+  
+
+p2
 plot_grid(p1,p2,ncol = 1)

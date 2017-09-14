@@ -8,17 +8,6 @@ library(devtools)
 setwd("/run/media/john/1TB/SpiderOak/Projects/adaptation-along-the-envelope/")
 
 load_all("/run/media/john/1TB/SpiderOak/Projects/fmlogit/")
-source("R/predictFelm.R")
-source("R/predictShare.R")
-source("R/fitWeight.R")
-
-tobit.ey <- function(mu, sigma){
-  p0 <- pnorm(mu/sigma)
-  lambda <- function(x) dnorm(x)/pnorm(x)
-  ey0 <- mu + sigma * lambda(mu/sigma)
-  ey <- p0 * ey0
-  return(ey)
-}
 
 # New Degree Day Data
 cs.0C <- readRDS("data/degree_day_changes/cross_section_regression_data_0C")
@@ -42,12 +31,12 @@ diff.3C <- readRDS("data/degree_day_changes/diff_regression_data_3C")
 diff.4C <- readRDS("data/degree_day_changes/diff_regression_data_4C")
 diff.5C <- readRDS("data/degree_day_changes/diff_regression_data_5C")
 
-diff.0Ct <- select(diff.0C, dday0_10, dday10_30, dday30C, prec, prec_sq, lat, long, latlong)
-diff.1Ct <- select(diff.1C, dday0_10, dday10_30, dday30C, prec, prec_sq, lat, long, latlong)
-diff.2Ct <- select(diff.2C, dday0_10, dday10_30, dday30C, prec, prec_sq, lat, long, latlong)
-diff.3Ct <- select(diff.3C, dday0_10, dday10_30, dday30C, prec, prec_sq, lat, long, latlong)
-diff.4Ct <- select(diff.4C, dday0_10, dday10_30, dday30C, prec, prec_sq, lat, long, latlong)
-diff.5Ct <- select(diff.5C, dday0_10, dday10_30, dday30C, prec, prec_sq, lat, long, latlong)
+diff.0Ct <- select(diff.0C, dday0_10, dday10_30, dday30C, prec, prec_sq, fips)
+diff.1Ct <- select(diff.1C, dday0_10, dday10_30, dday30C, prec, prec_sq, fips)
+diff.2Ct <- select(diff.2C, dday0_10, dday10_30, dday30C, prec, prec_sq, fips)
+diff.3Ct <- select(diff.3C, dday0_10, dday10_30, dday30C, prec, prec_sq, fips)
+diff.4Ct <- select(diff.4C, dday0_10, dday10_30, dday30C, prec, prec_sq, fips)
+diff.5Ct <- select(diff.5C, dday0_10, dday10_30, dday30C, prec, prec_sq, fips)
 
 #############################
 # Get models
@@ -152,3 +141,5 @@ ggplot(plot.diff_prop, aes(temp, sum_a/1000000, color = crop)) + geom_line() +
 
 saveRDS(cs.pred_acres, "data/cs.predicted_acres.rds")
 saveRDS(diff.pred_acres, "data/diff.predicted_acres.rds")
+
+plot_grid()
