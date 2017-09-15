@@ -3,6 +3,7 @@ library(cowplot)
 library(lfe)
 library(AER)
 
+setwd("/run/media/john/1TB/SpiderOak/Projects/adaptation-along-the-envelope/")
 cropdat <- readRDS("data/cross_section_regression_data.rds")
 
 # Cross Section: Revenue per acre -----------------------------------------

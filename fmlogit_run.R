@@ -8,17 +8,17 @@ load_all("/run/media/john/1TB/SpiderOak/Projects/fmlogit/")
 #library(fmlogit)
 #library("fmlogit", lib.loc = "/run/media/john/1TB/SpiderOak/Projects/fmlogit/")
 #cropdat <- filter(cropdat, year >= 1950)
-cropdat$latlong <- cropdat$lat*cropdat$long
+cropdat$`lat:long` <- cropdat$lat*cropdat$long
 
 # Fractional dep variables
 y <- select(cropdat, p_corn_share, p_cotton_share, p_hay_share, p_wheat_share, p_soybean_share )
 
-X <- select(cropdat, dday0_10, dday10_30, dday30C, prec, prec_sq, lat, long, latlong)
+X <- select(cropdat, dday0_10, dday10_30, dday30C, prec, prec_sq, lat, long, `lat:long`)
 #X$state <- factor(X$state)
 
 fm <- fmlogit(y, X, maxit = 1000, MLEmethod = "BHHH")
 fm$coefficient
-eff <- effects(fm, effect = "marginal")
+eff <- effects(fm, effect = "marginal", se = TRUE)
 eff
 
 p.fm <- predict.fmlogit(fm)
@@ -39,12 +39,12 @@ decadedat$latlong <- decadedat$lat*decadedat$long
 # Fractional dep variables
 y <- select(decadedat, p_corn_share, p_cotton_share, p_hay_share, p_wheat_share, p_soybean_share )
 
-X <- select(decadedat, dday0_10, dday10_30, dday30C, prec, prec_sq, fips)
-
+X <- select(decadedat, dday0_10, dday10_30, dday30C, prec, prec_sq, fips, year)
+X$fips <- factor(X$fips)
 
 fm <- fmlogit(y, X, maxit = 1000, MLEmethod = "BHHH")
 fm$coefficient
-eff <- effects(fm, effect = "marginal")
+eff <- effects(fm, effect = "marginal", se = TRUE)
 eff
 
 p.fm <- predict.fmlogit(fm)

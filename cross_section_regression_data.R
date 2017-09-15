@@ -38,8 +38,6 @@ cropdat$hay_w <- cropdat$hay_a
 cropdat$wheat_w <- cropdat$wheat_a
 cropdat$soybean_w <- cropdat$soybean_a
 
-
-
 # Remove inf to na
 is.na(cropdat) <- do.call(cbind, lapply(cropdat, is.infinite))
 
