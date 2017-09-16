@@ -28,6 +28,8 @@ saveRDS(eff, "models/cs.fmlogit_effects_test.rds")
 
 
 # Difference
+library(tidyverse)
+library(devtools)
 source("/run/media/john/1TB/SpiderOak/Projects/adaptation-along-the-envelope/diff_regression.R")
 load_all("/run/media/john/1TB/SpiderOak/Projects/fmlogit/")
 #cropdat <- readRDS("data/cross_section_regression_data.rds")
@@ -39,7 +41,7 @@ decadedat$latlong <- decadedat$lat*decadedat$long
 # Fractional dep variables
 y <- select(decadedat, p_corn_share, p_cotton_share, p_hay_share, p_wheat_share, p_soybean_share )
 
-X <- select(decadedat, dday0_10, dday10_30, dday30C, prec, prec_sq, fips, year)
+X <- select(decadedat, dday0_10, dday10_30, dday30C, prec, prec_sq)
 X$fips <- factor(X$fips)
 
 fm <- fmlogit(y, X, maxit = 1000, MLEmethod = "BHHH")

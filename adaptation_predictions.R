@@ -70,36 +70,36 @@ cs.rev$c_rev_acre[baset] <- cs.rev$b_rev_acre[baset]
 # Average temps
 cs.rev$tavg <- rep(cs.0C$tavg, 6)
 cs.rev$ctavg <- c(cs.0C$tavg, cs.1C$tavg, cs.2C$tavg, cs.3C$tavg, cs.4C$tavg, cs.5C$tavg)
-
-p0 <- densityShare(filter(cs.rev, temp == 0), "tavg", "b_rev_acre") + theme(legend.position = "none") + ylab("Value of Activity \n Total Revenue") +
-    theme(legend.position = c(0,1), legend.justification = c("left", "top"), legend.box.background = element_rect(colour = "grey"), 
-        legend.title = element_blank(), legend.key = element_blank())  
-p1 <- densityShare(filter(cs.rev, temp == 1), "tavg", "b_rev_acre") + theme(legend.position = "none")
-  #ggtitle("Change in Value of Activity without Adaptation \n (Cross-section estimates)") 
-p2 <- densityShare(filter(cs.rev, temp == 2), "tavg", "b_rev_acre") + theme(legend.position = "none") 
-p3 <- densityShare(filter(cs.rev, temp == 3), "tavg", "b_rev_acre") + theme(legend.position = "none")+ xlab("Average Temperature (C)")+ ylab("Value of Activity \n Total Revenue")
-p4 <- densityShare(filter(cs.rev, temp == 4), "tavg", "b_rev_acre") + theme(legend.position = "none") + xlab("Average Temperature (C)")
-p5 <- densityShare(filter(cs.rev, temp == 5), "tavg", "b_rev_acre") + theme(legend.position = "none")+ xlab("Average Temperature (C)")
-
-plot_grid(p0, p1, p2, p3, p4, p5, ncol = 3, labels = c("+0C", "+1C", "+2C", "+3C", "+4C", "+5C"),label_x = .75, label_y = .75) 
-
-p00 <- densityShare(filter(cs.rev, temp == 0), "ctavg", "c_rev_acre") + theme(legend.position = "none") + ylab("Value of Activity \n Total Revenue") +
-    theme(legend.position = c(0,1), legend.justification = c("left", "top"), legend.box.background = element_rect(colour = "grey"), 
-        legend.title = element_blank(), legend.key = element_blank())  
-p11 <- densityShare(filter(cs.rev, temp == 1), "ctavg", "c_rev_acre") + theme(legend.position = "none")
-  #ggtitle("Change in Value of Activity with Adaptation \n (Cross-section estimates)") 
-p22 <- densityShare(filter(cs.rev, temp == 2), "ctavg", "c_rev_acre") + theme(legend.position = "none") 
-p33 <- densityShare(filter(cs.rev, temp == 3), "ctavg", "c_rev_acre") + theme(legend.position = "none")+ xlab("Average Temperature (C)")+ ylab("Value of Activity \n Total Revenue")
-p44 <- densityShare(filter(cs.rev, temp == 4), "ctavg", "c_rev_acre") + theme(legend.position = "none") + xlab("Average Temperature (C)")
-p55 <- densityShare(filter(cs.rev, temp == 5), "ctavg", "c_rev_acre") + theme(legend.position = "none")+ xlab("Average Temperature (C)")
-
-plot_grid(p00, p11, p22, p33, p44, p55, ncol = 3, labels = c("+0C", "+1C", "+2C", "+3C", "+4C", "+5C"),label_x = .75, label_y = .75) 
+# 
+# p0 <- densityShare(filter(cs.rev, temp == 0), "tavg", "b_rev_acre") + theme(legend.position = "none") + ylab("Value of Activity \n Total Revenue") +
+#     theme(legend.position = c(0,1), legend.justification = c("left", "top"), legend.box.background = element_rect(colour = "grey"), 
+#         legend.title = element_blank(), legend.key = element_blank())  
+# p1 <- densityShare(filter(cs.rev, temp == 1), "tavg", "b_rev_acre") + theme(legend.position = "none")
+#   #ggtitle("Change in Value of Activity without Adaptation \n (Cross-section estimates)") 
+# p2 <- densityShare(filter(cs.rev, temp == 2), "tavg", "b_rev_acre") + theme(legend.position = "none") 
+# p3 <- densityShare(filter(cs.rev, temp == 3), "tavg", "b_rev_acre") + theme(legend.position = "none")+ xlab("Average Temperature (C)")+ ylab("Value of Activity \n Total Revenue")
+# p4 <- densityShare(filter(cs.rev, temp == 4), "tavg", "b_rev_acre") + theme(legend.position = "none") + xlab("Average Temperature (C)")
+# p5 <- densityShare(filter(cs.rev, temp == 5), "tavg", "b_rev_acre") + theme(legend.position = "none")+ xlab("Average Temperature (C)")
+# 
+# plot_grid(p0, p1, p2, p3, p4, p5, ncol = 3, labels = c("+0C", "+1C", "+2C", "+3C", "+4C", "+5C"),label_x = .75, label_y = .75) 
+# 
+# p00 <- densityShare(filter(cs.rev, temp == 0), "ctavg", "c_rev_acre") + theme(legend.position = "none") + ylab("Value of Activity \n Total Revenue") +
+#     theme(legend.position = c(0,1), legend.justification = c("left", "top"), legend.box.background = element_rect(colour = "grey"), 
+#         legend.title = element_blank(), legend.key = element_blank())  
+# p11 <- densityShare(filter(cs.rev, temp == 1), "ctavg", "c_rev_acre") + theme(legend.position = "none")
+#   #ggtitle("Change in Value of Activity with Adaptation \n (Cross-section estimates)") 
+# p22 <- densityShare(filter(cs.rev, temp == 2), "ctavg", "c_rev_acre") + theme(legend.position = "none") 
+# p33 <- densityShare(filter(cs.rev, temp == 3), "ctavg", "c_rev_acre") + theme(legend.position = "none")+ xlab("Average Temperature (C)")+ ylab("Value of Activity \n Total Revenue")
+# p44 <- densityShare(filter(cs.rev, temp == 4), "ctavg", "c_rev_acre") + theme(legend.position = "none") + xlab("Average Temperature (C)")
+# p55 <- densityShare(filter(cs.rev, temp == 5), "ctavg", "c_rev_acre") + theme(legend.position = "none")+ xlab("Average Temperature (C)")
+# 
+# plot_grid(p00, p11, p22, p33, p44, p55, ncol = 3, labels = c("+0C", "+1C", "+2C", "+3C", "+4C", "+5C"),label_x = .75, label_y = .75) 
 
 # Differences in revenue with and without adaptation
 cs.rev$diff <- cs.rev$c_rev_acre - cs.rev$b_rev_acre
 #ggplot(cs.rev, aes(c_rev_acre, color = crop)) + geom_bar()
 
-var(sampdat)/sqrt(length(sampdat))
+#var(sampdat)/sqrt(length(sampdat))
 
 change <- cs.rev %>% 
   group_by(temp) %>% 
@@ -134,10 +134,16 @@ ggplot(change, aes(x = temp, y = value/1000000, fill = factor(var))) +
 
 
 ggplot(filter(change, var != "Difference"), aes(x = temp, y = value/1000000, color = factor(var))) + 
-  geom_line() + geom_point() + ylab("Total Revenue \n (Million $)") +
+  geom_line() + geom_point() + ylab("Total Revenue \n ($ Million)") + theme_tufte(base_size = 14) +
   annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey") +
   annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
-  scale_x_continuous(breaks = 0:5, labels = c("0", "+1", "+2", "+3", "+4", "+5")) + ylim(0, 200)
+  scale_x_continuous(breaks = 0:5, labels = c("0", "+1", "+2", "+3", "+4", "+5")) + ylim(0, 200) +
+  xlab("Change in Temperature (C)") +
+    theme(legend.position="top") + theme_tufte(base_size = 14) +
+      theme(legend.position = c(.9,.8), legend.justification = c("right", "bottom"), 
+            legend.box.background = element_rect(colour = "grey"), 
+        legend.key = element_blank()) + labs(color = "Cross-section")
+  
 
 ###############################################
 #-----------------------------------------------
@@ -184,27 +190,27 @@ diff.rev$ctavg <- c(diff.0C$tavg, diff.1C$tavg, diff.2C$tavg, diff.3C$tavg, diff
 # diff.rev$c_rev_acre <- diff.rev$rev_a*diff.rev$acres
 # diff.rev$tavg <- diff.0C$tavg
 
-p0 <- densityShare(filter(diff.rev, temp == 0), "tavg", "b_rev_acre") + theme(legend.position = "none") + ylab("Value of Activity \n Total Revenue") +
-    theme(legend.position = c(0,1), legend.justification = c("left", "top"), legend.box.background = element_rect(colour = "grey"), 
-        legend.title = element_blank(), legend.key = element_blank())  
-p1 <- densityShare(filter(diff.rev, temp == 1), "tavg", "b_rev_acre") + theme(legend.position = "none") + ggtitle("Change in Value of Activity without Adaptation \n (Long difference estimates)") 
-p2 <- densityShare(filter(diff.rev, temp == 2), "tavg", "b_rev_acre") + theme(legend.position = "none") 
-p3 <- densityShare(filter(diff.rev, temp == 3), "tavg", "b_rev_acre") + theme(legend.position = "none")+ xlab("Average Temperature (C)")+ ylab("Value of Activity \n Total Revenue")
-p4 <- densityShare(filter(diff.rev, temp == 4), "tavg", "b_rev_acre") + theme(legend.position = "none") + xlab("Average Temperature (C)")
-p5 <- densityShare(filter(diff.rev, temp == 5), "tavg", "b_rev_acre") + theme(legend.position = "none")+ xlab("Average Temperature (C)")
-
-plot_grid(p0, p1, p2, p3, p4, p5, ncol = 3, labels = c("+0C", "+1C", "+2C", "+3C", "+4C", "+5C"),label_x = .75, label_y = .75) 
-
-p00 <- densityShare(filter(diff.rev, temp == 0), "tavg", "c_rev_acre") + theme(legend.position = "none") + ylab("Value of Activity \n Total Revenue") +
-    theme(legend.position = c(0,1), legend.justification = c("left", "top"), legend.box.background = element_rect(colour = "grey"), 
-        legend.title = element_blank(), legend.key = element_blank())  
-p11 <- densityShare(filter(diff.rev, temp == 1), "tavg", "c_rev_acre") + theme(legend.position = "none") + ggtitle("Change in Value of Activity with Adaptation \n (Long difference estimates)") 
-p22 <- densityShare(filter(diff.rev, temp == 2), "tavg", "c_rev_acre") + theme(legend.position = "none") 
-p33 <- densityShare(filter(diff.rev, temp == 3), "tavg", "c_rev_acre") + theme(legend.position = "none")+ xlab("Average Temperature (C)")+ ylab("Value of Activity \n Total Revenue")
-p44 <- densityShare(filter(diff.rev, temp == 4), "tavg", "c_rev_acre") + theme(legend.position = "none") + xlab("Average Temperature (C)")
-p55 <- densityShare(filter(diff.rev, temp == 5), "tavg", "c_rev_acre") + theme(legend.position = "none")+ xlab("Average Temperature (C)")
-
-plot_grid(p00, p11, p22, p33, p44, p55, ncol = 3, labels = c("+0C", "+1C", "+2C", "+3C", "+4C", "+5C"),label_x = .75, label_y = .75) 
+# p0 <- densityShare(filter(diff.rev, temp == 0), "tavg", "b_rev_acre") + theme(legend.position = "none") + ylab("Value of Activity \n Total Revenue") +
+#     theme(legend.position = c(0,1), legend.justification = c("left", "top"), legend.box.background = element_rect(colour = "grey"), 
+#         legend.title = element_blank(), legend.key = element_blank())  
+# p1 <- densityShare(filter(diff.rev, temp == 1), "tavg", "b_rev_acre") + theme(legend.position = "none") + ggtitle("Change in Value of Activity without Adaptation \n (Long difference estimates)") 
+# p2 <- densityShare(filter(diff.rev, temp == 2), "tavg", "b_rev_acre") + theme(legend.position = "none") 
+# p3 <- densityShare(filter(diff.rev, temp == 3), "tavg", "b_rev_acre") + theme(legend.position = "none")+ xlab("Average Temperature (C)")+ ylab("Value of Activity \n Total Revenue")
+# p4 <- densityShare(filter(diff.rev, temp == 4), "tavg", "b_rev_acre") + theme(legend.position = "none") + xlab("Average Temperature (C)")
+# p5 <- densityShare(filter(diff.rev, temp == 5), "tavg", "b_rev_acre") + theme(legend.position = "none")+ xlab("Average Temperature (C)")
+# 
+# plot_grid(p0, p1, p2, p3, p4, p5, ncol = 3, labels = c("+0C", "+1C", "+2C", "+3C", "+4C", "+5C"),label_x = .75, label_y = .75) 
+# 
+# p00 <- densityShare(filter(diff.rev, temp == 0), "tavg", "c_rev_acre") + theme(legend.position = "none") + ylab("Value of Activity \n Total Revenue") +
+#     theme(legend.position = c(0,1), legend.justification = c("left", "top"), legend.box.background = element_rect(colour = "grey"), 
+#         legend.title = element_blank(), legend.key = element_blank())  
+# p11 <- densityShare(filter(diff.rev, temp == 1), "tavg", "c_rev_acre") + theme(legend.position = "none") + ggtitle("Change in Value of Activity with Adaptation \n (Long difference estimates)") 
+# p22 <- densityShare(filter(diff.rev, temp == 2), "tavg", "c_rev_acre") + theme(legend.position = "none") 
+# p33 <- densityShare(filter(diff.rev, temp == 3), "tavg", "c_rev_acre") + theme(legend.position = "none")+ xlab("Average Temperature (C)")+ ylab("Value of Activity \n Total Revenue")
+# p44 <- densityShare(filter(diff.rev, temp == 4), "tavg", "c_rev_acre") + theme(legend.position = "none") + xlab("Average Temperature (C)")
+# p55 <- densityShare(filter(diff.rev, temp == 5), "tavg", "c_rev_acre") + theme(legend.position = "none")+ xlab("Average Temperature (C)")
+# 
+# plot_grid(p00, p11, p22, p33, p44, p55, ncol = 3, labels = c("+0C", "+1C", "+2C", "+3C", "+4C", "+5C"),label_x = .75, label_y = .75) 
 
 
 
@@ -247,8 +253,13 @@ ggplot(change, aes(x = temp, y = value/1000000, fill = factor(var))) +
 
 
 ggplot(filter(change, var != "Difference"), aes(x = temp, y = value/1000000, color = factor(var))) + 
-  geom_line() + geom_point() + ylab("Total Revenue \n (Million $)") +
+  geom_line() + geom_point() + ylab("Total Revenue \n ($ Million)") + theme_tufte(base_size = 14) +
   annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey") +
   annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
-  scale_x_continuous(breaks = 0:5, labels = c("0", "+1", "+2", "+3", "+4", "+5")) + ylim(0, 1500)
+  scale_x_continuous(breaks = 0:5, labels = c("0", "+1", "+2", "+3", "+4", "+5")) + ylim(0, 2000) +
+  xlab("Change in Temperature (C)") +
+    theme(legend.position="top") + theme_tufte(base_size = 14) +
+      theme(legend.position = c(.9,.8), legend.justification = c("right", "bottom"), 
+            legend.box.background = element_rect(colour = "grey"), 
+        legend.key = element_blank()) + labs(color = "Decade")
 

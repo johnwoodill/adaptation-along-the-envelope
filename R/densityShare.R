@@ -1,6 +1,6 @@
 densityShare <- function(x, variable, weight){ 
   cropdat <- x
-  cropdat$crop <- tolower(cropdat$crop)
+  #cropdat$crop <- tolower(cropdat$crop)
   varn <- which(names(cropdat) == variable)
   wn <- which(names(cropdat) == weight)
   names(cropdat)[[varn]] <- "variable"
@@ -50,7 +50,7 @@ densityShare <- function(x, variable, weight){
       geom_polygon(aes(x = dens.dat4$x, y = dens.dat4$y, fill = dat4$crop[1])) +
       geom_polygon(aes(x = dens.dat5$x, y = dens.dat5$y, fill = dat5$crop[1])) + 
       xlab(NULL) + ylab(NULL)+ ylim(0, ceiling(ymax/0.15)*.15) + theme_tufte(base_size = 14) +
-      scale_fill_discrete(breaks = c("corn", "soybean", "hay", "wheat", "cotton")) + 
+      #scale_fill_discrete(breaks = c("Corn", "soybean", "hay", "wheat", "cotton")) + 
       theme(legend.position="top") + 
       theme(legend.title=element_blank())
       

@@ -157,6 +157,9 @@ saveRDS(cs.pred_dat, "data/cs.pred_revenue.rds")
 saveRDS(p.pred_dat, "data/p.pred_revenue.rds")
 saveRDS(diff.pred_dat, "data/diff.pred_revenue.rds")
 
+plot.dat$crop <- as.character(plot.dat$crop)
+class(plot.diff_prop$crop)
+plot.dat$crop <- tools::toTitleCase(plot.dat$crop)
 
 p1 <- ggplot(plot.dat, aes(temp, rev, color = reg)) + 
   #geom_ribbon(aes(ymin = min, ymax = max), fill = "#C0CCD5", size = 0) + 
@@ -169,8 +172,10 @@ p1 <- ggplot(plot.dat, aes(temp, rev, color = reg)) +
   annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
   scale_x_continuous(labels = c("0", "+1", "+2", "+3", "+4", "+5")) +
   theme_tufte(base_size = 14) +
-  theme(legend.position = "top",
-        legend.title = element_blank()) + 
+    theme(legend.position="top") + theme_tufte(base_size = 14) +
+      theme(legend.position = c(.9,.15), legend.justification = c("right", "bottom"), 
+            legend.box.background = element_rect(colour = "grey"), 
+        legend.key = element_blank(), legend.title = element_blank()) +
   geom_text_repel(aes(temp, rev, label = round(rev)), show.legend  = FALSE, alpha = 0.5) 
 p1
 

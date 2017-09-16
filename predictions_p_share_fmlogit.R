@@ -31,12 +31,12 @@ diff.3C <- readRDS("data/degree_day_changes/diff_regression_data_3C")
 diff.4C <- readRDS("data/degree_day_changes/diff_regression_data_4C")
 diff.5C <- readRDS("data/degree_day_changes/diff_regression_data_5C")
 
-diff.0Ct <- select(diff.0C, dday0_10, dday10_30, dday30C, prec, prec_sq, fips)
-diff.1Ct <- select(diff.1C, dday0_10, dday10_30, dday30C, prec, prec_sq, fips)
-diff.2Ct <- select(diff.2C, dday0_10, dday10_30, dday30C, prec, prec_sq, fips)
-diff.3Ct <- select(diff.3C, dday0_10, dday10_30, dday30C, prec, prec_sq, fips)
-diff.4Ct <- select(diff.4C, dday0_10, dday10_30, dday30C, prec, prec_sq, fips)
-diff.5Ct <- select(diff.5C, dday0_10, dday10_30, dday30C, prec, prec_sq, fips)
+diff.0Ct <- select(diff.0C, dday0_10, dday10_30, dday30C, prec, prec_sq)
+diff.1Ct <- select(diff.1C, dday0_10, dday10_30, dday30C, prec, prec_sq)
+diff.2Ct <- select(diff.2C, dday0_10, dday10_30, dday30C, prec, prec_sq)
+diff.3Ct <- select(diff.3C, dday0_10, dday10_30, dday30C, prec, prec_sq)
+diff.4Ct <- select(diff.4C, dday0_10, dday10_30, dday30C, prec, prec_sq)
+diff.5Ct <- select(diff.5C, dday0_10, dday10_30, dday30C, prec, prec_sq)
 
 #############################
 # Get models
@@ -118,25 +118,41 @@ diff.sum_a <- diff.pred_acres %>%
   group_by(temp) %>% 
   summarise(sum_a = sum(acres))
 
+plot.cs_prop$crop <- as.character(plot.cs_prop$crop)
+class(plot.cs_prop$crop)
+plot.cs_prop$crop <- tools::toTitleCase(plot.cs_prop$crop)
 
 ggplot(plot.cs_prop, aes(temp, sum_a/1000000, color = crop)) + geom_line() + 
   geom_line(data = cs.sum_a, aes(temp, sum_a/1000000), linetype = "dashed", color = "grey") + 
-  annotate("text", x = 0.5, y = cs.sum_a$sum_a[1]/1000000 - (cs.sum_a$sum_a[1]*.05)/1000000, label = "Total Crop Acres") + 
+  annotate("text", x = 0.5, y = cs.sum_a$sum_a[1]/1000000 - (cs.sum_a$sum_a[1]*.02)/1000000, label = "Total Crop Acres", size = 5) + 
   theme_tufte(base_size = 14) + ylab("Total Acres \n (Million)") + xlab("Change in Temperature (C)") +
   theme(legend.position = "top",  legend.title = element_blank()) +
    annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey")+
    annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
-   scale_x_continuous(labels = c("0", "+1", "+2", "+3", "+4", "+5")) 
+   scale_x_continuous(labels = c("0", "+1", "+2", "+3", "+4", "+5"))  +
+    theme(legend.position="top") + theme_tufte(base_size = 14) +
+      theme(legend.position = c(.95,.7), 
+            legend.justification = c("right", "bottom"), 
+            legend.box.background = element_rect(colour = "grey"), 
+            legend.key = element_blank()) + labs(color = "Cross-section")
 #+ ggtitle("Predicted Crop Acres with Increase in Temperature \n (Cross-section estimates)")
+plot.diff_prop$crop <- as.character(plot.diff_prop$crop)
+class(plot.diff_prop$crop)
+plot.diff_prop$crop <- tools::toTitleCase(plot.diff_prop$crop)
 
 ggplot(plot.diff_prop, aes(temp, sum_a/1000000, color = crop)) + geom_line() + 
   geom_line(data = diff.sum_a, aes(temp, sum_a/1000000), linetype = "dashed", color = "grey") + 
-  annotate("text", x = 0.5, y = diff.sum_a$sum_a[1]/1000000 - (diff.sum_a$sum_a[1]*.05)/1000000, label = "Total Crop Acres") + 
+  annotate("text", x = 0.5, y = diff.sum_a$sum_a[1]/1000000 - (diff.sum_a$sum_a[1]*.02)/1000000, label = "Total Crop Acres") + 
   theme_tufte(base_size = 14) + ylab("Total Acres \n (Million)") + xlab("Change in Temperature (C)") +
   theme(legend.position = "top",  legend.title = element_blank()) +
    annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey")+
    annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
-   scale_x_continuous(labels = c("0", "+1", "+2", "+3", "+4", "+5")) 
+   scale_x_continuous(labels = c("0", "+1", "+2", "+3", "+4", "+5"))  +
+    theme(legend.position="top") + theme_tufte(base_size = 14) +
+      theme(legend.position = c(.95,.7), 
+            legend.justification = c("right", "bottom"), 
+            legend.box.background = element_rect(colour = "grey"), 
+            legend.key = element_blank()) + labs(color = "Decade")
 #+ ggtitle("Predicted Crop Acres with Increase in Temperature \n (Cross-section estimates)")
 
 saveRDS(cs.pred_acres, "data/cs.predicted_acres.rds")

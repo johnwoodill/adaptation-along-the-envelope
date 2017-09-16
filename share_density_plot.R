@@ -187,13 +187,19 @@ ddat10 <- filter(ddat10, !is.na(value) & !is.na(tavg))
 head(ddat65)
 head(ddat10)
 
-x = ddat65
-variable = "tavg"
-weight = "value"
+ddat65$crop <- as.character(ddat65$crop)
+ddat65$crop <- tools::toTitleCase(ddat65$crop)
+
+ddat10$crop <- as.character(ddat10$crop)
+ddat10$crop <- tools::toTitleCase(ddat10$crop)
+
+
+# x = ddat65
+# variable = "tavg"
+# weight = "value"
 
 p1 <- densityShare(ddat65, "tavg", "value") +
-  annotate("text", x = 24,  y = 0.20, label = "1965-1970", size = 8, alpha = 0.8) + theme_tufte(base_size = 14)+
-  #scale_x_continuous(breaks = c(seq(5,30, by = 5))) 
+  annotate("text", x = 24,  y = 0.20, label = "1960-1970", size = 8, alpha = 0.8) + theme_tufte(base_size = 14)+
   theme(legend.position = c(0,1), legend.justification = c("left", "top"), legend.box.background = element_rect(colour = "grey"), 
         legend.title = element_blank(), legend.key = element_blank()
         )  +
@@ -203,14 +209,14 @@ p1 <- densityShare(ddat65, "tavg", "value") +
   
 p1 
 
-p2 <- densityShare(ddat10, "tavg", "value")
-p2 <- p2 + ylab("Value of Activity \n (Total Revenue)") + theme_tufte(base_size = 14)+
+p2 <- densityShare(ddat10, "tavg", "value") + 
+  ylab("Value of Activity \n (Total Revenue)") + theme_tufte(base_size = 14)+
   annotate("text", x = 24, y = 0.2, label = "2000-2010", size = 8, alpha = 0.8) + 
-  #scale_x_continuous(breaks = c(seq(5,30, by = 5))) + 
   theme(legend.position = "none")+ xlab("Average Temperature (C)")+ xlim(10, 25) + ylim(0, 0.2) +
   annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "black") +
   annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "black")
   
 
 p2
+
 plot_grid(p1,p2,ncol = 1)
