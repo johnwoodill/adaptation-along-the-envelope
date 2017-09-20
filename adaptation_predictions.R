@@ -32,6 +32,8 @@ diff.pred_acres <- readRDS("data/diff.predicted_acres.rds")
 
 # Load panel to get average fips
 p.dat <- readRDS("data/panel_regression_data.rds")
+
+# Get average from last 20-years
 base.acres <- p.dat %>% 
   filter(year >= 1990) %>% 
   group_by(fips) %>% 
@@ -133,6 +135,9 @@ ggplot(change, aes(x = temp, y = value/1000000, fill = factor(var))) +
   scale_x_continuous(breaks = 0:5, labels = c("0", "+1", "+2", "+3", "+4", "+5")) 
 
 
+pdf("/home/john/Dropbox/Research/Adaptation Along the Envelope/figures/cs_rev_w_wo_adapt.pdf", 
+    width = 8, height = 10)
+
 ggplot(filter(change, var != "Difference"), aes(x = temp, y = value/1000000, color = factor(var))) + 
   geom_line() + geom_point() + ylab("Total Revenue \n ($ Million)") + theme_tufte(base_size = 14) +
   annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey") +
@@ -143,7 +148,9 @@ ggplot(filter(change, var != "Difference"), aes(x = temp, y = value/1000000, col
       theme(legend.position = c(.9,.8), legend.justification = c("right", "bottom"), 
             legend.box.background = element_rect(colour = "grey"), 
         legend.key = element_blank()) + labs(color = "Cross-section")
-  
+dev.off()  
+
+cs_rev_w_wo_adapt
 
 ###############################################
 #-----------------------------------------------
@@ -252,6 +259,9 @@ ggplot(change, aes(x = temp, y = value/1000000, fill = factor(var))) +
   scale_x_continuous(breaks = 0:5, labels = c("0", "+1", "+2", "+3", "+4", "+5")) 
 
 
+pdf("/home/john/Dropbox/Research/Adaptation Along the Envelope/figures/diff_rev_w_wo_adapt.pdf", 
+    width = 8, height = 10)
+
 ggplot(filter(change, var != "Difference"), aes(x = temp, y = value/1000000, color = factor(var))) + 
   geom_line() + geom_point() + ylab("Total Revenue \n ($ Million)") + theme_tufte(base_size = 14) +
   annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey") +
@@ -262,4 +272,94 @@ ggplot(filter(change, var != "Difference"), aes(x = temp, y = value/1000000, col
       theme(legend.position = c(.9,.8), legend.justification = c("right", "bottom"), 
             legend.box.background = element_rect(colour = "grey"), 
         legend.key = element_blank()) + labs(color = "Decade")
+dev.off()
 
+
+# Panel using cross-section and difference acres
+# Load panel data
+p.dat <- readRDS("data/panel_regression_data.rds")
+p.pred_rev <- readRDS("data/p.pred_revenue.rds")
+
+# Get average from last 20-years
+base.acres <- p.dat %>% 
+  filter(year >= 1990) %>% 
+  group_by(fips) %>% 
+  summarise(Corn = mean(corn_w, na.rm = TRUE),
+            Cotton = mean(cotton_w, na.rm = TRUE),
+            Hay = mean(hay_w, na.rm = TRUE),
+            Wheat = mean(wheat_w, na.rm = TRUE),
+            Soybean = mean(soybean_w, na.rm = TRUE))
+
+base.acres_g <- gather(base.acres, key = crop, value = base_acres, -fips)
+
+# Assign fips
+p.pred_rev$fips <- rep(p.dat$fips, 30)
+
+p.pred_rev <- p.pred_rev %>% 
+  group_by(temp, fips, crop) %>% 
+  summarise(rev = mean(rev))
+head(p.pred_rev)
+
+# Merge base acres
+p.pred_rev$crop <- tolower(p.pred_rev$crop)
+base.acres_g$crop <- tolower(base.acres_g$crop)
+p.pred_rev <- left_join(p.pred_rev, base.acres_g, by = c("fips", "crop")  )
+head(p.pred_rev)
+
+# Merge cross-section acres
+# Load Predicted acreage
+cs.pred_acres <- readRDS("data/cs.predicted_acres.rds")
+
+cs.pred_acres$fips <- rep(cs.0C$fips, 30)
+head(cs.pred_acres)
+names(cs.pred_acres)[3] <- "cs_acres"
+p.pred_rev <- left_join(p.pred_rev, cs.pred_acres, by = c("crop", "fips", "temp"))
+head(p.pred_rev)
+
+# Merge difference acres
+diff.pred_acres <- readRDS("data/diff.predicted_acres.rds")
+diff.pred_acres$fips <- rep(diff.0C$fips, 30)
+diff.pred_acres <- diff.pred_acres %>% 
+  group_by(temp, fips, crop) %>% 
+  summarise(acres = mean(acres))
+head(diff.pred_acres)                 
+names(diff.pred_acres)[4] <- "diff_acres"
+p.pred_rev <- left_join(p.pred_rev, diff.pred_acres, by = c("crop", "fips", "temp"))
+head(p.pred_rev)
+
+p.pred_rev$base_rev <- p.pred_rev$rev*p.pred_rev$base_acres
+
+p.pred_rev$cs_rev <- p.pred_rev$rev*p.pred_rev$cs_acres
+
+p.pred_rev$diff_rev <- p.pred_rev$rev*p.pred_rev$diff_acres
+
+head(p.pred_rev)
+
+p.plotdat <- p.pred_rev %>% 
+  group_by(temp) %>% 
+  summarise(base_rev = sum(base_rev),
+            cs_rev = sum(cs_rev),
+            diff_rev = sum(diff_rev))
+head(p.plotdat)
+# Set baseline 0C
+p.plotdat$cs_rev[1] <- p.plotdat$base_rev[1]
+p.plotdat$diff_rev[1] <- p.plotdat$base_rev[1]
+
+names(p.plotdat) <- c("temp", "w/o Adaptation", "w/ Adaptation (CS)", "w/ Adaptation (DIFF)")
+p.plotdat <- gather(p.plotdat, key = rev, value = value, -temp)
+
+p.plotdat$rev <- factor(p.plotdat$rev, levels = c("w/o Adaptation", "w/ Adaptation (CS)", "w/ Adaptation (DIFF)"))
+
+pdf("/home/john/Dropbox/Research/Adaptation Along the Envelope/figures/panel_rev_w_wo_adapt.pdf", 
+    width = 8, height = 10)
+ggplot(p.plotdat, aes(x = temp, y = value/1000000, color = factor(rev))) + 
+  geom_line() + geom_point() + ylab("Total Revenue \n ($ Million)") + theme_tufte(base_size = 14) +
+  annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey") +
+  annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
+  scale_x_continuous(breaks = 0:5, labels = c("0", "+1", "+2", "+3", "+4", "+5")) +
+  xlab("Change in Temperature (C)") +
+    theme(legend.position="top") + theme_tufte(base_size = 14) +
+      theme(legend.position = c(.9,.8), legend.justification = c("right", "bottom"), 
+            legend.box.background = element_rect(colour = "grey"), 
+        legend.key = element_blank(), legend.title = element_blank()) 
+dev.off()

@@ -26,7 +26,9 @@ p1
 p2 <- ggplot(cdat, aes(year, tavg_dm)) + geom_line()  + 
   scale_x_continuous(breaks = c(1930, 1940, 1950, 1960, 1970, 1980, 1990, 2000, 2010)) + theme_tufte(base_size = 14) + 
   geom_hline(aes(yintercept = 0), linetype = "dotted") + geom_smooth(fill = "#C0CCD5", color = "coral1") + 
-  ylim(-1.5, 1.5) + xlab(NULL) + ylab("Average Temperature Deviation from Mean")
+  ylim(-1.5, 1.5) + xlab(NULL) + ylab("Average Temperature Deviation from Mean") +
+    annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey") +
+  annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") 
 p2
 
 p3 <- ggplot(cdat, aes(year, tmax_dm)) + geom_line()  + 
@@ -40,7 +42,12 @@ p4 <- ggplot(cdat, aes(year, prec_dm)) + geom_line()  +
   geom_hline(aes(yintercept = 0), linetype = "dotted") + geom_smooth(fill = "#C0CCD5", color = "blue") + 
   xlab(NULL) + ylab("Precipitation")
 p4
-
 plot_grid(p1, p2, p3, p4, ncol = 1)
+
+dev.off()
+pdf("/home/john/Dropbox/Research/Adaptation Along the Envelope/figures/tavg_demean.pdf", 
+    width = 6, height = 5)
+p2
+dev.off()
 
 

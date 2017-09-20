@@ -161,6 +161,7 @@ plot.dat$crop <- as.character(plot.dat$crop)
 class(plot.diff_prop$crop)
 plot.dat$crop <- tools::toTitleCase(plot.dat$crop)
 
+dev.off()
 p1 <- ggplot(plot.dat, aes(temp, rev, color = reg)) + 
   #geom_ribbon(aes(ymin = min, ymax = max), fill = "#C0CCD5", size = 0) + 
   geom_line() + ylab("Revenue/Acre Impact (% Change) ") + 
@@ -173,11 +174,15 @@ p1 <- ggplot(plot.dat, aes(temp, rev, color = reg)) +
   scale_x_continuous(labels = c("0", "+1", "+2", "+3", "+4", "+5")) +
   theme_tufte(base_size = 14) +
     theme(legend.position="top") + theme_tufte(base_size = 14) +
-      theme(legend.position = c(.9,.15), legend.justification = c("right", "bottom"), 
+      theme(legend.position = c(.95,.15), legend.justification = c("right", "bottom"), 
             legend.box.background = element_rect(colour = "grey"), 
         legend.key = element_blank(), legend.title = element_blank()) +
   geom_text_repel(aes(temp, rev, label = round(rev)), show.legend  = FALSE, alpha = 0.5) 
+
+pdf("/home/john/Dropbox/Research/Adaptation Along the Envelope/figures/pred_change_rev.pdf", 
+    width = 6, height = 5)
 p1
+dev.off()
 
 #  Full Plot --------------------------------------------------------------
 # library(ggrepel)

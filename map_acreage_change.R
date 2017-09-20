@@ -124,5 +124,8 @@ soybean_map <- soybean_map + scale_fill_brewer(palette = "YlGnBu") +
   
 soybean_map
 
-plot_grid(corn_map, cotton_map, hay_map, wheat_map, soybean_map)
+pdf("/home/john/Dropbox/Research/Adaptation Along the Envelope/figures/map_acre_change.pdf", 
+    width = 6, height = 5)
 
+plot_grid(corn_map, cotton_map, hay_map, wheat_map, soybean_map)
+dev.off()

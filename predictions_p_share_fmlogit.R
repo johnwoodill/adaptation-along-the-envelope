@@ -122,40 +122,48 @@ plot.cs_prop$crop <- as.character(plot.cs_prop$crop)
 class(plot.cs_prop$crop)
 plot.cs_prop$crop <- tools::toTitleCase(plot.cs_prop$crop)
 
+dev.off()
+pdf("/home/john/Dropbox/Research/Adaptation Along the Envelope/figures/cs_acre_change.pdf", 
+    width = 6, height = 5)
+
 ggplot(plot.cs_prop, aes(temp, sum_a/1000000, color = crop)) + geom_line() + 
   geom_line(data = cs.sum_a, aes(temp, sum_a/1000000), linetype = "dashed", color = "grey") + 
-  annotate("text", x = 0.5, y = cs.sum_a$sum_a[1]/1000000 - (cs.sum_a$sum_a[1]*.02)/1000000, label = "Total Crop Acres", size = 5) + 
+  annotate("text", x = 0.7, y = cs.sum_a$sum_a[1]/1000000 - (cs.sum_a$sum_a[1]*.04)/1000000, label = "Total Crop Acres", size = 5) + 
   theme_tufte(base_size = 14) + ylab("Total Acres \n (Million)") + xlab("Change in Temperature (C)") +
   theme(legend.position = "top",  legend.title = element_blank()) +
    annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey")+
    annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
    scale_x_continuous(labels = c("0", "+1", "+2", "+3", "+4", "+5"))  +
     theme(legend.position="top") + theme_tufte(base_size = 14) +
-      theme(legend.position = c(.95,.7), 
-            legend.justification = c("right", "bottom"), 
+      theme(legend.position = c(.95,.95), 
+            legend.justification = c("right", "top"), 
             legend.box.background = element_rect(colour = "grey"), 
             legend.key = element_blank()) + labs(color = "Cross-section")
+dev.off()
 #+ ggtitle("Predicted Crop Acres with Increase in Temperature \n (Cross-section estimates)")
 plot.diff_prop$crop <- as.character(plot.diff_prop$crop)
 class(plot.diff_prop$crop)
 plot.diff_prop$crop <- tools::toTitleCase(plot.diff_prop$crop)
 
+dev.off()
+pdf("/home/john/Dropbox/Research/Adaptation Along the Envelope/figures/diff_acre_change.pdf", 
+    width = 6, height = 5)
+
 ggplot(plot.diff_prop, aes(temp, sum_a/1000000, color = crop)) + geom_line() + 
   geom_line(data = diff.sum_a, aes(temp, sum_a/1000000), linetype = "dashed", color = "grey") + 
-  annotate("text", x = 0.5, y = diff.sum_a$sum_a[1]/1000000 - (diff.sum_a$sum_a[1]*.02)/1000000, label = "Total Crop Acres") + 
+  annotate("text", x = 0.5, y = diff.sum_a$sum_a[1]/1000000 - (diff.sum_a$sum_a[1]*.04)/1000000, label = "Total Crop Acres") + 
   theme_tufte(base_size = 14) + ylab("Total Acres \n (Million)") + xlab("Change in Temperature (C)") +
   theme(legend.position = "top",  legend.title = element_blank()) +
    annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey")+
    annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
    scale_x_continuous(labels = c("0", "+1", "+2", "+3", "+4", "+5"))  +
     theme(legend.position="top") + theme_tufte(base_size = 14) +
-      theme(legend.position = c(.95,.7), 
-            legend.justification = c("right", "bottom"), 
+      theme(legend.position = c(.95,.95), 
+            legend.justification = c("right", "top"), 
             legend.box.background = element_rect(colour = "grey"), 
             legend.key = element_blank()) + labs(color = "Decade")
+dev.off()
 #+ ggtitle("Predicted Crop Acres with Increase in Temperature \n (Cross-section estimates)")
 
 saveRDS(cs.pred_acres, "data/cs.predicted_acres.rds")
 saveRDS(diff.pred_acres, "data/diff.predicted_acres.rds")
-
-plot_grid()

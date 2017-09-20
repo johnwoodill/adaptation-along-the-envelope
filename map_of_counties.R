@@ -152,6 +152,8 @@ soybean_map <- soybean_map + scale_fill_brewer(palette = "YlGnBu") +
                        panel.border = element_rect(fill = NA))
 soybean_map
 
-
+dev.off()
+pdf("/home/john/Dropbox/Research/Adaptation Along the Envelope/figures/crop_county_map.pdf", 
+    width = 6, height = 5)
 plot_grid(corn_map, cotton_map, hay_map, wheat_map, soybean_map)
-
+dev.off()

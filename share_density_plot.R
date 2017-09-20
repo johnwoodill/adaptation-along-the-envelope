@@ -197,10 +197,12 @@ ddat10$crop <- tools::toTitleCase(ddat10$crop)
 # x = ddat65
 # variable = "tavg"
 # weight = "value"
-
+dev.off()
 p1 <- densityShare(ddat65, "tavg", "value") +
-  annotate("text", x = 24,  y = 0.20, label = "1960-1970", size = 8, alpha = 0.8) + theme_tufte(base_size = 14)+
-  theme(legend.position = c(0,1), legend.justification = c("left", "top"), legend.box.background = element_rect(colour = "grey"), 
+  annotate("text", x = 22,  y = 0.20, label = "1950-1960", size = 6, alpha = 0.8) + 
+  theme_tufte(base_size = 12)+
+  theme(legend.position = c(0,1), legend.justification = c("left", "top"), 
+        legend.box.background = element_rect(colour = "grey"), 
         legend.title = element_blank(), legend.key = element_blank()
         )  +
   ylab("Value of Activity \n (Total Revenue)") + xlim(10, 25) + ylim(0, 0.2)+
@@ -210,13 +212,16 @@ p1 <- densityShare(ddat65, "tavg", "value") +
 p1 
 
 p2 <- densityShare(ddat10, "tavg", "value") + 
-  ylab("Value of Activity \n (Total Revenue)") + theme_tufte(base_size = 14)+
-  annotate("text", x = 24, y = 0.2, label = "2000-2010", size = 8, alpha = 0.8) + 
+  ylab("Value of Activity \n (Total Revenue)") + theme_tufte(base_size = 12)+
+  annotate("text", x = 22, y = 0.2, label = "2000-2010", size = 6, alpha = 0.8) + 
   theme(legend.position = "none")+ xlab("Average Temperature (C)")+ xlim(10, 25) + ylim(0, 0.2) +
   annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "black") +
   annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "black")
   
 
 p2
-
+dev.off()
+pdf("/home/john/Dropbox/Research/Adaptation Along the Envelope/figures/initial_density.pdf", 
+    width = 6, height = 5)
 plot_grid(p1,p2,ncol = 1)
+dev.off()
