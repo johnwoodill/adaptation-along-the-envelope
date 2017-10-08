@@ -28,11 +28,11 @@ densityShare <- function(x, variable, weight){
     sum.soybean <- sum(dat5$weight)
     sum.all <- sum.corn + sum.cotton + sum.hay + sum.wheat + sum.soybean
     
-    dens.dat1 <- density(dat1$variable, weight = dat1$weight/sum.all, from = 5, to = 30, n = 90)
-    dens.dat2 <- density(dat2$variable, weight = dat2$weight/sum.all, from = 5, to = 30, n = 90)
-    dens.dat3 <- density(dat3$variable, weight = dat3$weight/sum.all, from = 5, to = 30, n = 90)
-    dens.dat4 <- density(dat4$variable, weight = dat4$weight/sum.all, from = 5, to = 30, n = 90)
-    dens.dat5 <- density(dat5$variable, weight = dat5$weight/sum.all, from = 5, to = 30, n = 90)
+    dens.dat1 <- density(dat1$variable, weight = dat1$weight/sum.all, from = 0, to = 30, n = 60)
+    dens.dat2 <- density(dat2$variable, weight = dat2$weight/sum.all, from = 0, to = 30, n = 60)
+    dens.dat3 <- density(dat3$variable, weight = dat3$weight/sum.all, from = 0, to = 30, n = 60)
+    dens.dat4 <- density(dat4$variable, weight = dat4$weight/sum.all, from = 0, to = 30, n = 60)
+    dens.dat5 <- density(dat5$variable, weight = dat5$weight/sum.all, from = 0, to = 30, n = 60)
     
     dens.dat5$y <- dens.dat5$y + dens.dat4$y
     dens.dat4$y <- dens.dat4$y + dens.dat5$y
@@ -52,7 +52,9 @@ densityShare <- function(x, variable, weight){
       xlab(NULL) + ylab(NULL)+ ylim(0, ceiling(ymax/0.15)*.15) + theme_tufte(base_size = 14) +
       #scale_fill_discrete(breaks = c("Corn", "soybean", "hay", "wheat", "cotton")) + 
       theme(legend.position="top") + 
-      theme(legend.title=element_blank())
+      theme(legend.title=element_blank()) +
+        annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey") +
+        annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey")
       
     plot1    
     return(plot1)
