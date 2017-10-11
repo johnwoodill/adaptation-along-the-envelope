@@ -7,6 +7,8 @@ setwd("/run/media/john/1TB/SpiderOak/Projects/adaptation-along-the-envelope/")
 
 source("R/densityShare.R")
 
+million <- function(x) x/1000000
+
 ggplotColours <- function(n = 6, h = c(0, 360) + 15){
   if ((diff(h) %% 360) < 1) h[2] <- h[2] - 360/n
   hcl(h = (seq(h[1], h[2], length = n)), c = 100, l = 65)
@@ -25,12 +27,21 @@ cropdat <- readRDS("data/full_ag_data.rds")
 cropdat$dday0_10 <- cropdat$dday0C - cropdat$dday10C
 cropdat$dday10_30 <- cropdat$dday10C - cropdat$dday30C
 
+# Constant prices
+cropdat$corn_rprice <- mean(cropdat$corn_rprice, na.rm = TRUE)
+cropdat$cotton_rprice <- mean(cropdat$cotton_rprice, na.rm = TRUE)
+cropdat$hay_rprice <- mean(cropdat$hay_rprice, na.rm = TRUE)
+cropdat$wheat_rprice <- mean(cropdat$wheat_rprice, na.rm = TRUE)
+cropdat$soybean_rprice <- mean(cropdat$soybean_rprice, na.rm = TRUE)
+
 # Total Activity
-cropdat$corn <- cropdat$corn_yield*cropdat$corn_grain_a
-cropdat$cotton <- cropdat$cotton_yield*cropdat$cotton_a
-cropdat$hay <- cropdat$hay_yield*cropdat$hay_a
-cropdat$wheat <- cropdat$wheat_yield*cropdat$wheat_a
-cropdat$soybean <- cropdat$soybean_yield*cropdat$soybean_a
+cropdat$corn <- cropdat$corn_yield*cropdat$corn_grain_a*cropdat$corn_rprice
+cropdat$cotton <- cropdat$cotton_yield*cropdat$cotton_a*cropdat$cotton_rprice
+cropdat$hay <- cropdat$hay_yield*cropdat$hay_a*cropdat$hay_rprice
+cropdat$wheat <- cropdat$wheat_yield*cropdat$wheat_a*cropdat$wheat_rprice
+cropdat$soybean <- cropdat$soybean_yield*cropdat$soybean_a*cropdat$soybean_rprice
+
+
 
 # Crop Acres
 # cropdat$corn <- cropdat$corn_grain_a
@@ -90,6 +101,7 @@ head(diff)
 
 # Split into thirds
 #diff$thirds <- ntile(diff$diff30, 3)
+
 diff$thirds <- ntile(diff$difftavg, 3)
 spdiff1 <- filter(diff, thirds == 1) # Coolest
 spdiff2 <- filter(diff, thirds == 3) # Warmest
@@ -102,24 +114,31 @@ wdat1 <- filter(dat1, fips %in% fips2)
 wdat1 <- select(wdat1, fips, Corn, Cotton, Hay, Wheat, Soybean, tavg)
 wdat1 <- gather(wdat1, key = crop, value = value, -tavg, -fips)
 wdat1 <- filter(wdat1, !is.na(tavg) & !is.na(value))
+wdat1$value <- wdat1$value/1000000
 
 wdat2 <- filter(dat2, fips %in% fips2)
 wdat2 <- select(wdat2, fips, Corn, Cotton, Hay, Wheat, Soybean, tavg)
 wdat2 <- gather(wdat2, key = crop, value = value, -tavg, -fips)
 wdat2 <- filter(wdat2, !is.na(tavg) & !is.na(value))
+wdat2$value <- wdat2$value/1000000
 
-wplot1 <- densityShare(wdat1, "tavg", "value") +  theme(legend.position = c(0,1), 
+# x = wdat1
+# variable = "tavg"
+# weight = "value"
+# crop_prod = wdat1_prod
+
+wplot1 <- densityShare(wdat1, "tavg", "value") + theme(legend.position = c(0,1), 
         legend.justification = c("left", "top"), 
         legend.box.background = element_rect(colour = "grey"), 
         legend.key = element_blank(),
         legend.title = element_blank()) + 
-  xlab("Average Temperature (C)") + ylab("Crop Activity \n (Production)") +
-  annotate("text", x = 21, y = .2, label = "1950-1980", size = 6) + ylim(0, 0.2) + xlim(8, 25)
+  xlab("Average Temperature (C)") + ylab("Crop Value of Activity \n ($1 Million)") +
+  xlim(8, 25) 
 wplot1
 
 wplot2 <- densityShare(wdat2, "tavg", "value") + theme(legend.position = "none") +
-   xlab("Average Temperature (C)") + annotate("text", x = 21, y = .2, label = "1980-2010", size = 6) +
-   ylim(0, 0.2)+ xlim(8, 25)
+   xlab("Average Temperature (C)") +
+   xlim(8, 25) 
 wplot2
 
 mdat1 <- filter(dat1, fips %in% fips2)
@@ -135,11 +154,19 @@ mergedat <- data.frame(fips = mdat1$fips,
                        tavg2 = mdat2$tavg,
                        tavg1 = mdat1$tavg,
                        value1 = mdat1$value,
-                       value2 = mdat2$value)
+                       value2 = mdat2$value,
+                       diffvalue = mdat2$value - mdat1$value,
+                       mtavg = (mdat1$tavg + mdat2$tavg)/2)
 
 mergedat$tavgdiff = mergedat$tavg2 - mergedat$tavg1
 mergedat$tavgdiff <- ifelse(is.na(mergedat$value1), NA, mergedat$tavgdiff)
 mergedat$tavgdiff <- ifelse(is.na(mergedat$value2), NA, mergedat$tavgdiff)
+
+ggplot_build(wplot1)$data
+
+# Difference distribution
+diffdat <- filter(mergedat, !is.na(diffvalue))
+densityShare(mergedat, "mtavg", "diffvalue")
 
 # Remove outliers for boxplot
 tuftedata <- mergedat %>% 
@@ -152,7 +179,7 @@ head(diff)
 
 cpercent <- mergedat %>% 
   group_by(crop) %>% 
-  summarise(change = (sum(value2, na.rm = TRUE) - sum(value1, na.rm = TRUE))/sum(value1, na.rm = TRUE))
+  summarise(change = (sum(value2, na.rm = TRUE) - sum(value1, na.rm = TRUE))/sum(value1, na.rm = TRUE)*100)
 cpercent
 
 #plot(density(mergdat$tdiff, na.rm = TRUE))
@@ -172,9 +199,6 @@ p1 <- ggplot(mergedat, aes(y = tavgdiff, x = crop, color = crop)) +
   theme(legend.position = "none") +
   scale_y_continuous(breaks = c(0, 1, 2), labels = c("0", "+1C", "+2C"))
 
-
-
-
 p2 <- ggplot(cpercent, aes(y = change, x = crop)) + 
   geom_point(data = cpercent, aes(crop, change), color = c(ggplotColours(n = 5)), size = 1.5) +
   theme_tufte(base_size = 14) +
@@ -182,106 +206,21 @@ p2 <- ggplot(cpercent, aes(y = change, x = crop)) +
   annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey") +
   annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
   xlab(NULL) + 
-  ylab("% Change in \n Production") + ylim(0, 2)
- 
+  ylab("% Change in \n Production") + ylim(0, 200)
 
+wplot1_ymax <- ggplot_build(wplot1)$layout$panel_ranges[[1]]$y.range[2]
+wplot2_ymax <- ggplot_build(wplot2)$layout$panel_ranges[[1]]$y.range[2]
+
+wplot_ymax <- max(wplot1_ymax, wplot2_ymax)
+
+wplot1 <- wplot1 +  ylim(0, wplot_ymax) + annotate("text", x = 21, y = wplot_ymax, label = "1950-1980", size = 6)
+wplot2 <- wplot2 +  ylim(0, wplot_ymax)  + annotate("text", x = 21, y = wplot_ymax, label = "1980-2010", size = 6)
+wplot1
 dplot <-plot_grid(p1, p2, ncol = 1)
 
 plot_grid(wplot1, wplot2, dplot, ncol = 3) 
 
 ###################
-
-# Subset new data coldest counties
-cdat1 <- filter(dat1, fips %in% fips1)
-cdat1 <- select(cdat1, fips, Corn, Cotton, Hay, Wheat, Soybean, tavg)
-cdat1 <- gather(cdat1, key = crop, value = value, -tavg, -fips)
-cdat1 <- filter(cdat1, !is.na(tavg) & !is.na(value))
-
-cdat2 <- filter(dat2, fips %in% fips1)
-cdat2 <- select(cdat2, fips, Corn, Cotton, Hay, Wheat, Soybean, tavg)
-cdat2 <- gather(cdat2, key = crop, value = value, -tavg, -fips)
-cdat2 <- filter(cdat2, !is.na(tavg) & !is.na(value))
-
-wplot1 <- densityShare(cdat1, "tavg", "value") +  theme(legend.position = c(0,1), 
-        legend.justification = c("left", "top"), 
-        legend.box.background = element_rect(colour = "grey"), 
-        legend.key = element_blank(),
-        legend.title = element_blank()) + 
-  xlab("Average Temperature (C)") + ylab("Crop Activity \n (Production)") +
-  annotate("text", x = 21, y = .28, label = "1950-1980", size = 6) + ylim(0, 0.28) + xlim(10, 25)
-wplot1
-
-wplot2 <- densityShare(cdat2, "tavg", "value") + theme(legend.position = "none") +
-   xlab("Average Temperature (C)") + annotate("text", x = 21, y = .28, label = "1980-2010", size = 6) +
-   ylim(0, 0.28)+ xlim(10, 25)
-wplot2
-
-mdat1 <- filter(dat1, fips %in% fips1)
-mdat1 <- select(mdat1, fips, Corn, Cotton, Hay, Wheat, Soybean, tavg)
-mdat1 <- gather(mdat1, key = crop, value = value, -tavg, -fips)
-
-mdat2 <- filter(dat2, fips %in% fips1)
-mdat2 <- select(mdat2, fips, Corn, Cotton, Hay, Wheat, Soybean, tavg)
-mdat2 <- gather(mdat2, key = crop, value = value, -tavg, -fips)
-
-mergedat <- data.frame(fips = mdat1$fips,
-                       crop = mdat1$crop,
-                       tavg2 = mdat2$tavg,
-                       tavg1 = mdat1$tavg,
-                       value1 = mdat1$value,
-                       value2 = mdat2$value)
-
-mergedat$tavgdiff = mergedat$tavg2 - mergedat$tavg1
-mergedat$tavgdiff <- ifelse(is.na(mergedat$value1), NA, mergedat$tavgdiff)
-mergedat$tavgdiff <- ifelse(is.na(mergedat$value2), NA, mergedat$tavgdiff)
-
-# Remove outliers for boxplot
-tuftedata <- mergedat %>% 
-  group_by(crop) %>% 
-  mutate(tavgdiff = remove_outliers(tavgdiff))
-
-# Get outliers for boxplot
-diff <- filter(mergedat, !tavgdiff %in% tuftedata$tavgdiff)
-head(diff)
-
-cpercent <- mergedat %>% 
-  group_by(crop) %>% 
-  summarise(change = (sum(value2, na.rm = TRUE) - sum(value1, na.rm = TRUE))/sum(value1, na.rm = TRUE))
-cpercent
-
-#plot(density(mergdat$tdiff, na.rm = TRUE))
- # scale_fill_brewer(palette = "Dark2") +
-  
-p1 <- ggplot(mergedat, aes(y = tavgdiff, x = crop, color = crop)) +
-  ggthemes::geom_tufteboxplot(data = tuftedata, median.type = "line", 
-                              whisker.type = 'line', hoffset = 0, width = 3, size = 1, show.legend = FALSE) +
-  geom_point(data = diff) +
-  theme_tufte(base_size = 14) +
-  geom_hline(yintercept = 0, linetype = "dashed") +
-  annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey") +
-  annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
-  theme(axis.text.x = element_blank(),
-        axis.ticks.x = element_blank()) +
-  xlab(NULL) + ylab("Change in \n Temperature (C)") +
-  theme(legend.position = "none") +
-  scale_y_continuous(breaks = c(0, -0.5, -1), labels = c("0", "-0.5C", "-1C"))
-p1
-
-
-
-p2 <- ggplot(cpercent, aes(y = change, x = crop)) + 
-  geom_point(data = cpercent, aes(crop, change), color = c(ggplotColours(n = 5)), size = 1.5) +
-  theme_tufte(base_size = 14) +
-  geom_hline(yintercept = 0, linetype = "dashed") +
-  annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey") +
-  annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
-  xlab(NULL) + 
-  ylab("% Change in \n Production") + ylim(-0.5, 2)
-p2 
-
-dplot <-plot_grid(p1, p2, ncol = 1)
-
-plot_grid(wplot1, wplot2, dplot, ncol = 3)
 
 ###########################
 ###########################

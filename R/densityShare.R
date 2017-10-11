@@ -34,6 +34,13 @@ densityShare <- function(x, variable, weight){
     dens.dat4 <- density(dat4$variable, weight = dat4$weight/sum.all, from = 0, to = 30, n = 60)
     dens.dat5 <- density(dat5$variable, weight = dat5$weight/sum.all, from = 0, to = 30, n = 60)
     
+    # Adjust density based on production levels
+    dens.dat1$y <- dens.dat1$y*cropsum$sum[1]
+    dens.dat2$y <- dens.dat2$y*cropsum$sum[2]
+    dens.dat3$y <- dens.dat3$y*cropsum$sum[3]
+    dens.dat4$y <- dens.dat4$y*cropsum$sum[4]
+    dens.dat5$y <- dens.dat5$y*cropsum$sum[5]
+    
     dens.dat5$y <- dens.dat5$y + dens.dat4$y
     dens.dat4$y <- dens.dat4$y + dens.dat5$y
     dens.dat3$y <- dens.dat3$y + dens.dat4$y
