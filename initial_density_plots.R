@@ -125,9 +125,23 @@ fips2 <- spdiff2$fips
 
 # Map of counties
 mapdat <- data.frame(region = c(fips1, fips2), value = c(rep("Coolest", length(fips1)), rep("Warmest", length(fips2))))
+
+states <- tolower(unique(state.name[match(cropdat$state, tolower(state.abb))]))
+
 map <- county_choropleth(mapdat,
-                  title      = NULL)
-map+ scale_fill_manual(values=c("navyblue", "#f47041", "black"))
+                  title      = NULL,
+                  state_zoom = states)
+map+ scale_fill_manual(values=c("#9ecae1", "#de2d26", "black"), breaks = c("Warmest", "Coolest"))  +
+ #scale_fill_brewer(palette = "YlGnBu") + 
+  theme_tufte(base_size = 14)+ 
+  xlab("Sample Data") + ylab(NULL) + theme(legend.position = c(0,0),
+                                    legend.justification = c("left", "bottom"),
+                                    legend.title = element_blank(),
+                                     axis.text.x = element_blank(),
+                                     axis.text.y = element_blank(),
+                                     axis.ticks.x = element_blank(),
+                                     axis.ticks.y = element_blank(),
+                                     panel.border = element_rect(fill = NA)) 
 
 # Subset new data warmest counties
 wdat1 <- filter(dat1, fips %in% fips2)
@@ -259,7 +273,7 @@ p2 <- ggplot(cpercent, aes(y = change, x = crop)) +
   annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey") +
   annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
   xlab(NULL) + 
-  ylab("% Change in \n Production") + ylim(0, 200)
+  ylab("% Change in \n Value of Activity") + ylim(0, 200)
 
 wplot1_ymax <- ggplot_build(wplot1)$layout$panel_ranges[[1]]$y.range[2]
 wplot2_ymax <- ggplot_build(wplot2)$layout$panel_ranges[[1]]$y.range[2]
@@ -268,7 +282,7 @@ wplot_ymax <- max(wplot1_ymax, wplot2_ymax)
 
 wplot1 <- wplot1 +  ylim(0, wplot_ymax) + annotate("text", x = 17, y = wplot_ymax, label = "1950-1980", size = 4)
 wplot2 <- wplot2 +  ylim(0, wplot_ymax)  + annotate("text", x = 17, y = wplot_ymax, label = "1980-2010", size = 4)
-wdensplot <- wdensplot +  ylim(-50, wplot_ymax)  + annotate("text", x = 17, y = wplot_ymax, label = "Change", size = 4)
+wdensplot <- wdensplot +  ylim(-50, wplot_ymax)  + annotate("text", x = 17, y = wplot_ymax, label = "Difference", size = 4)
 wplot1
 dplot <-plot_grid(p1, p2, ncol = 2)
 
@@ -414,7 +428,7 @@ wplot_ymax <- max(wplot1_ymax, wplot2_ymax)
 
 wplot1 <- wplot1 +  ylim(0, wplot_ymax) + annotate("text", x = 17, y = wplot_ymax, label = "1950-1980", size = 4)
 wplot2 <- wplot2 +  ylim(0, wplot_ymax)  + annotate("text", x = 17, y = wplot_ymax, label = "1980-2010", size = 4)
-cdensplot <- cdensplot +  ylim(-50, wplot_ymax)  + annotate("text", x = 17, y = wplot_ymax, label = "Change", size = 4)
+cdensplot <- cdensplot +  ylim(-50, wplot_ymax)  + annotate("text", x = 17, y = wplot_ymax, label = "Difference", size = 4)
 #wplot1
 dplot <-plot_grid(p1, p2, ncol = 2)
 
@@ -476,7 +490,7 @@ diffdensplot <- ggplot(NULL) +
       geom_area(data = filter(diffdens, crop == diffdens_crop$crop[3]), aes(x2, ydiff, fill = diffdens_crop$crop[3])) +
       geom_area(data = filter(diffdens, crop == diffdens_crop$crop[4]), aes(x2, ydiff, fill = diffdens_crop$crop[4])) +
       geom_area(data = filter(diffdens, crop == diffdens_crop$crop[5]), aes(x2, ydiff, fill = diffdens_crop$crop[5])) +
-      xlab("Average Temperature (C)") + theme_tufte(base_size = 12) +
+      theme_tufte(base_size = 12) + xlab(NULL) +
       #scale_fill_discrete(breaks = c("Corn", "soybean", "hay", "wheat", "cotton")) + 
       theme(legend.title=element_blank()) +
       theme(legend.position = "none") +
@@ -485,7 +499,7 @@ diffdensplot <- ggplot(NULL) +
       annotate("text", x = 21, y = 47, label = "Increase activity \n in warmest \n counties", fontface = 2) +
       annotate("text", x = 21, y = -37, label = "Increase activity \n in coolest \n counties", fontface = 2) +
       xlim(8, 25)+ geom_hline(yintercept = 0, linetype = "dashed", color = "grey") + ylim(-60,60) 
-diffdensplot <- diffdensplot + ylab("Difference of Change") + xlab("Average Temperature (C)")
+diffdensplot <- diffdensplot + ylab("Difference of Change") 
 diffdensplot
 
 diffdens_crop$crop <- factor(diffdens_crop$crop, levels = c("Corn", "Cotton", "Hay", "Wheat", "Soybean", "All Crops"))
@@ -495,7 +509,7 @@ diffp1 <- ggplot(diffdens_crop, aes(crop, wperc, color = crop)) + geom_point(siz
   geom_hline(yintercept = 0, linetype = "dashed", color = "grey") +
   annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey") +
   annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
-  xlab(NULL)  + theme(legend.position = "none") +
+  xlab("")  + theme(legend.position = "none") +
   ylab("Proportion of \n Total Activity (%)") + ylim(-40, 40) 
   #annotate("text", x = 4.8, y = 37, label = "Increase activity \n in warmest \n counties") +
   #annotate("text", x = 4.8, y = -27, label = "Increase activity \n in coolest \n counties") 
@@ -507,14 +521,15 @@ wdensplot2 <- ggplot(NULL) +
       geom_area(data = filter(wdens, crop == wdens_crop$crop[3]), aes(x2, ydiff, fill = wdens_crop$crop[3])) +
       geom_area(data = filter(wdens, crop == wdens_crop$crop[4]), aes(x2, ydiff, fill = wdens_crop$crop[4])) +
       geom_area(data = filter(wdens, crop == wdens_crop$crop[5]), aes(x2, ydiff, fill = wdens_crop$crop[5])) +
-      xlab("") + ylab(NULL)+ theme_tufte(base_size = 14) +
+      xlab("") + ylab(NULL)+ theme_tufte(base_size = 12) +
       #scale_fill_discrete(breaks = c("Corn", "soybean", "hay", "wheat", "cotton")) + 
       theme(legend.position="none") + 
       theme(legend.title=element_blank()) +
         annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey") +
         annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
   xlim(8, 25)+ geom_hline(yintercept = 0, linetype = "dashed", color = "grey") +
-  ylim(-50, 400) + annotate("text", x = 17, y = 350, label = "Warmest \n Change")
+  ylim(-50, 400) + annotate("text", x = 17, y = 350, label = "Warmest \n Change") +
+  ylab("Value of Activity \n ($1 Million)")
 wdensplot2
 
 cdensplot2 <- ggplot(NULL) + 
@@ -523,7 +538,7 @@ cdensplot2 <- ggplot(NULL) +
       geom_area(data = filter(cdens, crop == cdens_crop$crop[3]), aes(x2, ydiff, fill = cdens_crop$crop[3])) +
       geom_area(data = filter(cdens, crop == cdens_crop$crop[4]), aes(x2, ydiff, fill = cdens_crop$crop[4])) +
       geom_area(data = filter(cdens, crop == cdens_crop$crop[5]), aes(x2, ydiff, fill = cdens_crop$crop[5])) +
-      xlab("") + ylab(NULL)+ theme_tufte(base_size = 14) +
+      xlab("Average Temperature (C)") + ylab(NULL)+ theme_tufte(base_size = 12) +
       #scale_fill_discrete(breaks = c("Corn", "soybean", "hay", "wheat", "cotton")) + 
       theme(legend.position="none") + 
       theme(legend.title=element_blank()) +
@@ -532,6 +547,16 @@ cdensplot2 <- ggplot(NULL) +
   xlim(8, 25)+ geom_hline(yintercept = 0, linetype = "dashed", color = "grey") +
   ylim(-50, 400) + annotate("text", x = 17, y = 350, label = "Coolest \n Change")
 cdensplot2
+
+wplot1_legend <- densityShare(wdat1, "tavg", "value")$plot + theme(legend.position = c(0.45,1), 
+        legend.justification = c("left", "top"), 
+        legend.box.background = element_rect(colour = "grey"), 
+        legend.key = element_blank(),
+        legend.title = element_blank()) + 
+  xlab("") + ylab("Crop Value of Activity \n ($1 Million)") +
+  xlim(8, 25) 
+legend <- g_legend(wplot1_legend)
+plot(legend)
 
 #wdensplot <- wdensplot + theme(legend.position = "none") + annotate("text", x = 17, y = 450, label = "(Warmest)")
 #cdensplot <- cdensplot + ylim(0, 500) + annotate("text", x = 17, y = 450, label = "(Coolest)")
