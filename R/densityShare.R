@@ -63,6 +63,14 @@ densityShare <- function(x, variable, weight){
         annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey") +
         annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey")
       
-    plot1    
-    return(plot1)
+    retdat <- data.frame(x = c(dens.dat1$x, dens.dat2$x, dens.dat3$x, dens.dat4$x, dens.dat5$x),
+               y = c(dens.dat1$y, dens.dat2$y, dens.dat3$y, dens.dat4$y, dens.dat5$y),
+               crop = c(rep(cropsum$crop[1], length(dens.dat1$x)),
+                        rep(cropsum$crop[2], length(dens.dat2$x)),
+                        rep(cropsum$crop[3], length(dens.dat3$x)),
+                        rep(cropsum$crop[4], length(dens.dat4$x)),
+                        rep(cropsum$crop[5], length(dens.dat5$x))))
+    retlist <- list(plot = plot1,
+                    densdata = retdat)
+    return(retlist)
 }
