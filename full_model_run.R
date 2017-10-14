@@ -16,7 +16,7 @@ source("panel_regression_data.R")
 source("panel_regression.R")
 
 # FML Regression
-source("fmlogit_run.R")
+#source("fmlogit_run.R")
 
 # Revenue Predictions
 source("predictions_ln_rev.R")

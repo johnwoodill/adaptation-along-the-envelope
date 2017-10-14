@@ -33,6 +33,7 @@ diff.pred_acres <- readRDS("data/diff.predicted_acres.rds")
 # Load panel to get average fips
 p.dat <- readRDS("data/panel_regression_data.rds")
 
+# ----------- Without Adaptation (Constant Acres)
 # Get average from last 20-years
 base.acres <- p.dat %>% 
   filter(year >= 1990) %>% 
@@ -52,8 +53,7 @@ base.acres_g <- gather(base.acres, key = crop, value = acres, -fips)
 cs.rev <- data.frame(temp = cs.pred_rev$temp, 
                      crop = cs.pred_rev$crop,
                      rev_a = cs.pred_rev$rev, 
-                     acres = cs.pred_acres$acres
-                     )
+                     acres = cs.pred_acres$acres)
 head(cs.rev)                     
 
 # Get base acres
@@ -98,7 +98,7 @@ cs.rev$ctavg <- c(cs.0C$tavg, cs.1C$tavg, cs.2C$tavg, cs.3C$tavg, cs.4C$tavg, cs
 # plot_grid(p00, p11, p22, p33, p44, p55, ncol = 3, labels = c("+0C", "+1C", "+2C", "+3C", "+4C", "+5C"),label_x = .75, label_y = .75) 
 
 # Differences in revenue with and without adaptation
-cs.rev$diff <- cs.rev$c_rev_acre - cs.rev$b_rev_acre
+#cs.rev$diff <- cs.rev$c_rev_acre - cs.rev$b_rev_acre
 #ggplot(cs.rev, aes(c_rev_acre, color = crop)) + geom_bar()
 
 #var(sampdat)/sqrt(length(sampdat))
@@ -335,6 +335,18 @@ p.pred_rev$diff_rev <- p.pred_rev$rev*p.pred_rev$diff_acres
 
 head(p.pred_rev)
 
+# Bootstrap s.e.
+bse <- p.pred_rev %>% 
+  group_by(crop, temp) %>% 
+  summarise(base_rev_bse = boot_strap_rev(base_rev))
+bse
+
+#bse <- boot_strap_rev(x = p.pred_rev$base_rev)
+bse$rev <- "w/o Adaptation"
+# bse2 <- p.pred_rev %>% 
+#   group_by(crop, temp) %>% 
+#   summarise(bse = boot.strap(rev)[[1]])
+
 p.plotdat <- p.pred_rev %>% 
   group_by(temp) %>% 
   summarise(base_rev = sum(base_rev),
@@ -349,10 +361,14 @@ names(p.plotdat) <- c("temp", "w/o Adaptation", "w/ Adaptation (CS)", "w/ Adapta
 p.plotdat <- gather(p.plotdat, key = rev, value = value, -temp)
 
 p.plotdat$rev <- factor(p.plotdat$rev, levels = c("w/o Adaptation", "w/ Adaptation (CS)", "w/ Adaptation (DIFF)"))
+p.plotdat <- left_join(p.plotdat, bse, by = c("temp", "rev"))
+#pdf("/home/john/Dropbox/Research/Adaptation Along the Envelope/figures/panel_rev_w_wo_adapt.pdf", 
+#    width = 8, height = 10)
 
-pdf("/home/john/Dropbox/Research/Adaptation Along the Envelope/figures/panel_rev_w_wo_adapt.pdf", 
-    width = 8, height = 10)
+p.plotdat <- as.data.frame(p.plotdat)
+p.plotdat$base_rev_bse*1.96 + p.plotdat$value
 ggplot(p.plotdat, aes(x = temp, y = value/1000000, color = factor(rev))) + 
+  geom_line(aes(x = temp, y = ((value/1000000)+(1.96*(base_rev_bse/1000000)))), color = "black") +
   geom_line() + geom_point() + ylab("Total Revenue \n ($ Million)") + theme_tufte(base_size = 14) +
   annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey") +
   annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
@@ -362,4 +378,4 @@ ggplot(p.plotdat, aes(x = temp, y = value/1000000, color = factor(rev))) +
       theme(legend.position = c(.9,.8), legend.justification = c("right", "bottom"), 
             legend.box.background = element_rect(colour = "grey"), 
         legend.key = element_blank(), legend.title = element_blank()) 
-dev.off()
+#dev.off()

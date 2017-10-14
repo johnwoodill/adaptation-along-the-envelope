@@ -320,12 +320,19 @@ fulldat$hay_yield <- fulldat$hay_p/fulldat$hay_a
 fulldat$wheat_yield <- fulldat$wheat_p/fulldat$wheat_a
 fulldat$soybean_yield <- fulldat$soybean_p/fulldat$soybean_a
 
-# Real revenue per acre
-fulldat$corn_rrev <- (fulldat$corn_grain_p*fulldat$corn_rprice)/fulldat$corn_grain_a
-fulldat$cotton_rrev <- (fulldat$cotton_p*fulldat$cotton_rprice)/fulldat$cotton_a
-fulldat$hay_rrev <- (fulldat$hay_p*fulldat$hay_rprice)/fulldat$hay_a 
-fulldat$wheat_rrev <- (fulldat$wheat_p*fulldat$wheat_rprice)/fulldat$wheat_a
-fulldat$soybean_rrev <- (fulldat$soybean_p*fulldat$soybean_rprice)/fulldat$soybean_a
+# # Real revenue per acre
+# fulldat$corn_rrev <- (fulldat$corn_grain_p*fulldat$corn_rprice)/fulldat$corn_grain_a
+# fulldat$cotton_rrev <- (fulldat$cotton_p*fulldat$cotton_rprice)/fulldat$cotton_a
+# fulldat$hay_rrev <- (fulldat$hay_p*fulldat$hay_rprice)/fulldat$hay_a
+# fulldat$wheat_rrev <- (fulldat$wheat_p*fulldat$wheat_rprice)/fulldat$wheat_a
+# fulldat$soybean_rrev <- (fulldat$soybean_p*fulldat$soybean_rprice)/fulldat$soybean_a
+
+# Real revenue per acre constant price
+fulldat$corn_rrev <- (fulldat$corn_grain_p*mean(fulldat$corn_rprice, na.rm = TRUE))/fulldat$corn_grain_a
+fulldat$cotton_rrev <- (fulldat$cotton_p*mean(fulldat$cotton_rprice, na.rm = TRUE))/fulldat$cotton_a
+fulldat$hay_rrev <- (fulldat$hay_p*mean(fulldat$hay_rprice, na.rm = TRUE))/fulldat$hay_a
+fulldat$wheat_rrev <- (fulldat$wheat_p*mean(fulldat$wheat_rprice, na.rm = TRUE))/fulldat$wheat_a
+fulldat$soybean_rrev <- (fulldat$soybean_p*mean(fulldat$soybean_rprice, na.rm = TRUE))/fulldat$soybean_a
 
 # Nominal rev
 fulldat$corn_nrev <- (fulldat$corn_grain_p*fulldat$corn_nprice)/fulldat$corn_grain_a

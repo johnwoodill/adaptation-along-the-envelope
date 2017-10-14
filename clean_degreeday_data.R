@@ -6,20 +6,20 @@ prec <- read_csv("data/fips_precipitation_1900-2013.csv")
 cs.dat <- readRDS("data/cross_section_regression_data.rds")
 xsectiondat <- dplyr::select(cs.dat, state, fips, ln_corn_rrev, ln_cotton_rrev, ln_hay_rrev, 
                       ln_wheat_rrev, ln_soybean_rrev, p_corn_share, p_cotton_share, p_hay_share,
-                      p_wheat_share, p_soybean_share, corn_w, cotton_w, hay_w, wheat_w, soybean_w, total_a, total_w, lat, long)
+                      p_wheat_share, p_soybean_share, corn_w, cotton_w, hay_w, wheat_w, soybean_w, total_a, lat, long)
 xsectiondat.dm <- dplyr::select(cs.dat, dday0_10, dday10_30, dday30C, prec)
 
 p.dat <- readRDS("data/panel_regression_data.rds")
 paneldat <- dplyr::select(p.dat, year, state, fips, ln_corn_rrev, ln_cotton_rrev, ln_hay_rrev, 
                       ln_wheat_rrev, ln_soybean_rrev, p_corn_share, p_cotton_share, p_hay_share,
-                      p_wheat_share, p_soybean_share, corn_w, cotton_w, hay_w, wheat_w, soybean_w, total_a, total_w, lat, long,
+                      p_wheat_share, p_soybean_share, corn_w, cotton_w, hay_w, wheat_w, soybean_w, total_a, lat, long,
                       corn_grain_a, corn_grain_p, corn_rprice)
 pdat.dm <- dplyr::select(p.dat, dday0_10, dday10_30, dday30C, prec)
 
 diff.dat <- readRDS("data/diff_regression_data.rds")
 diffdat <- dplyr::select(diff.dat, year, state, fips, ln_corn_rrev, ln_cotton_rrev, ln_hay_rrev, 
                       ln_wheat_rrev, ln_soybean_rrev, p_corn_share, p_cotton_share, p_hay_share,
-                      p_wheat_share, p_soybean_share, corn_w, cotton_w, hay_w, wheat_w, soybean_w, total_a, total_w, lat, long)
+                      p_wheat_share, p_soybean_share, corn_w, cotton_w, hay_w, wheat_w, soybean_w, total_a, lat, long)
 diffdat.dm <- dplyr::select(diff.dat, dday0_10, dday10_30, dday30C, prec)
 
 ################################
