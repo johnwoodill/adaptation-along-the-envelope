@@ -31,6 +31,8 @@ remove_outliers <- function(x, na.rm = TRUE, ...) {
   y
 }
 
+
+
 cropdat <- readRDS("data/full_ag_data.rds")
 cropdat$dday0_10 <- cropdat$dday0C - cropdat$dday10C
 cropdat$dday10_30 <- cropdat$dday10C - cropdat$dday30C
