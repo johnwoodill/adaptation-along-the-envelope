@@ -2,6 +2,7 @@ library(tidyverse)
 library(cowplot)
 library(ggthemes)
 library(ggrepel)
+library(scales)
 
 source("R/densityShare.R")
 
@@ -101,16 +102,14 @@ cs.rev$ctavg <- c(cs.0C$tavg, cs.1C$tavg, cs.2C$tavg, cs.3C$tavg, cs.4C$tavg, cs
 #cs.rev$diff <- cs.rev$c_rev_acre - cs.rev$b_rev_acre
 #ggplot(cs.rev, aes(c_rev_acre, color = crop)) + geom_bar()
 
-#var(sampdat)/sqrt(length(sampdat))
-
-change <- cs.rev %>% 
-  group_by(temp) %>% 
-  summarise(c_rev_acre = sum(c_rev_acre),
-            b_rev_acre = sum(b_rev_acre),
-            diff = sum(c_rev_acre) - sum(b_rev_acre)) %>% 
-  select(temp, b_rev_acre, c_rev_acre,  diff)
-
-change
+# change <- cs.rev %>% 
+#   group_by(temp) %>% 
+#   summarise(c_rev_acre = sum(c_rev_acre),
+#             b_rev_acre = sum(b_rev_acre),
+#             diff = sum(c_rev_acre) - sum(b_rev_acre)) %>% 
+#   select(temp, b_rev_acre, c_rev_acre,  diff)
+# 
+# change
 # change
 #  change <- cs.rev %>% 
 #    group_by(temp) %>% 
@@ -122,65 +121,65 @@ change
 #change$nr <- 1:nrow(change)
 #gather(change, key = crop, value = b_rev_acre)
 #gather(change, key = crop, value = b_rev_acre)
-change
-names(change) <- c("temp", "Rev w/o Adaptation", "Rev w/ Adaptation", "Difference")
-change <- gather(change, key = var, value = value, -temp)
-change
-change$var <- factor(change$var, levels = c("Rev w/ Adaptation", "Rev w/o Adaptation", "Difference")) 
+# change
+# names(change) <- c("temp", "Rev w/o Adaptation", "Rev w/ Adaptation", "Difference")
+# change <- gather(change, key = var, value = value, -temp)
+# change
+# change$var <- factor(change$var, levels = c("Rev w/ Adaptation", "Rev w/o Adaptation", "Difference")) 
 
-ggplot(change, aes(x = temp, y = value/1000000, fill = factor(var))) + 
-  geom_bar(stat = "identity", position = "dodge") + ylab("Total Revenue \n (Million $)") +
-  annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey") +
-  annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
-  scale_x_continuous(breaks = 0:5, labels = c("0", "+1", "+2", "+3", "+4", "+5")) 
+# ggplot(change, aes(x = temp, y = value/1000000, fill = factor(var))) + 
+#   geom_bar(stat = "identity", position = "dodge") + ylab("Total Revenue \n (Million $)") +
+#   annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey") +
+#   annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
+#   scale_x_continuous(breaks = 0:5, labels = c("0", "+1", "+2", "+3", "+4", "+5")) 
+# 
 
+# pdf("/home/john/Dropbox/Research/Adaptation Along the Envelope/figures/cs_rev_w_wo_adapt.pdf", 
+#     width = 8, height = 10)
 
-pdf("/home/john/Dropbox/Research/Adaptation Along the Envelope/figures/cs_rev_w_wo_adapt.pdf", 
-    width = 8, height = 10)
-
-ggplot(filter(change, var != "Difference"), aes(x = temp, y = value/1000000, color = factor(var))) + 
-  geom_line() + geom_point() + ylab("Total Revenue \n ($ Million)") + theme_tufte(base_size = 14) +
-  annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey") +
-  annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
-  scale_x_continuous(breaks = 0:5, labels = c("0", "+1", "+2", "+3", "+4", "+5")) + ylim(0, 200) +
-  xlab("Change in Temperature (C)") +
-    theme(legend.position="top") + theme_tufte(base_size = 14) +
-      theme(legend.position = c(.9,.8), legend.justification = c("right", "bottom"), 
-            legend.box.background = element_rect(colour = "grey"), 
-        legend.key = element_blank()) + labs(color = "Cross-section")
-dev.off()  
-
-cs_rev_w_wo_adapt
+# ggplot(filter(change, var != "Difference"), aes(x = temp, y = value/1000000, color = factor(var))) + 
+#   geom_line() + geom_point() + ylab("Total Revenue \n ($ Million)") + theme_tufte(base_size = 14) +
+#   annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey") +
+#   annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
+#   scale_x_continuous(breaks = 0:5, labels = c("0", "+1", "+2", "+3", "+4", "+5")) + ylim(0, 200) +
+#   xlab("Change in Temperature (C)") +
+#     theme(legend.position="top") + theme_tufte(base_size = 14) +
+#       theme(legend.position = c(.9,.8), legend.justification = c("right", "bottom"), 
+#             legend.box.background = element_rect(colour = "grey"), 
+#         legend.key = element_blank()) + labs(color = "Cross-section")
+# dev.off()  
+# 
+# cs_rev_w_wo_adapt
 
 ###############################################
 #-----------------------------------------------
 # Difference
 
 # Cross-section with and without adaptation
-diff.rev <- data.frame(temp = diff.pred_rev$temp, 
-                     crop = diff.pred_rev$crop,
-                     rev_a = diff.pred_rev$rev, 
-                     acres = diff.pred_acres$acres
-                     )
-head(diff.rev)                     
-
-# Get base acres
-diff.rev$b_acres <- rep(base.acres_g$acres, 36)
-
-# Get revenue without adaptation
-diff.rev$b_rev_acre <- diff.rev$rev_a*diff.rev$b_acres
-
-# Get revenue with adaptation
-diff.rev$c_rev_acre <- diff.rev$rev_a*diff.rev$acres
-
-# Keep base acres for temp = 0
-diff.baset <- which(diff.rev$temp == 0)
-diff.rev$c_rev_acre[diff.baset] <- diff.rev$b_rev_acre[diff.baset]
-diff.rev
-
-# Average temps
-diff.rev$tavg <- rep(diff.0C$tavg, 6)
-diff.rev$ctavg <- c(diff.0C$tavg, diff.1C$tavg, diff.2C$tavg, diff.3C$tavg, diff.4C$tavg, diff.5C$tavg)
+# diff.rev <- data.frame(temp = diff.pred_rev$temp, 
+#                      crop = diff.pred_rev$crop,
+#                      rev_a = diff.pred_rev$rev, 
+#                      acres = diff.pred_acres$acres
+#                      )
+# head(diff.rev)                     
+# 
+# # Get base acres
+# diff.rev$b_acres <- rep(base.acres_g$acres, 36)
+# 
+# # Get revenue without adaptation
+# diff.rev$b_rev_acre <- diff.rev$rev_a*diff.rev$b_acres
+# 
+# # Get revenue with adaptation
+# diff.rev$c_rev_acre <- diff.rev$rev_a*diff.rev$acres
+# 
+# # Keep base acres for temp = 0
+# diff.baset <- which(diff.rev$temp == 0)
+# diff.rev$c_rev_acre[diff.baset] <- diff.rev$b_rev_acre[diff.baset]
+# diff.rev
+# 
+# # Average temps
+# diff.rev$tavg <- rep(diff.0C$tavg, 6)
+# diff.rev$ctavg <- c(diff.0C$tavg, diff.1C$tavg, diff.2C$tavg, diff.3C$tavg, diff.4C$tavg, diff.5C$tavg)
 
 # # Difference with and without adaptation
 # diff.rev <- data.frame(temp = diff.pred_rev$temp, 
@@ -222,57 +221,57 @@ diff.rev$ctavg <- c(diff.0C$tavg, diff.1C$tavg, diff.2C$tavg, diff.3C$tavg, diff
 
 
 # Differences in revenue with and without adaptation
-diff.rev$diff <- diff.rev$c_rev_acre - diff.rev$b_rev_acre
-#ggplot(diff.rev, aes(c_rev_acre, color = crop)) + geom_bar()
-
-var(sampdat)/sqrt(length(sampdat))
-
-change <- diff.rev %>% 
-  group_by(temp) %>% 
-  summarise(c_rev_acre = sum(c_rev_acre),
-            b_rev_acre = sum(b_rev_acre),
-            diff = sum(c_rev_acre) - sum(b_rev_acre)) %>% 
-  select(temp, b_rev_acre, c_rev_acre,  diff)
-
-change
+# diff.rev$diff <- diff.rev$c_rev_acre - diff.rev$b_rev_acre
+# #ggplot(diff.rev, aes(c_rev_acre, color = crop)) + geom_bar()
+# 
+# var(sampdat)/sqrt(length(sampdat))
+# 
+# change <- diff.rev %>% 
+#   group_by(temp) %>% 
+#   summarise(c_rev_acre = sum(c_rev_acre),
+#             b_rev_acre = sum(b_rev_acre),
+#             diff = sum(c_rev_acre) - sum(b_rev_acre)) %>% 
+#   select(temp, b_rev_acre, c_rev_acre,  diff)
+# 
 # change
-#  change <- diff.rev %>% 
-#    group_by(temp) %>% 
-#    summarise(c_rev_acre = mean(c_rev_acre),
-#              b_rev_acre = mean(b_rev_acre),
-#              diff = mean(c_rev_acre) - mean(b_rev_acre)) %>% 
-#    select(temp, b_rev_acre, c_rev_acre, diff)
-
-#change$nr <- 1:nrow(change)
-#gather(change, key = crop, value = b_rev_acre)
-#gather(change, key = crop, value = b_rev_acre)
-change
-names(change) <- c("temp", "Rev w/o Adaptation", "Rev w/ Adaptation", "Difference")
-change <- gather(change, key = var, value = value, -temp)
-change
-change$var <- factor(change$var, levels = c("Rev w/ Adaptation", "Rev w/o Adaptation", "Difference")) 
-
-ggplot(change, aes(x = temp, y = value/1000000, fill = factor(var))) + 
-  geom_bar(stat = "identity", position = "dodge") + ylab("Total Revenue \n (Million $)") +
-  annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey") +
-  annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
-  scale_x_continuous(breaks = 0:5, labels = c("0", "+1", "+2", "+3", "+4", "+5")) 
-
-
-pdf("/home/john/Dropbox/Research/Adaptation Along the Envelope/figures/diff_rev_w_wo_adapt.pdf", 
-    width = 8, height = 10)
-
-ggplot(filter(change, var != "Difference"), aes(x = temp, y = value/1000000, color = factor(var))) + 
-  geom_line() + geom_point() + ylab("Total Revenue \n ($ Million)") + theme_tufte(base_size = 14) +
-  annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey") +
-  annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
-  scale_x_continuous(breaks = 0:5, labels = c("0", "+1", "+2", "+3", "+4", "+5")) + ylim(0, 2000) +
-  xlab("Change in Temperature (C)") +
-    theme(legend.position="top") + theme_tufte(base_size = 14) +
-      theme(legend.position = c(.9,.8), legend.justification = c("right", "bottom"), 
-            legend.box.background = element_rect(colour = "grey"), 
-        legend.key = element_blank()) + labs(color = "Decade")
-dev.off()
+# # change
+# #  change <- diff.rev %>% 
+# #    group_by(temp) %>% 
+# #    summarise(c_rev_acre = mean(c_rev_acre),
+# #              b_rev_acre = mean(b_rev_acre),
+# #              diff = mean(c_rev_acre) - mean(b_rev_acre)) %>% 
+# #    select(temp, b_rev_acre, c_rev_acre, diff)
+# 
+# #change$nr <- 1:nrow(change)
+# #gather(change, key = crop, value = b_rev_acre)
+# #gather(change, key = crop, value = b_rev_acre)
+# change
+# names(change) <- c("temp", "Rev w/o Adaptation", "Rev w/ Adaptation", "Difference")
+# change <- gather(change, key = var, value = value, -temp)
+# change
+# change$var <- factor(change$var, levels = c("Rev w/ Adaptation", "Rev w/o Adaptation", "Difference")) 
+# 
+# ggplot(change, aes(x = temp, y = value/1000000, fill = factor(var))) + 
+#   geom_bar(stat = "identity", position = "dodge") + ylab("Total Revenue \n (Million $)") +
+#   annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey") +
+#   annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
+#   scale_x_continuous(breaks = 0:5, labels = c("0", "+1", "+2", "+3", "+4", "+5")) 
+# 
+# 
+# pdf("/home/john/Dropbox/Research/Adaptation Along the Envelope/figures/diff_rev_w_wo_adapt.pdf", 
+#     width = 8, height = 10)
+# 
+# ggplot(filter(change, var != "Difference"), aes(x = temp, y = value/1000000, color = factor(var))) + 
+#   geom_line() + geom_point() + ylab("Total Revenue \n ($ Million)") + theme_tufte(base_size = 14) +
+#   annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey") +
+#   annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
+#   scale_x_continuous(breaks = 0:5, labels = c("0", "+1", "+2", "+3", "+4", "+5")) + ylim(0, 2000) +
+#   xlab("Change in Temperature (C)") +
+#     theme(legend.position="top") + theme_tufte(base_size = 14) +
+#       theme(legend.position = c(.9,.8), legend.justification = c("right", "bottom"), 
+#             legend.box.background = element_rect(colour = "grey"), 
+#         legend.key = element_blank()) + labs(color = "Decade")
+# dev.off()
 
 
 # Panel using cross-section and difference acres
@@ -290,11 +289,13 @@ base.acres <- p.dat %>%
             Wheat = mean(wheat_w, na.rm = TRUE),
             Soybean = mean(soybean_w, na.rm = TRUE))
 
+# To long format
 base.acres_g <- gather(base.acres, key = crop, value = base_acres, -fips)
 
 # Assign fips
 p.pred_rev$fips <- rep(p.dat$fips, 30)
 
+# Aggregate predicated rev to average temp in county for crop
 p.pred_rev <- p.pred_rev %>% 
   group_by(temp, fips, crop) %>% 
   summarise(rev = mean(rev))
@@ -336,13 +337,24 @@ p.pred_rev$diff_rev <- p.pred_rev$rev*p.pred_rev$diff_acres
 head(p.pred_rev)
 
 # Bootstrap s.e.
+# .e. of the sum
 bse <- p.pred_rev %>% 
   group_by(crop, temp) %>% 
-  summarise(base_rev_bse = boot_strap_rev(base_rev))
+  summarise(base_rev_bse = boot_strap_rev(base_rev),
+            cs_rev_bse = boot_strap_rev(cs_rev),
+            diff_rev_bse = boot_strap_rev(diff_rev))
+
+bse <- bse %>% 
+  group_by(temp) %>% 
+  summarise(base_rev_bse = sum(base_rev_bse)/1000000,
+            cs_rev_bse = sum(cs_rev_bse)/1000000,
+            diff_rev_bse = sum(diff_rev_bse)/1000000)
 bse
+names(bse) <- c("temp", "w/o Adaptation", "w/ Adaptation (CS)", "w/ Adaptation (DIFF)")
+bse <- gather(bse, key = rev, value = se, -temp)
 
 #bse <- boot_strap_rev(x = p.pred_rev$base_rev)
-bse$rev <- "w/o Adaptation"
+#bse$rev <- "w/o Adaptation"
 # bse2 <- p.pred_rev %>% 
 #   group_by(crop, temp) %>% 
 #   summarise(bse = boot.strap(rev)[[1]])
@@ -353,6 +365,7 @@ p.plotdat <- p.pred_rev %>%
             cs_rev = sum(cs_rev),
             diff_rev = sum(diff_rev))
 head(p.plotdat)
+
 # Set baseline 0C
 p.plotdat$cs_rev[1] <- p.plotdat$base_rev[1]
 p.plotdat$diff_rev[1] <- p.plotdat$base_rev[1]
@@ -361,21 +374,32 @@ names(p.plotdat) <- c("temp", "w/o Adaptation", "w/ Adaptation (CS)", "w/ Adapta
 p.plotdat <- gather(p.plotdat, key = rev, value = value, -temp)
 
 p.plotdat$rev <- factor(p.plotdat$rev, levels = c("w/o Adaptation", "w/ Adaptation (CS)", "w/ Adaptation (DIFF)"))
+bse$rev <- factor(bse$rev, levels = c("w/o Adaptation", "w/ Adaptation (CS)", "w/ Adaptation (DIFF)"))
+
 p.plotdat <- left_join(p.plotdat, bse, by = c("temp", "rev"))
+
 #pdf("/home/john/Dropbox/Research/Adaptation Along the Envelope/figures/panel_rev_w_wo_adapt.pdf", 
 #    width = 8, height = 10)
 
 p.plotdat <- as.data.frame(p.plotdat)
-p.plotdat$base_rev_bse*1.96 + p.plotdat$value
+
+#p.plotdat$base_rev_bse*1.96 + p.plotdat$value
 ggplot(p.plotdat, aes(x = temp, y = value/1000000, color = factor(rev))) + 
-  geom_line(aes(x = temp, y = ((value/1000000)+(1.96*(base_rev_bse/1000000)))), color = "black") +
-  geom_line() + geom_point() + ylab("Total Revenue \n ($ Million)") + theme_tufte(base_size = 14) +
+  geom_errorbar(aes(ymin = ((value/1000000)-(1.96*(se))), ymax = ((value/1000000)+1.96*(se))), width = .1) +
+  #geom_line(aes(x = temp, y = ((value/1000000)+(1.96*(se))) , color = factor(rev)), linetype = "dashed") +
+  #geom_line(aes(x = temp, y = ((value/1000000)-(1.96*(se))) , color = factor(rev)), linetype = "dashed") +
+  theme_tufte(base_size = 14) +
+  geom_line() + geom_point() + ylab("Total Revenue \n ($ Million)") +
   annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey") +
   annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
   scale_x_continuous(breaks = 0:5, labels = c("0", "+1", "+2", "+3", "+4", "+5")) +
+  scale_y_continuous(label = comma, limits = c(0, 15000)) +
   xlab("Change in Temperature (C)") +
-    theme(legend.position="top") + theme_tufte(base_size = 14) +
-      theme(legend.position = c(.9,.8), legend.justification = c("right", "bottom"), 
-            legend.box.background = element_rect(colour = "grey"), 
-        legend.key = element_blank(), legend.title = element_blank()) 
+  theme(legend.position = c(.9,.8), 
+        legend.justification = c("right", "bottom"), 
+        legend.box.background = element_rect(colour = "grey"), 
+        legend.key = element_blank(), 
+        legend.title = element_blank()) 
+  
+
 #dev.off()

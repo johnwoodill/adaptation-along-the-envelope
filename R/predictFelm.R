@@ -96,7 +96,7 @@ boot.strap <- function(x, rep = 1000, sample = length(x), cluster = NULL){
     newdat.mean <- c()
     for (r in 1:rep){
       sampdat <- sample(x, size = sample, replace = TRUE)
-      newdat.sum[r] <- sqrt(length(sampdat))*var(sampdat)
+      newdat.sum[r] <- sqrt(length(sampdat))*sd(sampdat)
       newdat.mean[r] <- var(sampdat)/sqrt(length(sampdat))
     }
     retdat <- list(se.sum = mean(newdat.sum),
@@ -115,8 +115,8 @@ boot.strap <- function(x, rep = 1000, sample = length(x), cluster = NULL){
       cl.dat.mean <- c()
       cl.dat <- filter(dat, cluster == i)
       for (r in 1:rep){
-        sampdat <-sample(cl.dat[1], length(cl.dat[1]),  replace = TRUE)
-        cl.dat.sum[r] <- sqrt(nrow(sampdat))*var(sampdat)
+        sampdat <-sample(cl.dat[[1]], nrow(cl.dat),  replace = TRUE)
+        cl.dat.sum[r] <- sqrt(length(sampdat))*sd(sampdat)
         cl.dat.mean[r] <- var(sampdat)/sqrt(length(sampdat))
       }
       newdat.sum[i] <- mean(cl.dat.sum)

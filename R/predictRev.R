@@ -26,7 +26,7 @@ predictRev <- function(models, data, crop, se = FALSE){
   diff5C.pred <- predictFelm(felm.fit = models[[3]], newdata = data[[18]])
   
   # Bootstrapped Standard errors 
-  cs0C.pred_se <- boot.strap(exp(cs0C.pred$fit + cs0C.pred$res + cs0C.pred$effects ))
+  cs0C.pred_se <- boot.strap(exp(cs0C.pred$fit + cs0C.pred$res + cs0C.pred$effect ))
   cs1C.pred_se <- boot.strap(exp(cs1C.pred$fit + cs1C.pred$res + cs1C.pred$effect ))
   cs2C.pred_se <- boot.strap(exp(cs2C.pred$fit + cs2C.pred$res + cs2C.pred$effect ))
   cs3C.pred_se <- boot.strap(exp(cs3C.pred$fit + cs3C.pred$res + cs3C.pred$effect ))
@@ -116,42 +116,42 @@ predictRev <- function(models, data, crop, se = FALSE){
   # # Predict change in revenue with C.I.
   cs.rev0_min <- cs.pred_rev0 - cs0C.pred_se$se.sum*1.96
   cs.rev0_max <- cs.pred_rev0 + cs0C.pred_se$se.sum*1.96
-  cs.rev1_min <- ((cs.pred_rev1 - cs1C.pred_se$se.sum*1.96)/cs.rev0_min - 1)*100
-  cs.rev1_max <- ((cs.pred_rev1 + cs1C.pred_se$se.sum*1.96)/cs.rev0_max - 1)*100
-  cs.rev2_min <- ((cs.pred_rev2 - cs2C.pred_se$se.sum*1.96)/cs.rev0_min - 1)*100
-  cs.rev2_max <- ((cs.pred_rev2 + cs2C.pred_se$se.sum*1.96)/cs.rev0_max - 1)*100
-  cs.rev3_min <- ((cs.pred_rev3 - cs3C.pred_se$se.sum*1.96)/cs.rev0_min - 1)*100
-  cs.rev3_max <- ((cs.pred_rev3 + cs3C.pred_se$se.sum*1.96)/cs.rev0_max - 1)*100
-  cs.rev4_min <- ((cs.pred_rev4 - cs4C.pred_se$se.sum*1.96)/cs.rev0_min - 1)*100
-  cs.rev4_max <- ((cs.pred_rev4 + cs4C.pred_se$se.sum*1.96)/cs.rev0_max - 1)*100
-  cs.rev5_min <- ((cs.pred_rev5 - cs5C.pred_se$se.sum*1.96)/cs.rev0_min - 1)*100
-  cs.rev5_max <- ((cs.pred_rev5 + cs5C.pred_se$se.sum*1.96)/cs.rev0_max - 1)*100
+  cs.rev1_min <- ((cs.pred_rev1 - cs1C.pred_se$se.sum*1.96)/cs.rev0 - 1)*100
+  cs.rev1_max <- ((cs.pred_rev1 + cs1C.pred_se$se.sum*1.96)/cs.rev0 - 1)*100
+  cs.rev2_min <- ((cs.pred_rev2 - cs2C.pred_se$se.sum*1.96)/cs.rev0 - 1)*100
+  cs.rev2_max <- ((cs.pred_rev2 + cs2C.pred_se$se.sum*1.96)/cs.rev0 - 1)*100
+  cs.rev3_min <- ((cs.pred_rev3 - cs3C.pred_se$se.sum*1.96)/cs.rev0 - 1)*100
+  cs.rev3_max <- ((cs.pred_rev3 + cs3C.pred_se$se.sum*1.96)/cs.rev0 - 1)*100
+  cs.rev4_min <- ((cs.pred_rev4 - cs4C.pred_se$se.sum*1.96)/cs.rev0 - 1)*100
+  cs.rev4_max <- ((cs.pred_rev4 + cs4C.pred_se$se.sum*1.96)/cs.rev0 - 1)*100
+  cs.rev5_min <- ((cs.pred_rev5 - cs5C.pred_se$se.sum*1.96)/cs.rev0 - 1)*100
+  cs.rev5_max <- ((cs.pred_rev5 + cs5C.pred_se$se.sum*1.96)/cs.rev0 - 1)*100
 
   p.rev0_min <- p.pred_rev0 - p0C.pred_se$se.sum*1.96
   p.rev0_max <- p.pred_rev0 + p0C.pred_se$se.sum*1.96
-  p.rev1_min <- ((p.pred_rev1 - p1C.pred_se$se.sum*1.96)/p.rev0_min - 1)*100
-  p.rev1_max <- ((p.pred_rev1 + p1C.pred_se$se.sum*1.96)/p.rev0_max - 1)*100
-  p.rev2_min <- ((p.pred_rev2 - p2C.pred_se$se.sum*1.96)/p.rev0_min - 1)*100
-  p.rev2_max <- ((p.pred_rev2 + p2C.pred_se$se.sum*1.96)/p.rev0_max - 1)*100
-  p.rev3_min <- ((p.pred_rev3 - p3C.pred_se$se.sum*1.96)/p.rev0_min - 1)*100
-  p.rev3_max <- ((p.pred_rev3 + p3C.pred_se$se.sum*1.96)/p.rev0_max - 1)*100
-  p.rev4_min <- ((p.pred_rev4 - p4C.pred_se$se.sum*1.96)/p.rev0_min - 1)*100
-  p.rev4_max <- ((p.pred_rev4 + p4C.pred_se$se.sum*1.96)/p.rev0_max - 1)*100
-  p.rev5_min <- ((p.pred_rev5 - p5C.pred_se$se.sum*1.96)/p.rev0_min - 1)*100
-  p.rev5_max <- ((p.pred_rev5 + p5C.pred_se$se.sum*1.96)/p.rev0_max - 1)*100
+  p.rev1_min <- ((p.pred_rev1 - p1C.pred_se$se.sum*1.96)/p.rev0 - 1)*100
+  p.rev1_max <- ((p.pred_rev1 + p1C.pred_se$se.sum*1.96)/p.rev0 - 1)*100
+  p.rev2_min <- ((p.pred_rev2 - p2C.pred_se$se.sum*1.96)/p.rev0 - 1)*100
+  p.rev2_max <- ((p.pred_rev2 + p2C.pred_se$se.sum*1.96)/p.rev0 - 1)*100
+  p.rev3_min <- ((p.pred_rev3 - p3C.pred_se$se.sum*1.96)/p.rev0 - 1)*100
+  p.rev3_max <- ((p.pred_rev3 + p3C.pred_se$se.sum*1.96)/p.rev0 - 1)*100
+  p.rev4_min <- ((p.pred_rev4 - p4C.pred_se$se.sum*1.96)/p.rev0 - 1)*100
+  p.rev4_max <- ((p.pred_rev4 + p4C.pred_se$se.sum*1.96)/p.rev0 - 1)*100
+  p.rev5_min <- ((p.pred_rev5 - p5C.pred_se$se.sum*1.96)/p.rev0 - 1)*100
+  p.rev5_max <- ((p.pred_rev5 + p5C.pred_se$se.sum*1.96)/p.rev0 - 1)*100
 
   diff.rev0_min <- diff.pred_rev0 - diff0C.pred_se$se.sum*1.96
   diff.rev0_max <- diff.pred_rev0 + diff0C.pred_se$se.sum*1.96
-  diff.rev1_min <- ((diff.pred_rev1 - diff1C.pred_se$se.sum*1.96)/diff.rev0_min - 1)*100
-  diff.rev1_max <- ((diff.pred_rev1 + diff1C.pred_se$se.sum*1.96)/diff.rev0_max - 1)*100
-  diff.rev2_min <- ((diff.pred_rev2 - diff2C.pred_se$se.sum*1.96)/diff.rev0_min - 1)*100
-  diff.rev2_max <- ((diff.pred_rev2 + diff2C.pred_se$se.sum*1.96)/diff.rev0_max - 1)*100
-  diff.rev3_min <- ((diff.pred_rev3 - diff3C.pred_se$se.sum*1.96)/diff.rev0_min - 1)*100
-  diff.rev3_max <- ((diff.pred_rev3 + diff3C.pred_se$se.sum*1.96)/diff.rev0_max - 1)*100
-  diff.rev4_min <- ((diff.pred_rev4 - diff4C.pred_se$se.sum*1.96)/diff.rev0_min - 1)*100
-  diff.rev4_max <- ((diff.pred_rev4 + diff4C.pred_se$se.sum*1.96)/diff.rev0_max - 1)*100
-  diff.rev5_min <- ((diff.pred_rev5 - diff5C.pred_se$se.sum*1.96)/diff.rev0_min - 1)*100
-  diff.rev5_max <- ((diff.pred_rev5 + diff5C.pred_se$se.sum*1.96)/diff.rev0_max - 1)*100
+  diff.rev1_min <- ((diff.pred_rev1 - diff1C.pred_se$se.sum*1.96)/diff.rev0 - 1)*100
+  diff.rev1_max <- ((diff.pred_rev1 + diff1C.pred_se$se.sum*1.96)/diff.rev0 - 1)*100
+  diff.rev2_min <- ((diff.pred_rev2 - diff2C.pred_se$se.sum*1.96)/diff.rev0 - 1)*100
+  diff.rev2_max <- ((diff.pred_rev2 + diff2C.pred_se$se.sum*1.96)/diff.rev0 - 1)*100
+  diff.rev3_min <- ((diff.pred_rev3 - diff3C.pred_se$se.sum*1.96)/diff.rev0 - 1)*100
+  diff.rev3_max <- ((diff.pred_rev3 + diff3C.pred_se$se.sum*1.96)/diff.rev0 - 1)*100
+  diff.rev4_min <- ((diff.pred_rev4 - diff4C.pred_se$se.sum*1.96)/diff.rev0 - 1)*100
+  diff.rev4_max <- ((diff.pred_rev4 + diff4C.pred_se$se.sum*1.96)/diff.rev0 - 1)*100
+  diff.rev5_min <- ((diff.pred_rev5 - diff5C.pred_se$se.sum*1.96)/diff.rev0 - 1)*100
+  diff.rev5_max <- ((diff.pred_rev5 + diff5C.pred_se$se.sum*1.96)/diff.rev0 - 1)*100
 
   pred.rev_a <- list(cs.acres = data.frame(temp = rep(c(0,1,2,3,4,5),each = length(cs.pred_rev0_a)),
                                             rev = c(cs.pred_rev0_a, cs.pred_rev1_a, cs.pred_rev2_a, cs.pred_rev3_a, cs.pred_rev4_a, cs.pred_rev5_a),

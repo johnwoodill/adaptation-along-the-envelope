@@ -40,11 +40,11 @@ diff.5Ct <- select(diff.5C, dday0_10, dday10_30, dday30C, prec, prec_sq)
 
 #############################
 # Get models
-cs.fmlogit <- readRDS("models/cs.fmlogit_test.rds")
-cs.fmlogit_effect <- readRDS("models/cs.fmlogit_effects_test.rds")
+cs.fmlogit <- readRDS("models/cs.fmlogit.rds")
+cs.fmlogit_effect <- readRDS("models/cs.fmlogit_effects.rds")
 
-diff.fmlogit <- readRDS("models/diff.fmlogit_test.rds")
-diff.fmlogit_effect <- readRDS("models/diff.fmlogit_effects_test.rds")
+diff.fmlogit <- readRDS("models/diff.fmlogit.rds")
+diff.fmlogit_effect <- readRDS("models/diff.fmlogit_effects.rds")
 
 # Predictions
 cs.pred0.fm <- predict(cs.fmlogit, cs.0Ct)
@@ -122,9 +122,9 @@ plot.cs_prop$crop <- as.character(plot.cs_prop$crop)
 class(plot.cs_prop$crop)
 plot.cs_prop$crop <- tools::toTitleCase(plot.cs_prop$crop)
 
-dev.off()
-pdf("/home/john/Dropbox/Research/Adaptation Along the Envelope/figures/cs_acre_change.pdf", 
-    width = 6, height = 5)
+#dev.off()
+#pdf("/home/john/Dropbox/Research/Adaptation Along the Envelope/figures/cs_acre_change.pdf", 
+#    width = 6, height = 5)
 
 ggplot(plot.cs_prop, aes(temp, sum_a/1000000, color = crop)) + geom_line() + 
   geom_line(data = cs.sum_a, aes(temp, sum_a/1000000), linetype = "dashed", color = "grey") + 
@@ -139,15 +139,15 @@ ggplot(plot.cs_prop, aes(temp, sum_a/1000000, color = crop)) + geom_line() +
             legend.justification = c("right", "top"), 
             legend.box.background = element_rect(colour = "grey"), 
             legend.key = element_blank()) + labs(color = "Cross-section")
-dev.off()
+#dev.off()
 #+ ggtitle("Predicted Crop Acres with Increase in Temperature \n (Cross-section estimates)")
 plot.diff_prop$crop <- as.character(plot.diff_prop$crop)
 class(plot.diff_prop$crop)
 plot.diff_prop$crop <- tools::toTitleCase(plot.diff_prop$crop)
 
-dev.off()
-pdf("/home/john/Dropbox/Research/Adaptation Along the Envelope/figures/diff_acre_change.pdf", 
-    width = 6, height = 5)
+#dev.off()
+#pdf("/home/john/Dropbox/Research/Adaptation Along the Envelope/figures/diff_acre_change.pdf", 
+#    width = 6, height = 5)
 
 ggplot(plot.diff_prop, aes(temp, sum_a/1000000, color = crop)) + geom_line() + 
   geom_line(data = diff.sum_a, aes(temp, sum_a/1000000), linetype = "dashed", color = "grey") + 
@@ -162,7 +162,7 @@ ggplot(plot.diff_prop, aes(temp, sum_a/1000000, color = crop)) + geom_line() +
             legend.justification = c("right", "top"), 
             legend.box.background = element_rect(colour = "grey"), 
             legend.key = element_blank()) + labs(color = "Decade")
-dev.off()
+#dev.off()
 #+ ggtitle("Predicted Crop Acres with Increase in Temperature \n (Cross-section estimates)")
 
 saveRDS(cs.pred_acres, "data/cs.predicted_acres.rds")

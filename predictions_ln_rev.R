@@ -98,10 +98,10 @@ model.dat <- list(cs.0C = cs.0C,
 
 
 # Corn predictions
-corn.pred <- predictRev(models = corn.models, data = model.dat, crop = "Corn")
+corn.pred <- predictRev(models = corn.models, data = model.dat, crop = "Corn", se = TRUE)
 
 ggplot(corn.pred$pred.change, aes(temp, rev, group = reg)) + 
-  geom_ribbon(aes(ymin = min, ymax = max), fill = "#C0CCD5") + 
+#  geom_ribbon(aes(ymin = min, ymax = max), fill = "#C0CCD5") + 
   geom_line(aes(temp, rev, color = reg)) + geom_hline(yintercept = 0, linetype = "dashed")
 
 
@@ -109,25 +109,25 @@ ggplot(corn.pred$pred.change, aes(temp, rev, group = reg)) +
 # Cotton predictions
 cotton.pred <- predictRev(models = cotton.models, data = model.dat, crop = "Cotton")
 ggplot(cotton.pred$pred.change, aes(temp, rev, group = reg)) + 
-  #geom_ribbon(aes(ymin = min, ymax = max), fill = "#C0CCD5") + 
+  #geom_errorbar(aes(ymin = min, ymax = max), fill = "#C0CCD5", width = 0.1) + 
   geom_line(aes(temp, rev, color = reg)) + geom_hline(yintercept = 0, linetype = "dashed")
 
 # Hay predictions
 hay.pred <- predictRev(models = hay.models, data = model.dat, crop = "hay")
 ggplot(hay.pred$pred.change, aes(temp, rev, group = reg)) + 
-  #geom_ribbon(aes(ymin = min, ymax = max), fill = "#C0CCD5") + 
+  #geom_errorbar(aes(ymin = min, ymax = max), fill = "#C0CCD5", width = 0.1) + 
   geom_line(aes(temp, rev, color = reg)) + geom_hline(yintercept = 0, linetype = "dashed")
 
 # Wheat predictions
 wheat.pred <- predictRev(models = wheat.models, data = model.dat, crop = "wheat")
 ggplot(wheat.pred$pred.change, aes(temp, rev, group = reg)) + 
-  #geom_ribbon(aes(ymin = min, ymax = max), fill = "#C0CCD5") + 
+  #geom_errorbar(aes(ymin = min, ymax = max), fill = "#C0CCD5", width = 0.1) + 
   geom_line(aes(temp, rev, color = reg)) + geom_hline(yintercept = 0, linetype = "dashed")
 
 # Soybean predictions
 soybean.pred <- predictRev(models = soybean.models, data = model.dat, crop = "soybean")
 ggplot(soybean.pred$pred.change, aes(temp, rev, group = reg)) + 
-  #geom_ribbon(aes(ymin = min, ymax = max), fill = "#C0CCD5") + 
+  #geom_errorbar(aes(ymin = min, ymax = max), fill = "#C0CCD5", width = 0.1) + 
   geom_line(aes(temp, rev, color = reg)) + geom_hline(yintercept = 0, linetype = "dashed")
 
 
@@ -179,8 +179,8 @@ p1 <- ggplot(plot.dat, aes(temp, rev, color = reg)) +
         legend.key = element_blank(), legend.title = element_blank()) +
   geom_text_repel(aes(temp, rev, label = round(rev)), show.legend  = FALSE, alpha = 0.5) 
 
-pdf("/home/john/Dropbox/Research/Adaptation Along the Envelope/figures/pred_change_rev.pdf", 
-    width = 6, height = 5)
+# pdf("/home/john/Dropbox/Research/Adaptation Along the Envelope/figures/pred_change_rev.pdf", 
+#     width = 6, height = 5)
 p1
 dev.off()
 

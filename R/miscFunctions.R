@@ -17,10 +17,11 @@ boot_strap_rev <- function(x, rep = 1000, sample = length(x)){
     newdat.sum <- c()
     for (r in 1:rep){
       sampldat <- sample(x, size = sample, replace = TRUE)
-      newdat.sum[r] <- sum(sampldat)
+      #newdat.sum[r] <- sum(sampldat)
+      newdat.sum[r] <- sd(sampldat)*sqrt(length(sampldat))
     }
-    #retdat <- mean(newdat.sum)
-    retdat <- var(sampldat)/sqrt(length(sampldat))
+    retdat <- mean(newdat.sum)
+    #retdat <- sd(sampldat)*sqrt(length(sampldat))
     return(retdat)
     }
 

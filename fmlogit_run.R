@@ -23,8 +23,8 @@ eff
 
 p.fm <- predict.fmlogit(fm)
 p.fm
-saveRDS(fm, "models/cs.fmlogit_test.rds")
-saveRDS(eff, "models/cs.fmlogit_effects_test.rds")
+saveRDS(fm, "models/cs.fmlogit.rds")
+saveRDS(eff, "models/cs.fmlogit_effects.rds")
 
 
 # Difference
@@ -51,8 +51,8 @@ eff
 
 p.fm <- predict.fmlogit(fm)
 p.fm
-saveRDS(fm, "models/diff.fmlogit_test.rds")
-saveRDS(eff, "models/diff.fmlogit_effects_test.rds")
+saveRDS(fm, "models/diff.fmlogit.rds")
+saveRDS(eff, "models/diff.fmlogit_effects.rds")
 
 # 
 # data = spending
