@@ -169,7 +169,7 @@ diff <- diff %>%
    mutate(thirds = dplyr::ntile(difftavg, 3))
 
 
-spdiff <- filter(diff, thirds == 3) # Warmest
+spdiff <- filter(diff, thirds == 1) # Warmest
 fipss <- spdiff$fips
 
 # Map of counties
@@ -243,11 +243,11 @@ wplot2 <- densityShare(wdat2, "tavg", "value")$plot + theme(legend.position = "n
 wplot2
 
 #mdat1 <- filter(dat1, fips %in% fips2)
-mdat1 <- select(dat1, fips, Corn, Cotton, Hay, Wheat, Soybean, tavg)
+mdat1 <- select(dat1, fips, state, Corn, Cotton, Hay, Wheat, Soybean, tavg)
 mdat1 <- gather(mdat1, key = crop, value = value, -tavg, -fips, -state)
 
 #mdat2 <- filter(dat2, fips %in% fips2)
-mdat2 <- select(dat2, fips, Corn, Cotton, Hay, Wheat, Soybean, tavg)
+mdat2 <- select(dat2, fips, state, Corn, Cotton, Hay, Wheat, Soybean, tavg)
 mdat2 <- gather(mdat2, key = crop, value = value, -tavg, -fips, -state)
 
 mergedat <- data.frame(fips = mdat1$fips,
@@ -334,8 +334,9 @@ p2 <- ggplot(cpercent, aes(y = change, x = crop)) +
   annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey") +
   annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
   xlab(NULL) + 
-  ylab("% Change in \n Value of Activity") + ylim(-250, 250)
+  ylab("% Change in \n Value of Activity") + ylim(-50, 50)
 p2
+
 wplot1_ymax <- ggplot_build(wplot1)$layout$panel_ranges[[1]]$y.range[2]
 wplot2_ymax <- ggplot_build(wplot2)$layout$panel_ranges[[1]]$y.range[2]
 
