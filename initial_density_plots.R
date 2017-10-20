@@ -108,42 +108,59 @@ dat2 <- dat2 %>%
             Soybean = mean(Soybean, na.rm = TRUE),
             tavg = mean(tavg, na.rm = TRUE))
 
+dat1 <- cropdat %>% 
+  mutate(dday30C = dday30C,
+            dday10_30 = dday10_30,
+            Corn = corn,
+            Cotton = cotton,
+            Hay = hay,
+            Wheat = wheat,
+            Soybean = soybean,
+            tavg = tavg)
+
+
 # Aggregate total acres
-dat1 <- filter(cropdat, year >= 1950 & year <= 1979)
-dat1 <- dat1 %>% 
-  group_by(state, fips) %>% 
-  summarise(dday30C = mean(dday30C, na.rm = TRUE),
-            dday10_30 = mean(dday10_30, na.rm = TRUE),
-            Corn = mean(corn, na.rm = TRUE),
-            Cotton = mean(cotton, na.rm = TRUE),
-            Hay = mean(hay, na.rm = TRUE),
-            Wheat = mean(wheat, na.rm = TRUE),
-            Soybean = mean(soybean, na.rm = TRUE),
-            tavg = mean(tavg, na.rm = TRUE)) %>% 
-  ungroup()
+#dat1 <- filter(cropdat, year >= 1950 & year <= 1979)
+# dat1 <- cropdat %>% 
+#   group_by(state, fips) %>% 
+#   summarise(dday30C = mean(dday30C, na.rm = TRUE),
+#             dday10_30 = mean(dday10_30, na.rm = TRUE),
+#             Corn = mean(corn, na.rm = TRUE),
+#             Cotton = mean(cotton, na.rm = TRUE),
+#             Hay = mean(hay, na.rm = TRUE),
+#             Wheat = mean(wheat, na.rm = TRUE),
+#             Soybean = mean(soybean, na.rm = TRUE),
+#             tavg = mean(tavg, na.rm = TRUE)) %>% 
+#   ungroup()
 
-dat2 <- filter(cropdat, year >= 1980 & year <= 2009)
+#dat2 <- filter(cropdat, year >= 1980 & year <= 2009)
 dat2 <- cropdat %>% 
+  group_by(year) %>% 
+  mutate(Corn = corn - mean(corn, na.rm = TRUE),
+            Cotton = cotton - mean(cotton, na.rm = TRUE),
+            Hay = hay - mean(hay, na.rm = TRUE),
+            Wheat = wheat - mean(wheat, na.rm = TRUE),
+            Soybean = soybean - mean(soybean, na.rm = TRUE)) %>% 
   group_by(state, fips) %>% 
   summarise(dday30C = mean(dday30C, na.rm = TRUE),
             dday10_30 = mean(dday10_30, na.rm = TRUE),
-            Corn = mean(corn, na.rm = TRUE),
-            Cotton = mean(cotton, na.rm = TRUE),
-            Hay = mean(hay, na.rm = TRUE),
-            Wheat = mean(wheat, na.rm = TRUE),
-            Soybean = mean(soybean, na.rm = TRUE),
+            Corn = mean(Corn, na.rm = TRUE),
+            Cotton = mean(Cotton, na.rm = TRUE),
+            Hay = mean(Hay, na.rm = TRUE),
+            Wheat = mean(Wheat, na.rm = TRUE),
+            Soybean = mean(Soybean, na.rm = TRUE),
             tavg = mean(tavg, na.rm = TRUE)) %>% 
   ungroup()
 
-dat2 <- filter(dat2, fips %in% unique(dat1$fips))
-dat1 <- filter(dat1, fips %in% unique(dat2$fips))
+# dat2 <- filter(dat2, fips %in% unique(dat1$fips))
+# dat1 <- filter(dat1, fips %in% unique(dat2$fips))
 
-dat1950 <- filter(cropdat, year >= 1950 & year <= 1979)
+dat1950 <- filter(cropdat, year >= 1950 & year <= 1959)
 dat1950 <- dat1950 %>% 
   group_by(state, fips) %>% 
   summarise(tavg = mean(tavg, na.rm = TRUE))
 
-dat2000 <- filter(cropdat, year >= 1980 & year <= 2009)
+dat2000 <- filter(cropdat, year >= 2000 & year <= 2009)
 dat2000 <- dat2000 %>% 
   group_by(state, fips) %>% 
   summarise(tavg = mean(tavg, na.rm = TRUE))
@@ -169,8 +186,9 @@ diff <- diff %>%
    mutate(thirds = dplyr::ntile(difftavg, 3))
 
 
-spdiff <- filter(diff, thirds == 1) # Warmest
+spdiff <- filter(diff, thirds == 3) # Warmest
 fipss <- spdiff$fips
+tavg_pdat <- filter(diff, fips %in% fipss)
 
 # Map of counties
 mapdat <- data.frame(region = fipss, value = rep("Warmest", length(fipss)))
@@ -201,8 +219,8 @@ wdat1 <- gather(wdat1, key = crop, value = value, -tavg, -state, -fips)
 wdat1 <- filter(wdat1, !is.na(tavg) & !is.na(value))
 wdat1$value <- wdat1$value/1000000
 
-wdat1$value <- wdat1$value^2
-wdat1$value <- wdat1$value/(sqrt(wdat1$value))
+# wdat1$value <- wdat1$value^2
+# wdat1$value <- wdat1$value/(sqrt(wdat1$value))
 #wdat1$value <- ifelse(is.na(wdat1$value), 0, wdat1$value)
 
 dat2 <- filter(dat2, fips %in% fipss)
@@ -211,22 +229,27 @@ wdat2 <- gather(wdat2, key = crop, value = value, -tavg, -state, -fips)
 wdat2 <- filter(wdat2, !is.na(tavg) & !is.na(value))
 wdat2$value <- wdat2$value/1000000
 
-wdat2$value <- wdat2$value^2
-wdat2$value <- wdat2$value/(sqrt(wdat2$value))
+ wdat2$value <- wdat2$value^2
+ wdat2$value <- wdat2$value/(sqrt(wdat2$value))
 
 
  # x = wdat1
  # variable = "tavg"
  # weight = "value"
 
+# dens data for densityShare
+newdens <- wdat2 %>% 
+  group_by(crop) %>% 
+  summarise(value = sum(value, na.rm = TRUE))
+newdens
 
-wplot1 <- densityShare(wdat1, "tavg", "value")$plot + theme(legend.position = "none") +
+wplot1 <- densityShare(wdat1, "tavg", "value", dens = newdens)$plot + theme(legend.position = "none") +
   xlab("") + ylab("Value of Activity \n ($1 Million)") +
   xlim(8, 25) + geom_hline(yintercept = 0, linetype = "dashed", color = "grey")
 wplot1
 
 # Legend
-wplot1_legend <- densityShare(wdat1, "tavg", "value")$plot + theme(legend.position = c(0.45,1.1), 
+wplot1_legend <- densityShare(wdat1, "tavg", "value", dens = newdens)$plot + theme(legend.position = c(0.45,1.1), 
         legend.justification = c("left", "top"), 
         legend.box.background = element_rect(colour = "grey"), 
         legend.key = element_blank(),
@@ -237,7 +260,7 @@ legend <- g_legend(wplot1_legend)
 plot(legend)
 
 
-wplot2 <- densityShare(wdat2, "tavg", "value")$plot + theme(legend.position = "none") +
+wplot2 <- densityShare(wdat2, "tavg", "value", dens = newdens)$plot + theme(legend.position = "none") +
    xlab("Average Temperature (C)") +
    xlim(8, 25) + geom_hline(yintercept = 0, linetype = "dashed", color = "grey")
 wplot2
@@ -264,10 +287,10 @@ mergedat$tavgdiff = mergedat$tavg2 - mergedat$tavg1
 #mergedat$tavgdiff <- ifelse(is.na(mergedat$value2), NA, mergedat$tavgdiff)
 
 # Difference distribution
-wdens1 <- densityShare(wdat1, "tavg", "value")$densdata
+wdens1 <- densityShare(wdat1, "tavg", "value", dens = newdens)$densdata
 wdens1 <- arrange(wdens1, crop, y)
 
-wdens2 <- densityShare(wdat2, "tavg", "value")$densdata
+wdens2 <- densityShare(wdat2, "tavg", "value", dens = newdens)$densdata
 wdens2 <- arrange(wdens2, crop, y)
 wdens <- wdens1
 wdens$x2 <- wdens2$x
@@ -308,11 +331,11 @@ head(diff)
 
 cpercent <- mergedat %>% 
   group_by(crop) %>% 
-  summarise(change = (sum(value2, na.rm = TRUE) - sum(value1, na.rm = TRUE))/sum(value1, na.rm = TRUE)*100,
+  summarise(change = ((sum(value2, na.rm = TRUE) - sum(value1, na.rm = TRUE))/sum(value1, na.rm = TRUE))*100,
             total = sum(value2, na.rm = TRUE) - sum(value1, na.rm = TRUE))
 cpercent
 
-p1 <- ggplot(mergedat, aes(y = tavgdiff, x = crop, color = crop)) +
+p1 <- ggplot(spdiff, aes(y = tavgdiff, x = crop, color = crop)) +
   ggthemes::geom_tufteboxplot(data = tuftedata, size = 1) +
   geom_point(data = diff, size = 1) +
   theme_tufte(base_size = 12) +
@@ -334,7 +357,7 @@ p2 <- ggplot(cpercent, aes(y = change, x = crop)) +
   annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey") +
   annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
   xlab(NULL) + 
-  ylab("% Change in \n Value of Activity") + ylim(-50, 50)
+  ylab("% Change in \n Value of Activity") + ylim(-200, 200)
 p2
 
 wplot1_ymax <- ggplot_build(wplot1)$layout$panel_ranges[[1]]$y.range[2]
@@ -342,8 +365,8 @@ wplot2_ymax <- ggplot_build(wplot2)$layout$panel_ranges[[1]]$y.range[2]
 
 wplot_ymax <- max(wplot1_ymax, wplot2_ymax)
 
-wplot1 <- wplot1 +  ylim(0, wplot_ymax) + annotate("text", x = 17, y = wplot_ymax, label = "1950-1980", size = 4)
-wplot2 <- wplot2 +  ylim(0, wplot_ymax)  + annotate("text", x = 17, y = wplot_ymax, label = "1980-2010", size = 4)
+wplot1 <- wplot1 +  ylim(0, wplot_ymax) + annotate("text", x = 17, y = wplot_ymax, label = "Short-run", size = 4)
+wplot2 <- wplot2 +  ylim(0, wplot_ymax)  + annotate("text", x = 17, y = wplot_ymax, label = "Long-run", size = 4)
 wdensplot <- wdensplot +  ylim(-1, 1)  + annotate("text", x = 17, y = wplot_ymax, label = "Difference", size = 4)
 wplot1
 dplot <-plot_grid(p1, p2, ncol = 2)

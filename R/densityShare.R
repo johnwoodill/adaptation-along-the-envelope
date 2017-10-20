@@ -1,4 +1,4 @@
-densityShare <- function(x, variable, weight){ 
+densityShare <- function(x, variable, weight, dens = NULL){ 
   cropdat <- x
   #cropdat$crop <- tolower(cropdat$crop)
   varn <- which(names(cropdat) == variable)
@@ -14,7 +14,12 @@ densityShare <- function(x, variable, weight){
     summarise(sum = sum(weight)) %>% 
     arrange(-sum)
   cropsum
-    
+  
+  # Order new dens data
+  croporder <- cropsum$crop
+  dens %>% 
+    slice(match(croporder, crop))
+  
     crop1 <- cropsum$crop[1];    dat1 <- filter(cropdat, crop == crop1)
     crop2 <- cropsum$crop[2];    dat2 <- filter(cropdat, crop == crop2)
     crop3 <- cropsum$crop[3];    dat3 <- filter(cropdat, crop == crop3)
@@ -35,12 +40,21 @@ densityShare <- function(x, variable, weight){
     dens.dat5 <- density(dat5$variable, weight = dat5$weight/sum.all, from = 0, to = 30, n = 60)
     
     # Adjust density based on production/acre levels
-    dens.dat1$y <- dens.dat1$y*cropsum$sum[1]
-    dens.dat2$y <- dens.dat2$y*cropsum$sum[2]
-    dens.dat3$y <- dens.dat3$y*cropsum$sum[3]
-    dens.dat4$y <- dens.dat4$y*cropsum$sum[4]
-    dens.dat5$y <- dens.dat5$y*cropsum$sum[5]
+    if(is.null(dens)){
+      dens.dat1$y <- dens.dat1$y*cropsum$sum[1]
+      dens.dat2$y <- dens.dat2$y*cropsum$sum[2]
+      dens.dat3$y <- dens.dat3$y*cropsum$sum[3]
+      dens.dat4$y <- dens.dat4$y*cropsum$sum[4]
+      dens.dat5$y <- dens.dat5$y*cropsum$sum[5]
+    }
     
+    if(!is.null(dens)){
+      dens.dat1$y <- dens.dat1$y*dens$value[1]
+      dens.dat2$y <- dens.dat2$y*dens$value[2]
+      dens.dat3$y <- dens.dat3$y*dens$value[3]
+      dens.dat4$y <- dens.dat4$y*dens$value[4]
+      dens.dat5$y <- dens.dat5$y*dens$value[5]
+    }
     
     dens.dat5$y <- dens.dat5$y + dens.dat4$y
     dens.dat4$y <- dens.dat4$y + dens.dat5$y
