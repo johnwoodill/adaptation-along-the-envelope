@@ -108,6 +108,7 @@ dat2 <- dat2 %>%
             Soybean = mean(Soybean, na.rm = TRUE),
             tavg = mean(tavg, na.rm = TRUE))
 
+# Crop acres
 dat1 <- cropdat %>% 
   mutate(dday30C = dday30C,
             dday10_30 = dday10_30,
@@ -117,6 +118,18 @@ dat1 <- cropdat %>%
             Wheat = wheat,
             Soybean = soybean,
             tavg = tavg)
+
+dat2 <- cropdat %>% 
+  group_by(state, fips) %>% 
+  summarise(dday30C = mean(dday30C, na.rm = TRUE),
+            dday10_30 = mean(dday10_30, na.rm = TRUE),
+            Corn = mean(corn, na.rm = TRUE),
+            Cotton = mean(cotton, na.rm = TRUE),
+            Hay = mean(hay, na.rm = TRUE),
+            Wheat = mean(wheat, na.rm = TRUE),
+            Soybean = mean(soybean, na.rm = TRUE),
+            tavg = mean(tavg, na.rm = TRUE)) %>% 
+  ungroup()
 
 
 # Aggregate total acres
@@ -134,33 +147,17 @@ dat1 <- cropdat %>%
 #   ungroup()
 
 #dat2 <- filter(cropdat, year >= 1980 & year <= 2009)
-dat2 <- cropdat %>% 
-  group_by(year) %>% 
-  mutate(Corn = corn - mean(corn, na.rm = TRUE),
-            Cotton = cotton - mean(cotton, na.rm = TRUE),
-            Hay = hay - mean(hay, na.rm = TRUE),
-            Wheat = wheat - mean(wheat, na.rm = TRUE),
-            Soybean = soybean - mean(soybean, na.rm = TRUE)) %>% 
-  group_by(state, fips) %>% 
-  summarise(dday30C = mean(dday30C, na.rm = TRUE),
-            dday10_30 = mean(dday10_30, na.rm = TRUE),
-            Corn = mean(Corn, na.rm = TRUE),
-            Cotton = mean(Cotton, na.rm = TRUE),
-            Hay = mean(Hay, na.rm = TRUE),
-            Wheat = mean(Wheat, na.rm = TRUE),
-            Soybean = mean(Soybean, na.rm = TRUE),
-            tavg = mean(tavg, na.rm = TRUE)) %>% 
-  ungroup()
+
 
 # dat2 <- filter(dat2, fips %in% unique(dat1$fips))
 # dat1 <- filter(dat1, fips %in% unique(dat2$fips))
 
-dat1950 <- filter(cropdat, year >= 1950 & year <= 1959)
+dat1950 <- filter(cropdat, year >= 1950 & year <= 1979)
 dat1950 <- dat1950 %>% 
   group_by(state, fips) %>% 
   summarise(tavg = mean(tavg, na.rm = TRUE))
 
-dat2000 <- filter(cropdat, year >= 2000 & year <= 2009)
+dat2000 <- filter(cropdat, year >= 1980 & year <= 2009)
 dat2000 <- dat2000 %>% 
   group_by(state, fips) %>% 
   summarise(tavg = mean(tavg, na.rm = TRUE))
@@ -183,12 +180,56 @@ head(diff)
 # Split into thirds by state
 diff <- diff %>% 
    group_by(state) %>% 
-   mutate(thirds = dplyr::ntile(difftavg, 3))
+   mutate(thirds = dplyr::ntile(difftavg, 3),
+          difftavg = difftavg)
 
 
 spdiff <- filter(diff, thirds == 3) # Warmest
 fipss <- spdiff$fips
-tavg_pdat <- filter(diff, fips %in% fipss)
+
+# Get data for change in temp graph
+dat1950 <- filter(cropdat, year >= 1950 & year <= 1959 & fips %in% fipss)
+dat1950 <- dat1950 %>% 
+  group_by(state, fips) %>% 
+  summarise(dday30C = mean(dday30C, na.rm = TRUE),
+            dday10_30 = mean(dday10_30, na.rm = TRUE),
+            Corn = mean(corn, na.rm = TRUE),
+            Cotton = mean(cotton, na.rm = TRUE),
+            Hay = mean(hay, na.rm = TRUE),
+            Wheat = mean(wheat, na.rm = TRUE),
+            Soybean = mean(soybean, na.rm = TRUE),
+            tavg = mean(tavg, na.rm = TRUE))
+
+dat1950 <- select(dat1950, state, fips, tavg, Corn, Cotton, Hay, Wheat, Soybean)
+dat1950 <- gather(dat1950, key = crop, value = value, -tavg, -fips, -state)
+
+dat2000 <- filter(cropdat, year >= 2000 & year <= 2009 & fips %in% fipss)
+dat2000 <- dat2000 %>% 
+  group_by(state, fips) %>% 
+  summarise(dday30C = mean(dday30C, na.rm = TRUE),
+            dday10_30 = mean(dday10_30, na.rm = TRUE),
+            Corn = mean(corn, na.rm = TRUE),
+            Cotton = mean(cotton, na.rm = TRUE),
+            Hay = mean(hay, na.rm = TRUE),
+            Wheat = mean(wheat, na.rm = TRUE),
+            Soybean = mean(soybean, na.rm = TRUE),
+            tavg = mean(tavg, na.rm = TRUE))
+dat2000 <- select(dat2000, state, fips, tavg, Corn, Cotton, Hay, Wheat, Soybean)
+dat2000 <- gather(dat2000, key = crop, value = value, -tavg, -fips, -state)
+head(dat1950)
+head(dat2000)
+
+tempdat <- data.frame(fips = dat1950$fips,
+                       crop = dat1950$crop,
+                       tavg2 = dat2000$tavg,
+                       tavg1 = dat1950$tavg,
+                       value1 = dat1950$value,
+                       value2 = dat2000$value,
+                       diffvalue = dat2000$value - dat1950$value)
+
+tempdat$tavgdiff = tempdat$tavg2 - tempdat$tavg1
+tempdat$tavgdiff <- ifelse(is.na(tempdat$value1), NA, tempdat$tavgdiff)
+tempdat$tavgdiff <- ifelse(is.na(tempdat$value2), NA, tempdat$tavgdiff)
 
 # Map of counties
 mapdat <- data.frame(region = fipss, value = rep("Warmest", length(fipss)))
@@ -229,8 +270,8 @@ wdat2 <- gather(wdat2, key = crop, value = value, -tavg, -state, -fips)
 wdat2 <- filter(wdat2, !is.na(tavg) & !is.na(value))
 wdat2$value <- wdat2$value/1000000
 
- wdat2$value <- wdat2$value^2
- wdat2$value <- wdat2$value/(sqrt(wdat2$value))
+ # wdat2$value <- wdat2$value^2
+ # wdat2$value <- wdat2$value/(sqrt(wdat2$value))
 
 
  # x = wdat1
@@ -321,21 +362,21 @@ wdensplot <- ggplot(NULL) +
 wdensplot
 
 # Remove outliers for boxplot
-tuftedata <- mergedat %>% 
+tuftedata <- tempdat %>% 
   group_by(crop) %>% 
   mutate(tavgdiff = remove_outliers(tavgdiff))
 
 # Get outliers for boxplot
-diff <- filter(mergedat, !tavgdiff %in% tuftedata$tavgdiff)
+diff <- filter(tempdat, !tavgdiff %in% tuftedata$tavgdiff)
 head(diff)
 
-cpercent <- mergedat %>% 
+cpercent <- tempdat %>% 
   group_by(crop) %>% 
   summarise(change = ((sum(value2, na.rm = TRUE) - sum(value1, na.rm = TRUE))/sum(value1, na.rm = TRUE))*100,
             total = sum(value2, na.rm = TRUE) - sum(value1, na.rm = TRUE))
 cpercent
 
-p1 <- ggplot(spdiff, aes(y = tavgdiff, x = crop, color = crop)) +
+p1 <- ggplot(tempdat, aes(y = tavgdiff, x = crop, color = crop)) +
   ggthemes::geom_tufteboxplot(data = tuftedata, size = 1) +
   geom_point(data = diff, size = 1) +
   theme_tufte(base_size = 12) +
@@ -347,7 +388,9 @@ p1 <- ggplot(spdiff, aes(y = tavgdiff, x = crop, color = crop)) +
   xlab(NULL) + 
   ylab("Change in \n Temperature (C)") +
   theme(legend.position = "none") +
-  scale_y_continuous(breaks = c(-1, -0.5, 0, 0.5, 1), labels = c("-1C", "-0.5C", "0", "+0.5C", "+1C"), limits = c(-1,1 ))
+  scale_y_continuous(breaks = c(-2, -1, 0, 1, 2), 
+                     labels = c("-2C", "-1C", "0", "+1C", "+2C"), 
+                     limits = c(-2, 2))
 p1
 
 p2 <- ggplot(cpercent, aes(y = change, x = crop)) + 
@@ -372,3 +415,4 @@ wplot1
 dplot <-plot_grid(p1, p2, ncol = 2)
 
 plot_grid(wplot1, wplot2, wdensplot, p1, p2, legend, ncol = 3, rel_heights = c(1, .5))
+
