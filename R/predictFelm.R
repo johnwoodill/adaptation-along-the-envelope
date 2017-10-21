@@ -96,11 +96,11 @@ boot.strap <- function(x, rep = 1000, sample = length(x), cluster = NULL){
     newdat.mean <- c()
     for (r in 1:rep){
       sampdat <- sample(x, size = sample, replace = TRUE)
-      newdat.sum[r] <- sqrt(length(sampdat))*sd(sampdat)
-      newdat.mean[r] <- var(sampdat)/sqrt(length(sampdat))
+      newdat.sum[r] <- sum(sampdat)
+      newdat.mean[r] <- mean(sampdat)
     }
-    retdat <- list(se.sum = mean(newdat.sum),
-                se.mean = mean(newdat.mean))
+    retdat <- list(se.sum = sd(newdat.sum),
+                se.mean = sd(newdat.mean))
     return(retdat)
   }
   
@@ -115,15 +115,15 @@ boot.strap <- function(x, rep = 1000, sample = length(x), cluster = NULL){
       cl.dat.mean <- c()
       cl.dat <- filter(dat, cluster == i)
       for (r in 1:rep){
-        sampdat <-sample(cl.dat[[1]], nrow(cl.dat),  replace = TRUE)
-        cl.dat.sum[r] <- sqrt(length(sampdat))*sd(sampdat)
-        cl.dat.mean[r] <- var(sampdat)/sqrt(length(sampdat))
+        sampdat <- sample(cl.dat[[1]], nrow(cl.dat),  replace = TRUE)
+        cl.dat.sum[r] <- sum(sampdat)
+        cl.dat.mean[r] <- mean(sampdat)
       }
-      newdat.sum[i] <- mean(cl.dat.sum)
-      newdat.mean[i] <- mean(cl.dat.mean)
+      newdat.sum[i] <- sd(cl.dat.sum)
+      newdat.mean[i] <- sd(cl.dat.mean)
     }
-      retdat <- list(se.sum = mean(newdat.sum),
-                se.mean = mean(newdat.mean))
+      retdat <- list(se.sum = sd(newdat.sum),
+                se.mean = sd(newdat.mean))
     return(retdat)
     }
   #eff.dat[, grep("_effect", colnames(eff.dat)

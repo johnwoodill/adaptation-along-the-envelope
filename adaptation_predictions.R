@@ -343,6 +343,7 @@ bse <- p.pred_rev %>%
   summarise(base_rev_bse = boot_strap_rev(base_rev),
             cs_rev_bse = boot_strap_rev(cs_rev),
             diff_rev_bse = boot_strap_rev(diff_rev))
+bse
 
 bse <- bse %>% 
   group_by(temp) %>% 

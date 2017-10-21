@@ -101,7 +101,7 @@ model.dat <- list(cs.0C = cs.0C,
 corn.pred <- predictRev(models = corn.models, data = model.dat, crop = "Corn", se = TRUE)
 
 ggplot(corn.pred$pred.change, aes(temp, rev, group = reg)) + 
-#  geom_ribbon(aes(ymin = min, ymax = max), fill = "#C0CCD5") + 
+  #geom_ribbon(aes(ymin = min, ymax = max), fill = "#C0CCD5") + 
   geom_line(aes(temp, rev, color = reg)) + geom_hline(yintercept = 0, linetype = "dashed")
 
 
