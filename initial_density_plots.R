@@ -148,11 +148,22 @@ dat2000 <- gather(dat2000, key = crop, value = value2, -tavg2, -fips, -state)
 head(dat1950)
 head(dat2000)
 
+# Get temperature change data for plot
 tempdat <- left_join(dat1950, dat2000, by = c("state", "fips", "crop"))
-tempdat$tavgdiff = tempdat$tavg2 - tempdat$tavg1
-
+tempdat$tavgdiff <- tempdat$tavg2 - tempdat$tavg1
 tempdat$tavgdiff <- ifelse(is.na(tempdat$value1), NA, tempdat$tavgdiff)
 tempdat$tavgdiff <- ifelse(is.na(tempdat$value2), NA, tempdat$tavgdiff)
+tempdat <- select(tempdat, state, fips, crop, tavgdiff)
+tempmerg <- tempdat %>% 
+  group_by(state, fips) %>% 
+  summarise(tavgdiff = mean(tavgdiff, na.rm = TRUE))
+
+tempmerg$crop <- "Total"
+tempdat <- rbind(tempdat, tempmerg)
+tempdat$crop <- factor(tempdat$crop, levels = c("Corn", "Cotton", "Hay", "Soybean", "Wheat", "Total"),
+                       labels = c("Corn", "Cotton", "Hay", "Soybean", "Wheat", "Total"))
+
+
 
 # Map of counties
 mapdat <- data.frame(region = fipss, value = rep("Warmest", length(fipss)))
@@ -255,8 +266,16 @@ mdat2 <- gather(mdat2, key = crop, value = value, -tavg, -fips, -state)
 wdens1 <- densityShare(wdat1, "tavg", "value", dens = newdens)$densdata
 wdens1 <- arrange(wdens1, crop, y)
 
+wdens1_t <- wdens1 %>% 
+  group_by(crop) %>% 
+  summarise(total1 = sum(y))
+
 wdens2 <- densityShare(wdat2, "tavg", "value", dens = newdens)$densdata
 wdens2 <- arrange(wdens2, crop, y)
+
+wdens2_t <- wdens2 %>% 
+  group_by(crop) %>% 
+  summarise(total2 = sum(y))
 
 wdens <- wdens1
 wdens$x2 <- wdens2$x
@@ -299,24 +318,26 @@ wdensplot
 # Remove outliers for boxplot
 tuftedata <- tempdat %>% 
   group_by(crop) %>% 
-  mutate(tavgdiff = remove_outliers(tavgdiff))
+  filter(!(abs(tavgdiff - median(tavgdiff)) < 2*sd(tavgdiff)))
+tuftedata  
 
 # Get outliers for boxplot
 diff <- filter(tempdat, !tavgdiff %in% tuftedata$tavgdiff)
 head(diff)
 
-cpercent <- left_join(wdens_crop, newdens, by = "crop")
-cpercent$change <- (cpercent$total/cpercent$value)*100
+#tuftedata <- filter(tuftedata, is.na(tavgdiff))
+#tuftedata
+#rownames(tuftedata)
+
+cpercent <- left_join(wdens1_t, wdens2_t, by = "crop")
+total <- data.frame(crop = "Total", total1 = sum(cpercent$total1), total2 = sum(cpercent$total2))
+cpercent <- rbind(cpercent, total)
+cpercent$change <- ((cpercent$total2 - cpercent$total1)/cpercent$total1)*100
 cpercent
 
-  # group_by(crop) %>% 
-  # summarise(change = ((sum(value2, na.rm = TRUE) - sum(value1, na.rm = TRUE))/sum(value1, na.rm = TRUE))*100,
-  #           total = sum(value2, na.rm = TRUE) - sum(value1, na.rm = TRUE))
-
-
-p1 <- ggplot(tempdat, aes(y = tavgdiff, x = crop, color = crop)) +
-  ggthemes::geom_tufteboxplot(data = tuftedata, size = 1) +
-  geom_point(data = diff, size = 1) +
+p1 <- ggplot(tempdat, aes(y = tavgdiff, x = crop), color = c(ggplotColours(n = 5), "grey40")) +
+  ggthemes::geom_tufteboxplot(data = tempdat, size = 1, color = c(ggplotColours(n = 5), "grey40")) +
+  #geom_point(data = diff, size = 1) +
   theme_tufte(base_size = 12) +
   geom_hline(yintercept = 0, linetype = "dashed") +
   annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey") +
@@ -328,12 +349,12 @@ p1 <- ggplot(tempdat, aes(y = tavgdiff, x = crop, color = crop)) +
   theme(legend.position = "none") +
   scale_y_continuous(breaks = c(-2, -1, 0, 1, 2), 
                      labels = c("-2C", "-1C", "0", "+1C", "+2C"), 
-                     limits = c(-2, 2))
+                     limits = c(-2, 2)) +
+  scale_x_discrete(labels = c("Corn", "Cotton", "Hay", "Soybean", "Wheat", "Total"))
 p1
 
 p2 <- ggplot(cpercent, aes(y = change, x = crop, color = crop)) + 
-  geom_point(size = 1.5) + 
-  #geom_point(data = cpercent, aes(crop, change), color = c(ggplotColours(n = 5)), size = 1.5) +
+  geom_point(size = 1.5, color = c(ggplotColours(n = 5),"grey40")) + 
   theme_tufte(base_size = 12) +
   geom_hline(yintercept = 0, linetype = "dashed") +
   annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey") +
@@ -351,7 +372,8 @@ wplot_ymax <- max(wplot1_ymax, wplot2_ymax)
 
 wplot1 <- wplot1 +  ylim(0, wplot_ymax) + annotate("text", x = 17, y = wplot_ymax, label = "Short-run", size = 4)
 wplot2 <- wplot2 +  ylim(0, wplot_ymax)  + annotate("text", x = 17, y = wplot_ymax, label = "Long-run", size = 4)
-wdensplot <- wdensplot +  ylim(-1, 1)  + annotate("text", x = 17, y = 1, label = "Difference", size = 4)
+wdensplot <- wdensplot +  ylim(-30, 30)  + annotate("text", x = 17, y = 30, label = "Difference", size = 4)
+wdensplot
 wplot1
 dplot <-plot_grid(p1, p2, ncol = 2)
 
@@ -359,6 +381,40 @@ plot_grid(wplot1, wplot2, wdensplot, p1, p2, legend, ncol = 3, rel_heights = c(1
 
 
 #---------------------------------------------
+
+
+setwd("/run/media/john/1TB/SpiderOak/Projects/adaptation-along-the-envelope/")
+
+source("R/densityShare.R")
+
+g_legend<-function(a.gplot){
+    tmp <- ggplot_gtable(ggplot_build(a.gplot))
+    leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
+    legend <- tmp$grobs[[leg]]
+    legend
+}
+
+million <- function(x) x/1000000
+
+ggplotColours <- function(n = 6, h = c(0, 360) + 15){
+  if ((diff(h) %% 360) < 1) h[2] <- h[2] - 360/n
+  hcl(h = (seq(h[1], h[2], length = n)), c = 100, l = 65)
+}
+
+remove_outliers <- function(x, na.rm = TRUE, ...) {
+  qnt <- quantile(x, probs=c(.25, .75), na.rm = na.rm, ...)
+  H <- 1.5 * IQR(x, na.rm = na.rm)
+  y <- x
+  y[x < (qnt[1] - H)] <- NA
+  y[x > (qnt[2] + H)] <- NA
+  y
+}
+
+
+
+cropdat <- readRDS("data/full_ag_data.rds")
+cropdat$dday0_10 <- cropdat$dday0C - cropdat$dday10C
+cropdat$dday10_30 <- cropdat$dday10C - cropdat$dday30C
 
 # Crop acres
 cropdat$corn <- cropdat$corn_grain_a
@@ -454,11 +510,22 @@ dat2000 <- gather(dat2000, key = crop, value = value2, -tavg2, -fips, -state)
 head(dat1950)
 head(dat2000)
 
+# Get temperature change data for plot
 tempdat <- left_join(dat1950, dat2000, by = c("state", "fips", "crop"))
-tempdat$tavgdiff = tempdat$tavg2 - tempdat$tavg1
-
+tempdat$tavgdiff <- tempdat$tavg2 - tempdat$tavg1
 tempdat$tavgdiff <- ifelse(is.na(tempdat$value1), NA, tempdat$tavgdiff)
 tempdat$tavgdiff <- ifelse(is.na(tempdat$value2), NA, tempdat$tavgdiff)
+tempdat <- select(tempdat, state, fips, crop, tavgdiff)
+tempmerg <- tempdat %>% 
+  group_by(state, fips) %>% 
+  summarise(tavgdiff = mean(tavgdiff, na.rm = TRUE))
+
+tempmerg$crop <- "Total"
+tempdat <- rbind(tempdat, tempmerg)
+tempdat$crop <- factor(tempdat$crop, levels = c("Corn", "Cotton", "Hay", "Soybean", "Wheat", "Total"),
+                       labels = c("Corn", "Cotton", "Hay", "Soybean", "Wheat", "Total"))
+
+
 
 # Map of counties
 mapdat <- data.frame(region = fipss, value = rep("Warmest", length(fipss)))
@@ -561,8 +628,16 @@ mdat2 <- gather(mdat2, key = crop, value = value, -tavg, -fips, -state)
 wdens1 <- densityShare(wdat1, "tavg", "value", dens = newdens)$densdata
 wdens1 <- arrange(wdens1, crop, y)
 
+wdens1_t <- wdens1 %>% 
+  group_by(crop) %>% 
+  summarise(total1 = sum(y))
+
 wdens2 <- densityShare(wdat2, "tavg", "value", dens = newdens)$densdata
 wdens2 <- arrange(wdens2, crop, y)
+
+wdens2_t <- wdens2 %>% 
+  group_by(crop) %>% 
+  summarise(total2 = sum(y))
 
 wdens <- wdens1
 wdens$x2 <- wdens2$x
@@ -604,15 +679,24 @@ wdensplot
 
 # Remove outliers for boxplot
 tuftedata <- tempdat %>% 
+  filter(!is.na(tavgdiff)) %>% 
   group_by(crop) %>% 
   mutate(tavgdiff = remove_outliers(tavgdiff))
 
+
+tuftedata <- filter(tuftedata, !is.na(tavgdiff))
+tuftedata
+rownames(tuftedata)
+
 # Get outliers for boxplot
-diff <- filter(tempdat, !tavgdiff %in% tuftedata$tavgdiff)
+diff <- left_join(tuftedata, tempdat, by = c("state", "fips", "crop"))
+diff <- filter(tempdat, fips %in% tuftedata$fips)
 head(diff)
 
-cpercent <- left_join(wdens_crop, newdens, by = "crop")
-cpercent$change <- (cpercent$total/cpercent$value)*100
+cpercent <- left_join(wdens1_t, wdens2_t, by = "crop")
+total <- data.frame(crop = "Total", total1 = sum(cpercent$total1), total2 = sum(cpercent$total2))
+cpercent <- rbind(cpercent, total)
+cpercent$change <- ((cpercent$total2 - cpercent$total1)/cpercent$total1)*100
 cpercent
 
   # group_by(crop) %>% 
@@ -634,7 +718,8 @@ p1 <- ggplot(tempdat, aes(y = tavgdiff, x = crop, color = crop)) +
   theme(legend.position = "none") +
   scale_y_continuous(breaks = c(-2, -1, 0, 1, 2), 
                      labels = c("-2C", "-1C", "0", "+1C", "+2C"), 
-                     limits = c(-2, 2))
+                     limits = c(-2, 2)) +
+    scale_x_discrete(labels = c("Corn", "Cotton", "Hay", "Soybean", "Wheat", "Total"))
 p1
 
 p2 <- ggplot(cpercent, aes(y = change, x = crop, color = crop)) + 
