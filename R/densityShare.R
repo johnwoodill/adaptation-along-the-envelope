@@ -17,8 +17,11 @@ densityShare <- function(x, variable, weight, dens = NULL){
   
   # Order new dens data
   croporder <- cropsum$crop
+  
+  if(!is.null(dens)){
   dens %>% 
     slice(match(croporder, crop))
+  }
   
     crop1 <- cropsum$crop[1];    dat1 <- filter(cropdat, crop == crop1)
     crop2 <- cropsum$crop[2];    dat2 <- filter(cropdat, crop == crop2)
