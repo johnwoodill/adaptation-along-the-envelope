@@ -125,9 +125,18 @@ wfips <- spdiff$fips
 tpdiff <- filter(diff, thirds == 1) # Warmest
 cfips <- tpdiff$fips
 
+#Get max by state
+getmax <- filter(diff, thirds != 2)
+
+getmax <- getmax %>% 
+  group_by(state) %>% 
+  summarise(newdiff = max(difftavg) - min(difftavg))
+head(getmax)
+
+max(getmax$newdiff)
 
 # Get data for change in temp graph
-dat1950 <- filter(cropdat, year >= 1950 & year <= 1979 & fips %in% fipss)
+dat1950 <- filter(cropdat, year >= 1950 & year <= 1979 & fips %in% wfips)
 dat1950 <- dat1950 %>% 
   group_by(state, fips) %>% 
   summarise(dday30C = mean(dday30C, na.rm = TRUE),
@@ -142,7 +151,7 @@ dat1950 <- dat1950 %>%
 dat1950 <- select(dat1950, state, fips, tavg1, Corn, Cotton, Hay, Wheat, Soybean)
 dat1950 <- gather(dat1950, key = crop, value = value1, -tavg1, -fips, -state)
 
-dat2000 <- filter(cropdat, year >= 1980 & year <= 2009 & fips %in% fipss)
+dat2000 <- filter(cropdat, year >= 1980 & year <= 2009 & fips %in% wfips)
 dat2000 <- dat2000 %>% 
   group_by(state, fips) %>% 
   summarise(dday30C = mean(dday30C, na.rm = TRUE),
@@ -199,7 +208,7 @@ map <- map +
 map
 
 # Subset new data warmest counties
-dat1  <- dplyr::filter(dat1, fips %in% fipss)
+dat1  <- dplyr::filter(dat1, fips %in% wfips)
 wdat1 <- select(dat1, fips, state, Corn, Cotton, Hay, Wheat, Soybean, tavg)
 wdat1 <- gather(wdat1, key = crop, value = value, -tavg, -state, -fips)
 wdat1 <- filter(wdat1, !is.na(tavg) & !is.na(value))
@@ -209,7 +218,7 @@ wdat1$value <- wdat1$value/1000000
 # wdat1$value <- wdat1$value/(sqrt(wdat1$value))
 #wdat1$value <- ifelse(is.na(wdat1$value), 0, wdat1$value)
 
-dat2 <- filter(dat2, fips %in% fipss)
+dat2 <- filter(dat2, fips %in% wfips)
 wdat2 <- select(dat2, fips, state, Corn, Cotton, Hay, Wheat, Soybean, tavg)
 wdat2 <- gather(wdat2, key = crop, value = value, -tavg, -state, -fips)
 wdat2 <- filter(wdat2, !is.na(tavg) & !is.na(value))
@@ -250,11 +259,11 @@ wplot2 <- densityShare(wdat2, "tavg", "value", dens = newdens)$plot + theme(lege
    xlim(8, 25) + geom_hline(yintercept = 0, linetype = "dashed", color = "grey")
 wplot2
 
-mdat1 <- filter(dat1, fips %in% fipss)
+mdat1 <- filter(dat1, fips %in% wfips)
 mdat1 <- select(mdat1, fips, state, Corn, Cotton, Hay, Wheat, Soybean, tavg)
 mdat1 <- gather(mdat1, key = crop, value = value, -tavg, -fips, -state)
 
-mdat2 <- filter(dat2, fips %in% fipss)
+mdat2 <- filter(dat2, fips %in% wfips)
 mdat2 <- select(mdat2, fips, state, Corn, Cotton, Hay, Wheat, Soybean, tavg)
 mdat2 <- gather(mdat2, key = crop, value = value, -tavg, -fips, -state)
 

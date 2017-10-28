@@ -24,11 +24,12 @@ adj_ln <- function(x){
   # mod4$coefficients[c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")] <- 
   # multiply.100(mod3$coefficients[c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")])
   
-  # mod0$coefficients[2:4] <- adj_ln(mod0$coefficients[2:4])
-  # mod1$coefficients[48:50] <- adj_ln(mod1$coefficients[48:50])
-  # mod2$coefficients[36:38] <- adj_ln(mod2$coefficients[36:38])
-  # mod3$coefficients[35:37] <- adj_ln(mod3$coefficients[35:37])
-  # mod4$coefficients[36:38] <- adj_ln(mod4$coefficients[36:38])
+  mod0$coefficients[2:4] <- adj_ln(mod0$coefficients[2:4])
+  mod1$coefficients[1:3] <- adj_ln(mod1$coefficients[1:3])
+  mod2$coefficients[1:3] <- adj_ln(mod2$coefficients[1:3])
+  mod3$coefficients[6:8] <- adj_ln(mod3$coefficients[6:8])
+  mod4$coefficients[6:8] <- adj_ln(mod4$coefficients[6:8])
+  mod5$coefficients[6:8] <- adj_ln(mod5$coefficients[6:8])
   
   #   
   # mod0$coefficients[c("tau", "omega", "did")] <- adj_ln(mod0$coefficients[c("tau", "omega", "did")])
@@ -40,22 +41,25 @@ adj_ln <- function(x){
 
 
 
-star1 <- stargazer(mod0, mod1, mod2, mod3, mod4, mod5, 
-                   align = FALSE, no.space = FALSE, 
+star1 <- stargazer(mod0, mod1, mod2, mod3, mod4, 
+                  align = FALSE, no.space = FALSE, 
                   style = "aer", digits = 2,
-                  omit = c("fips", "year", "state"), 
+                  omit = c("fips", "year"), 
                   omit.stat = c("ser", "f"),
                   title = "Difference-in-Difference Regression Model explaining Crop Revenue per Acre", 
-                  column.labels = c("Basic Model", "Basic Model", "Basic Model", "Climate Model", "Climate Model", "Climate Model"),
-          dep.var.labels = c("Log(Crop Revenue)", "Log(Crop Revenue)", "Log(Crop Revenue)", "Log(Crop Revenue)", "Log(Crop Revenue)"), 
+                  column.labels = c("Basic Model", "Basic Model", "Climate Model", "Climate Model", "Climate Model"),
+          dep.var.labels = c("Log(Crop Revenue)", "Log(Crop Revenue)", "Log(Crop Revenue)", "Log(Crop Revenue)"), 
           covariate.labels = c("Degree Days (0-10C)", "Degree Days (10-30C)", "Degree Days (30C)", 
-                               "Precipitaton", "Precipitation Squared", "Post - 0:1950-1980/1:1980-2010", "Treat - County 0:cooled/1:warmed the most", "Treatment-effect"),
+                               "Precipitaton", "Precipitation Squared", "Post - 0:1950-1980/1:1980-2010", 
+                               "Treat - County 0:cooled/1:warmed the most", "Treatment-effect",
+                               "State-by-Year Trend"),
           model.names = FALSE, omit.table.layout = "n",
           apply.coef = multiply.100, apply.se = multiply.100,
           table.layout ="=dcm#-t-as=n",
           font.size = "footnotesize",
-          add.lines = list(c("Fixed-effect", "", "County", "County \\& Year", "", "County", "County \\& Year"),
-                           c("Trend", "", "State-by-year", "", "", "State-by-year", "")))
+          add.lines = list(c("Fixed-effect", "", "County", "", "County", "County \\& Year")),
+          notes.append = FALSE, notes.align = "l",
+          notes = "asdf")
 #star1
 
 
