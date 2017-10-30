@@ -26,11 +26,26 @@ cropdat$hay <- cropdat$hay_yield*cropdat$hay_rprice
 cropdat$wheat <- cropdat$wheat_yield*cropdat$wheat_rprice
 cropdat$soybean <- cropdat$soybean_yield*cropdat$soybean_rprice
 
-
-
 cropdat$rev <- rowSums(cropdat[, c("corn", "cotton", "hay", "soybean", "wheat")], na.rm = TRUE)
+cropdat$acres <- rowSums(cropdat[, c("corn_grain_a", "cotton_a", "hay_a", "soybean_a", "wheat_a")], na.rm = TRUE)
+head(cropdat$acres)
+
 cropdat$ln_rev <- log(1 + cropdat$rev)
+cropdat$ln_acres <- log(1 + cropdat$acres)
 cropdat$prec_sq <- cropdat$prec^2
+
+# Proportion of crop acres as total of harvested_farmland_a
+cropdat$p_corn_a <- cropdat$corn_grain_a/cropdat$harvested_cropland_a
+cropdat$p_cotton_a <- cropdat$cotton_a/cropdat$harvested_cropland_a
+cropdat$p_hay_a <- cropdat$hay_a/cropdat$harvested_cropland_a
+cropdat$p_soybean_a <- cropdat$soybean_a/cropdat$harvested_cropland_a
+cropdat$p_wheat_a <- cropdat$wheat_a/cropdat$harvested_cropland_a
+
+cropdat$p_corn_a <- ifelse(is.infinite(cropdat$p_corn_a), NA, cropdat$p_corn_a)
+cropdat$p_cotton_a <- ifelse(is.infinite(cropdat$p_cotton_a), NA, cropdat$p_cotton_a)
+cropdat$p_hay_a <- ifelse(is.infinite(cropdat$p_hay_a), NA, cropdat$p_hay_a)
+cropdat$p_soybean_a <- ifelse(is.infinite(cropdat$p_soybean_a), NA, cropdat$p_soybean_a)
+cropdat$p_wheat_a <- ifelse(is.infinite(cropdat$p_wheat_a), NA, cropdat$p_wheat_a)
 
 # Find warmest counties
 dat1950 <- filter(cropdat, year >= 1950 & year <= 1979)
@@ -126,6 +141,67 @@ mod3 <- felm(ln_rev ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq +
 mod4 <- felm(ln_rev ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
               tau + omega + tau + did | fips + year, data = moddat)
 
+ saveRDS(mod0, "models/dd_mod0.rds")
+ saveRDS(mod1, "models/dd_mod1.rds")
+ saveRDS(mod2, "models/dd_mod2.rds")
+ saveRDS(mod3, "models/dd_mod3.rds")
+ saveRDS(mod4, "models/dd_mod4.rds")
+
+ 
+# Crop Acre Regressions  
+ 
+moda0 <- tobit(p_corn_a ~ tau + omega + tau + did, data = moddat)
+summary(moda0)
+
+moda1 <- felm(ln_rev ~ tau + omega + tau + did + state_trend | fips, data = moddat)
+
+moda2 <- felm(p_corn_a ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
+               tau + omega + tau + did, data = moddat)
+summary(moda2)
+
+moda3 <- felm(ln_rev ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
+               tau + omega + tau + did + state_trend | fips, data = moddat)
+
+moda4 <- felm(ln_rev ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
+              tau + omega + tau + did | fips + year, data = moddat)
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+##################
+
+mod0 <- felm(ln_acres ~ tau + omega + tau + did, data = moddat)
+summary(mod0)
+
+mod1 <- felm(ln_rev ~ tau + omega + tau + did + state_trend | fips, data = moddat)
+
+#mod2 <- felm(ln_rev ~ tau + omega + tau + did | fips + year, data = moddat)
+
+mod2 <- felm(ln_acres ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
+               tau + omega + tau + did | 0 | 0 | state, data = moddat)
+summary(mod2)
+
+mod3 <- felm(ln_rev ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
+               tau + omega + tau + did + state_trend | fips, data = moddat)
+
+mod4 <- felm(ln_rev ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
+              tau + omega + tau + did | fips + year, data = moddat)
 
 # summary(mod1)
 # summary(mod2)
@@ -133,12 +209,7 @@ mod4 <- felm(ln_rev ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq +
 # summary(mod4)
 
 
- saveRDS(mod0, "models/dd_mod0.rds")
- saveRDS(mod1, "models/dd_mod1.rds")
- saveRDS(mod2, "models/dd_mod2.rds")
- saveRDS(mod3, "models/dd_mod3.rds")
- saveRDS(mod4, "models/dd_mod4.rds")
- #saveRDS(mod5, "models/dd_mod5.rds")
+
  
 #------------------------------------
 # Without adaptation for warmest counties
