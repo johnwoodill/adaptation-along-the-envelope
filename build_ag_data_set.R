@@ -180,10 +180,10 @@ head(cropland)
 
 # # Merge historical Haines data
 hains_dat <- read_dta("data/DustBowl_All_base1910.dta")
-hains_dat <- select(hains_dat, year, fips, cropland_harvested)
+hains_dat <- select(hains_dat, year, fips, cropland)
 hains_dat$year <- as.integer(hains_dat$year)
 hains_dat$fips <- as.integer(hains_dat$fips)
-names(hains_dat) <- c("year", "fips", "harvested_cropland_a")
+names(hains_dat) <- c("year", "fips", "cropland_a")
 head(hains_dat)
 
 # expand grid data
@@ -196,13 +196,13 @@ names(mdat) <- c("year", "fips")
 # Merge historical with current census data
 mdat <- left_join(mdat, hains_dat, by = c("fips", "year")) %>% 
   left_join(cropland, by = c("fips", "year")) %>% 
-  mutate(harvested_cropland_a = ifelse(is.na(harvested_cropland_a.x), harvested_cropland_a.y, harvested_cropland_a.x)) %>% 
-  select(-harvested_cropland_a.x, -harvested_cropland_a.y)
+  mutate(cropland_a = ifelse(is.na(cropland_a.x), cropland_a.y, cropland_a.x)) %>% 
+  select(-cropland_a.x, -cropland_a.y)
 
 mdatt <- mdat %>%   
    group_by(fips) %>% 
    arrange(year) %>% 
-   mutate(harvested_cropland_a = na.approx(harvested_cropland_a, na.rm = FALSE)) %>% 
+   mutate(cropland_a = na.approx(cropland_a, na.rm = FALSE)) %>% 
   ungroup()
 head(mdatt)
 
@@ -377,7 +377,7 @@ fulldat$wheat_nrev <- (fulldat$wheat_p*fulldat$wheat_nprice)/fulldat$wheat_a
 fulldat$soybean_nrev <- (fulldat$soybean_p*fulldat$soybean_nprice)/fulldat$soybean_a
 
 # Organize before degree day merge
-fulldat <- select(fulldat, year, state, fips, lat, long, gdp_price_def, harvested_cropland_a,
+fulldat <- select(fulldat, year, state, fips, lat, long, gdp_price_def, cropland_a,
                   corn_grain_a, corn_grain_p, corn_yield, corn_nprice, corn_rprice, corn_rrev, corn_nrev,
                   cotton_a, cotton_p, cotton_yield, cotton_nprice, cotton_rprice, cotton_rrev, cotton_nrev,
                   hay_a, hay_p, hay_yield, hay_nprice, hay_rprice, hay_rrev, hay_nrev,

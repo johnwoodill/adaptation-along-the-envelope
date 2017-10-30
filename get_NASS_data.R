@@ -91,7 +91,7 @@ dat <- data.frame()
 for (i in unique(states)){
   
 # Get acres harvested
-  params = list("state_alpha"=i, "agg_level_desc"="COUNTY","commodity_desc"="AG LAND", "source_desc"="CENSUS", "short_desc"="AG LAND, CROPLAND, HARVESTED - ACRES", "domain_desc"= "AREA HARVESTED")
+  params = list("state_alpha"=i, "agg_level_desc"="COUNTY","commodity_desc"="AG LAND", "source_desc"="CENSUS", "short_desc"="AG LAND, CROPLAND - ACRES")
     a <- tryCatch({
       req = nassqs_GET(params=params, key=NASSQS_TOKEN)
       censusdat = nassqs_parse(req)
@@ -103,6 +103,7 @@ for (i in unique(states)){
   }
 
 census_dat <- dat
+census_dat <- filter(census_dat, data.short_desc == "AG LAND, CROPLAND - ACRES")
 
 # Remove comma
 census_dat$data.Value <- as.numeric(gsub(",", "", census_dat$data.Value))
@@ -111,17 +112,19 @@ census_dat$data.Value <- as.numeric(gsub(",", "", census_dat$data.Value))
 census_dat$fips <- paste(census_dat$data.state_fips_code, census_dat$data.county_code, sep = "")
 
 # If only monthly observations exist, then use average
-census_dat <- census_dat %>%
-  group_by(data.year, data.state_alpha, data.short_desc, fips) %>%
-  summarise(data.Value = ifelse("MARKETING YEAR"%in%data.reference_period_desc, 
-                           data.Value[data.reference_period_desc=="MARKETING YEAR"], 
-                           mean(data.Value[data.reference_period_desc!="MARKETING YEAR"])), data.reference_period_desc="YEAR") %>% 
-  ungroup()
+ census_dat <- census_dat %>%
+   group_by(data.year, data.state_alpha, data.short_desc, fips) %>%
+   summarise(data.Value = ifelse("MARKETING YEAR"%in%data.reference_period_desc, 
+                            data.Value[data.reference_period_desc=="MARKETING YEAR"], 
+                            mean(data.Value[data.reference_period_desc!="MARKETING YEAR"])), data.reference_period_desc="YEAR") %>% 
+   ungroup()
+
+
 
 # Tidy up data
 census_dat <- select(census_dat, data.year, data.state_alpha, fips, data.short_desc, data.Value)
 census_dat<- spread(census_dat, key = data.short_desc, value = data.Value)
-names(census_dat) <- c("year", "state", "fips", "harvested_cropland_a")
+names(census_dat) <- c("year", "state", "fips", "cropland_a")
 
 head(census_dat)
 min(census_dat$year)

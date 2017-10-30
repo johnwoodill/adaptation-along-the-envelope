@@ -35,11 +35,11 @@ cropdat$ln_acres <- log(1 + cropdat$acres)
 cropdat$prec_sq <- cropdat$prec^2
 
 # Proportion of crop acres as total of harvested_farmland_a
-cropdat$p_corn_a <- cropdat$corn_grain_a/cropdat$harvested_cropland_a
-cropdat$p_cotton_a <- cropdat$cotton_a/cropdat$harvested_cropland_a
-cropdat$p_hay_a <- cropdat$hay_a/cropdat$harvested_cropland_a
-cropdat$p_soybean_a <- cropdat$soybean_a/cropdat$harvested_cropland_a
-cropdat$p_wheat_a <- cropdat$wheat_a/cropdat$harvested_cropland_a
+cropdat$p_corn_a <- cropdat$corn_grain_a/cropdat$cropland_a
+cropdat$p_cotton_a <- cropdat$cotton_a/cropdat$cropland_a
+cropdat$p_hay_a <- cropdat$hay_a/cropdat$cropland_a
+cropdat$p_soybean_a <- cropdat$soybean_a/cropdat$cropland_a
+cropdat$p_wheat_a <- cropdat$wheat_a/cropdat$cropland_a
 
 cropdat$p_corn_a <- ifelse(is.infinite(cropdat$p_corn_a), NA, cropdat$p_corn_a)
 cropdat$p_cotton_a <- ifelse(is.infinite(cropdat$p_cotton_a), NA, cropdat$p_cotton_a)
@@ -149,26 +149,56 @@ mod4 <- felm(ln_rev ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq +
 
  
 # Crop Acre Regressions  
- 
-moda0 <- tobit(p_corn_a ~ tau + omega + tau + did, data = moddat)
-summary(moda0)
 
-moda1 <- felm(ln_rev ~ tau + omega + tau + did + state_trend | fips, data = moddat)
+# Corn
+modc1 <- felm(log(corn_grain_a) ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
+                tau + omega + did | state, data = moddat)
+summary(modc1) 
 
-moda2 <- felm(p_corn_a ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
-               tau + omega + tau + did, data = moddat)
-summary(moda2)
+modc2 <- felm(p_corn_a ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
+               state_trend + tau + omega + did | state, data = moddat)
+summary(modc2)
 
-moda3 <- felm(ln_rev ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
-               tau + omega + tau + did + state_trend | fips, data = moddat)
+modco1 <- felm(log(cotton_a) ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
+               state_trend + tau + omega + did | state, data = moddat)
+summary(moda2) 
 
-moda4 <- felm(ln_rev ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
-              tau + omega + tau + did | fips + year, data = moddat)
+modco2 <- felm(p_cotton_a ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
+               state_trend + tau + omega + did | state, data = moddat)
 
+modh1 <- felm(log(hay_a) ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
+               state_trend + tau + omega + did | state, data = moddat)
+summary(moda2) 
+
+modh2 <- felm(p_hay_a ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
+               state_trend + tau + omega + did | state, data = moddat)
+
+mods1 <- felm(log(soybean_a) ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
+               state_trend + tau + omega + did | state, data = moddat)
+summary(moda2) 
+
+mods2 <- felm(p_soybean_a ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
+               state_trend + tau + omega + did | state, data = moddat)
+
+modw1 <- felm(log(wheat_a) ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
+               state_trend + tau + omega + did | state, data = moddat)
+summary(moda2) 
+
+modw2 <- felm(p_wheat_a ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
+               state_trend + tau + omega + did | state, data = moddat)
  
  
  
- 
+saveRDS(modc1, "models/dd_modc1.rds")
+saveRDS(modc2, "models/dd_modc2.rds")
+saveRDS(modco1, "models/dd_modco1.rds")
+saveRDS(modco2, "models/dd_modco2.rds")
+saveRDS(modh1, "models/dd_modh1.rds")
+saveRDS(modh2, "models/dd_modh2.rds")
+saveRDS(mods1, "models/dd_mods1.rds")
+saveRDS(mods2, "models/dd_mods2.rds")
+saveRDS(modw1, "models/dd_modw1.rds")
+saveRDS(modw2, "models/dd_modw2.rds")
  
  
  

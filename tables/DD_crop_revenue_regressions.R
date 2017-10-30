@@ -62,12 +62,60 @@ star1 <- stargazer(mod0, mod1, mod2, mod3, mod4,
           notes = "asdf")
 #star1
 
+star2 <- stargazer(modc1, modc2, modco1, modco2, modh1, modh2,
+                  align = FALSE, no.space = FALSE, 
+                  style = "aer", digits = 2,
+                  omit = c("fips", "year"), 
+                  omit.stat = c("ser", "f"),
+                  title = "Difference-in-Difference Regression Model explaining Crop Acres", 
+                  #column.labels = c("Basic Model", "Basic Model", "Climate Model", "Climate Model", "Climate Model"),
+          dep.var.labels = c("Log(Corn Acres)", "Corn Share", 
+                             "Log(Cotton Acres)", "Cotton Share",
+                             "Log(Hay Acres)", "Hay Share"), 
+          covariate.labels = c("Degree Days (0-10C)", "Degree Days (10-30C)", "Degree Days (30C)", 
+                              "Precipitaton", "Precipitation Squared", "State-by-Year Trend", "Post - 0:1950-1980/1:1980-2010", 
+                               "Treat - County 0:cooled/1:warmed the most", "Treatment-effect"
+                               ),
+          model.names = FALSE, omit.table.layout = "n",
+          apply.coef = multiply.100, apply.se = multiply.100,
+          table.layout ="=dcm#-t-as=n",
+          font.size = "footnotesize",
+          #add.lines = list(c("Fixed-effect", "", "County", "", "County", "County \\& Year")),
+          notes.append = FALSE, notes.align = "l",
+          notes = "asdf")
+#star1
 
+star3 <- stargazer(mods1, mods2, modw1, modw2, 
+                  align = FALSE, no.space = FALSE, 
+                  style = "aer", digits = 2,
+                  omit = c("fips", "year"), 
+                  omit.stat = c("ser", "f"),
+                  title = "Difference-in-Difference Regression Model explaining Crop Acres", 
+                  #column.labels = c("Basic Model", "Basic Model", "Climate Model", "Climate Model", "Climate Model"),
+          dep.var.labels = c("Log(Soybeans Acres)", "Soybeans Share", 
+                             "Log(Wheat Acres)", "Wheat Share"), 
+          covariate.labels = c("Degree Days (0-10C)", "Degree Days (10-30C)", "Degree Days (30C)", 
+                              "Precipitaton", "Precipitation Squared", "State-by-Year Trend", "Post - 0:1950-1980/1:1980-2010", 
+                               "Treat - County 0:cooled/1:warmed the most", "Treatment-effect"
+                               ),
+          model.names = FALSE, omit.table.layout = "n",
+          apply.coef = multiply.100, apply.se = multiply.100,
+          table.layout ="=dcm#-t-as=n",
+          font.size = "footnotesize",
+          #add.lines = list(c("Fixed-effect", "", "County", "", "County", "County \\& Year")),
+          notes.append = FALSE, notes.align = "l",
+          notes = "asdf")
+#star1
 
 setwd("/run/media/john/1TB/SpiderOak/Projects/adaptation-along-the-envelope/tables")          
 {
-cat("\\documentclass[10pt]{article}\n\\usepackage{graphicx}\n\\usepackage{dcolumn}\n\\usepackage[a4paper, total={8in, 10in}]{geometry}\n\\begin{document}", file = "dd_crop_revenue_tables.tex")
+cat("\\documentclass[10pt]{article}\n\\usepackage{graphicx}\n\\usepackage{pdflscape}\n\\usepackage{dcolumn}\n\\usepackage[a4paper, total={8in, 10in}]{geometry}\n\\begin{document}", file = "dd_crop_revenue_tables.tex")
 cat(star1, file = "dd_crop_revenue_tables.tex", sep = "\n", append = TRUE)
+cat("\\newpage", file = "dd_crop_revenue_tables.tex", append = TRUE)
+#cat("\\begin{landscape}\n", file = "dd_crop_revenue_tables.tex", append = TRUE)
+cat(star2, file = "dd_crop_revenue_tables.tex", sep = "\n", append = TRUE)
+cat(star3, file = "dd_crop_revenue_tables.tex", sep = "\n", append = TRUE)
+#cat("\\end{landscape}\n", file = "dd_crop_revenue_tables.tex", append = TRUE)
 cat("\\end{document}", file = "dd_crop_revenue_tables.tex", append = TRUE)
 # Compile pdf
 system("pdflatex dd_crop_revenue_tables.tex")
