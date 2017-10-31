@@ -17,6 +17,17 @@ adj_ln <- function(x){
   mod3 <- readRDS("models/dd_mod3.rds")
   mod4 <- readRDS("models/dd_mod4.rds")
   mod5 <- readRDS("models/dd_mod5.rds")
+  
+modc1 <- readRDS("models/dd_modc1.rds")
+modc2 <- readRDS("models/dd_modc2.rds")
+modco1 <- readRDS("models/dd_modco1.rds")
+modco2 <- readRDS("models/dd_modco2.rds")
+modh1 <- readRDS("models/dd_modh1.rds")
+modh2 <- readRDS("models/dd_modh2.rds")
+mods1 <- readRDS("models/dd_mods1.rds")
+mods2 <- readRDS("models/dd_mods2.rds")
+modw1 <- readRDS("models/dd_modw1.rds")
+modw2 <- readRDS("models/dd_modw2.rds")
 
   # mod3$coefficients[c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")] <- 
   #   multiply.100(mod3$coefficients[c("dday0_10", "dday10_30", "dday30C", "prec", "prec_sq")])
@@ -31,8 +42,13 @@ adj_ln <- function(x){
   mod4$coefficients[6:8] <- adj_ln(mod4$coefficients[6:8])
   mod5$coefficients[6:8] <- adj_ln(mod5$coefficients[6:8])
   
-  #   
-  # mod0$coefficients[c("tau", "omega", "did")] <- adj_ln(mod0$coefficients[c("tau", "omega", "did")])
+  modc1$coefficients[7:9] <- adj_ln(modc1$coefficients[7:9])
+  modco1$coefficients[7:9] <- adj_ln(modco1$coefficients[7:9])
+  modh1$coefficients[7:9] <- adj_ln(modh1$coefficients[7:9])
+  mods1$coefficients[7:9] <- adj_ln(mods1$coefficients[7:9])
+  modw1$coefficients[7:9] <- adj_ln(modw1$coefficients[7:9])
+
+    # mod0$coefficients[c("tau", "omega", "did")] <- adj_ln(mod0$coefficients[c("tau", "omega", "did")])
   # mod1$coefficients[c("tau", "omega", "did")] <- adj_ln(mod1$coefficients[c("tau", "omega", "did")])
   # mod2$coefficients[c("tau", "omega", "did")] <- adj_ln(mod2$coefficients[c("tau", "omega", "did")])
   # mod3$coefficients[c("tau", "omega", "did")] <- adj_ln(mod3$coefficients[c("tau", "omega", "did")])
@@ -62,16 +78,14 @@ star1 <- stargazer(mod0, mod1, mod2, mod3, mod4,
           notes = "asdf")
 #star1
 
-star2 <- stargazer(modc1, modc2, modco1, modco2, modh1, modh2,
+star2 <- stargazer(modc1, modco1, modh1, mods1, modw1,
                   align = FALSE, no.space = FALSE, 
                   style = "aer", digits = 2,
                   omit = c("fips", "year"), 
                   omit.stat = c("ser", "f"),
                   title = "Difference-in-Difference Regression Model explaining Crop Acres", 
                   #column.labels = c("Basic Model", "Basic Model", "Climate Model", "Climate Model", "Climate Model"),
-          dep.var.labels = c("Log(Corn Acres)", "Corn Share", 
-                             "Log(Cotton Acres)", "Cotton Share",
-                             "Log(Hay Acres)", "Hay Share"), 
+          dep.var.labels = c("Log(Corn Acres)",  "Log(Cotton Acres)", "Log(Hay Acres)", "Log(Soybeans Acres)", "Log(Wheat Acres)"),
           covariate.labels = c("Degree Days (0-10C)", "Degree Days (10-30C)", "Degree Days (30C)", 
                               "Precipitaton", "Precipitation Squared", "State-by-Year Trend", "Post - 0:1950-1980/1:1980-2010", 
                                "Treat - County 0:cooled/1:warmed the most", "Treatment-effect"
@@ -80,20 +94,20 @@ star2 <- stargazer(modc1, modc2, modco1, modco2, modh1, modh2,
           apply.coef = multiply.100, apply.se = multiply.100,
           table.layout ="=dcm#-t-as=n",
           font.size = "footnotesize",
-          #add.lines = list(c("Fixed-effect", "", "County", "", "County", "County \\& Year")),
+          add.lines = list(c("Mean of Dep Variable", "9.30", "8.05",  "9.64", "9.17", "9.18"),
+                           c("Fixed-effect", "State", "State", "State", "State", "State")),
           notes.append = FALSE, notes.align = "l",
           notes = "asdf")
 #star1
 
-star3 <- stargazer(mods1, mods2, modw1, modw2, 
+star3 <- stargazer(modc2, modco2, modh2, mods2, modw2, 
                   align = FALSE, no.space = FALSE, 
                   style = "aer", digits = 2,
                   omit = c("fips", "year"), 
                   omit.stat = c("ser", "f"),
                   title = "Difference-in-Difference Regression Model explaining Crop Acres", 
                   #column.labels = c("Basic Model", "Basic Model", "Climate Model", "Climate Model", "Climate Model"),
-          dep.var.labels = c("Log(Soybeans Acres)", "Soybeans Share", 
-                             "Log(Wheat Acres)", "Wheat Share"), 
+          dep.var.labels = c("Corn Share", "Cotton Share", "Hay Share", "Soybeans Share", "Wheat Share"), 
           covariate.labels = c("Degree Days (0-10C)", "Degree Days (10-30C)", "Degree Days (30C)", 
                               "Precipitaton", "Precipitation Squared", "State-by-Year Trend", "Post - 0:1950-1980/1:1980-2010", 
                                "Treat - County 0:cooled/1:warmed the most", "Treatment-effect"
@@ -102,7 +116,8 @@ star3 <- stargazer(mods1, mods2, modw1, modw2,
           apply.coef = multiply.100, apply.se = multiply.100,
           table.layout ="=dcm#-t-as=n",
           font.size = "footnotesize",
-          #add.lines = list(c("Fixed-effect", "", "County", "", "County", "County \\& Year")),
+          add.lines = list(c("Mean of Dep Variable", "0.21", "0.11",  "0.22", "0.20", "0.11"),
+                             c("Fixed-effect", "State", "State", "State", "State", "State")),
           notes.append = FALSE, notes.align = "l",
           notes = "asdf")
 #star1

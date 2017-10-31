@@ -72,7 +72,7 @@ diff <- diff %>%
 spdiff <- filter(diff, thirds == 3) # Warmest
 wfips <- spdiff$fips
 
-tpdiff <- filter(diff, thirds == 2) # Coolest
+tpdiff <- filter(diff, thirds == 1) # Coolest
 cfips <- tpdiff$fips
 
 moddat1 <- filter(cropdat, fips %in% wfips)
@@ -152,7 +152,7 @@ mod4 <- felm(ln_rev ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq +
 
 # Corn
 modc1 <- felm(log(corn_grain_a) ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
-                tau + omega + did | state, data = moddat)
+                state_trend + tau + omega + did | state, data = moddat)
 summary(modc1) 
 
 modc2 <- felm(p_corn_a ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 

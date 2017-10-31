@@ -35,21 +35,6 @@ cropdat <- readRDS("data/full_ag_data.rds")
 cropdat$dday0_10 <- cropdat$dday0C - cropdat$dday10C
 cropdat$dday10_30 <- cropdat$dday10C - cropdat$dday30C
 
-# Constant prices
-cropdat$corn_rprice <- mean(cropdat$corn_rprice, na.rm = TRUE)
-cropdat$cotton_rprice <- mean(cropdat$cotton_rprice, na.rm = TRUE)
-cropdat$hay_rprice <- mean(cropdat$hay_rprice, na.rm = TRUE)
-cropdat$wheat_rprice <- mean(cropdat$wheat_rprice, na.rm = TRUE)
-cropdat$soybean_rprice <- mean(cropdat$soybean_rprice, na.rm = TRUE)
-
-# Total Activity
-cropdat$corn <- cropdat$corn_yield*cropdat$corn_grain_a*cropdat$corn_rprice
-cropdat$cotton <- cropdat$cotton_yield*cropdat$cotton_a*cropdat$cotton_rprice
-cropdat$hay <- cropdat$hay_yield*cropdat$hay_a*cropdat$hay_rprice
-cropdat$wheat <- cropdat$wheat_yield*cropdat$wheat_a*cropdat$wheat_rprice
-cropdat$soybean <- cropdat$soybean_yield*cropdat$soybean_a*cropdat$soybean_rprice
-
-
 # Yield per acre
 cropdat$corn <- cropdat$corn_yield
 cropdat$cotton <- cropdat$cotton_yield
@@ -58,11 +43,11 @@ cropdat$wheat <- cropdat$wheat_yield
 cropdat$soybean <- cropdat$soybean_yield
 
 # Crop Acres
-# cropdat$corn <- cropdat$corn_grain_a
-# cropdat$cotton <- cropdat$cotton_a
-# cropdat$hay <- cropdat$hay_a
-# cropdat$wheat <- cropdat$wheat_a
-# cropdat$soybean <- cropdat$soybean_a
+cropdat$corn <- cropdat$corn_grain_a
+cropdat$cotton <- cropdat$cotton_a
+cropdat$hay <- cropdat$hay_a
+cropdat$wheat <- cropdat$wheat_a
+cropdat$soybean <- cropdat$soybean_a
 
 
 # cropdat <- filter(cropdat, !is.na(corn) | !is.na(cotton) | !is.na(hay) | !is.na(wheat) | !is.na(soybean) |
@@ -160,9 +145,13 @@ wdat2$value <- wdat2$value/1000000
  # weight = "value"
 
 
-wplot1 <- densityShare(wdat1, "tavg", "value")$plot + theme(legend.position = "none") +
-  xlab("") + ylab("Value of Activity \n ($1 Million)") +
-  xlim(8, 25) + geom_hline(yintercept = 0, linetype = "dashed", color = "grey")
+wplot1 <- densityShare(wdat1, "tavg", "value")$plot + 
+  theme(legend.position = "none") +
+  xlab("") + 
+  ylab("Crop Acres \n (Million)") +
+  xlim(8, 25) + 
+  geom_hline(yintercept = 0, linetype = "dashed", color = "grey")
+wplot1
 
 # Legend
 wplot1_legend <- densityShare(wdat1, "tavg", "value")$plot + theme(legend.position = c(0.45,1.1), 
@@ -170,7 +159,7 @@ wplot1_legend <- densityShare(wdat1, "tavg", "value")$plot + theme(legend.positi
         legend.box.background = element_rect(colour = "grey"), 
         legend.key = element_blank(),
         legend.title = element_blank()) + 
-  xlab("") + ylab("Crop Value of Activity \n ($1 Million)") +
+  xlab("") + ylab("Crop Acres \n ($1 Million)") +
   xlim(8, 25) 
 legend <- g_legend(wplot1_legend)
 
@@ -178,6 +167,7 @@ legend <- g_legend(wplot1_legend)
 wplot2 <- densityShare(wdat2, "tavg", "value")$plot + theme(legend.position = "none") +
    xlab("Average Temperature (C)") +
    xlim(8, 25) + geom_hline(yintercept = 0, linetype = "dashed", color = "grey")
+wplot2
 
 mdat1 <- filter(dat1, fips %in% fips2)
 mdat1 <- select(mdat1, fips, Corn, Cotton, Hay, Wheat, Soybean, tavg)
@@ -232,6 +222,8 @@ wdensplot <- ggplot(NULL) +
         annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey") +
         annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
   xlim(8, 25)+ geom_hline(yintercept = 0, linetype = "dashed", color = "grey")
+wdensplot <- wdensplot + ylim(-3, 3)
+wdensplot
 
 # Remove outliers for boxplot
 tuftedata <- mergedat %>% 
@@ -259,7 +251,7 @@ p1 <- ggplot(mergedat, aes(y = tavgdiff, x = crop, color = crop)) +
   xlab(NULL) + ylab("Change in \n Temperature (C)") +
   theme(legend.position = "none") +
   scale_y_continuous(breaks = c(0, 1, 2), labels = c("0", "+1C", "+2C"))
-
+p1
 p2 <- ggplot(cpercent, aes(y = change, x = crop)) + 
   geom_point(data = cpercent, aes(crop, change), color = c(ggplotColours(n = 5)), size = 1.5) +
   theme_tufte(base_size = 12) +
@@ -267,7 +259,7 @@ p2 <- ggplot(cpercent, aes(y = change, x = crop)) +
   annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey") +
   annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
   xlab(NULL) + 
-  ylab("% Change in \n Value of Activity") + ylim(0, 200)
+  ylab("% Change in \n Crop Acres") + ylim(-100, 100)
 wplot1_ymax <- ggplot_build(wplot1)$layout$panel_ranges[[1]]$y.range[2]
 wplot2_ymax <- ggplot_build(wplot2)$layout$panel_ranges[[1]]$y.range[2]
 
@@ -275,7 +267,7 @@ wplot_ymax <- max(wplot1_ymax, wplot2_ymax)
 
 wplot1 <- wplot1 +  ylim(0, wplot_ymax) + annotate("text", x = 17, y = wplot_ymax, label = "1950-1980", size = 4)
 wplot2 <- wplot2 +  ylim(0, wplot_ymax)  + annotate("text", x = 17, y = wplot_ymax, label = "1980-2010", size = 4)
-wdensplot <- wdensplot +  ylim(-50, wplot_ymax)  + annotate("text", x = 17, y = wplot_ymax, label = "Difference", size = 4)
+wdensplot <- wdensplot +  ylim(-3, wplot_ymax)  + annotate("text", x = 17, y = wplot_ymax, label = "Difference", size = 4)
 wplot1
 dplot <-plot_grid(p1, p2, ncol = 2)
 
@@ -302,9 +294,9 @@ cdat2$value <- cdat2$value/1000000
 
 
 wplot1 <- densityShare(cdat1, "tavg", "value")$plot + theme(legend.position = "none") +
-  xlab("") + ylab("Value of Activity \n ($1 Million)") +
-  xlim(10, 25) + geom_hline(yintercept = 0, linetype = "dashed", color = "grey")
-#wplot1
+  xlab("") + ylab("Crop Acres \n (1 Million)") +
+  xlim(8, 27) + geom_hline(yintercept = 0, linetype = "dashed", color = "grey")
+wplot1
 
 # Legend
 wplot1_legend <- densityShare(cdat1, "tavg", "value")$plot + theme(legend.position = c(0.45,1.1), 
@@ -312,7 +304,7 @@ wplot1_legend <- densityShare(cdat1, "tavg", "value")$plot + theme(legend.positi
         legend.box.background = element_rect(colour = "grey"), 
         legend.key = element_blank(),
         legend.title = element_blank()) + 
-  xlab("") + ylab("Crop Value of Activity \n ($1 Million)") +
+  xlab("") + ylab("Crop Acres \n (1 Million)") +
   xlim(10, 25) 
 legend <- g_legend(wplot1_legend)
 #plot(legend)
@@ -320,8 +312,8 @@ legend <- g_legend(wplot1_legend)
 
 wplot2 <- densityShare(cdat2, "tavg", "value")$plot + theme(legend.position = "none") +
    xlab("Average Temperature (C)") +
-   xlim(10, 25) + geom_hline(yintercept = 0, linetype = "dashed", color = "grey")
-#wplot2
+   xlim(8, 27) + geom_hline(yintercept = 0, linetype = "dashed", color = "grey")
+wplot2
 
 mdat1 <- filter(dat1, fips %in% fips1)
 mdat1 <- select(mdat1, fips, Corn, Cotton, Hay, Wheat, Soybean, tavg)
@@ -375,7 +367,7 @@ cdensplot <- ggplot(NULL) +
         annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey") +
         annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
   xlim(8, 25)+ geom_hline(yintercept = 0, linetype = "dashed", color = "grey")
-#cdensplot
+cdensplot
 
 # Remove outliers for boxplot
 tuftedata <- mergedat %>% 
@@ -412,7 +404,7 @@ p2 <- ggplot(cpercent, aes(y = change, x = crop)) +
   annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey") +
   annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
   xlab(NULL) + 
-  ylab("% Change in \n Production") + ylim(0, 200)
+  ylab("% Change in \n Crop Acres") + ylim(-100, 100)
 
 wplot1_ymax <- ggplot_build(wplot1)$layout$panel_ranges[[1]]$y.range[2]
 wplot2_ymax <- ggplot_build(wplot2)$layout$panel_ranges[[1]]$y.range[2]
@@ -421,7 +413,7 @@ wplot_ymax <- max(wplot1_ymax, wplot2_ymax)
 
 wplot1 <- wplot1 +  ylim(0, wplot_ymax) + annotate("text", x = 17, y = wplot_ymax, label = "1950-1980", size = 4)
 wplot2 <- wplot2 +  ylim(0, wplot_ymax)  + annotate("text", x = 17, y = wplot_ymax, label = "1980-2010", size = 4)
-cdensplot <- cdensplot +  ylim(-50, wplot_ymax)  + annotate("text", x = 17, y = wplot_ymax, label = "Difference", size = 4)
+cdensplot <- cdensplot +  ylim(-3, wplot_ymax)  + annotate("text", x = 17, y = wplot_ymax, label = "Difference", size = 4)
 #wplot1
 dplot <-plot_grid(p1, p2, ncol = 2)
 
@@ -489,11 +481,12 @@ diffdensplot <- ggplot(NULL) +
       theme(legend.position = "none") +
       annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey") +
       annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
-      annotate("text", x = 17, y = 57, label = "Increase in counties \n that warmed the most", fontface = 2) +
-      annotate("text", x = 17, y = -37, label = "Increase in counties \n that cooled the most", fontface = 2) +
-      xlim(8, 25)+ geom_hline(yintercept = 0, linetype = "dashed", color = "grey") + ylim(-60,60) 
+      annotate("text", x = 17, y = 1.5, label = "Increase in counties \n that warmed the most", fontface = 2) +
+      annotate("text", x = 17, y = -1.5, label = "Increase in counties \n that cooled the most", fontface = 2) +
+      xlim(8, 25)+ geom_hline(yintercept = 0, linetype = "dashed", color = "grey") + ylim(-2,2)
+      
 
-diffdensplot <- diffdensplot + ylab("Difference of Change") 
+diffdensplot <- diffdensplot + ylab("Difference of Change")
 diffdensplot
 
 diffdens_crop$crop <- factor(diffdens_crop$crop, levels = c("Corn", "Cotton", "Hay", "Wheat", "Soybean", "All Crops"))
@@ -504,7 +497,7 @@ diffp1 <- ggplot(diffdens_crop, aes(crop, wperc, color = crop)) + geom_point(siz
   annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey") +
   annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
   xlab("")  + theme(legend.position = "none") +
-  ylab("Proportion of \n Total Activity (%)") + ylim(-40, 40) 
+  ylab("Proportion of \n Total Crop Acres (%)") + ylim(-100, 100) 
   #annotate("text", x = 4.8, y = 37, label = "Increase activity \n in warmest \n counties") +
   #annotate("text", x = 4.8, y = -27, label = "Increase activity \n in coolest \n counties") 
 diffp1
@@ -522,8 +515,8 @@ wdensplot2 <- ggplot(NULL) +
         annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey") +
         annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
   xlim(8, 25)+ geom_hline(yintercept = 0, linetype = "dashed", color = "grey") +
-  ylim(-50, 400) + annotate("text", x = 17, y = 370, label = "Counties that \n warmed the most") +
-  ylab("Value of Activity \n ($1 Million)")
+  ylim(-3, 3) + annotate("text", x = 17, y = 2.5, label = "Counties that \n warmed the most") +
+  ylab("Crop Acres \n (Million)")
 wdensplot2
 
 cdensplot2 <- ggplot(NULL) + 
@@ -539,7 +532,7 @@ cdensplot2 <- ggplot(NULL) +
       annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey") +
       annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
   xlim(8, 25)+ geom_hline(yintercept = 0, linetype = "dashed", color = "grey") +
-  ylim(-50, 400) + annotate("text", x = 17, y = 370, label = "Counties that \n cooled the most")
+  ylim(-3, 3) + annotate("text", x = 17, y = 2.5, label = "Counties that \n cooled the most")
 cdensplot2
 
 wplot1_legend <- densityShare(wdat1, "tavg", "value")$plot + theme(legend.position = c(0.45,1), 
@@ -547,7 +540,7 @@ wplot1_legend <- densityShare(wdat1, "tavg", "value")$plot + theme(legend.positi
         legend.box.background = element_rect(colour = "grey"), 
         legend.key = element_blank(),
         legend.title = element_blank()) + 
-  xlab("") + ylab("Crop Value of Activity \n ($1 Million)") +
+  xlab("") + ylab("Crop Acres \n (Million)") +
   xlim(8, 25) 
 legend <- g_legend(wplot1_legend)
 plot(legend)
