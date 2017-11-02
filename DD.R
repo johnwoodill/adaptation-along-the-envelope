@@ -128,18 +128,18 @@ ggplot(moddat, aes(year, rev, color = factor(type))) +
 
 mod0 <- felm(ln_rev ~ tau + omega + tau + did, data = moddat)
 
-mod1 <- felm(ln_rev ~ tau + omega + tau + did + state_trend | fips, data = moddat)
-
+mod1 <- felm(ln_rev ~ tau + omega + tau + did + state_trend | state | 0 | state, data = moddat)
+mod1
 #mod2 <- felm(ln_rev ~ tau + omega + tau + did | fips + year, data = moddat)
 
 mod2 <- felm(ln_rev ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
                tau + omega + tau + did, data = moddat)
 
 mod3 <- felm(ln_rev ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
-               tau + omega + tau + did + state_trend | fips, data = moddat)
+               tau + omega + tau + did + state_trend | state | 0 |state, data = moddat)
 
 mod4 <- felm(ln_rev ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
-              tau + omega + tau + did | fips + year, data = moddat)
+              tau + omega + tau + did | state + year | 0 |state, data = moddat)
 
  saveRDS(mod0, "models/dd_mod0.rds")
  saveRDS(mod1, "models/dd_mod1.rds")
@@ -147,45 +147,71 @@ mod4 <- felm(ln_rev ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq +
  saveRDS(mod3, "models/dd_mod3.rds")
  saveRDS(mod4, "models/dd_mod4.rds")
 
+ source("R/predictFelm.R")
  
+ moddat$did <- moddat$tau*moddat$trend
+
+ moddat$state <- factor(moddat$state) 
+
+dat <- moddat
+dbdist <- datadist(dat)
+options("datadist" = "dbdist")
+
+mod3 <- ols(ln_rev ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
+                 rcs(trend, 7) + omega + omega*rcs(trend, 7), data = dat, x = TRUE, y = TRUE)
+mod3
+pa <- Predict(mod3, "")
+plot(y = pa$yhat, x = pa$trend)
+pa$yhat
+plot(pa)
+
+summary(mod3) 
+predict(mod3, rcs(trend))
+
+pa <- predict.felm(mod3, newdata = moddat)
+
+a <- predict.lfe(mod3)
+a$pred_data$
+plot(y = a$fit, x = moddat$tau_trend)
+
 # Crop Acre Regressions  
 
 # Corn
 modc1 <- felm(log(corn_grain_a) ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
-                state_trend + tau + omega + did | state, data = moddat)
+                state_trend + tau + omega + did | state | 0 | state, data = moddat)
 summary(modc1) 
 
 modc2 <- felm(p_corn_a ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
-               state_trend + tau + omega + did | state, data = moddat)
+               state_trend + tau + omega + did, data = moddat)
 summary(modc2)
 
 modco1 <- felm(log(cotton_a) ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
-               state_trend + tau + omega + did | state, data = moddat)
+               state_trend + tau + omega + did | state | 0 | state, data = moddat)
 summary(moda2) 
 
 modco2 <- felm(p_cotton_a ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
-               state_trend + tau + omega + did | state, data = moddat)
+               state_trend + tau + omega + did | state | 0 | state, data = moddat)
 
 modh1 <- felm(log(hay_a) ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
-               state_trend + tau + omega + did | state, data = moddat)
+               state_trend + tau + omega + did | state | 0 | state, data = moddat)
 summary(moda2) 
 
 modh2 <- felm(p_hay_a ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
-               state_trend + tau + omega + did | state, data = moddat)
+               state_trend + tau + omega + did | state | 0 | state, data = moddat)
 
 mods1 <- felm(log(soybean_a) ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
-               state_trend + tau + omega + did | state, data = moddat)
+               state_trend + tau + omega + did | state | 0 | state, data = moddat)
 summary(moda2) 
 
 mods2 <- felm(p_soybean_a ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
-               state_trend + tau + omega + did | state, data = moddat)
+               state_trend + tau + omega + did | state | 0 | state, data = moddat)
 
 modw1 <- felm(log(wheat_a) ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
-               state_trend + tau + omega + did | state, data = moddat)
+               state_trend + tau + omega + did | state | 0 | state, data = moddat)
 summary(moda2) 
 
 modw2 <- felm(p_wheat_a ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
-               state_trend + tau + omega + did | state, data = moddat)
+               state_trend + tau + omega + did | state | 0 | state, data = moddat)
  
  
  
@@ -201,11 +227,22 @@ saveRDS(modw1, "models/dd_modw1.rds")
 saveRDS(modw2, "models/dd_modw2.rds")
  
  
+mod1 <- p_corn_a ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
+               state_trend + tau + omega + did
+mod2 <- p_cotton_a ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
+               state_trend + tau + omega + did
+mod3 <- p_hay_a ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
+               state_trend + tau + omega + did
+mod4 <- p_soybean_a ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
+               state_trend + tau + omega + did
+mod5 <- p_wheat_a ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
+               state_trend + tau + omega + did
  
- 
- 
- 
- 
+modlist <- list(mod1 = mod1, mod2 = mod2, mod3 = mod3, mod4 = mod4, mod5 = mod5)
+modlist <- list(mod1 = mod1, mod2 = mod2, mod3 = mod3, mod4 = mod4, mod5 = mod5)
+sysfit <- systemfit(modlist, data = moddat) 
+print(sysfit) 
+summary(sysfit)
  
  
  
@@ -276,7 +313,7 @@ cropdat$hay <- cropdat$hay_yield*cropdat$hay_rprice
 cropdat$wheat <- cropdat$wheat_yield*cropdat$wheat_rprice
 cropdat$soybean <- cropdat$soybean_yield*cropdat$soybean_rprice
 
-set.seed(123)
+set.seed(234)
 cropdat$rand <- 1
 
 rfips <- sample(unique(cropdat$fips), size = length(unique(cropdat$fips))/2)
@@ -310,15 +347,15 @@ d = sapply(subset(moddat, tau == 1 & omega == 1, select = rev), mean)
 
 # average difference
 (d - c) - (b - a)
-# -10.88443
+# -11.61372 
 
 # percentage difference
 ((d - c) / c)* 100 - ((b - a) / a)*100
-#-3.037302
+#-7.990657 
 
 moddat$type <- ifelse(moddat$rand == 0, "No Adaptation", "Adaptation")
-moddat$type <- factor(moddat$type, levels = c("No Adaptation", "Adaptation"),
-                      labels = c("No Adaptation", "Adaptation"))
+#moddat$type <- factor(moddat$type, levels = c("No Adaptation", "Adaptation"),
+#                      labels = c("No Adaptation", "Adaptation"))
 
 moddat$pre <- ifelse(moddat$year >= 1980, moddat$rev, NA)
 
@@ -336,18 +373,123 @@ ggplot(moddat, aes(year, rev, color = factor(type))) +
         legend.title = element_blank()) 
   
 
+f <- function (dat, model) {
+   cropdat <- dat
+   cropdat$rand <- 1
+   
+   rfips <- sample(unique(cropdat$fips), size = length(unique(cropdat$fips))/2)
+   
+   cropdat$rand <- ifelse(cropdat$fips %in% rfips, 0, 1)
+   
+  cropdat$corn <- ifelse(cropdat$rand == 0, (cropdat$corn_grain_p/cropdat$avg_corn_a)*cropdat$corn_rprice, cropdat$corn)
+  cropdat$cotton <- ifelse(cropdat$rand == 0, (cropdat$cotton_p/cropdat$avg_cotton_a)*cropdat$cotton_rprice, cropdat$cotton)
+  cropdat$hay <- ifelse(cropdat$rand == 0, (cropdat$hay_p/cropdat$avg_hay_a)*cropdat$hay_rprice, cropdat$hay)
+  cropdat$soybean <- ifelse(cropdat$rand == 0, (cropdat$soybean_p/cropdat$avg_soybean_a)*cropdat$soybean_rprice, cropdat$soybean)
+  cropdat$wheat <- ifelse(cropdat$rand == 0, (cropdat$wheat_p/cropdat$avg_wheat_a)*cropdat$wheat_rprice, cropdat$wheat)
 
-mod0 <- felm(ln_rev ~ tau + omega + tau + did, data = moddat)
+  cropdat$rev <- rowSums(cropdat[, c("corn", "cotton", "hay", "soybean", "wheat")], na.rm = TRUE)
+  moddat <- cropdat
+  
+  moddat$tau <- ifelse(moddat$year >= 1980, 1, 0)
+  moddat$omega <- moddat$rand
+  
+  moddat$did <- moddat$tau*moddat$omega
+  moddat$trend <- moddat$year - 1949
+  moddat$state_trend <- as.numeric(factor(moddat$state, levels = unique(moddat$state)))*moddat$trend
+  # fit <- felm(ln_rev ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
+  #              omega + tau + did | state | 0 | state, data = moddat, subset = sample(nrow(moddat), 
+  #                                                                                    nrow(moddat)/2, 
+  #                                                                                    replace = TRUE))
+  if(model == 1){
+  fit <- felm(ln_rev ~ omega + tau + did, data = moddat)
+  return(coef(fit))
+  }
+  
+  if(model == 2){
+  fit <- felm(ln_rev ~ omega + tau + did | state | 0 | state, data = moddat)
+  return(coef(fit))
+  }
+  
+  if(model == 3){
+  fit <- felm(ln_rev ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
+               omega + tau + did, data = moddat)
+  return(coef(fit))
+  }
+  
+  if(model == 4){
+  fit <- felm(ln_rev ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
+               omega + tau + did | state | 0 | state, data = moddat)
+  return(coef(fit))
+  }
+  
+}
 
-mod1 <- felm(ln_rev ~ tau + omega + tau + did + state_trend | fips, data = moddat)
+# Basic Model
+z1 <- t(replicate(1000, f(cropdat, model = 1)))
 
-#mod2 <- felm(ln_rev ~ tau + omega + tau + did | fips + year, data = moddat)
+bs_mod1 <- lm(ln_rev ~ omega + tau + did, data = moddat)
+for (i in 1:length(bs_mod1$coefficients)){
+  bs_mod1$coefficients[i] <- mean(z1[, i])
+  bs_mod1$se[i] <- sd(z1[, i])
+}
+
+# Basic Model w/ Fixed Effect and cluster s.e.
+z2 <- t(replicate(1000, f(cropdat, model = 2)))
+
+bs_mod2 <- lm(ln_rev ~ omega + tau + did - 1, data = moddat)
+
+for (i in 1:length(bs_mod2$coefficients)){
+  bs_mod2$coefficients[i] <- mean(z2[, i])
+  bs_mod2$se[i] <- sd(z2[, i])
+}
+
+# Climate Model
+z3 <- t(replicate(1000, f(cropdat, model = 3)))
+
+bs_mod3 <- lm(ln_rev ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
+               omega + tau + did, data = moddat)
+for (i in 1:length(bs_mod3$coefficients)){
+  bs_mod3$coefficients[i] <- mean(z3[, i])
+  bs_mod3$se[i] <- sd(z3[, i])
+}
+
+# Climate Model with fixed effect and clustered s.e.
+z4 <- t(replicate(1000, f(cropdat, model = 4)))
+
+bs_mod4 <- lm(ln_rev ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
+               omega + tau + did - 1, data = moddat)
+for (i in 1:length(bs_mod4$coefficients)){
+  bs_mod4$coefficients[i] <- mean(z4[, i])
+  bs_mod4$se[i] <- sd(z4[, i])
+}
+
+
+bs_mod1
+bs_mod2
+bs_mod3
+bs_mod4
+
+saveRDS(bs_mod1, "models/bs_mod1.rds")
+saveRDS(bs_mod2, "models/bs_mod2.rds")
+saveRDS(bs_mod3, "models/bs_mod3.rds")
+saveRDS(bs_mod4, "models/bs_mod4.rds")
+ 
+summary(bs_mod1)
+coef(bs_mod1)
+stargazer(bs_mod1)
+mod0 <- felm(ln_rev ~ omega + tau + did, data = moddat)
+summary(mod0)
+
+mod1 <- felm(ln_rev ~ omega + tau + did | state | 0 | state | fips, data = moddat)
+summary(mod1)
 
 mod2 <- felm(ln_rev ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
-               tau + omega + tau + did, data = moddat)
+               omega + tau + did | state | 0 | state, data = moddat)
+summary(mod2)
 
 mod3 <- felm(ln_rev ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
-               tau + omega + tau + did + state_trend | fips, data = moddat)
+               tau + omega + tau + did + state_trend | state | 0 | state, data = moddat)
+summary(mod3)
 
 mod4 <- felm(ln_rev ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
               tau + omega + tau + did | fips + year, data = moddat)
