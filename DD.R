@@ -18,16 +18,31 @@ cropdat$hay_rprice <- mean(cropdat$hay_rprice, na.rm = TRUE)
 cropdat$wheat_rprice <- mean(cropdat$wheat_rprice, na.rm = TRUE)
 cropdat$soybean_rprice <- mean(cropdat$soybean_rprice, na.rm = TRUE)
 
+cropdat <- cropdat %>% 
+   group_by(fips) %>% 
+   mutate(avg_corn_a = mean(corn_grain_a, na.rm = TRUE),
+          avg_cotton_a = mean(cotton_a, na.rm = TRUE),
+          avg_hay_a = mean(hay_a, na.rm = TRUE),
+          avg_soybean_a = mean(soybean_a, na.rm = TRUE),
+          avg_wheat_a = mean(wheat_a, na.rm = TRUE))
+
+cropdat$corn <- (cropdat$corn_grain_p/cropdat$avg_corn_a)*cropdat$corn_rprice
+cropdat$cotton <- (cropdat$cotton_p/cropdat$avg_cotton_a)*cropdat$cotton_rprice
+cropdat$hay <- (cropdat$hay_p/cropdat$avg_hay_a)*cropdat$hay_rprice
+cropdat$soybean <- (cropdat$soybean_p/cropdat$avg_soybean_a)*cropdat$soybean_rprice
+cropdat$wheat <- (cropdat$wheat_p/cropdat$avg_wheat_a)*cropdat$wheat_rprice
+
  
 # Total Activity
-cropdat$corn <- cropdat$corn_yield*cropdat$corn_rprice
-cropdat$cotton <- cropdat$cotton_yield*cropdat$cotton_rprice
-cropdat$hay <- cropdat$hay_yield*cropdat$hay_rprice
-cropdat$wheat <- cropdat$wheat_yield*cropdat$wheat_rprice
-cropdat$soybean <- cropdat$soybean_yield*cropdat$soybean_rprice
+# cropdat$corn <- cropdat$corn_yield*cropdat$corn_rprice
+# cropdat$cotton <- cropdat$cotton_yield*cropdat$cotton_rprice
+# cropdat$hay <- cropdat$hay_yield*cropdat$hay_rprice
+# cropdat$wheat <- cropdat$wheat_yield*cropdat$wheat_rprice
+# cropdat$soybean <- cropdat$soybean_yield*cropdat$soybean_rprice
 
 cropdat$rev <- rowSums(cropdat[, c("corn", "cotton", "hay", "soybean", "wheat")], na.rm = TRUE)
 cropdat$acres <- rowSums(cropdat[, c("corn_grain_a", "cotton_a", "hay_a", "soybean_a", "wheat_a")], na.rm = TRUE)
+cropdat$yield <- rowSums(cropdat[, c("corn_yield", "cotton_yield", "hay_yield", "soybean_yield", "wheat_yield")], na.rm = TRUE)
 head(cropdat$acres)
 
 cropdat$ln_rev <- log(1 + cropdat$rev)
@@ -111,8 +126,14 @@ moddat$type <- factor(moddat$type, levels = c("Counties that warmed the most", "
 
 moddat$pre <- ifelse(moddat$year >= 1980, moddat$rev, NA)
 
+pdat <- moddat %>% 
+  group_by(year, omega) %>% 
+  summarise(rev = mean(rev, na.rm = TRUE),
+            yield = mean(yield, na.rm =))
+
 ggplot(moddat, aes(year, rev, color = factor(type))) + 
-  geom_smooth(method='lm',formula=y~x) + 
+  geom_line(data = pdat, aes(year, rev, color = factor(omega))) +
+  geom_smooth(method='loess',formula=y~rcs(x, 5)) + 
   theme_tufte(base_size = 12) +
   geom_hline(yintercept = 0, color = "grey") +
   annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey") +
@@ -124,44 +145,118 @@ ggplot(moddat, aes(year, rev, color = factor(type))) +
         legend.key = element_blank(),
         legend.title = element_blank()) 
   
-
+ggplot(moddat, aes(year, yield, color = factor(type))) + 
+  geom_smooth(method='lm',formula=y~rcs(x, 5)) + 
+  theme_tufte(base_size = 12) +
+  geom_hline(yintercept = 0, color = "grey") +
+  annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey") +
+  annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
+  xlab(NULL) + ylab("Crop Revenue per Acre") +
+  theme(legend.position = c(0,1), 
+        legend.justification = c("left", "top"), 
+        legend.box.background = element_rect(colour = "grey"), 
+        legend.key = element_blank(),
+        legend.title = element_blank()) 
 
 mod0 <- felm(ln_rev ~ tau + omega + tau + did, data = moddat)
+summary(mod0)
 
 mod1 <- felm(ln_rev ~ tau + omega + tau + did + state_trend | state | 0 | state, data = moddat)
-mod1
+summary(mod1)
+
 #mod2 <- felm(ln_rev ~ tau + omega + tau + did | fips + year, data = moddat)
 
 mod2 <- felm(ln_rev ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
                tau + omega + tau + did, data = moddat)
+summary(mod2)
 
 mod3 <- felm(ln_rev ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
                tau + omega + tau + did + state_trend | state | 0 |state, data = moddat)
+summary(mod3)
 
 mod4 <- felm(ln_rev ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
               tau + omega + tau + did | state + year | 0 |state, data = moddat)
-
- saveRDS(mod0, "models/dd_mod0.rds")
- saveRDS(mod1, "models/dd_mod1.rds")
- saveRDS(mod2, "models/dd_mod2.rds")
- saveRDS(mod3, "models/dd_mod3.rds")
- saveRDS(mod4, "models/dd_mod4.rds")
-
- source("R/predictFelm.R")
+summary(mod4)
  
- moddat$did <- moddat$tau*moddat$trend
+saveRDS(mod0, "models/dd_mod0.rds")
+saveRDS(mod1, "models/dd_mod1.rds")
+saveRDS(mod2, "models/dd_mod2.rds")
+saveRDS(mod3, "models/dd_mod3.rds")
+saveRDS(mod4, "models/dd_mod4.rds")
 
- moddat$state <- factor(moddat$state) 
+source("R/predictFelm.R")
+ 
+graphplot1 <- data.frame(year = c("1950-1980", "1950-1980", "1950-1980", "1980-2010", "1980-2010", "1980-2010"),
+           temp = c("C", "W", "T", "C", "W", "T"),
+           rev = c(143.39, 137.59, 137.59, 235.61, 218, 229.81),
+           se = c(0.543, 0.54, 0, 0.853, 0.873, 0))
+graphplot1$temp <- factor(graphplot1$temp, labels = c("Cooled the most", "Counterfactual", "Warmed the most"))
 
+ggplot(graphplot1, aes(year, rev, color = temp, group = temp, linetype = temp)) + 
+  theme_tufte(base_size = 14) +
+  #geom_line(aes(x = year, y = rev + 1.96*se, color = temp, group = temp), linetype = "dashed", alpha = 0.3) +
+  #geom_line(aes(x = year, y = rev - 1.96*se, color = temp, group = temp), linetype = "dashed", alpha = 0.3) +
+  geom_point() + 
+  geom_line() + 
+  ylim(100,250) + 
+  xlab(NULL) +
+  ylab("Revenue per Acre") +
+  annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey") +
+  annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
+  theme(legend.position = c(0,1), legend.justification = c("left", "top"), 
+        legend.box.background = element_rect(colour = "grey"),
+        legend.title = element_blank()) + 
+  scale_color_manual(values = c("blue", "grey", "red"),
+                     guide = guide_legend(override.aes = list(
+                       shape = NA,
+                     size = 2))) +
+  scale_linetype_manual(values = c("solid", "dashed", "solid"))
+  
+graphplot2 <- data.frame(year = c("1950-1980", "1950-1980", "1950-1980", "1980-2010", "1980-2010", "1980-2010"),
+           temp = c("C", "W", "T", "C", "W", "T"),
+           yield = c(69.36, 67.28, 67.28, 116.46, 108.60, 114.38),
+           se = c(0.543, 0.54, 0, 0.853, 0.873, 0))
+graphplot2$temp <- factor(graphplot2$temp, labels = c("Cooled the most", "Counterfactual", "Warmed the most"))
+
+ggplot(graphplot2, aes(year, yield, color = temp, group = temp, linetype = temp)) + 
+  theme_tufte(base_size = 14) +
+  #geom_line(aes(x = year, y = rev + 1.96*se, color = temp, group = temp), linetype = "dashed", alpha = 0.3) +
+  #geom_line(aes(x = year, y = rev - 1.96*se, color = temp, group = temp), linetype = "dashed", alpha = 0.3) +
+  geom_point() + 
+  geom_line() + 
+  ylim(50,150) + 
+  xlab(NULL) +
+  ylab("Crop Acres") +
+  annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey") +
+  annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf, color = "grey") +
+  theme(legend.position = c(0,1), legend.justification = c("left", "top"), 
+        legend.box.background = element_rect(colour = "grey"),
+        legend.title = element_blank()) + 
+  scale_color_manual(values = c("blue", "grey", "red"),
+                     guide = guide_legend(override.aes = list(
+                       shape = NA,
+                     size = 2))) +
+  scale_linetype_manual(values = c("solid", "dashed", "solid"))
+
+graphplot3 <- 
+
+
+#moddat$did <- moddat$tau*moddat$trend
+
+#moddat$state <- factor(moddat$state) 
+
+moddat <- cbind(moddat, rtomega)
 dat <- moddat
 dbdist <- datadist(dat)
 options("datadist" = "dbdist")
 
 mod3 <- ols(ln_rev ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
-                 rcs(trend, 7) + omega + omega*rcs(trend, 7), data = dat, x = TRUE, y = TRUE)
+                 rcs(trend, 7) + omega + rtomega, data = dat, x = TRUE, y = TRUE)
 mod3
-pa <- Predict(mod3, "")
+pa <- Predict(mod3, "omega")
+plot(pa)
 plot(y = pa$yhat, x = pa$trend)
+
 pa$yhat
 plot(pa)
 
