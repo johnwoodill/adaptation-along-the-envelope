@@ -1,13 +1,23 @@
 library(lfe)
 library(tidyverse)
 library(ggthemes)
-
+library(rms)
 
 setwd("/run/media/john/1TB/SpiderOak/Projects/adaptation-along-the-envelope/")
 cropdat <- readRDS("data/full_ag_data.rds")
 cropdat <- filter(cropdat, year < 2010)
 cropdat$dday0_10 <- cropdat$dday0C - cropdat$dday10C
 cropdat$dday10_30 <- cropdat$dday10C - cropdat$dday30C
+
+dummyCreator <- function(invec, prefix = NULL) {
+     L <- length(invec)
+     ColNames <- sort(unique(invec))
+     M <- matrix(0L, ncol = length(ColNames), nrow = L,
+                 dimnames = list(NULL, ColNames))
+     M[cbind(seq_len(L), match(invec, ColNames))] <- 1L
+     if (!is.null(prefix)) colnames(M) <- paste(prefix, colnames(M), sep = "_")
+     M
+} 
 
 #cropdat <- filter(cropdat, state == "wi")
 #cropdat
@@ -43,6 +53,7 @@ cropdat$wheat <- (cropdat$wheat_p/cropdat$avg_wheat_a)*cropdat$wheat_rprice
 cropdat$rev <- rowSums(cropdat[, c("corn", "cotton", "hay", "soybean", "wheat")], na.rm = TRUE)
 cropdat$acres <- rowSums(cropdat[, c("corn_grain_a", "cotton_a", "hay_a", "soybean_a", "wheat_a")], na.rm = TRUE)
 cropdat$yield <- rowSums(cropdat[, c("corn_yield", "cotton_yield", "hay_yield", "soybean_yield", "wheat_yield")], na.rm = TRUE)
+cropdat$trend <- cropdat$year - 1949
 head(cropdat$acres)
 
 cropdat$ln_rev <- log(1 + cropdat$rev)
@@ -98,14 +109,31 @@ moddat2$type <- "Counties that cooled the most"
 moddat1$omega <- 1
 moddat2$omega <- 0
 
+moddat1 <- moddat1 %>% 
+  mutate(trend_dday30C = dday30C - mean(dday30C, na.rm = TRUE))
+mod1 <- lm(dday30C ~ trend, data = moddat1)
+moddat1$lm_dday30C <- mod1$coefficients[2]*moddat1$trend
+
+moddat2 <- moddat2 %>% 
+  mutate(trend_dday30C = dday30C - mean(dday30C, na.rm = TRUE))
+mod2 <- lm(dday30C ~ trend, data = moddat2)
+moddat2$lm_dday30C <- mod2$coefficients[2]*moddat2$trend
+
 moddat <- rbind(moddat1, moddat2)
 head(moddat)
+
+# moddat <- moddat %>% 
+#   group_by(state) %>% 
+#   mutate(state_trend = year - 1949)
+head(moddat)
+state_trend <- dummyCreator(moddat$state, prefix = "state")
+state_trend <- state_trend*moddat$trend
+cbind(moddat, state_trend)
 
 moddat$tau <- ifelse(moddat$year >= 1980, 1, 0)
 
 moddat$did <- moddat$tau*moddat$omega
-moddat$trend <- moddat$year - 1949
-moddat$state_trend <- as.numeric(factor(moddat$state, levels = unique(moddat$state)))*moddat$trend
+#moddat$state_trend <- as.numeric(factor(moddat$state, levels = unique(moddat$state)))*moddat$trend
 
 # Hand computer data
 a = sapply(subset(moddat, tau == 0 & omega == 0, select = rev), mean)
@@ -133,7 +161,7 @@ pdat <- moddat %>%
 
 ggplot(moddat, aes(year, rev, color = factor(type))) + 
   geom_line(data = pdat, aes(year, rev, color = factor(omega))) +
-  geom_smooth(method='loess',formula=y~rcs(x, 5)) + 
+  geom_smooth(method='lm',formula=y~rcs(x, 5)) + 
   theme_tufte(base_size = 12) +
   geom_hline(yintercept = 0, color = "grey") +
   annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey") +
@@ -161,28 +189,61 @@ ggplot(moddat, aes(year, yield, color = factor(type))) +
 mod0 <- felm(ln_rev ~ tau + omega + tau + did, data = moddat)
 summary(mod0)
 
-mod1 <- felm(ln_rev ~ tau + omega + tau + did + state_trend | state | 0 | state, data = moddat)
+mod1 <- felm(ln_rev ~ tau + omega + tau + did | fips | 0 | state, data = moddat)
 summary(mod1)
 
-#mod2 <- felm(ln_rev ~ tau + omega + tau + did | fips + year, data = moddat)
-
-mod2 <- felm(ln_rev ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
-               tau + omega + tau + did, data = moddat)
+mod2 <- felm(ln_rev ~ state_trend + omega + tau + did  | fips | 0 | state, data = moddat)
 summary(mod2)
 
 mod3 <- felm(ln_rev ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
-               tau + omega + tau + did + state_trend | state | 0 |state, data = moddat)
+               omega + tau + did  | 0 | 0 | 0, data = moddat)
 summary(mod3)
 
 mod4 <- felm(ln_rev ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
-              tau + omega + tau + did | state + year | 0 |state, data = moddat)
+               omega + tau + did  | fips | 0 | state, data = moddat)
 summary(mod4)
+
+mod5 <- felm(ln_rev ~ state_trend + dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
+               omega + tau + did  | fips | 0 | state, data = moddat)
  
 saveRDS(mod0, "models/dd_mod0.rds")
 saveRDS(mod1, "models/dd_mod1.rds")
 saveRDS(mod2, "models/dd_mod2.rds")
 saveRDS(mod3, "models/dd_mod3.rds")
 saveRDS(mod4, "models/dd_mod4.rds")
+saveRDS(mod5, "models/dd_mod5.rds")
+
+# Trend treatment effect
+mod <- lm(dday30C ~ trend, data = moddat)
+moddat$lm_dday30C <- moddat$trend*mod$coefficients[2]
+
+moddat$omega <- moddat$omega
+moddat$tau <- moddat$lm_dday30C
+moddat$did <- moddat$omega*moddat$tau
+
+moda <- felm(ln_rev ~ omega + tau + did  | 0 | 0 | 0, data = moddat)
+
+modb <- felm(ln_rev ~ omega + tau + did  | fips | 0 | state, data = moddat)
+
+modc <- felm(ln_rev ~ state_trend + omega + tau + did  | fips | 0 | state, data = moddat)
+
+modd <- felm(ln_rev ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
+               omega + tau + did  | 0 | 0 | 0, data = moddat)
+
+mode <- felm(ln_rev ~ dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
+               omega + tau + did  | fips | 0 | state, data = moddat)
+
+modf <- felm(ln_rev ~ state_trend + dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
+               omega + tau + did  | fips | 0 | state, data = moddat)
+
+saveRDS(moda, "models/dd_moda.rds")
+saveRDS(modb, "models/dd_modb.rds")
+saveRDS(modc, "models/dd_modc.rds")
+saveRDS(modd, "models/dd_modd.rds")
+saveRDS(mode, "models/dd_mode.rds")
+saveRDS(modf, "models/dd_modf.rds")
+
+summary(mod)
 
 source("R/predictFelm.R")
  
