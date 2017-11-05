@@ -17,7 +17,7 @@ library(cowplot)
 
 grr <- readRDS("data/full_ag_data.rds")
 gr <- filter(grr, year == 1950)
-#gr <- grr
+gr <- grr
 mapdat <- data.frame(region = unique(gr$fips))
 
 grr$state <- toupper(factor(grr$state))
@@ -25,8 +25,8 @@ states <- tolower(unique(state.name[match(grr$state, state.abb)]))
 states <- states[!is.na(states)]                     
 
 crops <- gr %>% 
-  group_by(fips) %>% 
-  summarise(corn_a = mean(corn_grain_a, na.rm = TRUE),
+  dplyr::group_by(fips) %>% 
+  dplyr::summarise(corn_a = mean(corn_grain_a, na.rm = TRUE),
             cotton_a = mean(cotton_a, na.rm = TRUE),
             hay_a = mean(hay_a, na.rm = TRUE),
             wheat_a = mean(wheat_a, na.rm = TRUE),
@@ -65,7 +65,7 @@ fipss <- unique(mapdat$region)
 # counties <- unique(mapdat$region)
 
 # Corn
-corndat <- select(mapdat, region, corn_a) %>% filter(!is.na(corn_a)) %>%  rename(region = region, value = corn_a)
+corndat <- dplyr::select(mapdat, region, corn_a) %>% filter(!is.na(corn_a)) %>%  rename(region = region, value = corn_a)
 cornfips <- corndat$region
 corn_map <- county_choropleth(corndat,
                  title      = NULL, state_zoom = states)
@@ -153,7 +153,7 @@ soybean_map <- soybean_map + scale_fill_brewer(palette = "YlGnBu") +
 soybean_map
 
 dev.off()
-pdf("/home/john/Dropbox/Research/Adaptation Along the Envelope/figures/crop_county_map.pdf", 
-    width = 6, height = 5)
+#pdf("/home/john/Dropbox/Research/Adaptation Along the Envelope/figures/crop_county_map.pdf", 
+#    width = 6, height = 5)
 plot_grid(corn_map, cotton_map, hay_map, wheat_map, soybean_map)
-dev.off()
+#dev.off()

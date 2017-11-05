@@ -139,8 +139,8 @@ hay <- read_csv("data/hay_1918-2008.csv")
 hay$state <- tolower(hay$state)
 hay$fips <- as.integer(hay$fips)
 
-#wheat <- read_csv("data/wheat_1909-2007.csv")
-wheat <- read_csv("data/wheat_1909-2007_spring.csv")
+wheat <- read_csv("data/wheat_1909-2007.csv")
+#wheat <- read_csv("data/wheat_1909-2007_spring.csv")
 wheat$state <- tolower(wheat$state)
 wheat$fips <- as.integer(wheat$fips)
 
@@ -545,7 +545,8 @@ fulldat <- do.call(data.frame,lapply(fulldat, function(x) replace(x, is.infinite
 
 
 
-data <- filter(fulldat, state %in% c("mt", "nd", "sd") | abs(long) <= 100)
+#data <- filter(fulldat, state %in% c("mt", "nd", "sd") | abs(long) <= 100)
+data <- filter(fulldat, abs(long) <= 100)
 unique(data$state)
 data <- filter(data, year >= 1950 & year <= 2010)
 saveRDS(data, "data/full_ag_data.rds")

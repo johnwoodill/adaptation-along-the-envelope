@@ -108,14 +108,15 @@ fips1 <- spdiff1$fips
 fips2 <- spdiff2$fips
 
 # Map of counties
-mapdat <- data.frame(region = c(fips1, fips2), value = c(rep("Coolest", length(fips1)), rep("Warmest", length(fips2))))
+mapdat <- data.frame(region = c(fips1, fips2), value = c(rep("Counties that cooled the most", length(fips1)), rep("Counties that warmed the most", length(fips2))))
 
 states <- tolower(unique(state.name[match(cropdat$state, tolower(state.abb))]))
 
 map <- county_choropleth(mapdat,
                   title      = NULL,
                   state_zoom = states)
-map <- map+ scale_fill_manual(values=c("#9ecae1", "#de2d26", "black"), breaks = c("Warmest", "Coolest"))  +
+map <- map+ scale_fill_manual(values=c("#9ecae1", "#de2d26", "black"), breaks = c("Counties that warmed the most", 
+                                                                                  "Counties that cooled the most"))  +
  #scale_fill_brewer(palette = "YlGnBu") + 
   theme_tufte(base_size = 14)+ 
   xlab("Sample Data") + ylab(NULL) + theme(legend.position = c(0,0),
@@ -126,7 +127,7 @@ map <- map+ scale_fill_manual(values=c("#9ecae1", "#de2d26", "black"), breaks = 
                                      axis.ticks.x = element_blank(),
                                      axis.ticks.y = element_blank(),
                                      panel.border = element_rect(fill = NA)) 
-
+map
 # Subset new data warmest counties
 wdat1 <- filter(dat1, fips %in% fips2)
 wdat1 <- select(wdat1, fips, Corn, Cotton, Hay, Wheat, Soybean, tavg)

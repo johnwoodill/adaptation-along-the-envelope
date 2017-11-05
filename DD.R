@@ -152,6 +152,9 @@ d = sapply(subset(moddat, tau == 1 & omega == 1, select = rev), mean)
 moddat$type <- factor(moddat$type, levels = c("Counties that warmed the most", "Counties that cooled the most"),
                       labels = c("Counties that warmed the most", "Counties that cooled the most"))
 
+moddat$omega <- factor(moddat$omega, levels = c(1, 0),
+                      labels = c("Counties that warmed the most", "Counties that cooled the most"))
+
 moddat$pre <- ifelse(moddat$year >= 1980, moddat$rev, NA)
 
 pdat <- moddat %>% 
@@ -159,9 +162,9 @@ pdat <- moddat %>%
   summarise(rev = mean(rev, na.rm = TRUE),
             yield = mean(yield, na.rm =))
 
-ggplot(moddat, aes(year, rev, color = factor(type))) + 
-  geom_line(data = pdat, aes(year, rev, color = factor(omega))) +
-  geom_smooth(method='lm',formula=y~rcs(x, 5)) + 
+ggplot(pdat, aes(year, rev, color = type, group = omega)) + 
+  geom_line(pdat = moddat, aes(year, rev, color = omega)) +
+  #geom_smooth(method='lm',formula=y~rcs(x, 5)) + 
   theme_tufte(base_size = 12) +
   geom_hline(yintercept = 0, color = "grey") +
   annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf, color = "grey") +
