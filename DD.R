@@ -190,8 +190,10 @@ mod4 <- felm(ln_rev ~ state_trend + dday0_10 + dday10_30 + dday30C + prec + prec
 summary(mod4)
 
 mod5 <- felm(ln_rev ~ state_trend + dday0_10 + dday10_30 + dday30C + prec + prec_sq + 
-               omega + tau + did  | fips | 0 | state, data = moddat)
-summary(mod5) 
+               omega + tau + did  | fips | 0 | fips, data = moddat)
+summary(mod5, robust = TRUE) 
+cl(moddat, mod5, moddat$fips)
+summary(mod5)
 
 saveRDS(mod0, "models/dd_mod0.rds")
 saveRDS(mod1, "models/dd_mod1.rds")
